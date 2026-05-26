@@ -1,0 +1,148 @@
+strict digraph {
+
+  bgcolor="white";
+  splines=ortho;
+  nodesep=0.8;
+  ranksep=1.1;
+
+  concentrate=true;
+
+  graph [
+    fontname="Noto Sans CJK TC",
+    labelloc="t",
+    label="小石開源力：核心遊戲循環"
+  ];
+
+  node [
+    fontname="Noto Sans CJK TC",
+    shape=box,
+    style="rounded,filled",
+    color="#333333",
+    fillcolor="#F8F8F8",
+    margin="0.3,0.3"
+  ];
+
+  edge [
+    fontname="Noto Sans CJK TC",
+    color="#333333",
+    arrowsize=0.8
+  ];
+
+  // ===== 中心資產 =====
+
+  Bag [
+    label="背包中的小石\n持有小石、素材、道具",
+    fillcolor="#FCE5CD",
+    fontsize=18
+  ];
+
+  // ===== 現實任務輸入 =====
+
+  RealTask [
+    label="完成營隊實體任務\n攤位、互動、完成回饋表單",
+    fillcolor="#F4CCCC",
+    fontcolor="#CC0000"
+  ];
+
+  RealReward [
+    label="贈送素材\n特殊用途小石",
+    fillcolor="#F4CCCC"
+  ];
+
+  // ===== 小隊貢獻循環 =====
+
+  TeamPower [
+    label="貢獻小隊開源力",
+    fillcolor="#D9EAD3"
+  ];
+
+  TeamBuff [
+    label="小石獲得數值加乘\n提升知識王與世界魔王表現",
+    fillcolor="#D9EAD3"
+  ];
+
+  // ===== 知識王循環 =====
+
+
+
+  // ===== 世界魔王循環 =====
+
+  BossDispatch [
+    label="組隊派遣小石",
+    fillcolor="#EADCF8"
+  ];
+
+  WorldBoss [
+    label="挑戰無限生成的世界魔王",
+    fillcolor="#EADCF8",
+    fontcolor="#3366CC"
+  ];
+
+  BossReward [
+    label="獲得大量強化道具",
+    fillcolor="#EADCF8"
+  ];
+
+  UnlockWorld [
+    label="獲得特殊道具\n解鎖故事、新探險地點",
+    fillcolor="#EADCF8",
+    fontcolor="#3366CC"
+  ];
+
+  // ===== 合成與破台 =====
+
+  ClearGoal [
+    label="集滿破台",
+    fillcolor="#EFEFEF",
+    fontcolor="#3366CC"
+  ];
+
+  Review [
+    label="結算\n給出遊戲行為回顧",
+    fillcolor="#EFEFEF"
+  ];
+
+  UnlockCraft [
+    label="解鎖小石疊合操作",
+    fillcolor="#EFEFEF"
+  ];
+
+  CraftLoop [
+    label="反覆疊合\n成為數值怪",
+    fillcolor="#EFEFEF"
+  ];
+
+  // ===== 主輸入：現實任務 → 背包 =====
+
+  RealTask -> RealReward [label="完成後"];
+  RealReward -> Bag [label="加入背包"];
+
+  // ===== 小隊開源力循環 =====
+
+  Bag -> TeamPower [label="投入資源"];
+  TeamPower -> TeamBuff [label="形成加乘"];
+
+
+  // ===== 知識王循環 =====
+
+
+  // ===== 世界魔王循環 =====
+
+  Bag -> BossDispatch [label="派遣小石"];
+  BossDispatch -> WorldBoss [label="挑戰"];
+  WorldBoss -> BossReward [label="戰鬥結算"];
+  BossReward -> Bag [label="強化小石"];
+
+  WorldBoss -> UnlockWorld [label="擊破階段"];
+  UnlockWorld -> Bag [label="特殊道具與新小石"];
+
+  // ===== 破台與合成循環 =====
+
+  Bag -> ClearGoal [label="完成圖鑑"];
+  ClearGoal -> Review [label="破台後"];
+  Review -> UnlockCraft [label="解鎖"];
+  UnlockCraft -> CraftLoop [label="開放合成"];
+  CraftLoop -> Bag [label="合成結果回到背包"];
+
+
+}
