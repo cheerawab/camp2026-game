@@ -1,7 +1,7 @@
 strict digraph {
 
   bgcolor="white";
-  splines=ortho;
+  splines=spline;
   nodesep=0.8;
   ranksep=1.1;
 
@@ -10,7 +10,7 @@ strict digraph {
   graph [
     fontname="Noto Sans CJK TC",
     labelloc="t",
-    label="小石開源力：核心遊戲循環"
+    label="小石開源力：知識探索核心循環"
   ];
 
   node [
@@ -30,119 +30,125 @@ strict digraph {
 
   // ===== 中心資產 =====
 
-  Bag [
-    label="背包中的小石\n持有小石、素材、道具",
-    fillcolor="#FCE5CD",
+  ProfileBase [
+    label="基地主頁\n小石、佈景、回顧展示",
+    fillcolor="#D9EAD3",
     fontsize=18
   ];
 
-  // ===== 現實任務輸入 =====
+  Inventory [
+    label="收藏背包\n開源力、道具、小石造型",
+    fillcolor="#FCE5CD"
+  ];
 
-  RealTask [
-    label="完成營隊實體任務\n攤位、互動、完成回饋表單",
+  // ===== 行為輸入 =====
+
+  RealActions [
+    label="營隊實際行為\n提問、互動、協助、解題、參與活動",
     fillcolor="#F4CCCC",
     fontcolor="#CC0000"
   ];
 
-  RealReward [
-    label="贈送素材\n特殊用途小石",
+  ActionReward [
+    label="取得對應小石\n開源力、造型道具、基地佈景",
     fillcolor="#F4CCCC"
   ];
 
-  // ===== 小隊貢獻循環 =====
+  // ===== 知識王 =====
 
-  TeamPower [
-    label="貢獻小隊開源力",
+  Quiz [
+    label="知識王\nCP 訂正、面對面對戰",
+    fillcolor="#D9EAF7",
+    fontcolor="#1C4587"
+  ];
+
+  Explanation [
+    label="看解析\n答錯進訂正區",
+    fillcolor="#D9EAF7"
+  ];
+
+  QuizReward [
+    label="題組紀錄\n開源力、道具、小石",
+    fillcolor="#D9EAF7"
+  ];
+
+  // ===== 合成與展示 =====
+
+  Craft [
+    label="造型合成\n小石 + 指定道具",
+    fillcolor="#FFF2CC"
+  ];
+
+  NewStyle [
+    label="新造型小石\n行為紀念與展示",
+    fillcolor="#FFF2CC"
+  ];
+
+  BaseTheme [
+    label="套用基地佈景\n主頁就是基地",
     fillcolor="#D9EAD3"
   ];
 
-  TeamBuff [
-    label="小石獲得數值加乘\n提升知識王與世界魔王表現",
-    fillcolor="#D9EAD3"
-  ];
+  // ===== 世界魔王 =====
 
-  // ===== 知識王循環 =====
-
-
-
-  // ===== 世界魔王循環 =====
-
-  BossDispatch [
-    label="組隊派遣小石",
+  DailyCourse [
+    label="當天課程內容\n形成魔王題組",
     fillcolor="#EADCF8"
   ];
 
   WorldBoss [
-    label="挑戰無限生成的世界魔王",
+    label="全營世界魔王\n共同推進階段",
     fillcolor="#EADCF8",
     fontcolor="#3366CC"
   ];
 
-  BossReward [
-    label="獲得大量強化道具",
-    fillcolor="#EADCF8"
-  ];
-
-  UnlockWorld [
-    label="獲得特殊道具\n解鎖故事、新探險地點",
+  BossClear [
+    label="共鬥勝利\n全體參與者獲得限定造型小石",
     fillcolor="#EADCF8",
     fontcolor="#3366CC"
   ];
 
-  // ===== 合成與破台 =====
+  // ===== 收束 =====
 
-  ClearGoal [
-    label="集滿破台",
+  Review [
+    label="Day 5 活動回顧\n多類型成就結算",
     fillcolor="#EFEFEF",
     fontcolor="#3366CC"
   ];
 
-  Review [
-    label="結算\n給出遊戲行為回顧",
+  Awards [
+    label="實體獎勵與紀念\n知識、訂正、合作、探索、收藏",
     fillcolor="#EFEFEF"
   ];
 
-  UnlockCraft [
-    label="解鎖小石疊合操作",
-    fillcolor="#EFEFEF"
-  ];
+  // ===== 主循環 =====
 
-  CraftLoop [
-    label="反覆疊合\n成為數值怪",
-    fillcolor="#EFEFEF"
-  ];
+  RealActions -> ActionReward [label="完成後"];
+  ActionReward -> Inventory [label="加入收藏"];
+  ActionReward -> ProfileBase [label="更新展示"];
 
-  // ===== 主輸入：現實任務 → 背包 =====
+  Inventory -> Craft [label="使用道具"];
+  Craft -> NewStyle [label="合成"];
+  NewStyle -> Inventory [label="加入背包"];
+  NewStyle -> ProfileBase [label="展示"];
 
-  RealTask -> RealReward [label="完成後"];
-  RealReward -> Bag [label="加入背包"];
+  Inventory -> BaseTheme [label="兌換佈景"];
+  BaseTheme -> ProfileBase [label="套用"];
 
-  // ===== 小隊開源力循環 =====
+  Quiz -> Explanation [label="作答後"];
+  Explanation -> QuizReward [label="答對或完成訂正"];
+  QuizReward -> Inventory [label="取得獎勵"];
+  QuizReward -> ProfileBase [label="留下紀錄"];
 
-  Bag -> TeamPower [label="投入資源"];
-  TeamPower -> TeamBuff [label="形成加乘"];
+  DailyCourse -> WorldBoss [label="每日題組"];
+  QuizReward -> WorldBoss [label="推進共同進度"];
+  RealActions -> WorldBoss [label="任務貢獻"];
+  WorldBoss -> BossClear [label="階段擊破"];
+  BossClear -> Inventory [label="限定造型"];
+  BossClear -> ProfileBase [label="魔王紀念"];
 
-
-  // ===== 知識王循環 =====
-
-
-  // ===== 世界魔王循環 =====
-
-  Bag -> BossDispatch [label="派遣小石"];
-  BossDispatch -> WorldBoss [label="挑戰"];
-  WorldBoss -> BossReward [label="戰鬥結算"];
-  BossReward -> Bag [label="強化小石"];
-
-  WorldBoss -> UnlockWorld [label="擊破階段"];
-  UnlockWorld -> Bag [label="特殊道具與新小石"];
-
-  // ===== 破台與合成循環 =====
-
-  Bag -> ClearGoal [label="完成圖鑑"];
-  ClearGoal -> Review [label="破台後"];
-  Review -> UnlockCraft [label="解鎖"];
-  UnlockCraft -> CraftLoop [label="開放合成"];
-  CraftLoop -> Bag [label="合成結果回到背包"];
-
-
+  ProfileBase -> Review [label="累積回顧素材"];
+  Inventory -> Review [label="收藏紀錄"];
+  WorldBoss -> Review [label="參與階段"];
+  Review -> Awards [label="Day 5 結算"];
 }
