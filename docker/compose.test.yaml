@@ -1,0 +1,23 @@
+name: camp2026-game-test
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: camp2026-game-postgres-test
+    environment:
+      POSTGRES_USER: camp2026
+      POSTGRES_PASSWORD: camp2026
+      POSTGRES_DB: camp2026
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U camp2026 -d camp2026"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    volumes:
+      - postgres-test-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-test-data:
