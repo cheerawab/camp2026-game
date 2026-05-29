@@ -1,0 +1,162 @@
+@import "tailwindcss" source("../");
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-status-success: var(--status-success);
+  --color-status-success-foreground: var(--status-success-foreground);
+  --color-status-info: var(--status-info);
+  --color-status-info-foreground: var(--status-info-foreground);
+  --color-status-magic: var(--status-magic);
+  --color-status-magic-foreground: var(--status-magic-foreground);
+  --color-status-warning: var(--status-warning);
+  --color-status-warning-foreground: var(--status-warning-foreground);
+  --color-pebble-explore: var(--pebble-explore);
+  --color-pebble-explore-muted: var(--pebble-explore-muted);
+  --color-pebble-explore-foreground: var(--pebble-explore-foreground);
+  --color-pebble-spark: var(--pebble-spark);
+  --color-pebble-spark-muted: var(--pebble-spark-muted);
+  --color-pebble-spark-foreground: var(--pebble-spark-foreground);
+  --color-pebble-resonate: var(--pebble-resonate);
+  --color-pebble-resonate-muted: var(--pebble-resonate-muted);
+  --color-pebble-resonate-foreground: var(--pebble-resonate-foreground);
+  --color-pebble-engineer: var(--pebble-engineer);
+  --color-pebble-engineer-muted: var(--pebble-engineer-muted);
+  --color-pebble-engineer-foreground: var(--pebble-engineer-foreground);
+  --color-pebble-play: var(--pebble-play);
+  --color-pebble-play-muted: var(--pebble-play-muted);
+  --color-pebble-play-foreground: var(--pebble-play-foreground);
+}
+
+:root {
+  --radius: 0.5rem;
+  --background: oklch(0.985 0.008 96);
+  --foreground: oklch(0.22 0.03 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.03 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.03 260);
+  --primary: oklch(0.44 0.13 152);
+  --primary-foreground: oklch(0.99 0.01 96);
+  --secondary: oklch(0.94 0.02 250);
+  --secondary-foreground: oklch(0.28 0.04 260);
+  --muted: oklch(0.94 0.02 250);
+  --muted-foreground: oklch(0.48 0.04 260);
+  --accent: oklch(0.9 0.05 78);
+  --accent-foreground: oklch(0.28 0.04 260);
+  --destructive: oklch(0.58 0.2 28);
+  --border: oklch(0.88 0.02 250);
+  --input: oklch(0.88 0.02 250);
+  --ring: oklch(0.6 0.13 152);
+  --status-success: oklch(0.55 0.14 152);
+  --status-success-foreground: oklch(0.99 0.01 96);
+  --status-info: oklch(0.56 0.15 250);
+  --status-info-foreground: oklch(0.99 0.01 96);
+  --status-magic: oklch(0.56 0.16 300);
+  --status-magic-foreground: oklch(0.99 0.01 96);
+  --status-warning: oklch(0.78 0.13 82);
+  --status-warning-foreground: oklch(0.25 0.04 78);
+  --pebble-explore: oklch(0.55 0.14 152);
+  --pebble-explore-muted: oklch(0.94 0.05 152);
+  --pebble-explore-foreground: oklch(0.32 0.11 152);
+  --pebble-spark: oklch(0.78 0.13 82);
+  --pebble-spark-muted: oklch(0.96 0.06 82);
+  --pebble-spark-foreground: oklch(0.36 0.08 78);
+  --pebble-resonate: oklch(0.58 0.15 300);
+  --pebble-resonate-muted: oklch(0.94 0.04 300);
+  --pebble-resonate-foreground: oklch(0.35 0.1 300);
+  --pebble-engineer: oklch(0.56 0.15 250);
+  --pebble-engineer-muted: oklch(0.94 0.04 250);
+  --pebble-engineer-foreground: oklch(0.34 0.11 250);
+  --pebble-play: oklch(0.66 0.16 48);
+  --pebble-play-muted: oklch(0.94 0.06 48);
+  --pebble-play-foreground: oklch(0.38 0.11 48);
+}
+
+.dark {
+  --background: oklch(0.18 0.03 260);
+  --foreground: oklch(0.97 0.01 96);
+  --card: oklch(0.23 0.03 260);
+  --card-foreground: oklch(0.97 0.01 96);
+  --popover: oklch(0.23 0.03 260);
+  --popover-foreground: oklch(0.97 0.01 96);
+  --primary: oklch(0.72 0.15 152);
+  --primary-foreground: oklch(0.18 0.03 260);
+  --secondary: oklch(0.3 0.03 260);
+  --secondary-foreground: oklch(0.97 0.01 96);
+  --muted: oklch(0.3 0.03 260);
+  --muted-foreground: oklch(0.72 0.03 250);
+  --accent: oklch(0.45 0.08 78);
+  --accent-foreground: oklch(0.97 0.01 96);
+  --destructive: oklch(0.7 0.18 28);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.72 0.15 152);
+  --status-success: oklch(0.72 0.15 152);
+  --status-success-foreground: oklch(0.18 0.03 260);
+  --status-info: oklch(0.7 0.13 250);
+  --status-info-foreground: oklch(0.18 0.03 260);
+  --status-magic: oklch(0.72 0.14 300);
+  --status-magic-foreground: oklch(0.18 0.03 260);
+  --status-warning: oklch(0.82 0.13 82);
+  --status-warning-foreground: oklch(0.18 0.03 260);
+  --pebble-explore: oklch(0.72 0.15 152);
+  --pebble-explore-muted: oklch(0.3 0.07 152);
+  --pebble-explore-foreground: oklch(0.9 0.04 152);
+  --pebble-spark: oklch(0.82 0.13 82);
+  --pebble-spark-muted: oklch(0.33 0.07 82);
+  --pebble-spark-foreground: oklch(0.94 0.05 82);
+  --pebble-resonate: oklch(0.72 0.14 300);
+  --pebble-resonate-muted: oklch(0.32 0.07 300);
+  --pebble-resonate-foreground: oklch(0.92 0.05 300);
+  --pebble-engineer: oklch(0.7 0.13 250);
+  --pebble-engineer-muted: oklch(0.31 0.07 250);
+  --pebble-engineer-foreground: oklch(0.9 0.05 250);
+  --pebble-play: oklch(0.76 0.14 48);
+  --pebble-play-muted: oklch(0.33 0.07 48);
+  --pebble-play-foreground: oklch(0.92 0.05 48);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family:
+      Inter,
+      ui-sans-serif,
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      sans-serif;
+  }
+}
