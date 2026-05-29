@@ -1,0 +1,191 @@
+basePath: /api/v1
+definitions:
+  example.PlayerInput:
+    properties:
+      displayName:
+        maxLength: 40
+        type: string
+      favoritePebbleType:
+        enum:
+        - exploration
+        - inspiration
+        - resonance
+        - engineering
+        - entertainment
+        type: string
+      teamNumber:
+        maximum: 20
+        minimum: 1
+        type: integer
+    required:
+    - displayName
+    - favoritePebbleType
+    - teamNumber
+    type: object
+  example.ValidationExampleRequest:
+    properties:
+      players:
+        items:
+          $ref: '#/definitions/example.PlayerInput'
+        maxItems: 20
+        minItems: 1
+        type: array
+    required:
+    - players
+    type: object
+  example.ValidationExampleResponse:
+    properties:
+      message:
+        example: validation example accepted
+        type: string
+      players:
+        items:
+          $ref: '#/definitions/example.PlayerInput'
+        type: array
+    type: object
+  httpx.ErrorDetail:
+    properties:
+      location:
+        type: string
+      message:
+        type: string
+    type: object
+  httpx.ProblemDetails:
+    properties:
+      detail:
+        type: string
+      errors:
+        items:
+          $ref: '#/definitions/httpx.ErrorDetail'
+        type: array
+      instance:
+        type: string
+      status:
+        type: integer
+      title:
+        type: string
+      type:
+        type: string
+    type: object
+  system.MessageResponse:
+    properties:
+      message:
+        example: Camp 2026 Game API is running
+        type: string
+    type: object
+  system.PingResponse:
+    properties:
+      databaseTime:
+        example: 2026-05-29 12:00:00.000000+00
+        type: string
+      message:
+        example: pong
+        type: string
+    type: object
+  system.StatusResponse:
+    properties:
+      status:
+        example: ok
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Backend API for the SITCON Camp 2026 game.
+  title: Camp 2026 Game API
+  version: 0.1.0
+paths:
+  /:
+    get:
+      description: Confirms the API process is running.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/system.MessageResponse'
+      summary: Hello world
+      tags:
+      - system
+  /examples/validation:
+    post:
+      consumes:
+      - application/json
+      description: Demonstrates JSON decode errors, validator semantic errors, and
+        array-level error locations.
+      parameters:
+      - description: Validation example request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/example.ValidationExampleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/example.ValidationExampleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      summary: Validation example
+      tags:
+      - examples
+  /healthz:
+    get:
+      description: Confirms the HTTP process is alive.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/system.StatusResponse'
+      summary: Health check
+      tags:
+      - system
+  /ping:
+    get:
+      description: Runs a minimal sqlc query to confirm database access.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/system.PingResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      summary: Database ping
+      tags:
+      - system
+  /readyz:
+    get:
+      description: Confirms required dependencies are reachable.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/system.StatusResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      summary: Readiness check
+      tags:
+      - system
+schemes:
+- http
+- https
+swagger: "2.0"
