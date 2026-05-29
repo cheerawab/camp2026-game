@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Local configuration
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Build output
+dist/
+.output/
+.vinxi/
+.nitro/
+.vercel/
+.netlify/
+
+# Generated files
+routeTree.gen.ts
+*.tsbuildinfo
+
+# Test output
+coverage/
+.nyc_output/
+
+# Logs and caches
+logs/
+*.log
+.cache/
+.vite/
+.turbo/
