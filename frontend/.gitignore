@@ -29,3 +29,5 @@ logs/
 .cache/
 .vite/
 .turbo/
+
+.zed/
