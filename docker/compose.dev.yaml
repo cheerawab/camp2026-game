@@ -1,0 +1,21 @@
+services:
+  postgresql:
+    image: postgres:16-alpine
+    container_name: camp2026-postgresql
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: camp2026
+      POSTGRES_PASSWORD: camp2026
+      POSTGRES_DB: camp2026
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U camp2026 -d camp2026"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgresql-data:
