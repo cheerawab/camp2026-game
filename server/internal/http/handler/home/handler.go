@@ -1,4 +1,4 @@
-package example
+package home
 
 import "github.com/go-chi/chi/v5"
 
@@ -9,5 +9,5 @@ func New() *Handler {
 }
 
 func (h *Handler) RegisterRoutes(api chi.Router) {
-	api.Post("/examples/validation", h.Validation)
+	api.Get("/users/state", h.GetUserState)
 }

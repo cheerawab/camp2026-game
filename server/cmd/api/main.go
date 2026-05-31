@@ -14,8 +14,12 @@ import (
 // @title Camp 2026 Game API
 // @version 0.1.0
 // @description Backend API for the SITCON Camp 2026 game.
-// @BasePath /api/v1
+// @BasePath /api
 // @schemes http https
+// @securityDefinitions.apikey AuthCookieAuth
+// @in header
+// @name Cookie
+// @description User auth cookie. Send as `Cookie: camp2026_auth=<base64url-auth-token>`.
 func main() {
 	os.Exit(run())
 }

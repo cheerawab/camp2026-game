@@ -1,6 +1,7 @@
 package httpserver
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -8,8 +9,9 @@ import (
 	"github.com/sitcon-tw/camp2026-game/docs"
 )
 
-func registerSwaggerRoutes(api chi.Router, apiVersion string) {
-	docs.SwaggerInfo.BasePath = "/api/" + apiVersion
+func registerSwaggerRoutes(api chi.Router) {
+	basePath := "/api"
+	docs.SwaggerInfo.BasePath = basePath
 
 	api.Get("/swagger.json", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -17,14 +19,17 @@ func registerSwaggerRoutes(api chi.Router, apiVersion string) {
 		_, _ = w.Write([]byte(docs.SwaggerInfo.ReadDoc()))
 	})
 
-	api.Get("/docs", writeScalarDocs)
-	api.Get("/docs/index.html", writeScalarDocs)
+	writeDocs := func(w http.ResponseWriter, _ *http.Request) {
+		writeScalarDocs(w, basePath+"/swagger.json")
+	}
+	api.Get("/docs", writeDocs)
+	api.Get("/docs/index.html", writeDocs)
 }
 
-func writeScalarDocs(w http.ResponseWriter, _ *http.Request) {
+func writeScalarDocs(w http.ResponseWriter, specURL string) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write([]byte(scalarDocsHTML))
+	_, _ = fmt.Fprintf(w, scalarDocsHTML, specURL)
 }
 
 const scalarDocsHTML = `<!doctype html>
@@ -39,7 +44,7 @@ const scalarDocsHTML = `<!doctype html>
     <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
     <script>
       Scalar.createApiReference('#app', {
-        url: '../swagger.json',
+        url: '%s',
       })
     </script>
   </body>

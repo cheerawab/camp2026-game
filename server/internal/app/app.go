@@ -12,7 +12,6 @@ import (
 	"github.com/sitcon-tw/camp2026-game/internal/config"
 	httpserver "github.com/sitcon-tw/camp2026-game/internal/http"
 	"github.com/sitcon-tw/camp2026-game/internal/postgres"
-	"github.com/sitcon-tw/camp2026-game/internal/postgres/sqlc"
 )
 
 type Application struct {
@@ -37,13 +36,10 @@ func New(ctx context.Context) (*Application, error) {
 		return nil, err
 	}
 
-	queries := sqlc.New(dbPool)
 	handler := httpserver.NewRouter(httpserver.Dependencies{
 		Log:            log,
-		APIVersion:     cfg.APIVersion,
 		RequestTimeout: cfg.HTTP.RequestTimeout,
 		ReadinessCheck: postgres.ReadinessCheck(dbPool),
-		Queries:        queries,
 	})
 
 	return &Application{

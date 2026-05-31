@@ -10,26 +10,28 @@ import (
 	"github.com/go-chi/chi/v5"
 	chimw "github.com/go-chi/chi/v5/middleware"
 
-	examplehandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/example"
+	authhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/auth"
+	bingohandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/bingo"
+	cataloghandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/catalog"
+	homehandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/home"
+	matcheshandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/matches"
+	qrcodehandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/qrcode"
+	staffhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/staff"
+	storagehandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/storage"
 	systemhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/system"
+	worldbosshandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/worldboss"
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
-	"github.com/sitcon-tw/camp2026-game/internal/postgres/sqlc"
 )
 
 type Dependencies struct {
 	Log            *slog.Logger
-	APIVersion     string
 	RequestTimeout time.Duration
 	ReadinessCheck func(context.Context) error
-	Queries        *sqlc.Queries
 }
 
 func NewRouter(dep Dependencies) http.Handler {
 	if dep.Log == nil {
 		dep.Log = slog.New(slog.NewTextHandler(io.Discard, nil))
-	}
-	if dep.APIVersion == "" {
-		dep.APIVersion = "v1"
 	}
 	if dep.RequestTimeout <= 0 {
 		dep.RequestTimeout = 10 * time.Second
@@ -43,8 +45,8 @@ func NewRouter(dep Dependencies) http.Handler {
 	r.Use(recoverer(dep.Log))
 	r.Use(requestLogger(dep.Log))
 
-	r.Route("/api/"+dep.APIVersion, func(api chi.Router) {
-		registerRoutes(api, dep, dep.APIVersion)
+	r.Route("/api", func(api chi.Router) {
+		registerRoutes(api, dep)
 	})
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
@@ -57,12 +59,19 @@ func NewRouter(dep Dependencies) http.Handler {
 	return r
 }
 
-func registerRoutes(api chi.Router, dep Dependencies, apiVersion string) {
+func registerRoutes(api chi.Router, dep Dependencies) {
 	systemhandler.New(systemhandler.Dependencies{
 		ReadinessCheck: dep.ReadinessCheck,
-		Queries:        dep.Queries,
 	}).RegisterRoutes(api)
-	examplehandler.New().RegisterRoutes(api)
+	authhandler.New().RegisterRoutes(api)
+	homehandler.New().RegisterRoutes(api)
+	bingohandler.New().RegisterRoutes(api)
+	matcheshandler.New().RegisterRoutes(api)
+	qrcodehandler.New().RegisterRoutes(api)
+	worldbosshandler.New().RegisterRoutes(api)
+	storagehandler.New().RegisterRoutes(api)
+	cataloghandler.New().RegisterRoutes(api)
+	staffhandler.New().RegisterRoutes(api)
 
-	registerSwaggerRoutes(api, apiVersion)
+	registerSwaggerRoutes(api)
 }

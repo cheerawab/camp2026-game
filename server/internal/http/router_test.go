@@ -10,243 +10,275 @@ import (
 	"testing"
 )
 
-func TestRoot(t *testing.T) {
-	router := NewRouter(Dependencies{APIVersion: "v1"})
-
-	res := performRequest(router, http.MethodGet, "/api/v1/", nil)
-	if res.Code != http.StatusOK {
-		t.Fatalf("expected status %d, got %d", http.StatusOK, res.Code)
-	}
-
-	var body struct {
-		Message string `json:"message"`
-	}
-	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
-		t.Fatalf("decode response: %v", err)
-	}
-	if body.Message == "" {
-		t.Fatal("expected message")
-	}
-}
-
 func TestHealth(t *testing.T) {
-	router := NewRouter(Dependencies{APIVersion: "v1"})
-
-	res := performRequest(router, http.MethodGet, "/api/v1/healthz", nil)
-	if res.Code != http.StatusOK {
-		t.Fatalf("expected status %d, got %d", http.StatusOK, res.Code)
-	}
-}
-
-func TestReady(t *testing.T) {
+	called := false
 	router := NewRouter(Dependencies{
-		APIVersion: "v1",
 		ReadinessCheck: func(context.Context) error {
+			called = true
 			return nil
 		},
 	})
 
-	res := performRequest(router, http.MethodGet, "/api/v1/readyz", nil)
+	res := performRequest(router, http.MethodGet, "/api/healthz", nil)
 	if res.Code != http.StatusOK {
 		t.Fatalf("expected status %d, got %d", http.StatusOK, res.Code)
 	}
+	if !called {
+		t.Fatalf("expected health check to call readiness check")
+	}
+	if !strings.Contains(res.Body.String(), `"database":"ok"`) {
+		t.Fatalf("expected health response to include database check, got %s", res.Body.String())
+	}
 }
 
-func TestReadyFailure(t *testing.T) {
+func TestHealthWhenDatabaseUnavailable(t *testing.T) {
 	router := NewRouter(Dependencies{
-		APIVersion: "v1",
 		ReadinessCheck: func(context.Context) error {
-			return errors.New("database unavailable")
+			return errors.New("database down")
 		},
 	})
 
-	res := performRequest(router, http.MethodGet, "/api/v1/readyz", nil)
-	if res.Code != http.StatusServiceUnavailable {
-		t.Fatalf("expected status %d, got %d", http.StatusServiceUnavailable, res.Code)
+	res := performRequest(router, http.MethodGet, "/api/healthz", nil)
+	problem := assertProblem(t, res, http.StatusServiceUnavailable, "")
+	if problem.Status != http.StatusServiceUnavailable {
+		t.Fatalf("expected problem status %d, got %d", http.StatusServiceUnavailable, problem.Status)
 	}
-	if contentType := res.Header().Get("Content-Type"); contentType != "application/problem+json" {
-		t.Fatalf("expected problem content type, got %q", contentType)
+}
+
+func TestRemovedRoutes(t *testing.T) {
+	router := NewRouter(Dependencies{})
+
+	for _, route := range []struct {
+		method string
+		path   string
+	}{
+		{method: http.MethodGet, path: "/api/"},
+		{method: http.MethodGet, path: "/api/me/home"},
+		{method: http.MethodGet, path: "/api/readyz"},
+		{method: http.MethodGet, path: "/api/ping"},
+		{method: http.MethodPost, path: "/api/examples/validation"},
+	} {
+		res := performRequest(router, route.method, route.path, nil)
+		if res.Code != http.StatusNotFound {
+			t.Fatalf("%s %s: expected status %d, got %d", route.method, route.path, http.StatusNotFound, res.Code)
+		}
 	}
 }
 
 func TestSwaggerJSON(t *testing.T) {
-	router := NewRouter(Dependencies{APIVersion: "v1"})
+	router := NewRouter(Dependencies{})
 
-	res := performRequest(router, http.MethodGet, "/api/v1/swagger.json", nil)
+	res := performRequest(router, http.MethodGet, "/api/swagger.json", nil)
 	if res.Code != http.StatusOK {
 		t.Fatalf("expected status %d, got %d", http.StatusOK, res.Code)
 	}
 	if contentType := res.Header().Get("Content-Type"); contentType != "application/json" {
 		t.Fatalf("expected json content type, got %q", contentType)
 	}
-}
-
-func TestScalarDocs(t *testing.T) {
-	router := NewRouter(Dependencies{APIVersion: "v1"})
-
-	res := performRequest(router, http.MethodGet, "/api/v1/docs/index.html", nil)
-	if res.Code != http.StatusOK {
-		t.Fatalf("expected status %d, got %d", http.StatusOK, res.Code)
-	}
-	if contentType := res.Header().Get("Content-Type"); contentType != "text/html; charset=utf-8" {
-		t.Fatalf("expected html content type, got %q", contentType)
-	}
 
 	body := res.Body.String()
 	for _, want := range []string{
-		"@scalar/api-reference",
-		"Scalar.createApiReference",
-		"../swagger.json",
+		"/auth/login",
+		"/auth/logout",
+		"/users/state",
+		"/bingo/boards",
+		"/matches",
+		"/match-pairings",
+		"/qrcode/me",
+		"/world-bosses",
+		"/storage",
+		"/storage/sitones",
+		"/storage/recipes",
+		"/catalog/sitones",
+		"/staff/rewards",
+		"/staff/activity-verifications",
+		"AuthCookieAuth",
+		"camp2026_auth",
 	} {
 		if !strings.Contains(body, want) {
-			t.Fatalf("expected docs html to contain %q", want)
+			t.Fatalf("expected swagger json to contain %q", want)
+		}
+	}
+
+	var spec struct {
+		Paths map[string]map[string]struct {
+			Security []map[string][]string `json:"security,omitempty"`
+		} `json:"paths"`
+	}
+	if err := json.Unmarshal([]byte(body), &spec); err != nil {
+		t.Fatalf("decode swagger json: %v", err)
+	}
+	for _, path := range []string{"/", "/readyz", "/ping", "/examples/validation", "/me/home", "/quiz/pairings", "/quiz/sessions", "/world-bosses/challenges/{challengeID}/answers"} {
+		if _, ok := spec.Paths[path]; ok {
+			t.Fatalf("expected swagger json not to contain path %q", path)
+		}
+	}
+	assertSwaggerSecurity(t, spec.Paths, "/healthz", http.MethodGet, false)
+	assertSwaggerSecurity(t, spec.Paths, "/auth/login", http.MethodPost, false)
+	for _, route := range []struct {
+		path   string
+		method string
+	}{
+		{path: "/users/state", method: http.MethodGet},
+		{path: "/auth/logout", method: http.MethodPost},
+		{path: "/staff/rewards", method: http.MethodPost},
+		{path: "/staff/activity-verifications", method: http.MethodPost},
+	} {
+		assertSwaggerSecurity(t, spec.Paths, route.path, route.method, true)
+	}
+}
+
+func TestScalarDocs(t *testing.T) {
+	router := NewRouter(Dependencies{})
+
+	for _, path := range []string{"/api/docs", "/api/docs/index.html"} {
+		res := performRequest(router, http.MethodGet, path, nil)
+		if res.Code != http.StatusOK {
+			t.Fatalf("%s: expected status %d, got %d", path, http.StatusOK, res.Code)
+		}
+		if contentType := res.Header().Get("Content-Type"); contentType != "text/html; charset=utf-8" {
+			t.Fatalf("%s: expected html content type, got %q", path, contentType)
+		}
+
+		body := res.Body.String()
+		for _, want := range []string{
+			"@scalar/api-reference",
+			"Scalar.createApiReference",
+			"/api/swagger.json",
+		} {
+			if !strings.Contains(body, want) {
+				t.Fatalf("%s: expected docs html to contain %q", path, want)
+			}
 		}
 	}
 }
 
-func TestValidationExample(t *testing.T) {
-	router := NewRouter(Dependencies{APIVersion: "v1"})
+func TestGameDesignGetRoutes(t *testing.T) {
+	router := NewRouter(Dependencies{})
 
-	res := performRequest(router, http.MethodPost, "/api/v1/examples/validation", strings.NewReader(`{
-		"players": [
-			{
-				"displayName": " Alice ",
-				"teamNumber": 3,
-				"favoritePebbleType": "engineering"
+	for _, path := range []string{
+		"/api/users/state",
+		"/api/bingo/boards",
+		"/api/matches",
+		"/api/matches/match_01HR9Z7E2Z2VJ2QZ4P4Z",
+		"/api/qrcode/me",
+		"/api/world-bosses",
+		"/api/world-bosses/boss_layer_1",
+		"/api/storage",
+		"/api/storage/sitones",
+		"/api/storage/items",
+		"/api/storage/recipes",
+		"/api/catalog/sitones",
+		"/api/catalog/items",
+		"/api/catalog/recipes",
+	} {
+		res := performRequest(router, http.MethodGet, path, nil)
+		if res.Code != http.StatusOK {
+			t.Fatalf("%s: expected status %d, got %d: %s", path, http.StatusOK, res.Code, res.Body.String())
+		}
+		if contentType := res.Header().Get("Content-Type"); contentType != "application/json" {
+			t.Fatalf("%s: expected json content type, got %q", path, contentType)
+		}
+	}
+}
+
+func TestRecipeListContractUsesSingularRequirements(t *testing.T) {
+	router := NewRouter(Dependencies{})
+
+	for _, path := range []string{"/api/storage/recipes", "/api/catalog/recipes"} {
+		res := performRequest(router, http.MethodGet, path, nil)
+		if res.Code != http.StatusOK {
+			t.Fatalf("%s: expected status %d, got %d: %s", path, http.StatusOK, res.Code, res.Body.String())
+		}
+
+		body := res.Body.String()
+		for _, want := range []string{
+			`"requiredSitoneType":"engineering"`,
+			`"requiredItemId":"item-camp-sticker"`,
+			`"requiredItemQuantity":1`,
+		} {
+			if !strings.Contains(body, want) {
+				t.Fatalf("%s: expected body to contain %s: %s", path, want, body)
 			}
-		]
-	}`))
-	if res.Code != http.StatusCreated {
-		t.Fatalf("expected status %d, got %d: %s", http.StatusCreated, res.Code, res.Body.String())
-	}
-
-	var body struct {
-		Message string `json:"message"`
-		Players []struct {
-			DisplayName        string `json:"displayName"`
-			TeamNumber         int    `json:"teamNumber"`
-			FavoritePebbleType string `json:"favoritePebbleType"`
-		} `json:"players"`
-	}
-	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
-		t.Fatalf("decode response: %v", err)
-	}
-	if body.Message != "validation example accepted" {
-		t.Fatalf("unexpected message %q", body.Message)
-	}
-	if got := body.Players[0].DisplayName; got != "Alice" {
-		t.Fatalf("expected trimmed displayName, got %q", got)
-	}
-}
-
-func TestValidationExampleMalformedJSON(t *testing.T) {
-	router := NewRouter(Dependencies{APIVersion: "v1"})
-
-	res := performRequest(router, http.MethodPost, "/api/v1/examples/validation", strings.NewReader(`{"players": [`))
-	assertProblem(t, res, http.StatusBadRequest, "")
-}
-
-func TestValidationExampleUnknownField(t *testing.T) {
-	router := NewRouter(Dependencies{APIVersion: "v1"})
-
-	res := performRequest(router, http.MethodPost, "/api/v1/examples/validation", strings.NewReader(`{
-		"players": [],
-		"unexpected": true
-	}`))
-	assertProblem(t, res, http.StatusBadRequest, "")
-}
-
-func TestValidationExampleMissingPlayers(t *testing.T) {
-	router := NewRouter(Dependencies{APIVersion: "v1"})
-
-	res := performRequest(router, http.MethodPost, "/api/v1/examples/validation", strings.NewReader(`{}`))
-	problem := assertProblem(t, res, http.StatusUnprocessableEntity, "body.players")
-	if got := problem.Errors[0].Message; got != "players is required" {
-		t.Fatalf("unexpected validation message %q", got)
-	}
-}
-
-func TestValidationExampleEmptyPlayers(t *testing.T) {
-	router := NewRouter(Dependencies{APIVersion: "v1"})
-
-	res := performRequest(router, http.MethodPost, "/api/v1/examples/validation", strings.NewReader(`{"players":[]}`))
-	problem := assertProblem(t, res, http.StatusUnprocessableEntity, "body.players")
-	if got := problem.Errors[0].Message; got != "players must be at least 1" {
-		t.Fatalf("unexpected validation message %q", got)
-	}
-}
-
-func TestValidationExampleTooManyPlayers(t *testing.T) {
-	router := NewRouter(Dependencies{APIVersion: "v1"})
-
-	res := performRequest(router, http.MethodPost, "/api/v1/examples/validation", strings.NewReader(validationExampleBodyWithPlayers(21)))
-	problem := assertProblem(t, res, http.StatusUnprocessableEntity, "body.players")
-	if got := problem.Errors[0].Message; got != "players must be at most 20" {
-		t.Fatalf("unexpected validation message %q", got)
-	}
-}
-
-func TestValidationExampleNestedDisplayName(t *testing.T) {
-	router := NewRouter(Dependencies{APIVersion: "v1"})
-
-	res := performRequest(router, http.MethodPost, "/api/v1/examples/validation", strings.NewReader(`{
-		"players": [
-			{
-				"displayName": "   ",
-				"teamNumber": 3,
-				"favoritePebbleType": "engineering"
+		}
+		for _, removed := range []string{"requiredSitoneTypes", "requiredItemIds"} {
+			if strings.Contains(body, removed) {
+				t.Fatalf("%s: expected body not to contain %q: %s", path, removed, body)
 			}
-		]
-	}`))
-	problem := assertProblem(t, res, http.StatusUnprocessableEntity, "body.players[0].displayName")
-	if got := problem.Errors[0].Message; got != "displayName is required" {
-		t.Fatalf("unexpected validation message %q", got)
+		}
 	}
 }
 
-func TestValidationExampleNestedTeamNumber(t *testing.T) {
-	router := NewRouter(Dependencies{APIVersion: "v1"})
+func TestGameDesignPostRoutesAreContractStubs(t *testing.T) {
+	router := NewRouter(Dependencies{})
 
-	res := performRequest(router, http.MethodPost, "/api/v1/examples/validation", strings.NewReader(`{
-		"players": [
-			{
-				"displayName": "Alice",
-				"teamNumber": 3,
-				"favoritePebbleType": "engineering"
-			},
-			{
-				"displayName": "Bob",
-				"teamNumber": 21,
-				"favoritePebbleType": "exploration"
-			}
-		]
-	}`))
-	problem := assertProblem(t, res, http.StatusUnprocessableEntity, "body.players[1].teamNumber")
-	if got := problem.Errors[0].Message; got != "teamNumber must be at most 20" {
-		t.Fatalf("unexpected validation message %q", got)
+	tests := []struct {
+		name string
+		path string
+		body string
+	}{
+		{
+			name: "complete bingo mission",
+			path: "/api/bingo/missions/mission_daily_match_3/complete",
+			body: `{"flag":"CAMP2026-HELLO"}`,
+		},
+		{
+			name: "create match pairing",
+			path: "/api/match-pairings",
+			body: `{"targetQrCodeToken":"player_qr_token"}`,
+		},
+		{
+			name: "create match",
+			path: "/api/matches",
+			body: `{"mode":"qr_duel","pairingId":"pair_01HR9Z7E2Z2VJ2QZ4P4Z","sitoneIds":["sitone_01HR9Z7E2Z2VJ2QZ4P4Z"]}`,
+		},
+		{
+			name: "submit match answer",
+			path: "/api/matches/match_01HR9Z7E2Z2VJ2QZ4P4Z/answers",
+			body: `{"questionId":"question_001","choiceId":"A"}`,
+		},
+		{
+			name: "scan qrcode",
+			path: "/api/qrcode/scans",
+			body: `{"token":"player_qr_token","context":"match_pairing"}`,
+		},
+		{
+			name: "create world boss match",
+			path: "/api/world-bosses/boss_layer_1/matches",
+			body: `{"sitoneIds":["sitone_01HR9Z7E2Z2VJ2QZ4P4Z"]}`,
+		},
+		{
+			name: "craft sitone",
+			path: "/api/storage/crafting",
+			body: `{"recipeId":"recipe_engineering_skin","sitoneId":"sitone_01HR9Z7E2Z2VJ2QZ4P4Z","itemIds":["pit_01HR9Z7E2Z2VJ2QZ4P4Z"]}`,
+		},
+		{
+			name: "claim bingo line reward",
+			path: "/api/bingo/line-rewards/line_reward_row_0/claim",
+			body: `{}`,
+		},
+		{
+			name: "grant staff reward",
+			path: "/api/staff/rewards",
+			body: `{"targetQrCodeToken":"player_qr_token","reason":"camp_activity_reward","openPower":100}`,
+		},
+		{
+			name: "verify staff activity",
+			path: "/api/staff/activity-verifications",
+			body: `{"targetQrCodeToken":"player_qr_token","activityCode":"booth-linux-101","missionId":"mission_activity_linux_101"}`,
+		},
 	}
-}
 
-func TestValidationExampleFavoritePebbleType(t *testing.T) {
-	router := NewRouter(Dependencies{APIVersion: "v1"})
-
-	res := performRequest(router, http.MethodPost, "/api/v1/examples/validation", strings.NewReader(`{
-		"players": [
-			{
-				"displayName": "Alice",
-				"teamNumber": 3,
-				"favoritePebbleType": "unknown"
-			}
-		]
-	}`))
-	problem := assertProblem(t, res, http.StatusUnprocessableEntity, "body.players[0].favoritePebbleType")
-	if !strings.Contains(problem.Errors[0].Message, "favoritePebbleType must be one of:") {
-		t.Fatalf("unexpected validation message %q", problem.Errors[0].Message)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			res := performRequest(router, http.MethodPost, tt.path, strings.NewReader(tt.body))
+			assertProblem(t, res, http.StatusNotImplemented, "")
+		})
 	}
 }
 
 func TestNotFound(t *testing.T) {
-	router := NewRouter(Dependencies{APIVersion: "v1"})
+	router := NewRouter(Dependencies{})
 
 	res := performRequest(router, http.MethodGet, "/missing", nil)
 	if res.Code != http.StatusNotFound {
@@ -260,6 +292,41 @@ type problemResponse struct {
 		Location string `json:"location"`
 		Message  string `json:"message"`
 	} `json:"errors"`
+}
+
+func assertSwaggerSecurity(
+	t *testing.T,
+	paths map[string]map[string]struct {
+		Security []map[string][]string `json:"security,omitempty"`
+	},
+	path string,
+	method string,
+	wantSecurity bool,
+) {
+	t.Helper()
+
+	operations, ok := paths[path]
+	if !ok {
+		t.Fatalf("expected swagger path %q", path)
+	}
+	operation, ok := operations[strings.ToLower(method)]
+	if !ok {
+		t.Fatalf("expected swagger operation %s %s", method, path)
+	}
+
+	hasSecurity := false
+	for _, security := range operation.Security {
+		if _, ok := security["AuthCookieAuth"]; ok {
+			hasSecurity = true
+			break
+		}
+	}
+	if wantSecurity && !hasSecurity {
+		t.Fatalf("expected %s %s to require AuthCookieAuth", method, path)
+	}
+	if !wantSecurity && len(operation.Security) > 0 {
+		t.Fatalf("expected %s %s to have no security, got %v", method, path, operation.Security)
+	}
 }
 
 func assertProblem(t *testing.T, res *httptest.ResponseRecorder, status int, location string) problemResponse {
@@ -288,19 +355,6 @@ func assertProblem(t *testing.T, res *httptest.ResponseRecorder, status int, loc
 		}
 	}
 	return problem
-}
-
-func validationExampleBodyWithPlayers(count int) string {
-	var builder strings.Builder
-	builder.WriteString(`{"players":[`)
-	for i := range count {
-		if i > 0 {
-			builder.WriteString(",")
-		}
-		builder.WriteString(`{"displayName":"Player","teamNumber":1,"favoritePebbleType":"engineering"}`)
-	}
-	builder.WriteString(`]}`)
-	return builder.String()
 }
 
 func performRequest(handler http.Handler, method, path string, body *strings.Reader) *httptest.ResponseRecorder {

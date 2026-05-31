@@ -15,7 +15,6 @@ const (
 	defaultAppEnv          = "local"
 	defaultServiceName     = "camp2026-game-api"
 	defaultAppVersion      = "0.1.0"
-	defaultAPIVersion      = "v1"
 	defaultLogLevel        = "info"
 	defaultHTTPAddr        = ":8080"
 	defaultDatabaseURL     = "postgres://camp2026:camp2026@localhost:5432/camp2026?sslmode=disable"
@@ -27,7 +26,6 @@ type Config struct {
 	Env             string
 	ServiceName     string
 	Version         string
-	APIVersion      string
 	LogLevel        slog.Level
 	ShutdownTimeout time.Duration
 	HTTP            HTTPConfig
@@ -50,7 +48,6 @@ func Load() (Config, error) {
 		Env:             stringValue("APP_ENV", defaultAppEnv),
 		ServiceName:     stringValue("SERVICE_NAME", defaultServiceName),
 		Version:         stringValue("APP_VERSION", defaultAppVersion),
-		APIVersion:      strings.Trim(stringValue("API_VERSION", defaultAPIVersion), "/"),
 		ShutdownTimeout: durationValue("SHUTDOWN_TIMEOUT", defaultShutdownTimeout),
 		HTTP: HTTPConfig{
 			Addr:              stringValue("HTTP_ADDR", defaultHTTPAddr),
@@ -86,9 +83,6 @@ func (cfg Config) validate() error {
 	}
 	if strings.TrimSpace(cfg.Version) == "" {
 		errs = append(errs, errors.New("APP_VERSION is required"))
-	}
-	if strings.TrimSpace(cfg.APIVersion) == "" {
-		errs = append(errs, errors.New("API_VERSION is required"))
 	}
 	if strings.TrimSpace(cfg.HTTP.Addr) == "" {
 		errs = append(errs, errors.New("HTTP_ADDR is required"))
