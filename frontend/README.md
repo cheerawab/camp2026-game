@@ -11,8 +11,30 @@ pnpm test
 pnpm build
 ```
 
-The demo Home page calls the local TanStack Start API route at `GET /api/hello`.
+The demo Home page calls the backend health check at `GET /api/healthz`.
 Set `APP_ORIGIN` when running SSR behind a non-local origin.
+
+## Backend API Proxy
+
+During local development, `pnpm dev` proxies same-origin requests under
+`/api` to the backend at `http://localhost:8080`. Frontend API code should
+call backend endpoints with relative paths, for example:
+
+```ts
+apiClient.get("/api/healthz")
+```
+
+Proxy settings live in `.env`. Start from the example file:
+
+```sh
+cp .env.example .env
+```
+
+Use `API_PROXY_TARGET` when the backend runs on a different origin.
+
+This dev proxy avoids browser CORS for local frontend-to-backend calls. For
+production, serve the frontend and backend behind the same origin or configure
+an equivalent reverse proxy at the deployment layer.
 
 ## Icons
 

@@ -1,6 +1,6 @@
 import { CalendarClock, RefreshCw, Server, Wifi } from "lucide-react"
 
-import type { HelloResponse } from "../model/hello.schema"
+import type { HomeStatus } from "../model/health.schema"
 import { Button } from "@/shared/ui/button"
 import {
   Card,
@@ -14,7 +14,7 @@ import { InfoTile } from "@/shared/ui/info-tile"
 import { StatusBadge } from "@/shared/ui/status-badge"
 
 type HomeStatusCardProps = {
-  data: HelloResponse
+  data: HomeStatus
   isFetching?: boolean
   onRefresh?: () => void
 }
@@ -33,7 +33,7 @@ export function HomeStatusCard({
               <Wifi className="text-primary size-5" />
               基地連線
             </CardTitle>
-            <CardDescription>{data.message}</CardDescription>
+            <CardDescription>後端 API 已連線</CardDescription>
           </div>
           <StatusBadge tone="success">{data.status}</StatusBadge>
         </div>
@@ -48,7 +48,7 @@ export function HomeStatusCard({
               {new Intl.DateTimeFormat("zh-TW", {
                 dateStyle: "medium",
                 timeStyle: "medium",
-              }).format(new Date(data.generatedAt))}
+              }).format(new Date(data.checkedAt))}
             </time>
           }
         />
