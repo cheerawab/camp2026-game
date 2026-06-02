@@ -22,4 +22,5 @@ func New(dep Dependencies) *Handler {
 
 func (h *Handler) RegisterRoutes(api chi.Router) {
 	api.Get("/catalog/sitones", h.ListSitones)
+	api.Get("/catalog/items", h.ListItems)
 }

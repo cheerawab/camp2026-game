@@ -41,6 +41,31 @@ definitions:
         example: 8M4RXP
         type: string
     type: object
+  catalog.ItemListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/catalog.ItemResponse'
+        type: array
+    type: object
+  catalog.ItemResponse:
+    properties:
+      description:
+        example: 小石造型合成使用的基礎素材。
+        type: string
+      id:
+        example: item-crafting-fragment
+        type: string
+      name:
+        example: 合成碎片
+        type: string
+      rarity:
+        example: common
+        type: string
+      type:
+        example: material
+        type: string
+    type: object
   catalog.SitoneListResponse:
     properties:
       sitones:
@@ -180,6 +205,23 @@ paths:
       summary: User logout
       tags:
       - User Authentication
+  /catalog/items:
+    get:
+      description: Lists all collectible item definitions.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/catalog.ItemListResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      summary: List item catalog
+      tags:
+      - catalog
   /catalog/sitones:
     get:
       description: Lists all collectible sitone definitions.

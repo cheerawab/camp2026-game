@@ -116,6 +116,32 @@
                 }
             }
         },
+        "/catalog/items": {
+            "get": {
+                "description": "Lists all collectible item definitions.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "catalog"
+                ],
+                "summary": "List item catalog",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/catalog.ItemListResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
         "/catalog/sitones": {
             "get": {
                 "description": "Lists all collectible sitone definitions.",
@@ -226,6 +252,42 @@
                 "teamId": {
                     "type": "string",
                     "example": "8M4RXP"
+                }
+            }
+        },
+        "catalog.ItemListResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/catalog.ItemResponse"
+                    }
+                }
+            }
+        },
+        "catalog.ItemResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "小石造型合成使用的基礎素材。"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "item-crafting-fragment"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "合成碎片"
+                },
+                "rarity": {
+                    "type": "string",
+                    "example": "common"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "material"
                 }
             }
         },

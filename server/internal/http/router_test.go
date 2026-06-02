@@ -90,7 +90,6 @@ func TestRemovedRoutes(t *testing.T) {
 		{method: http.MethodGet, path: "/api/crafting/recipes"},
 		{method: http.MethodGet, path: "/api/crafting/recipes/recipe_engineering_skin"},
 		{method: http.MethodPost, path: "/api/crafting"},
-		{method: http.MethodGet, path: "/api/catalog/items"},
 		{method: http.MethodGet, path: "/api/catalog/crafting-recipes"},
 		{method: http.MethodGet, path: "/api/catalog/recipes"},
 		{method: http.MethodPost, path: "/api/staff/rewards"},
@@ -157,6 +156,63 @@ func TestListSitoneCatalog(t *testing.T) {
 	}
 }
 
+func TestListItemCatalog(t *testing.T) {
+	router := NewRouter(Dependencies{
+		Content: loadTestContent(t),
+	})
+
+	res := performRequest(router, http.MethodGet, "/api/catalog/items", nil)
+	if res.Code != http.StatusOK {
+		t.Fatalf("expected status %d, got %d: %s", http.StatusOK, res.Code, res.Body.String())
+	}
+	if contentType := res.Header().Get("Content-Type"); contentType != "application/json" {
+		t.Fatalf("expected json content type, got %q", contentType)
+	}
+
+	var body struct {
+		Items []struct {
+			ID          string `json:"id"`
+			Name        string `json:"name"`
+			Type        string `json:"type"`
+			Rarity      string `json:"rarity"`
+			Description string `json:"description"`
+		} `json:"items"`
+	}
+	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if len(body.Items) != 3 {
+		t.Fatalf("expected 3 items, got %d", len(body.Items))
+	}
+
+	wantIDs := []string{
+		"item-crafting-fragment",
+		"item-memory-tag",
+		"item-theme-ticket",
+	}
+	for i, wantID := range wantIDs {
+		if body.Items[i].ID != wantID {
+			t.Fatalf("expected item %d id %q, got %q", i, wantID, body.Items[i].ID)
+		}
+	}
+	if got := body.Items[0]; got.Name != "合成碎片" ||
+		got.Type != "material" ||
+		got.Rarity != "common" ||
+		got.Description == "" {
+		t.Fatalf("unexpected crafting fragment item: %#v", got)
+	}
+}
+
+func TestListItemCatalogWhenContentUnavailable(t *testing.T) {
+	router := NewRouter(Dependencies{})
+
+	res := performRequest(router, http.MethodGet, "/api/catalog/items", nil)
+	problem := assertProblem(t, res, http.StatusServiceUnavailable, "")
+	if problem.Status != http.StatusServiceUnavailable {
+		t.Fatalf("expected problem status %d, got %d", http.StatusServiceUnavailable, problem.Status)
+	}
+}
+
 func TestListSitoneCatalogWhenContentUnavailable(t *testing.T) {
 	router := NewRouter(Dependencies{})
 
@@ -182,6 +238,7 @@ func TestSwaggerJSON(t *testing.T) {
 	for _, want := range []string{
 		"/auth/login",
 		"/auth/logout",
+		"/catalog/items",
 		"/catalog/sitones",
 		"/healthz",
 		"AuthCookieAuth",
@@ -234,7 +291,6 @@ func TestSwaggerJSON(t *testing.T) {
 		"/storage",
 		"/storage/sitones",
 		"/storage/recipes",
-		"/catalog/items",
 		"/catalog/crafting-recipes",
 		"/catalog/recipes",
 		"/staff/rewards",
@@ -250,6 +306,7 @@ func TestSwaggerJSON(t *testing.T) {
 	assertSwaggerSecurity(t, spec.Paths, "/healthz", http.MethodGet, false)
 	assertSwaggerSecurity(t, spec.Paths, "/auth/login", http.MethodPost, false)
 	assertSwaggerSecurity(t, spec.Paths, "/auth/logout", http.MethodPost, true)
+	assertSwaggerSecurity(t, spec.Paths, "/catalog/items", http.MethodGet, false)
 	assertSwaggerSecurity(t, spec.Paths, "/catalog/sitones", http.MethodGet, false)
 }
 
