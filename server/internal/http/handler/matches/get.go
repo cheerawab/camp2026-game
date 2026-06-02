@@ -1,0 +1,55 @@
+package matches
+
+import (
+	"net/http"
+	"time"
+
+	"github.com/go-chi/chi/v5"
+
+	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
+)
+
+// Get godoc
+// @Summary Get match state
+// @Description Returns the current match state for a participant. Active matches hide correct answers until completed.
+// @Tags matches
+// @Produce json
+// @Security AuthCookieAuth
+// @Success 200 {object} MatchStateResponse
+// @Failure 401 {object} httpx.ProblemDetails
+// @Failure 404 {object} httpx.ProblemDetails
+// @Failure 500 {object} httpx.ProblemDetails
+// @Failure 503 {object} httpx.ProblemDetails
+// @Router /matches/{matchID} [get]
+func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
+	player, ok := currentPlayer(w, r)
+	if !ok || !h.requireDatabase(w, r) || !h.requireContent(w, r) {
+		return
+	}
+
+	match, err := h.findMatchByID(r.Context(), chi.URLParam(r, "matchID"))
+	if err != nil {
+		writeMatchProblem(w, r, err)
+		return
+	}
+	if !isParticipant(match, player.ID) {
+		httpx.WriteProblem(w, r, httpx.NotFound("match not found"))
+		return
+	}
+
+	match, events, err := h.advanceMatch(r.Context(), match, time.Now())
+	if err != nil {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match state unavailable"))
+		return
+	}
+	for _, event := range events {
+		h.publishState(r.Context(), match, event)
+	}
+
+	state, err := h.buildMatchState(r.Context(), match)
+	if err != nil {
+		httpx.WriteProblem(w, r, err)
+		return
+	}
+	httpx.WriteJSON(w, http.StatusOK, state)
+}

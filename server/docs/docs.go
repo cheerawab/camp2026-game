@@ -196,6 +196,530 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/matches": {
+            "post": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Creates a two-player quiz match room for the authenticated player.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "matches"
+                ],
+                "summary": "Create match room",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/matches.CreateMatchResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/matches/join": {
+            "post": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Joins a waiting two-player quiz match room by invite code.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "matches"
+                ],
+                "summary": "Join match room",
+                "parameters": [
+                    {
+                        "description": "Join match request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/matches.JoinMatchRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/matches.JoinMatchResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/matches/{matchID}": {
+            "get": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Returns the current match state for a participant. Active matches hide correct answers until completed.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "matches"
+                ],
+                "summary": "Get match state",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/matches.MatchStateResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/matches/{matchID}/answers": {
+            "post": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Accepts the authenticated player's answer for the current question without revealing correctness until match completion.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "matches"
+                ],
+                "summary": "Submit match answer",
+                "parameters": [
+                    {
+                        "description": "Answer request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/matches.AnswerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/matches.AnswerAcceptedResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/matches/{matchID}/events": {
+            "get": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Streams match state changes for participants with Server-Sent Events.",
+                "produces": [
+                    "text/event-stream"
+                ],
+                "tags": [
+                    "matches"
+                ],
+                "summary": "Stream match events",
+                "responses": {
+                    "200": {
+                        "description": "SSE event stream",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/matches/{matchID}/ready": {
+            "post": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Marks the authenticated player ready. The match starts automatically when both players are ready.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "matches"
+                ],
+                "summary": "Mark current player ready",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/matches.ReadyMatchResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/me/items": {
+            "get": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Returns items owned by the authenticated player with catalog definitions.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "me"
+                ],
+                "summary": "List current player items",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/me.ItemListResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/me/qrcode": {
+            "get": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Returns the authenticated player's QR code token for client-side QR rendering.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "me"
+                ],
+                "summary": "Get current player QR code token",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/me.QRCodeResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/me/sitones": {
+            "get": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Returns sitones owned by the authenticated player with catalog definitions.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "me"
+                ],
+                "summary": "List current player sitones",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/me.SitoneListResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/me/status": {
+            "get": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Returns the authenticated player's profile summary, team, and open power total.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "me"
+                ],
+                "summary": "Get current player status",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/me.StatusResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -368,6 +892,575 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "string"
+                }
+            }
+        },
+        "matches.AnswerAcceptedResponse": {
+            "type": "object",
+            "properties": {
+                "accepted": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "matches.AnswerRequest": {
+            "type": "object",
+            "required": [
+                "choice",
+                "questionId"
+            ],
+            "properties": {
+                "choice": {
+                    "type": "string",
+                    "enum": [
+                        "A",
+                        "B",
+                        "C",
+                        "D"
+                    ],
+                    "example": "A"
+                },
+                "questionId": {
+                    "type": "string",
+                    "example": "quiz-001"
+                }
+            }
+        },
+        "matches.CreateMatchResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "example": "ABC123"
+                },
+                "completedAt": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "currentQuestion": {
+                    "$ref": "#/definitions/matches.MatchQuestionResponse"
+                },
+                "currentQuestionIndex": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "hostPlayerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                },
+                "matchId": {
+                    "type": "string",
+                    "example": "match_7H9K2Q"
+                },
+                "players": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/matches.MatchPlayerResponse"
+                    }
+                },
+                "questionCount": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/matches.MatchQuestionResult"
+                    }
+                },
+                "roundEndsAt": {
+                    "type": "string"
+                },
+                "roundStartedAt": {
+                    "type": "string"
+                },
+                "startedAt": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "active"
+                }
+            }
+        },
+        "matches.JoinMatchRequest": {
+            "type": "object",
+            "required": [
+                "code"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "maxLength": 16,
+                    "minLength": 4,
+                    "example": "ABC123"
+                }
+            }
+        },
+        "matches.JoinMatchResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "example": "ABC123"
+                },
+                "completedAt": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "currentQuestion": {
+                    "$ref": "#/definitions/matches.MatchQuestionResponse"
+                },
+                "currentQuestionIndex": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "hostPlayerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                },
+                "matchId": {
+                    "type": "string",
+                    "example": "match_7H9K2Q"
+                },
+                "players": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/matches.MatchPlayerResponse"
+                    }
+                },
+                "questionCount": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/matches.MatchQuestionResult"
+                    }
+                },
+                "roundEndsAt": {
+                    "type": "string"
+                },
+                "roundStartedAt": {
+                    "type": "string"
+                },
+                "startedAt": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "active"
+                }
+            }
+        },
+        "matches.MatchAnswerResponse": {
+            "type": "object",
+            "properties": {
+                "answeredAt": {
+                    "type": "string"
+                },
+                "choice": {
+                    "type": "string",
+                    "example": "A"
+                },
+                "correct": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "elapsedMillis": {
+                    "type": "integer",
+                    "example": 3200
+                },
+                "playerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                },
+                "score": {
+                    "type": "integer",
+                    "example": 150
+                }
+            }
+        },
+        "matches.MatchPlayerResponse": {
+            "type": "object",
+            "properties": {
+                "answeredCurrentQuestion": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "nickname": {
+                    "type": "string",
+                    "example": "Alice"
+                },
+                "playerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                },
+                "ready": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "score": {
+                    "type": "integer",
+                    "example": 850
+                }
+            }
+        },
+        "matches.MatchQuestionResponse": {
+            "type": "object",
+            "properties": {
+                "choiceA": {
+                    "type": "string",
+                    "example": "git init"
+                },
+                "choiceB": {
+                    "type": "string",
+                    "example": "git clone"
+                },
+                "choiceC": {
+                    "type": "string",
+                    "example": "git status"
+                },
+                "choiceD": {
+                    "type": "string",
+                    "example": "git add"
+                },
+                "prompt": {
+                    "type": "string",
+                    "example": "Which command initializes a new Git repository?"
+                },
+                "questionId": {
+                    "type": "string",
+                    "example": "quiz-001"
+                }
+            }
+        },
+        "matches.MatchQuestionResult": {
+            "type": "object",
+            "properties": {
+                "answers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/matches.MatchAnswerResponse"
+                    }
+                },
+                "choiceA": {
+                    "type": "string",
+                    "example": "git init"
+                },
+                "choiceB": {
+                    "type": "string",
+                    "example": "git clone"
+                },
+                "choiceC": {
+                    "type": "string",
+                    "example": "git status"
+                },
+                "choiceD": {
+                    "type": "string",
+                    "example": "git add"
+                },
+                "correctChoice": {
+                    "type": "string",
+                    "example": "A"
+                },
+                "explanation": {
+                    "type": "string",
+                    "example": "git init creates a new repository."
+                },
+                "prompt": {
+                    "type": "string",
+                    "example": "Which command initializes a new Git repository?"
+                },
+                "questionId": {
+                    "type": "string",
+                    "example": "quiz-001"
+                }
+            }
+        },
+        "matches.MatchStateResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "example": "ABC123"
+                },
+                "completedAt": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "currentQuestion": {
+                    "$ref": "#/definitions/matches.MatchQuestionResponse"
+                },
+                "currentQuestionIndex": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "hostPlayerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                },
+                "matchId": {
+                    "type": "string",
+                    "example": "match_7H9K2Q"
+                },
+                "players": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/matches.MatchPlayerResponse"
+                    }
+                },
+                "questionCount": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/matches.MatchQuestionResult"
+                    }
+                },
+                "roundEndsAt": {
+                    "type": "string"
+                },
+                "roundStartedAt": {
+                    "type": "string"
+                },
+                "startedAt": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "active"
+                }
+            }
+        },
+        "matches.ReadyMatchResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "example": "ABC123"
+                },
+                "completedAt": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "currentQuestion": {
+                    "$ref": "#/definitions/matches.MatchQuestionResponse"
+                },
+                "currentQuestionIndex": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "hostPlayerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                },
+                "matchId": {
+                    "type": "string",
+                    "example": "match_7H9K2Q"
+                },
+                "players": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/matches.MatchPlayerResponse"
+                    }
+                },
+                "questionCount": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/matches.MatchQuestionResult"
+                    }
+                },
+                "roundEndsAt": {
+                    "type": "string"
+                },
+                "roundStartedAt": {
+                    "type": "string"
+                },
+                "startedAt": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "active"
+                }
+            }
+        },
+        "me.ItemListResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/me.PlayerItemResponse"
+                    }
+                }
+            }
+        },
+        "me.ItemResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "小石造型合成使用的基礎素材。"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "item-crafting-fragment"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "合成碎片"
+                },
+                "rarity": {
+                    "type": "string",
+                    "example": "common"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "material"
+                }
+            }
+        },
+        "me.PlayerItemResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "owned-item-001"
+                },
+                "item": {
+                    "$ref": "#/definitions/me.ItemResponse"
+                },
+                "itemId": {
+                    "type": "string",
+                    "example": "item-crafting-fragment"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "example": 3
+                }
+            }
+        },
+        "me.PlayerSitoneResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "owned-sitone-001"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "sitone": {
+                    "$ref": "#/definitions/me.SitoneResponse"
+                },
+                "sitoneId": {
+                    "type": "string",
+                    "example": "sitone-engineering"
+                }
+            }
+        },
+        "me.QRCodeResponse": {
+            "type": "object",
+            "properties": {
+                "qrcodeToken": {
+                    "type": "string",
+                    "example": "qr_token_123456"
+                }
+            }
+        },
+        "me.SitoneListResponse": {
+            "type": "object",
+            "properties": {
+                "sitones": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/me.PlayerSitoneResponse"
+                    }
+                }
+            }
+        },
+        "me.SitoneResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "修 bug、分享解法、完成技術任務。"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "sitone-engineering"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "工程型小石"
+                },
+                "rarity": {
+                    "type": "string",
+                    "example": "base"
+                },
+                "style": {
+                    "type": "string",
+                    "example": "default"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "engineering"
+                }
+            }
+        },
+        "me.StatusResponse": {
+            "type": "object",
+            "properties": {
+                "avatarUrl": {
+                    "type": "string",
+                    "example": "https://example.test/avatar/alice.png"
+                },
+                "nickname": {
+                    "type": "string",
+                    "example": "Alice"
+                },
+                "openPower": {
+                    "type": "integer",
+                    "example": 1280
+                },
+                "playerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                },
+                "team": {
+                    "$ref": "#/definitions/me.TeamResponse"
+                }
+            }
+        },
+        "me.TeamResponse": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "Blue Team"
+                },
+                "teamId": {
+                    "type": "string",
+                    "example": "8M4RXP"
                 }
             }
         },

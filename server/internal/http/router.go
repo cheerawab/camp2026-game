@@ -11,8 +11,11 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 
 	"github.com/sitcon-tw/camp2026-game/internal/content"
+	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
 	authhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/auth"
 	cataloghandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/catalog"
+	matcheshandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/matches"
+	mehandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/me"
 	systemhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/system"
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
 )
@@ -65,6 +68,14 @@ func registerRoutes(api chi.Router, dep Dependencies) {
 	cataloghandler.New(cataloghandler.Dependencies{
 		Content: dep.Content,
 	}).RegisterRoutes(api)
+	mehandler.New(mehandler.Dependencies{
+		Content: dep.Content,
+		MongoDB: dep.MongoDB,
+	}).RegisterRoutes(api.With(authctx.RequirePlayer(dep.MongoDB)))
+	matcheshandler.New(matcheshandler.Dependencies{
+		Content: dep.Content,
+		MongoDB: dep.MongoDB,
+	}).RegisterRoutes(api.With(authctx.RequirePlayer(dep.MongoDB)))
 
 	registerSwaggerRoutes(api)
 }

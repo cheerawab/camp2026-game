@@ -3,6 +3,8 @@ package auth
 import (
 	"github.com/go-chi/chi/v5"
 	"go.mongodb.org/mongo-driver/v2/mongo"
+
+	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
 )
 
 type Dependencies struct {
@@ -21,5 +23,5 @@ func New(dep Dependencies) *Handler {
 
 func (h *Handler) RegisterRoutes(api chi.Router) {
 	api.Post("/auth/login", h.Login)
-	api.Post("/auth/logout", h.Logout)
+	api.With(authctx.RequirePlayer(h.db)).Post("/auth/logout", h.Logout)
 }

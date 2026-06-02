@@ -1,0 +1,92 @@
+package matches
+
+import (
+	"context"
+	"errors"
+	"net/http"
+	"time"
+
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+
+	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
+	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
+)
+
+// Create godoc
+// @Summary Create match room
+// @Description Creates a two-player quiz match room for the authenticated player.
+// @Tags matches
+// @Produce json
+// @Security AuthCookieAuth
+// @Success 201 {object} CreateMatchResponse
+// @Failure 401 {object} httpx.ProblemDetails
+// @Failure 500 {object} httpx.ProblemDetails
+// @Failure 503 {object} httpx.ProblemDetails
+// @Router /matches [post]
+func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
+	player, ok := currentPlayer(w, r)
+	if !ok || !h.requireDatabase(w, r) {
+		return
+	}
+
+	matchID, err := newID("match")
+	if err != nil {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match creation failed"))
+		return
+	}
+	code, err := h.uniqueMatchCode(r.Context())
+	if err != nil {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match creation failed"))
+		return
+	}
+
+	now := time.Now()
+	match := mongomodel.Match{
+		ID:           matchID,
+		Code:         code,
+		Status:       mongomodel.MatchStatusWaiting,
+		HostPlayerID: player.ID,
+		Players: []mongomodel.MatchPlayer{
+			{
+				PlayerID: player.ID,
+				Nickname: player.Nickname,
+				Ready:    false,
+				Score:    0,
+			},
+		},
+		CreatedAt: now,
+	}
+
+	if _, err := h.db.Collection(mongomodel.MatchesCollection).InsertOne(r.Context(), match); err != nil {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match creation failed"))
+		return
+	}
+
+	state, err := h.buildMatchState(r.Context(), match)
+	if err != nil {
+		httpx.WriteProblem(w, r, err)
+		return
+	}
+	httpx.WriteJSON(w, http.StatusCreated, state)
+}
+
+func (h *Handler) uniqueMatchCode(ctx context.Context) (string, error) {
+	for i := 0; i < 5; i++ {
+		code, err := newMatchCode()
+		if err != nil {
+			return "", err
+		}
+
+		err = h.db.Collection(mongomodel.MatchesCollection).
+			FindOne(ctx, bson.M{"code": code, "status": bson.M{"$ne": mongomodel.MatchStatusCompleted}}).
+			Err()
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return code, nil
+		}
+		if err != nil {
+			return "", err
+		}
+	}
+	return "", errors.New("match code collision")
+}

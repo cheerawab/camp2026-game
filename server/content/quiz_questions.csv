@@ -1,0 +1,11 @@
+id,prompt,choice_a,choice_b,choice_c,choice_d,correct_choice,explanation
+quiz-001,Which command initializes a new Git repository,git init,git clone,git status,git add,A,git init creates a new repository in the current directory.
+quiz-002,Which HTTP status usually means resource not found,200,201,404,503,C,404 is the standard not found status.
+quiz-003,Which layer commonly stores application state in MongoDB,Collection,Header,Cookie,Route,A,MongoDB stores documents inside collections.
+quiz-004,Which method is commonly used to create a REST resource,GET,POST,OPTIONS,TRACE,B,POST is commonly used to create resources.
+quiz-005,Which format is this question bank using,CSV,TOML,XML,YAML,A,The quiz question bank is stored as CSV.
+quiz-006,Which Go package is used for HTTP handlers,net/http,fmt,os,path/filepath,A,The net/http package provides HTTP server primitives.
+quiz-007,Which field should not be exposed to clients,auth token,nickname,team name,avatar url,A,Auth tokens are secrets and should not be exposed.
+quiz-008,Which response type is used for API errors,problem json,plain text,html,image,A,This API uses application/problem+json for errors.
+quiz-009,Which value means a player is ready,ready=true,ready=false,status=waiting,status=missing,A,A ready flag set to true marks the player ready.
+quiz-010,Which event stream format is server to client,SSE,SMTP,FTP,DNS,A,SSE streams events from the server to the client.

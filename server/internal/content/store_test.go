@@ -105,6 +105,40 @@ description = "小石造型合成使用的基礎素材。"
 	}
 }
 
+func TestLoadQuizQuestions(t *testing.T) {
+	dir := writeContent(t, validSitonesTOML(), validItemsTOML(), validQuizQuestionsCSV())
+
+	store, err := Load(dir)
+	if err != nil {
+		t.Fatalf("load content: %v", err)
+	}
+
+	questions := store.ListQuizQuestions()
+	if len(questions) != minQuizQuestionCount {
+		t.Fatalf("expected %d questions, got %d", minQuizQuestionCount, len(questions))
+	}
+	if questions[0].ID != "quiz-001" {
+		t.Fatalf("expected questions sorted by id, got %#v", questions[0])
+	}
+
+	question, ok := store.GetQuizQuestion("quiz-001")
+	if !ok {
+		t.Fatal("expected quiz-001 to exist")
+	}
+	if question.CorrectChoice != "A" {
+		t.Fatalf("expected correct choice A, got %q", question.CorrectChoice)
+	}
+	if _, ok := store.GetQuizQuestion("missing"); ok {
+		t.Fatal("expected missing question not to exist")
+	}
+
+	questions[0].ID = "mutated"
+	questions = store.ListQuizQuestions()
+	if questions[0].ID != "quiz-001" {
+		t.Fatalf("expected ListQuizQuestions to return a copy, got %q", questions[0].ID)
+	}
+}
+
 func TestLoadRejectsDuplicateSitoneID(t *testing.T) {
 	dir := writeContent(t, `
 [[sitones]]
@@ -249,6 +283,33 @@ rarity = "mythic"
 	}
 }
 
+func TestLoadRejectsInvalidQuizChoice(t *testing.T) {
+	dir := writeContent(t, validSitonesTOML(), validItemsTOML(), strings.Replace(validQuizQuestionsCSV(), "quiz-001,Question 1,A,B,C,D,A,Explanation 1", "quiz-001,Question 1,A,B,C,D,Z,Explanation 1", 1))
+
+	_, err := Load(dir)
+	if err == nil {
+		t.Fatal("expected invalid quiz choice error")
+	}
+	if !strings.Contains(err.Error(), "correct_choice must be one of") {
+		t.Fatalf("expected invalid correct choice error, got %v", err)
+	}
+}
+
+func TestLoadRejectsTooFewQuizQuestions(t *testing.T) {
+	dir := writeContent(t, validSitonesTOML(), validItemsTOML(), strings.TrimSpace(`
+id,prompt,choice_a,choice_b,choice_c,choice_d,correct_choice,explanation
+quiz-001,Question 1,A,B,C,D,A,Explanation 1
+`))
+
+	_, err := Load(dir)
+	if err == nil {
+		t.Fatal("expected too few quiz questions error")
+	}
+	if !strings.Contains(err.Error(), "at least 10 quiz questions are required") {
+		t.Fatalf("expected too few questions error, got %v", err)
+	}
+}
+
 func TestLoadResolvesServerContentFallback(t *testing.T) {
 	root := t.TempDir()
 	serverDir := filepath.Join(root, "server")
@@ -261,6 +322,9 @@ func TestLoadResolvesServerContentFallback(t *testing.T) {
 	}
 	if err := os.WriteFile(filepath.Join(contentDir, itemsFile), []byte(validItemsTOML()), 0o644); err != nil {
 		t.Fatalf("write items: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(contentDir, quizQuestionsFile), []byte(validQuizQuestionsCSV()), 0o644); err != nil {
+		t.Fatalf("write quiz questions: %v", err)
 	}
 
 	oldCWD, err := os.Getwd()
@@ -286,9 +350,12 @@ func TestLoadResolvesServerContentFallback(t *testing.T) {
 	if len(store.ListItems()) != 1 {
 		t.Fatalf("expected 1 item, got %d", len(store.ListItems()))
 	}
+	if len(store.ListQuizQuestions()) != minQuizQuestionCount {
+		t.Fatalf("expected %d quiz questions, got %d", minQuizQuestionCount, len(store.ListQuizQuestions()))
+	}
 }
 
-func writeContent(t *testing.T, sitones string, items ...string) string {
+func writeContent(t *testing.T, sitones string, values ...string) string {
 	t.Helper()
 
 	dir := t.TempDir()
@@ -297,11 +364,19 @@ func writeContent(t *testing.T, sitones string, items ...string) string {
 	}
 
 	itemContent := validItemsTOML()
-	if len(items) > 0 {
-		itemContent = items[0]
+	if len(values) > 0 {
+		itemContent = values[0]
 	}
 	if err := os.WriteFile(filepath.Join(dir, itemsFile), []byte(strings.TrimSpace(itemContent)), 0o644); err != nil {
 		t.Fatalf("write items: %v", err)
+	}
+
+	quizContent := validQuizQuestionsCSV()
+	if len(values) > 1 {
+		quizContent = values[1]
+	}
+	if err := os.WriteFile(filepath.Join(dir, quizQuestionsFile), []byte(strings.TrimSpace(quizContent)), 0o644); err != nil {
+		t.Fatalf("write quiz questions: %v", err)
 	}
 	return dir
 }
@@ -323,5 +398,21 @@ id = "item-crafting-fragment"
 name = "Crafting Fragment"
 type = "material"
 rarity = "common"
+`)
+}
+
+func validQuizQuestionsCSV() string {
+	return strings.TrimSpace(`
+id,prompt,choice_a,choice_b,choice_c,choice_d,correct_choice,explanation
+quiz-001,Question 1,A,B,C,D,A,Explanation 1
+quiz-002,Question 2,A,B,C,D,B,Explanation 2
+quiz-003,Question 3,A,B,C,D,C,Explanation 3
+quiz-004,Question 4,A,B,C,D,D,Explanation 4
+quiz-005,Question 5,A,B,C,D,A,Explanation 5
+quiz-006,Question 6,A,B,C,D,B,Explanation 6
+quiz-007,Question 7,A,B,C,D,C,Explanation 7
+quiz-008,Question 8,A,B,C,D,D,Explanation 8
+quiz-009,Question 9,A,B,C,D,A,Explanation 9
+quiz-010,Question 10,A,B,C,D,B,Explanation 10
 `)
 }

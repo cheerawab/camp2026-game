@@ -118,6 +118,406 @@ definitions:
       type:
         type: string
     type: object
+  matches.AnswerAcceptedResponse:
+    properties:
+      accepted:
+        example: true
+        type: boolean
+    type: object
+  matches.AnswerRequest:
+    properties:
+      choice:
+        enum:
+        - A
+        - B
+        - C
+        - D
+        example: A
+        type: string
+      questionId:
+        example: quiz-001
+        type: string
+    required:
+    - choice
+    - questionId
+    type: object
+  matches.CreateMatchResponse:
+    properties:
+      code:
+        example: ABC123
+        type: string
+      completedAt:
+        type: string
+      createdAt:
+        type: string
+      currentQuestion:
+        $ref: '#/definitions/matches.MatchQuestionResponse'
+      currentQuestionIndex:
+        example: 0
+        type: integer
+      hostPlayerId:
+        example: 7H9K2Q
+        type: string
+      matchId:
+        example: match_7H9K2Q
+        type: string
+      players:
+        items:
+          $ref: '#/definitions/matches.MatchPlayerResponse'
+        type: array
+      questionCount:
+        example: 10
+        type: integer
+      results:
+        items:
+          $ref: '#/definitions/matches.MatchQuestionResult'
+        type: array
+      roundEndsAt:
+        type: string
+      roundStartedAt:
+        type: string
+      startedAt:
+        type: string
+      status:
+        example: active
+        type: string
+    type: object
+  matches.JoinMatchRequest:
+    properties:
+      code:
+        example: ABC123
+        maxLength: 16
+        minLength: 4
+        type: string
+    required:
+    - code
+    type: object
+  matches.JoinMatchResponse:
+    properties:
+      code:
+        example: ABC123
+        type: string
+      completedAt:
+        type: string
+      createdAt:
+        type: string
+      currentQuestion:
+        $ref: '#/definitions/matches.MatchQuestionResponse'
+      currentQuestionIndex:
+        example: 0
+        type: integer
+      hostPlayerId:
+        example: 7H9K2Q
+        type: string
+      matchId:
+        example: match_7H9K2Q
+        type: string
+      players:
+        items:
+          $ref: '#/definitions/matches.MatchPlayerResponse'
+        type: array
+      questionCount:
+        example: 10
+        type: integer
+      results:
+        items:
+          $ref: '#/definitions/matches.MatchQuestionResult'
+        type: array
+      roundEndsAt:
+        type: string
+      roundStartedAt:
+        type: string
+      startedAt:
+        type: string
+      status:
+        example: active
+        type: string
+    type: object
+  matches.MatchAnswerResponse:
+    properties:
+      answeredAt:
+        type: string
+      choice:
+        example: A
+        type: string
+      correct:
+        example: true
+        type: boolean
+      elapsedMillis:
+        example: 3200
+        type: integer
+      playerId:
+        example: 7H9K2Q
+        type: string
+      score:
+        example: 150
+        type: integer
+    type: object
+  matches.MatchPlayerResponse:
+    properties:
+      answeredCurrentQuestion:
+        example: true
+        type: boolean
+      nickname:
+        example: Alice
+        type: string
+      playerId:
+        example: 7H9K2Q
+        type: string
+      ready:
+        example: true
+        type: boolean
+      score:
+        example: 850
+        type: integer
+    type: object
+  matches.MatchQuestionResponse:
+    properties:
+      choiceA:
+        example: git init
+        type: string
+      choiceB:
+        example: git clone
+        type: string
+      choiceC:
+        example: git status
+        type: string
+      choiceD:
+        example: git add
+        type: string
+      prompt:
+        example: Which command initializes a new Git repository?
+        type: string
+      questionId:
+        example: quiz-001
+        type: string
+    type: object
+  matches.MatchQuestionResult:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/matches.MatchAnswerResponse'
+        type: array
+      choiceA:
+        example: git init
+        type: string
+      choiceB:
+        example: git clone
+        type: string
+      choiceC:
+        example: git status
+        type: string
+      choiceD:
+        example: git add
+        type: string
+      correctChoice:
+        example: A
+        type: string
+      explanation:
+        example: git init creates a new repository.
+        type: string
+      prompt:
+        example: Which command initializes a new Git repository?
+        type: string
+      questionId:
+        example: quiz-001
+        type: string
+    type: object
+  matches.MatchStateResponse:
+    properties:
+      code:
+        example: ABC123
+        type: string
+      completedAt:
+        type: string
+      createdAt:
+        type: string
+      currentQuestion:
+        $ref: '#/definitions/matches.MatchQuestionResponse'
+      currentQuestionIndex:
+        example: 0
+        type: integer
+      hostPlayerId:
+        example: 7H9K2Q
+        type: string
+      matchId:
+        example: match_7H9K2Q
+        type: string
+      players:
+        items:
+          $ref: '#/definitions/matches.MatchPlayerResponse'
+        type: array
+      questionCount:
+        example: 10
+        type: integer
+      results:
+        items:
+          $ref: '#/definitions/matches.MatchQuestionResult'
+        type: array
+      roundEndsAt:
+        type: string
+      roundStartedAt:
+        type: string
+      startedAt:
+        type: string
+      status:
+        example: active
+        type: string
+    type: object
+  matches.ReadyMatchResponse:
+    properties:
+      code:
+        example: ABC123
+        type: string
+      completedAt:
+        type: string
+      createdAt:
+        type: string
+      currentQuestion:
+        $ref: '#/definitions/matches.MatchQuestionResponse'
+      currentQuestionIndex:
+        example: 0
+        type: integer
+      hostPlayerId:
+        example: 7H9K2Q
+        type: string
+      matchId:
+        example: match_7H9K2Q
+        type: string
+      players:
+        items:
+          $ref: '#/definitions/matches.MatchPlayerResponse'
+        type: array
+      questionCount:
+        example: 10
+        type: integer
+      results:
+        items:
+          $ref: '#/definitions/matches.MatchQuestionResult'
+        type: array
+      roundEndsAt:
+        type: string
+      roundStartedAt:
+        type: string
+      startedAt:
+        type: string
+      status:
+        example: active
+        type: string
+    type: object
+  me.ItemListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/me.PlayerItemResponse'
+        type: array
+    type: object
+  me.ItemResponse:
+    properties:
+      description:
+        example: 小石造型合成使用的基礎素材。
+        type: string
+      id:
+        example: item-crafting-fragment
+        type: string
+      name:
+        example: 合成碎片
+        type: string
+      rarity:
+        example: common
+        type: string
+      type:
+        example: material
+        type: string
+    type: object
+  me.PlayerItemResponse:
+    properties:
+      id:
+        example: owned-item-001
+        type: string
+      item:
+        $ref: '#/definitions/me.ItemResponse'
+      itemId:
+        example: item-crafting-fragment
+        type: string
+      quantity:
+        example: 3
+        type: integer
+    type: object
+  me.PlayerSitoneResponse:
+    properties:
+      id:
+        example: owned-sitone-001
+        type: string
+      quantity:
+        example: 1
+        type: integer
+      sitone:
+        $ref: '#/definitions/me.SitoneResponse'
+      sitoneId:
+        example: sitone-engineering
+        type: string
+    type: object
+  me.QRCodeResponse:
+    properties:
+      qrcodeToken:
+        example: qr_token_123456
+        type: string
+    type: object
+  me.SitoneListResponse:
+    properties:
+      sitones:
+        items:
+          $ref: '#/definitions/me.PlayerSitoneResponse'
+        type: array
+    type: object
+  me.SitoneResponse:
+    properties:
+      description:
+        example: 修 bug、分享解法、完成技術任務。
+        type: string
+      id:
+        example: sitone-engineering
+        type: string
+      name:
+        example: 工程型小石
+        type: string
+      rarity:
+        example: base
+        type: string
+      style:
+        example: default
+        type: string
+      type:
+        example: engineering
+        type: string
+    type: object
+  me.StatusResponse:
+    properties:
+      avatarUrl:
+        example: https://example.test/avatar/alice.png
+        type: string
+      nickname:
+        example: Alice
+        type: string
+      openPower:
+        example: 1280
+        type: integer
+      playerId:
+        example: 7H9K2Q
+        type: string
+      team:
+        $ref: '#/definitions/me.TeamResponse'
+    type: object
+  me.TeamResponse:
+    properties:
+      name:
+        example: Blue Team
+        type: string
+      teamId:
+        example: 8M4RXP
+        type: string
+    type: object
   system.StatusResponse:
     properties:
       checks:
@@ -256,6 +656,344 @@ paths:
       summary: Health check
       tags:
       - system
+  /matches:
+    post:
+      description: Creates a two-player quiz match room for the authenticated player.
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/matches.CreateMatchResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Create match room
+      tags:
+      - matches
+  /matches/{matchID}:
+    get:
+      description: Returns the current match state for a participant. Active matches
+        hide correct answers until completed.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/matches.MatchStateResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Get match state
+      tags:
+      - matches
+  /matches/{matchID}/answers:
+    post:
+      consumes:
+      - application/json
+      description: Accepts the authenticated player's answer for the current question
+        without revealing correctness until match completion.
+      parameters:
+      - description: Answer request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/matches.AnswerRequest'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/matches.AnswerAcceptedResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Submit match answer
+      tags:
+      - matches
+  /matches/{matchID}/events:
+    get:
+      description: Streams match state changes for participants with Server-Sent Events.
+      produces:
+      - text/event-stream
+      responses:
+        "200":
+          description: SSE event stream
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Stream match events
+      tags:
+      - matches
+  /matches/{matchID}/ready:
+    post:
+      description: Marks the authenticated player ready. The match starts automatically
+        when both players are ready.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/matches.ReadyMatchResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Mark current player ready
+      tags:
+      - matches
+  /matches/join:
+    post:
+      consumes:
+      - application/json
+      description: Joins a waiting two-player quiz match room by invite code.
+      parameters:
+      - description: Join match request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/matches.JoinMatchRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/matches.JoinMatchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Join match room
+      tags:
+      - matches
+  /me/items:
+    get:
+      description: Returns items owned by the authenticated player with catalog definitions.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/me.ItemListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: List current player items
+      tags:
+      - me
+  /me/qrcode:
+    get:
+      description: Returns the authenticated player's QR code token for client-side
+        QR rendering.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/me.QRCodeResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Get current player QR code token
+      tags:
+      - me
+  /me/sitones:
+    get:
+      description: Returns sitones owned by the authenticated player with catalog
+        definitions.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/me.SitoneListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: List current player sitones
+      tags:
+      - me
+  /me/status:
+    get:
+      description: Returns the authenticated player's profile summary, team, and open
+        power total.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/me.StatusResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Get current player status
+      tags:
+      - me
 schemes:
 - http
 - https

@@ -2,6 +2,8 @@ package auth
 
 import (
 	"net/http"
+
+	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
 )
 
 // Logout godoc
@@ -16,7 +18,7 @@ import (
 // @Router /auth/logout [post]
 func (h *Handler) Logout(w http.ResponseWriter, _ *http.Request) {
 	http.SetCookie(w, &http.Cookie{
-		Name:     "camp2026_auth",
+		Name:     authctx.CookieName,
 		Value:    "",
 		Path:     "/",
 		MaxAge:   -1,

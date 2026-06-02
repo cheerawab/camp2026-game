@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 
 	"github.com/sitcon-tw/camp2026-game/internal/http/apimodel"
+	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
 	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
 )
@@ -81,7 +82,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
 func setAuthCookie(w http.ResponseWriter, token string) {
 	http.SetCookie(w, &http.Cookie{
-		Name:     "camp2026_auth",
+		Name:     authctx.CookieName,
 		Value:    token,
 		Path:     "/",
 		HttpOnly: true,

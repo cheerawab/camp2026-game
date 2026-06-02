@@ -58,10 +58,7 @@ func TestRemovedRoutes(t *testing.T) {
 		{method: http.MethodGet, path: "/api/me"},
 		{method: http.MethodGet, path: "/api/me/state"},
 		{method: http.MethodGet, path: "/api/me/home"},
-		{method: http.MethodGet, path: "/api/me/qrcode"},
-		{method: http.MethodGet, path: "/api/me/sitones"},
 		{method: http.MethodGet, path: "/api/me/sitones/S9K2QA"},
-		{method: http.MethodGet, path: "/api/me/items"},
 		{method: http.MethodGet, path: "/api/me/items/I8M4RX"},
 		{method: http.MethodGet, path: "/api/me/open-power"},
 		{method: http.MethodGet, path: "/api/me/open-power/records"},
@@ -75,10 +72,6 @@ func TestRemovedRoutes(t *testing.T) {
 		{method: http.MethodGet, path: "/api/qrcode/me"},
 		{method: http.MethodGet, path: "/api/world-bosses"},
 		{method: http.MethodPost, path: "/api/match-pairings"},
-		{method: http.MethodGet, path: "/api/matches"},
-		{method: http.MethodPost, path: "/api/matches"},
-		{method: http.MethodGet, path: "/api/matches/M8RXP2"},
-		{method: http.MethodPost, path: "/api/matches/M8RXP2/answers"},
 		{method: http.MethodPost, path: "/api/matches/M8RXP2/finish"},
 		{method: http.MethodGet, path: "/api/matches/M8RXP2/ws"},
 		{method: http.MethodGet, path: "/api/shop/items"},
@@ -101,6 +94,94 @@ func TestRemovedRoutes(t *testing.T) {
 		res := performRequest(router, route.method, route.path, nil)
 		if res.Code != http.StatusNotFound {
 			t.Fatalf("%s %s: expected status %d, got %d", route.method, route.path, http.StatusNotFound, res.Code)
+		}
+	}
+}
+
+func TestMatchRoutesRequireAuthentication(t *testing.T) {
+	router := NewRouter(Dependencies{
+		Content: loadTestContent(t),
+		MongoDB: fakeDatabase(t),
+	})
+
+	for _, route := range []struct {
+		method string
+		path   string
+	}{
+		{method: http.MethodPost, path: "/api/matches"},
+		{method: http.MethodPost, path: "/api/matches/join"},
+		{method: http.MethodGet, path: "/api/matches/M8RXP2"},
+		{method: http.MethodPost, path: "/api/matches/M8RXP2/ready"},
+		{method: http.MethodPost, path: "/api/matches/M8RXP2/answers"},
+		{method: http.MethodGet, path: "/api/matches/M8RXP2/events"},
+	} {
+		res := performRequest(router, route.method, route.path, nil)
+		problem := assertProblem(t, res, http.StatusUnauthorized, "")
+		if problem.Status != http.StatusUnauthorized {
+			t.Fatalf("%s %s: expected problem status %d, got %d", route.method, route.path, http.StatusUnauthorized, problem.Status)
+		}
+	}
+}
+
+func TestMatchRoutesRequireDatabase(t *testing.T) {
+	router := NewRouter(Dependencies{
+		Content: loadTestContent(t),
+	})
+
+	for _, route := range []struct {
+		method string
+		path   string
+	}{
+		{method: http.MethodPost, path: "/api/matches"},
+		{method: http.MethodPost, path: "/api/matches/join"},
+		{method: http.MethodGet, path: "/api/matches/M8RXP2"},
+		{method: http.MethodPost, path: "/api/matches/M8RXP2/ready"},
+		{method: http.MethodPost, path: "/api/matches/M8RXP2/answers"},
+		{method: http.MethodGet, path: "/api/matches/M8RXP2/events"},
+	} {
+		res := performRequestWithCookie(router, route.method, route.path, nil, "auth_token_123456")
+		problem := assertProblem(t, res, http.StatusServiceUnavailable, "")
+		if problem.Status != http.StatusServiceUnavailable {
+			t.Fatalf("%s %s: expected problem status %d, got %d", route.method, route.path, http.StatusServiceUnavailable, problem.Status)
+		}
+	}
+}
+
+func TestMeRoutesRequireAuthentication(t *testing.T) {
+	router := NewRouter(Dependencies{
+		Content: loadTestContent(t),
+		MongoDB: fakeDatabase(t),
+	})
+
+	for _, path := range []string{
+		"/api/me/status",
+		"/api/me/qrcode",
+		"/api/me/sitones",
+		"/api/me/items",
+	} {
+		res := performRequest(router, http.MethodGet, path, nil)
+		problem := assertProblem(t, res, http.StatusUnauthorized, "")
+		if problem.Status != http.StatusUnauthorized {
+			t.Fatalf("%s: expected problem status %d, got %d", path, http.StatusUnauthorized, problem.Status)
+		}
+	}
+}
+
+func TestMeRoutesRequireDatabase(t *testing.T) {
+	router := NewRouter(Dependencies{
+		Content: loadTestContent(t),
+	})
+
+	for _, path := range []string{
+		"/api/me/status",
+		"/api/me/qrcode",
+		"/api/me/sitones",
+		"/api/me/items",
+	} {
+		res := performRequestWithCookie(router, http.MethodGet, path, nil, "auth_token_123456")
+		problem := assertProblem(t, res, http.StatusServiceUnavailable, "")
+		if problem.Status != http.StatusServiceUnavailable {
+			t.Fatalf("%s: expected problem status %d, got %d", path, http.StatusServiceUnavailable, problem.Status)
 		}
 	}
 }
@@ -241,6 +322,16 @@ func TestSwaggerJSON(t *testing.T) {
 		"/catalog/items",
 		"/catalog/sitones",
 		"/healthz",
+		"/me/items",
+		"/me/qrcode",
+		"/me/sitones",
+		"/me/status",
+		"/matches",
+		"/matches/join",
+		"/matches/{matchID}",
+		"/matches/{matchID}/answers",
+		"/matches/{matchID}/events",
+		"/matches/{matchID}/ready",
 		"AuthCookieAuth",
 		"camp2026_auth",
 	} {
@@ -264,9 +355,6 @@ func TestSwaggerJSON(t *testing.T) {
 		"/examples/validation",
 		"/me",
 		"/me/state",
-		"/me/qrcode",
-		"/me/sitones",
-		"/me/items",
 		"/me/open-power",
 		"/me/home",
 		"/users/state",
@@ -275,9 +363,6 @@ func TestSwaggerJSON(t *testing.T) {
 		"/activities/{activityID}/claims",
 		"/bingo/boards",
 		"/match-pairings",
-		"/matches",
-		"/matches/{matchID}",
-		"/matches/{matchID}/answers",
 		"/matches/{matchID}/finish",
 		"/qrcode/me",
 		"/qrcode/scans",
@@ -308,6 +393,16 @@ func TestSwaggerJSON(t *testing.T) {
 	assertSwaggerSecurity(t, spec.Paths, "/auth/logout", http.MethodPost, true)
 	assertSwaggerSecurity(t, spec.Paths, "/catalog/items", http.MethodGet, false)
 	assertSwaggerSecurity(t, spec.Paths, "/catalog/sitones", http.MethodGet, false)
+	assertSwaggerSecurity(t, spec.Paths, "/me/status", http.MethodGet, true)
+	assertSwaggerSecurity(t, spec.Paths, "/me/qrcode", http.MethodGet, true)
+	assertSwaggerSecurity(t, spec.Paths, "/me/sitones", http.MethodGet, true)
+	assertSwaggerSecurity(t, spec.Paths, "/me/items", http.MethodGet, true)
+	assertSwaggerSecurity(t, spec.Paths, "/matches", http.MethodPost, true)
+	assertSwaggerSecurity(t, spec.Paths, "/matches/join", http.MethodPost, true)
+	assertSwaggerSecurity(t, spec.Paths, "/matches/{matchID}", http.MethodGet, true)
+	assertSwaggerSecurity(t, spec.Paths, "/matches/{matchID}/ready", http.MethodPost, true)
+	assertSwaggerSecurity(t, spec.Paths, "/matches/{matchID}/answers", http.MethodPost, true)
+	assertSwaggerSecurity(t, spec.Paths, "/matches/{matchID}/events", http.MethodGet, true)
 }
 
 func TestScalarDocs(t *testing.T) {
@@ -433,4 +528,30 @@ func performRequest(handler http.Handler, method, path string, body *strings.Rea
 	res := httptest.NewRecorder()
 	handler.ServeHTTP(res, req)
 	return res
+}
+
+func performRequestWithCookie(handler http.Handler, method, path string, body *strings.Reader, token string) *httptest.ResponseRecorder {
+	if body == nil {
+		body = strings.NewReader("")
+	}
+	req := httptest.NewRequest(method, path, body)
+	req.AddCookie(&http.Cookie{Name: "camp2026_auth", Value: token})
+	res := httptest.NewRecorder()
+	handler.ServeHTTP(res, req)
+	return res
+}
+
+func fakeDatabase(t *testing.T) *mongo.Database {
+	t.Helper()
+
+	client, err := mongo.Connect(options.Client().
+		ApplyURI("mongodb://127.0.0.1:1").
+		SetServerSelectionTimeout(time.Millisecond))
+	if err != nil {
+		t.Fatalf("connect mongo client: %v", err)
+	}
+	t.Cleanup(func() {
+		_ = client.Disconnect(t.Context())
+	})
+	return client.Database("camp2026_game_test")
 }

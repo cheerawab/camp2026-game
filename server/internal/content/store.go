@@ -19,10 +19,12 @@ var validRarities = map[string]struct{}{
 }
 
 type Store struct {
-	sitones     []Sitone
-	sitonesByID map[string]Sitone
-	items       []Item
-	itemsByID   map[string]Item
+	sitones           []Sitone
+	sitonesByID       map[string]Sitone
+	items             []Item
+	itemsByID         map[string]Item
+	quizQuestions     []QuizQuestion
+	quizQuestionsByID map[string]QuizQuestion
 }
 
 func Load(dir string) (*Store, error) {
@@ -53,11 +55,19 @@ func Load(dir string) (*Store, error) {
 		return nil, err
 	}
 
+	quizQuestionsPath := filepath.Join(resolvedDir, quizQuestionsFile)
+	quizQuestions, quizQuestionsByID, err := loadQuizQuestions(quizQuestionsPath)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Store{
-		sitones:     sitones,
-		sitonesByID: sitonesByID,
-		items:       items,
-		itemsByID:   itemsByID,
+		sitones:           sitones,
+		sitonesByID:       sitonesByID,
+		items:             items,
+		itemsByID:         itemsByID,
+		quizQuestions:     quizQuestions,
+		quizQuestionsByID: quizQuestionsByID,
 	}, nil
 }
 
