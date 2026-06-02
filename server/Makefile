@@ -1,4 +1,4 @@
-.PHONY: dev run generate swagger fmt test tidy
+.PHONY: dev run generate swagger fmt test test-e2e tidy
 
 dev:
 	air
@@ -16,6 +16,9 @@ fmt:
 
 test:
 	go test ./...
+
+test-e2e:
+	go test -tags=e2e ./internal/e2e
 
 tidy:
 	go mod tidy

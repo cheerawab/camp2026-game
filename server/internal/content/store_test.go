@@ -65,6 +65,9 @@ name = "基地佈景券"
 type = "cosmetic"
 rarity = "rare"
 description = "可以兌換小隊基地展示佈景。"
+purchasable = true
+enabled = true
+price_open_power = 200
 
 [[items]]
 id = "item-crafting-fragment"
@@ -93,6 +96,12 @@ description = "小石造型合成使用的基礎素材。"
 	}
 	if item.Name != "基地佈景券" {
 		t.Fatalf("expected theme ticket name, got %q", item.Name)
+	}
+	if !item.Purchasable || !item.Enabled || item.PriceOpenPower != 200 {
+		t.Fatalf("expected theme ticket shop metadata, got %#v", item)
+	}
+	if item, ok := store.GetItem("item-crafting-fragment"); !ok || item.Purchasable || item.Enabled || item.PriceOpenPower != 0 {
+		t.Fatalf("expected crafting fragment to use default shop metadata, got %#v", item)
 	}
 	if _, ok := store.GetItem("missing"); ok {
 		t.Fatal("expected missing item not to exist")
@@ -280,6 +289,27 @@ rarity = "mythic"
 		if !strings.Contains(err.Error(), want) {
 			t.Fatalf("expected error to contain %q, got %v", want, err)
 		}
+	}
+}
+
+func TestLoadRejectsPurchasableItemWithoutPrice(t *testing.T) {
+	dir := writeContent(t, validSitonesTOML(), `
+[[items]]
+id = "item-crafting-fragment"
+name = "Crafting Fragment"
+type = "material"
+rarity = "common"
+purchasable = true
+enabled = true
+price_open_power = 0
+`)
+
+	_, err := Load(dir)
+	if err == nil {
+		t.Fatal("expected invalid price error")
+	}
+	if !strings.Contains(err.Error(), "items[0].price_open_power must be greater than 0 when purchasable is true") {
+		t.Fatalf("expected price error, got %v", err)
 	}
 }
 

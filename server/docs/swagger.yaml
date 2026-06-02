@@ -518,6 +518,67 @@ definitions:
         example: 8M4RXP
         type: string
     type: object
+  shop.ItemDetailResponse:
+    properties:
+      item:
+        $ref: '#/definitions/shop.ShopItemResponse'
+    type: object
+  shop.ItemListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/shop.ShopItemResponse'
+        type: array
+    type: object
+  shop.PurchaseRequest:
+    properties:
+      itemId:
+        example: item-crafting-fragment
+        type: string
+    required:
+    - itemId
+    type: object
+  shop.PurchaseResponse:
+    properties:
+      item:
+        $ref: '#/definitions/shop.ShopItemResponse'
+      itemId:
+        example: item-crafting-fragment
+        type: string
+      openPower:
+        example: 1230
+        type: integer
+      priceOpenPower:
+        example: 50
+        type: integer
+      purchaseId:
+        example: purchase_abc123
+        type: string
+      quantity:
+        example: 1
+        type: integer
+    type: object
+  shop.ShopItemResponse:
+    properties:
+      description:
+        example: 小石造型合成使用的基礎素材。
+        type: string
+      id:
+        example: item-crafting-fragment
+        type: string
+      name:
+        example: 合成碎片
+        type: string
+      priceOpenPower:
+        example: 50
+        type: integer
+      rarity:
+        example: common
+        type: string
+      type:
+        example: material
+        type: string
+    type: object
   system.StatusResponse:
     properties:
       checks:
@@ -994,6 +1055,115 @@ paths:
       summary: Get current player status
       tags:
       - me
+  /shop/items:
+    get:
+      description: Lists purchasable and enabled item definitions.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.ItemListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: List shop items
+      tags:
+      - shop
+  /shop/items/{itemID}:
+    get:
+      description: Returns one purchasable and enabled item definition.
+      parameters:
+      - description: Item ID
+        in: path
+        name: itemID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/shop.ItemDetailResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Get shop item
+      tags:
+      - shop
+  /shop/purchases:
+    post:
+      consumes:
+      - application/json
+      description: Purchases one enabled shop item, deducts open power, and adds it
+        to the current player's item bag.
+      parameters:
+      - description: Purchase request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/shop.PurchaseRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/shop.PurchaseResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Purchase shop item
+      tags:
+      - shop
 schemes:
 - http
 - https

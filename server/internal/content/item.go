@@ -16,11 +16,14 @@ var validItemTypes = map[string]struct{}{
 }
 
 type Item struct {
-	ID          string `toml:"id"`
-	Name        string `toml:"name"`
-	Type        string `toml:"type"`
-	Rarity      string `toml:"rarity"`
-	Description string `toml:"description"`
+	ID             string `toml:"id"`
+	Name           string `toml:"name"`
+	Type           string `toml:"type"`
+	Rarity         string `toml:"rarity"`
+	Description    string `toml:"description"`
+	Purchasable    bool   `toml:"purchasable"`
+	Enabled        bool   `toml:"enabled"`
+	PriceOpenPower int    `toml:"price_open_power"`
 }
 
 type itemsDocument struct {
@@ -74,6 +77,9 @@ func validateItems(path string, items []Item) ([]Item, map[string]Item, error) {
 			errs = append(errs, fmt.Errorf("%s.rarity is required", location))
 		} else if _, ok := validRarities[item.Rarity]; !ok {
 			errs = append(errs, fmt.Errorf("%s.rarity must be one of %s", location, sortedKeys(validRarities)))
+		}
+		if item.Purchasable && item.PriceOpenPower <= 0 {
+			errs = append(errs, fmt.Errorf("%s.price_open_power must be greater than 0 when purchasable is true", location))
 		}
 
 		normalized = append(normalized, item)

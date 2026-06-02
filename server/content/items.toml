@@ -4,6 +4,9 @@ name = "合成碎片"
 type = "material"
 rarity = "common"
 description = "小石造型合成使用的基礎素材。"
+purchasable = true
+enabled = true
+price_open_power = 50
 
 [[items]]
 id = "item-theme-ticket"
@@ -11,6 +14,9 @@ name = "基地佈景券"
 type = "cosmetic"
 rarity = "rare"
 description = "可以兌換小隊基地展示佈景。"
+purchasable = true
+enabled = true
+price_open_power = 200
 
 [[items]]
 id = "item-memory-tag"
@@ -18,3 +24,6 @@ name = "活動回顧標籤"
 type = "event"
 rarity = "limited"
 description = "記錄營隊活動或世界魔王階段的特殊紀念道具。"
+purchasable = false
+enabled = false
+price_open_power = 0

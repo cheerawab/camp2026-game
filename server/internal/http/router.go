@@ -16,6 +16,7 @@ import (
 	cataloghandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/catalog"
 	matcheshandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/matches"
 	mehandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/me"
+	shophandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/shop"
 	systemhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/system"
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
 )
@@ -75,6 +76,11 @@ func registerRoutes(api chi.Router, dep Dependencies) {
 	matcheshandler.New(matcheshandler.Dependencies{
 		Content: dep.Content,
 		MongoDB: dep.MongoDB,
+	}).RegisterRoutes(api.With(authctx.RequirePlayer(dep.MongoDB)))
+	shophandler.New(shophandler.Dependencies{
+		Content:     dep.Content,
+		MongoClient: dep.MongoClient,
+		MongoDB:     dep.MongoDB,
 	}).RegisterRoutes(api.With(authctx.RequirePlayer(dep.MongoDB)))
 
 	registerSwaggerRoutes(api)
