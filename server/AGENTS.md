@@ -29,6 +29,7 @@ server/
   cmd/api/                  process entry point
   internal/app/             composition root and graceful lifecycle
   internal/config/          environment loading, defaults, validation
+  internal/content/         TOML game content loader and in-memory store
   internal/http/            router, server, middleware, Swagger wiring
   internal/http/apimodel/   shared HTTP request and response DTOs
   internal/http/handler/    HTTP route groups
@@ -348,6 +349,7 @@ HTTP_READ_TIMEOUT
 HTTP_WRITE_TIMEOUT
 HTTP_IDLE_TIMEOUT
 SHUTDOWN_TIMEOUT
+CONTENT_DIR
 MONGODB_URI
 MONGODB_DATABASE
 ```
@@ -699,7 +701,7 @@ Use `.env.example` as the local template:
 cp .env.example .env
 ```
 
-Then adjust `MONGODB_URI` or `MONGODB_DATABASE`.
+Then adjust `CONTENT_DIR`, `MONGODB_URI`, or `MONGODB_DATABASE`.
 
 The default `MONGODB_URI` is:
 

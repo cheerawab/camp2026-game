@@ -41,6 +41,34 @@ definitions:
         example: 8M4RXP
         type: string
     type: object
+  catalog.SitoneListResponse:
+    properties:
+      sitones:
+        items:
+          $ref: '#/definitions/catalog.SitoneResponse'
+        type: array
+    type: object
+  catalog.SitoneResponse:
+    properties:
+      description:
+        example: 修 bug、分享解法、完成技術任務。
+        type: string
+      id:
+        example: sitone-engineering
+        type: string
+      name:
+        example: 工程型小石
+        type: string
+      rarity:
+        example: base
+        type: string
+      style:
+        example: default
+        type: string
+      type:
+        example: engineering
+        type: string
+    type: object
   httpx.ErrorDetail:
     properties:
       location:
@@ -152,6 +180,23 @@ paths:
       summary: User logout
       tags:
       - User Authentication
+  /catalog/sitones:
+    get:
+      description: Lists all collectible sitone definitions.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/catalog.SitoneListResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      summary: List sitone catalog
+      tags:
+      - catalog
   /healthz:
     get:
       description: Confirms the HTTP process is alive and the database is reachable.

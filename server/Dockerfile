@@ -17,6 +17,9 @@ RUN addgroup -S app && adduser -S -G app app
 WORKDIR /app
 
 COPY --from=build /out/api /app/api
+COPY --from=build /src/server/content /app/content
+
+ENV CONTENT_DIR=/app/content
 
 USER app:app
 

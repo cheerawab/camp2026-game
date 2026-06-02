@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/sitcon-tw/camp2026-game/internal/content"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
@@ -89,7 +90,6 @@ func TestRemovedRoutes(t *testing.T) {
 		{method: http.MethodGet, path: "/api/crafting/recipes"},
 		{method: http.MethodGet, path: "/api/crafting/recipes/recipe_engineering_skin"},
 		{method: http.MethodPost, path: "/api/crafting"},
-		{method: http.MethodGet, path: "/api/catalog/sitones"},
 		{method: http.MethodGet, path: "/api/catalog/items"},
 		{method: http.MethodGet, path: "/api/catalog/crafting-recipes"},
 		{method: http.MethodGet, path: "/api/catalog/recipes"},
@@ -103,6 +103,67 @@ func TestRemovedRoutes(t *testing.T) {
 		if res.Code != http.StatusNotFound {
 			t.Fatalf("%s %s: expected status %d, got %d", route.method, route.path, http.StatusNotFound, res.Code)
 		}
+	}
+}
+
+func TestListSitoneCatalog(t *testing.T) {
+	router := NewRouter(Dependencies{
+		Content: loadTestContent(t),
+	})
+
+	res := performRequest(router, http.MethodGet, "/api/catalog/sitones", nil)
+	if res.Code != http.StatusOK {
+		t.Fatalf("expected status %d, got %d: %s", http.StatusOK, res.Code, res.Body.String())
+	}
+	if contentType := res.Header().Get("Content-Type"); contentType != "application/json" {
+		t.Fatalf("expected json content type, got %q", contentType)
+	}
+
+	var body struct {
+		Sitones []struct {
+			ID          string `json:"id"`
+			Name        string `json:"name"`
+			Type        string `json:"type"`
+			Rarity      string `json:"rarity"`
+			Style       string `json:"style"`
+			Description string `json:"description"`
+		} `json:"sitones"`
+	}
+	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if len(body.Sitones) != 5 {
+		t.Fatalf("expected 5 sitones, got %d", len(body.Sitones))
+	}
+
+	wantIDs := []string{
+		"sitone-engineering",
+		"sitone-entertainment",
+		"sitone-exploration",
+		"sitone-inspiration",
+		"sitone-resonance",
+	}
+	for i, wantID := range wantIDs {
+		if body.Sitones[i].ID != wantID {
+			t.Fatalf("expected sitone %d id %q, got %q", i, wantID, body.Sitones[i].ID)
+		}
+	}
+	if got := body.Sitones[0]; got.Name != "工程型小石" ||
+		got.Type != "engineering" ||
+		got.Rarity != "base" ||
+		got.Style != "default" ||
+		got.Description == "" {
+		t.Fatalf("unexpected engineering sitone: %#v", got)
+	}
+}
+
+func TestListSitoneCatalogWhenContentUnavailable(t *testing.T) {
+	router := NewRouter(Dependencies{})
+
+	res := performRequest(router, http.MethodGet, "/api/catalog/sitones", nil)
+	problem := assertProblem(t, res, http.StatusServiceUnavailable, "")
+	if problem.Status != http.StatusServiceUnavailable {
+		t.Fatalf("expected problem status %d, got %d", http.StatusServiceUnavailable, problem.Status)
 	}
 }
 
@@ -121,6 +182,7 @@ func TestSwaggerJSON(t *testing.T) {
 	for _, want := range []string{
 		"/auth/login",
 		"/auth/logout",
+		"/catalog/sitones",
 		"/healthz",
 		"AuthCookieAuth",
 		"camp2026_auth",
@@ -172,7 +234,6 @@ func TestSwaggerJSON(t *testing.T) {
 		"/storage",
 		"/storage/sitones",
 		"/storage/recipes",
-		"/catalog/sitones",
 		"/catalog/items",
 		"/catalog/crafting-recipes",
 		"/catalog/recipes",
@@ -189,6 +250,7 @@ func TestSwaggerJSON(t *testing.T) {
 	assertSwaggerSecurity(t, spec.Paths, "/healthz", http.MethodGet, false)
 	assertSwaggerSecurity(t, spec.Paths, "/auth/login", http.MethodPost, false)
 	assertSwaggerSecurity(t, spec.Paths, "/auth/logout", http.MethodPost, true)
+	assertSwaggerSecurity(t, spec.Paths, "/catalog/sitones", http.MethodGet, false)
 }
 
 func TestScalarDocs(t *testing.T) {
@@ -294,6 +356,16 @@ func assertProblem(t *testing.T, res *httptest.ResponseRecorder, status int, loc
 		}
 	}
 	return problem
+}
+
+func loadTestContent(t *testing.T) *content.Store {
+	t.Helper()
+
+	store, err := content.Load("../../content")
+	if err != nil {
+		t.Fatalf("load test content: %v", err)
+	}
+	return store
 }
 
 func performRequest(handler http.Handler, method, path string, body *strings.Reader) *httptest.ResponseRecorder {

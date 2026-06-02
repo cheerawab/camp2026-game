@@ -10,7 +10,9 @@ import (
 	chimw "github.com/go-chi/chi/v5/middleware"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 
+	"github.com/sitcon-tw/camp2026-game/internal/content"
 	authhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/auth"
+	cataloghandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/catalog"
 	systemhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/system"
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
 )
@@ -18,6 +20,7 @@ import (
 type Dependencies struct {
 	Log            *slog.Logger
 	RequestTimeout time.Duration
+	Content        *content.Store
 	MongoClient    *mongo.Client
 	MongoDB        *mongo.Database
 }
@@ -58,6 +61,9 @@ func registerRoutes(api chi.Router, dep Dependencies) {
 	}).RegisterRoutes(api)
 	authhandler.New(authhandler.Dependencies{
 		MongoDB: dep.MongoDB,
+	}).RegisterRoutes(api)
+	cataloghandler.New(cataloghandler.Dependencies{
+		Content: dep.Content,
 	}).RegisterRoutes(api)
 
 	registerSwaggerRoutes(api)

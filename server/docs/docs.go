@@ -119,6 +119,32 @@ const docTemplate = `{
                 }
             }
         },
+        "/catalog/sitones": {
+            "get": {
+                "description": "Lists all collectible sitone definitions.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "catalog"
+                ],
+                "summary": "List sitone catalog",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/catalog.SitoneListResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
         "/healthz": {
             "get": {
                 "description": "Confirms the HTTP process is alive and the database is reachable.",
@@ -203,6 +229,46 @@ const docTemplate = `{
                 "teamId": {
                     "type": "string",
                     "example": "8M4RXP"
+                }
+            }
+        },
+        "catalog.SitoneListResponse": {
+            "type": "object",
+            "properties": {
+                "sitones": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/catalog.SitoneResponse"
+                    }
+                }
+            }
+        },
+        "catalog.SitoneResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "修 bug、分享解法、完成技術任務。"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "sitone-engineering"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "工程型小石"
+                },
+                "rarity": {
+                    "type": "string",
+                    "example": "base"
+                },
+                "style": {
+                    "type": "string",
+                    "example": "default"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "engineering"
                 }
             }
         },

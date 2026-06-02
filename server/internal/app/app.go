@@ -10,6 +10,7 @@ import (
 	drivermongo "go.mongodb.org/mongo-driver/v2/mongo"
 
 	"github.com/sitcon-tw/camp2026-game/internal/config"
+	"github.com/sitcon-tw/camp2026-game/internal/content"
 	httpserver "github.com/sitcon-tw/camp2026-game/internal/http"
 	"github.com/sitcon-tw/camp2026-game/internal/mongodb"
 )
@@ -18,6 +19,7 @@ type Application struct {
 	Config      config.Config
 	Log         *slog.Logger
 	HTTPServer  *http.Server
+	Content     *content.Store
 	MongoClient *drivermongo.Client
 	MongoDB     *drivermongo.Database
 }
@@ -32,6 +34,11 @@ func New(ctx context.Context) (*Application, error) {
 		Level: cfg.LogLevel,
 	}))
 
+	contentStore, err := content.Load(cfg.ContentDir)
+	if err != nil {
+		return nil, fmt.Errorf("load content: %w", err)
+	}
+
 	mongoClient, err := mongodb.NewClient(ctx, cfg.MongoURI)
 	if err != nil {
 		return nil, err
@@ -41,6 +48,7 @@ func New(ctx context.Context) (*Application, error) {
 	handler := httpserver.NewRouter(httpserver.Dependencies{
 		Log:            log,
 		RequestTimeout: cfg.HTTP.RequestTimeout,
+		Content:        contentStore,
 		MongoClient:    mongoClient,
 		MongoDB:        mongoDB,
 	})
@@ -49,6 +57,7 @@ func New(ctx context.Context) (*Application, error) {
 		Config:      cfg,
 		Log:         log,
 		HTTPServer:  httpserver.NewServer(cfg.HTTP, handler),
+		Content:     contentStore,
 		MongoClient: mongoClient,
 		MongoDB:     mongoDB,
 	}, nil

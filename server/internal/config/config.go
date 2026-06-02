@@ -17,6 +17,7 @@ const (
 	defaultAppVersion      = "0.1.0"
 	defaultLogLevel        = "info"
 	defaultHTTPAddr        = ":8080"
+	defaultContentDir      = "server/content"
 	defaultMongoURI        = "mongodb://camp2026:camp2026@localhost:27017/camp2026?authSource=admin"
 	defaultMongoDatabase   = "camp2026"
 	defaultRequestTimeout  = 10 * time.Second
@@ -29,6 +30,7 @@ type Config struct {
 	Version         string
 	LogLevel        slog.Level
 	ShutdownTimeout time.Duration
+	ContentDir      string
 	HTTP            HTTPConfig
 	MongoURI        string
 	MongoDatabase   string
@@ -51,6 +53,7 @@ func Load() (Config, error) {
 		ServiceName:     stringValue("SERVICE_NAME", defaultServiceName),
 		Version:         stringValue("APP_VERSION", defaultAppVersion),
 		ShutdownTimeout: durationValue("SHUTDOWN_TIMEOUT", defaultShutdownTimeout),
+		ContentDir:      stringValue("CONTENT_DIR", defaultContentDir),
 		HTTP: HTTPConfig{
 			Addr:              stringValue("HTTP_ADDR", defaultHTTPAddr),
 			RequestTimeout:    durationValue("REQUEST_TIMEOUT", defaultRequestTimeout),
@@ -89,6 +92,9 @@ func (cfg Config) validate() error {
 	}
 	if strings.TrimSpace(cfg.HTTP.Addr) == "" {
 		errs = append(errs, errors.New("HTTP_ADDR is required"))
+	}
+	if strings.TrimSpace(cfg.ContentDir) == "" {
+		errs = append(errs, errors.New("CONTENT_DIR is required"))
 	}
 	if strings.TrimSpace(cfg.MongoURI) == "" {
 		errs = append(errs, errors.New("MONGODB_URI is required"))

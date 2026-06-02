@@ -1,0 +1,39 @@
+[[sitones]]
+id = "sitone-exploration"
+name = "探索型小石"
+type = "exploration"
+rarity = "base"
+style = "default"
+description = "逛攤位、問問題、參與社群事件。"
+
+[[sitones]]
+id = "sitone-inspiration"
+name = "靈光型小石"
+type = "inspiration"
+rarity = "base"
+style = "default"
+description = "提問、回答、做筆記、完成反思。"
+
+[[sitones]]
+id = "sitone-resonance"
+name = "共鳴型小石"
+type = "resonance"
+rarity = "base"
+style = "default"
+description = "幫助隊友、跨隊合作、社交互動。"
+
+[[sitones]]
+id = "sitone-engineering"
+name = "工程型小石"
+type = "engineering"
+rarity = "base"
+style = "default"
+description = "修 bug、分享解法、完成技術任務。"
+
+[[sitones]]
+id = "sitone-entertainment"
+name = "娛樂型小石"
+type = "entertainment"
+rarity = "base"
+style = "default"
+description = "參與晚會、團康、活動事件。"

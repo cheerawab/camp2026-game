@@ -56,11 +56,11 @@ is intentionally part of the public API.
 
 ## Local Config
 
-Copy `.env.example` to `.env` and adjust `MONGODB_URI` or
+Copy `.env.example` to `.env` and adjust `CONTENT_DIR`, `MONGODB_URI`, or
 `MONGODB_DATABASE` when needed.
 Runtime settings and secrets stay in env. Game content definitions such as
 sitones, items, crafting recipes, bingo boards, bingo missions, and world boss
-definitions should be loaded from JSON files, not env.
+definitions should be loaded from TOML files, not env.
 
 The app opens and pings MongoDB during startup. Collection indexes and seed data
 should be managed explicitly by setup scripts when those schemas are introduced.
