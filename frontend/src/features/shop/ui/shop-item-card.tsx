@@ -35,13 +35,17 @@ export function ShopItemCard({
     // TODO: 串接 API
     toast.success(
       <div className="grid">
-        <span className="font-bold text-lg">購買成功！</span>
-      <span>已成功花費{" "}<strong className="font-bold ">{price} OP</strong>，購買{" "}<strong className="font-bold ">{name}</strong>。</span>
-      </div>
-      , {
+        <span className="text-lg font-bold">購買成功！</span>
+        <span>
+          已成功花費 <strong className="font-bold">{price} OP</strong>，購買{" "}
+          <strong className="font-bold">{name}</strong>。
+        </span>
+      </div>,
+      {
         position: "bottom-center",
-        icon: <Check />
-    })
+        icon: <Check />,
+      },
+    )
   }
   return (
     <div
@@ -76,11 +80,7 @@ export function ShopItemCard({
               資訊
             </Button>
             {purchased ? (
-              <Button
-                variant="outline"
-                disabled
-                className="flex-1"
-              >
+              <Button variant="outline" disabled className="flex-1">
                 <Check />
                 已擁有
               </Button>
