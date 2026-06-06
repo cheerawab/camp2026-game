@@ -1,9 +1,6 @@
+import { BattleWaitingPage } from "@/pages/battel/waiting/ui/battle-waiting"
 import { createFileRoute } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/battle/waiting")({
-  component: RouteComponent,
+  component: BattleWaitingPage,
 })
-
-function RouteComponent() {
-  return <div>Hello "/battle/waiting"!</div>
-}
