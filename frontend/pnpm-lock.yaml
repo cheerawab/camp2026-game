@@ -265,6 +265,13 @@ packages:
     peerDependencies:
       "@babel/core": ^7.0.0-0
 
+  "@babel/runtime@7.29.7":
+    resolution:
+      {
+        integrity: sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw==,
+      }
+    engines: { node: ">=6.9.0" }
+
   "@babel/template@7.29.7":
     resolution:
       {
@@ -3956,6 +3963,8 @@ snapshots:
     dependencies:
       "@babel/core": 7.29.7
       "@babel/helper-plugin-utils": 7.29.7
+
+  "@babel/runtime@7.29.7": {}
 
   "@babel/template@7.29.7":
     dependencies:
