@@ -1,6 +1,6 @@
 import { Badge } from "@/shared/ui/badge"
 import { Button } from "@/shared/ui/button"
-import { X, Check } from "lucide-react"
+import { Check } from "lucide-react"
 import { PageHeader } from "@/shared/ui/page-header"
 
 const itemData = {
