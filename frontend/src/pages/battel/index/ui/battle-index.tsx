@@ -7,13 +7,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card"
+import { Field } from "@/shared/ui/field"
+import { Input } from "@/shared/ui/input"
 import { PageHeader } from "@/shared/ui/page-header"
-import { Play, Plus } from "lucide-react"
+import { Play, ArrowRight, DoorOpen, ScanQrCode } from "lucide-react"
 
 export function BattleIndexPage() {
   return (
     <main className="mx-auto grid w-full max-w-sm gap-y-2 py-4">
-      <PageHeader title="知識王" headline="Quiz Battle Lobby" />
+      <PageHeader title="知識王" headline="Battle Lobby" />
       {/* 單人遊戲 */}
       <Card>
         <CardHeader>
@@ -24,21 +26,40 @@ export function BattleIndexPage() {
           <span>與 SITCON 電腦進行對決，複習上課知識！</span>
         </CardContent>
         <CardFooter>
-          <Button className="w-full">開始遊戲</Button>
+          <Button className="w-full">
+            <Play />
+            開始遊戲
+          </Button>
         </CardFooter>
       </Card>
       {/* 多人連線 */}
       <Card>
         <CardHeader>
-          <CardTitle></CardTitle>
-          <CardDescription></CardDescription>
+          <CardTitle>多人連線</CardTitle>
+          <CardDescription>見面就是 Yo Battle!</CardDescription>
         </CardHeader>
         <CardContent>
-          <Input
+          <span>和其他學員連線對戰，比拼誰才是知識王！</span>
         </CardContent>
-        <CardFooter className="flex gap-2">
-          <Button className="w-full flex-1" variant="secondary">加入房間</Button>
-          <Button className="w-full flex-1">創建房間</Button>
+        <CardFooter className="grid gap-2">
+          {/* 加入房間 */}
+          <Field orientation="horizontal">
+            <Input id="input-room-id" type="text" placeholder="請輸入房號" />
+            <Button size="icon-lg">
+              <ScanQrCode />
+            </Button>
+            <Button className="w-full flex-1" size="lg" variant="secondary">
+              加入房間
+              <ArrowRight />
+            </Button>
+          </Field>
+          {/* - 或 - */}
+          <span className="text-muted-foreground text-center">或</span>
+          {/* 創建房間 */}
+          <Button className="w-full flex-1">
+            <DoorOpen />
+            創建房間
+          </Button>
         </CardFooter>
       </Card>
     </main>
