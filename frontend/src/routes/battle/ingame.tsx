@@ -1,6 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router"
 
-export const Route = createFileRoute('/battle/ingame')({
+export const Route = createFileRoute("/battle/ingame")({
   component: RouteComponent,
 })
 
