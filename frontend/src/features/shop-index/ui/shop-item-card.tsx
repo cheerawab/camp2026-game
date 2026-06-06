@@ -1,6 +1,7 @@
 import { Badge } from "@/shared/ui/badge"
 import { Button } from "@/shared/ui/button"
 import { cn } from "@/shared/utils/cn"
+import { useNavigate } from "@tanstack/react-router"
 import { Info, ShoppingCart, Check } from "lucide-react"
 import { toast } from "sonner"
 
@@ -31,6 +32,12 @@ export function ShopItemCard({
   pictureSrc,
   className,
 }: ShopItemCardType) {
+  const navigate = useNavigate()
+
+  const onInspect = () => {
+    navigate({ to: `/shop/${id}` })
+  }
+
   const onPurchase = () => {
     // TODO: 串接 API
     toast.success(
@@ -75,7 +82,7 @@ export function ShopItemCard({
           <div className="text-2xl font-bold">{name}</div>
           <div className="text-muted-foreground">{description}</div>
           <div className="flex gap-2">
-            <Button variant="secondary" className="flex-1">
+            <Button variant="secondary" className="flex-1" onClick={onInspect}>
               <Info />
               資訊
             </Button>
