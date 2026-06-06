@@ -1,6 +1,7 @@
 import { Badge } from "@/shared/ui/badge"
 import { Button } from "@/shared/ui/button"
 import { X, Check } from "lucide-react"
+import { PageHeader } from "@/shared/ui/page-header"
 
 const itemData = {
   id: "lantern-theme",
@@ -24,8 +25,9 @@ export function ShopInfoPage({ data }: ShopInfoPageType) {
   // TODO: 串接 API
 
   return (
-    <main className="mx-auto grid w-full max-w-sm gap-y-4 py-4">
-      {/* TODO: place share component pageheader */}
+    <main className="mx-auto grid w-full max-w-sm gap-y-2 py-4">
+      {/* 標題 & 返回 */}
+      <PageHeader title="道具資訊" headline="Item Detail" />
       {/* 物品圖片 */}
       <div className="border-foreground bg-accent relative w-full rounded-lg border-2 py-8">
         <img

@@ -1,4 +1,5 @@
 import { ShopItemCard } from "@/features/shop-index/ui/shop-item-card"
+import { PageHeader } from "@/shared/ui/page-header"
 import { Toaster } from "@/shared/ui/sonner"
 
 const SHOP_ITEMS = [
@@ -48,10 +49,10 @@ const SHOP_ITEMS = [
 
 export function ShopPage() {
   return (
-    <div>
-      <main className="mx-auto w-full max-w-sm py-4">
+    <>
+      <main className="mx-auto grid w-full max-w-sm gap-y-2 py-4">
         {/* 標題 & 返回 */}
-        <>{/* TODO: */}</>
+        <PageHeader title="商店" headline="Item Shop" />
         {/* 簡單資訊 */}
         <>{/* TODO: */}</>
         {/* 商品列表 */}
@@ -76,6 +77,6 @@ export function ShopPage() {
         </>
       </main>
       <Toaster />
-    </div>
+    </>
   )
 }
