@@ -97,6 +97,14 @@ func openPowerReward(score int) int {
 	return score/10 + 20
 }
 
+func matchRewardRecordID(matchID, playerID string) string {
+	return "open_power_reward_" + matchID + "_" + playerID
+}
+
+func matchRewardSource(matchID, playerID string) string {
+	return "quiz_match:" + matchID + ":player:" + playerID
+}
+
 func timePtr(value time.Time) *time.Time {
 	if value.IsZero() {
 		return nil

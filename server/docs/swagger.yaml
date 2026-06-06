@@ -94,6 +94,76 @@ definitions:
         example: engineering
         type: string
     type: object
+  fusions.CreateRequest:
+    properties:
+      recipeId:
+        example: fusion-engineering-route-frame
+        type: string
+    required:
+    - recipeId
+    type: object
+  fusions.CreateResponse:
+    properties:
+      fusionId:
+        example: fusion_abc123
+        type: string
+      recipe:
+        $ref: '#/definitions/fusions.FusionRecipeResponse'
+    type: object
+  fusions.FusionComponentResponse:
+    properties:
+      id:
+        example: item-crafting-fragment
+        type: string
+      kind:
+        example: item
+        type: string
+      name:
+        example: 合成碎片
+        type: string
+      quantity:
+        example: 3
+        type: integer
+      rarity:
+        example: common
+        type: string
+      type:
+        example: material
+        type: string
+    type: object
+  fusions.FusionRecipeResponse:
+    properties:
+      available:
+        example: true
+        type: boolean
+      description:
+        example: 把工程小石與合成碎片組合成基地展示用的收藏外框。
+        type: string
+      enabled:
+        example: true
+        type: boolean
+      id:
+        example: fusion-engineering-route-frame
+        type: string
+      inputs:
+        items:
+          $ref: '#/definitions/fusions.FusionComponentResponse'
+        type: array
+      name:
+        example: 工程路線展示框
+        type: string
+      outputs:
+        items:
+          $ref: '#/definitions/fusions.FusionComponentResponse'
+        type: array
+    type: object
+  fusions.RecipeListResponse:
+    properties:
+      recipes:
+        items:
+          $ref: '#/definitions/fusions.FusionRecipeResponse'
+        type: array
+    type: object
   httpx.ErrorDetail:
     properties:
       location:
@@ -116,6 +186,42 @@ definitions:
       title:
         type: string
       type:
+        type: string
+    type: object
+  leaderboards.ListResponse:
+    properties:
+      currentTeam:
+        $ref: '#/definitions/leaderboards.TeamRankResponse'
+      gapToPrevious:
+        example: 72
+        type: integer
+      teams:
+        items:
+          $ref: '#/definitions/leaderboards.TeamRankResponse'
+        type: array
+      type:
+        example: open_power
+        type: string
+    type: object
+  leaderboards.TeamRankResponse:
+    properties:
+      current:
+        example: true
+        type: boolean
+      metric:
+        example: OP
+        type: string
+      name:
+        example: Blue Team
+        type: string
+      rank:
+        example: 2
+        type: integer
+      score:
+        example: 1188
+        type: integer
+      teamId:
+        example: 8M4RXP
         type: string
     type: object
   matches.AnswerAcceptedResponse:
@@ -181,6 +287,16 @@ definitions:
       status:
         example: active
         type: string
+    type: object
+  matches.JoinByQRRequest:
+    properties:
+      qrcodeToken:
+        example: qr_token_123456
+        maxLength: 512
+        minLength: 4
+        type: string
+    required:
+    - qrcodeToken
     type: object
   matches.JoinMatchRequest:
     properties:
@@ -261,6 +377,9 @@ definitions:
       nickname:
         example: Alice
         type: string
+      openPowerReward:
+        example: 105
+        type: integer
       playerId:
         example: 7H9K2Q
         type: string
@@ -405,6 +524,43 @@ definitions:
         example: active
         type: string
     type: object
+  me.HomeActionResponse:
+    properties:
+      enabled:
+        example: true
+        type: boolean
+      id:
+        example: battle
+        type: string
+      label:
+        example: 知識王戰
+        type: string
+    type: object
+  me.HomeResponse:
+    properties:
+      actions:
+        items:
+          $ref: '#/definitions/me.HomeActionResponse'
+        type: array
+      player:
+        $ref: '#/definitions/me.StatusResponse'
+      summary:
+        $ref: '#/definitions/me.HomeSummaryResponse'
+      teamRank:
+        $ref: '#/definitions/me.TeamRankResponse'
+    type: object
+  me.HomeSummaryResponse:
+    properties:
+      itemCount:
+        example: 29
+        type: integer
+      openPower:
+        example: 1280
+        type: integer
+      sitoneCount:
+        example: 8
+        type: integer
+    type: object
   me.ItemListResponse:
     properties:
       items:
@@ -509,7 +665,69 @@ definitions:
       team:
         $ref: '#/definitions/me.TeamResponse'
     type: object
+  me.TeamRankResponse:
+    properties:
+      gapToPrevious:
+        example: 72
+        type: integer
+      name:
+        example: Blue Team
+        type: string
+      rank:
+        example: 2
+        type: integer
+      score:
+        example: 1188
+        type: integer
+      teamId:
+        example: 8M4RXP
+        type: string
+      type:
+        example: open_power
+        type: string
+    type: object
   me.TeamResponse:
+    properties:
+      name:
+        example: Blue Team
+        type: string
+      teamId:
+        example: 8M4RXP
+        type: string
+    type: object
+  qr.PlayerSummaryResponse:
+    properties:
+      avatarUrl:
+        example: https://example.test/avatar/alice.png
+        type: string
+      nickname:
+        example: Alice
+        type: string
+      openPower:
+        example: 1280
+        type: integer
+      playerId:
+        example: 7H9K2Q
+        type: string
+      team:
+        $ref: '#/definitions/qr.TeamResponse'
+    type: object
+  qr.ResolveRequest:
+    properties:
+      qrcodeToken:
+        example: qr_token_123456
+        maxLength: 512
+        minLength: 4
+        type: string
+    required:
+    - qrcodeToken
+    type: object
+  qr.ResolveResponse:
+    properties:
+      player:
+        $ref: '#/definitions/qr.PlayerSummaryResponse'
+    type: object
+  qr.TeamResponse:
     properties:
       name:
         example: Blue Team
@@ -575,6 +793,9 @@ definitions:
       rarity:
         example: common
         type: string
+      redeemed:
+        example: false
+        type: boolean
       type:
         example: material
         type: string
@@ -700,6 +921,87 @@ paths:
       summary: List sitone catalog
       tags:
       - catalog
+  /fusions:
+    post:
+      consumes:
+      - application/json
+      description: Consumes the recipe inputs and grants recipe outputs to the authenticated
+        player.
+      parameters:
+      - description: Fusion request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/fusions.CreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/fusions.CreateResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Create fusion
+      tags:
+      - fusions
+  /fusions/recipes:
+    get:
+      description: Lists enabled fusion recipes and whether the authenticated player
+        has enough materials.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/fusions.RecipeListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: List fusion recipes
+      tags:
+      - fusions
   /healthz:
     get:
       description: Confirms the HTTP process is alive and the database is reachable.
@@ -717,6 +1019,47 @@ paths:
       summary: Health check
       tags:
       - system
+  /leaderboards:
+    get:
+      description: Lists team rankings by open power, sitone count, or completed match
+        score.
+      parameters:
+      - description: Leaderboard type
+        enum:
+        - open_power
+        - sitones
+        - matches
+        in: query
+        name: type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/leaderboards.ListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: List team leaderboard
+      tags:
+      - leaderboards
   /matches:
     post:
       description: Creates a two-player quiz match room for the authenticated player.
@@ -948,6 +1291,87 @@ paths:
       summary: Join match room
       tags:
       - matches
+  /matches/join-by-qr:
+    post:
+      consumes:
+      - application/json
+      description: Joins a waiting match by scanning either a match invite code token
+        or the host player's QR token.
+      parameters:
+      - description: Join by QR request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/matches.JoinByQRRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/matches.JoinMatchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Join match room by QR code
+      tags:
+      - matches
+  /me/home:
+    get:
+      description: Returns the authenticated player's home page summary, resource
+        counts, and open power team rank.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/me.HomeResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Get current player home summary
+      tags:
+      - me
   /me/items:
     get:
       description: Returns items owned by the authenticated player with catalog definitions.
@@ -1055,6 +1479,49 @@ paths:
       summary: Get current player status
       tags:
       - me
+  /qr/resolve:
+    post:
+      consumes:
+      - application/json
+      description: Resolves a player QR token into a public player summary without
+        exposing auth credentials.
+      parameters:
+      - description: QR resolve request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/qr.ResolveRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/qr.ResolveResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      summary: Resolve player QR code
+      tags:
+      - qr
   /shop/items:
     get:
       description: Lists purchasable and enabled item definitions.

@@ -94,6 +94,18 @@ func TestStatusResponse(t *testing.T) {
 	}
 }
 
+func TestHomeActions(t *testing.T) {
+	actions := homeActions()
+	if len(actions) != 8 {
+		t.Fatalf("expected 8 home actions, got %#v", actions)
+	}
+	for _, action := range actions {
+		if action.ID == "" || action.Label == "" || !action.Enabled {
+			t.Fatalf("expected enabled action with id and label, got %#v", action)
+		}
+	}
+}
+
 func TestOpenPowerTotalPipeline(t *testing.T) {
 	got := openPowerTotalPipeline("7H9K2Q")
 	want := mongo.Pipeline{
@@ -106,6 +118,13 @@ func TestOpenPowerTotalPipeline(t *testing.T) {
 
 	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("unexpected pipeline: %#v", got)
+	}
+}
+
+func TestOpenPowerScoresByTeamPipeline(t *testing.T) {
+	pipeline := openPowerScoresByTeamPipeline()
+	if len(pipeline) != 4 {
+		t.Fatalf("expected 4 pipeline stages, got %#v", pipeline)
 	}
 }
 

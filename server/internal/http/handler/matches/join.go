@@ -54,6 +54,11 @@ func (h *Handler) Join(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match join failed"))
 		return
 	}
+
+	h.joinMatch(w, r, match, player)
+}
+
+func (h *Handler) joinMatch(w http.ResponseWriter, r *http.Request, match mongomodel.Match, player mongomodel.Player) {
 	if match.Status != mongomodel.MatchStatusWaiting {
 		httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "match is not joinable"))
 		return

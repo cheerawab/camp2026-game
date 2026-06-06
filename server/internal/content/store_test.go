@@ -148,6 +148,61 @@ func TestLoadQuizQuestions(t *testing.T) {
 	}
 }
 
+func TestLoadFusionRecipes(t *testing.T) {
+	dir := writeContent(t, validSitonesTOML(), validItemsTOML(), validQuizQuestionsCSV(), `
+[[fusion_recipes]]
+id = "fusion-engineering-route-frame"
+name = "Engineering Route Frame"
+description = "Build a base display frame."
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "sitone-engineering"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item-crafting-fragment"
+quantity = 3
+
+[[fusion_recipes.outputs]]
+kind = "item"
+id = "item-crafting-fragment"
+quantity = 1
+`)
+
+	store, err := Load(dir)
+	if err != nil {
+		t.Fatalf("load content: %v", err)
+	}
+
+	recipes := store.ListFusionRecipes()
+	if len(recipes) != 1 {
+		t.Fatalf("expected 1 recipe, got %d", len(recipes))
+	}
+	if recipes[0].ID != "fusion-engineering-route-frame" || !recipes[0].Enabled {
+		t.Fatalf("unexpected fusion recipe: %#v", recipes[0])
+	}
+
+	recipe, ok := store.GetFusionRecipe("fusion-engineering-route-frame")
+	if !ok {
+		t.Fatal("expected fusion recipe to exist")
+	}
+	if len(recipe.Inputs) != 2 || len(recipe.Outputs) != 1 {
+		t.Fatalf("unexpected recipe components: %#v", recipe)
+	}
+
+	recipes[0].Inputs[0].ID = "mutated"
+	recipe, ok = store.GetFusionRecipe("fusion-engineering-route-frame")
+	if !ok {
+		t.Fatal("expected fusion recipe to exist")
+	}
+	if recipe.Inputs[0].ID != "sitone-engineering" {
+		t.Fatalf("expected fusion recipe components to be copied, got %#v", recipe.Inputs[0])
+	}
+}
+
 func TestLoadRejectsDuplicateSitoneID(t *testing.T) {
 	dir := writeContent(t, `
 [[sitones]]
@@ -353,6 +408,9 @@ func TestLoadResolvesServerContentFallback(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(contentDir, itemsFile), []byte(validItemsTOML()), 0o644); err != nil {
 		t.Fatalf("write items: %v", err)
 	}
+	if err := os.WriteFile(filepath.Join(contentDir, fusionRecipesFile), []byte(validFusionRecipesTOML()), 0o644); err != nil {
+		t.Fatalf("write fusion recipes: %v", err)
+	}
 	if err := os.WriteFile(filepath.Join(contentDir, quizQuestionsFile), []byte(validQuizQuestionsCSV()), 0o644); err != nil {
 		t.Fatalf("write quiz questions: %v", err)
 	}
@@ -401,6 +459,14 @@ func writeContent(t *testing.T, sitones string, values ...string) string {
 		t.Fatalf("write items: %v", err)
 	}
 
+	fusionContent := validFusionRecipesTOML()
+	if len(values) > 2 {
+		fusionContent = values[2]
+	}
+	if err := os.WriteFile(filepath.Join(dir, fusionRecipesFile), []byte(strings.TrimSpace(fusionContent)), 0o644); err != nil {
+		t.Fatalf("write fusion recipes: %v", err)
+	}
+
 	quizContent := validQuizQuestionsCSV()
 	if len(values) > 1 {
 		quizContent = values[1]
@@ -428,6 +494,31 @@ id = "item-crafting-fragment"
 name = "Crafting Fragment"
 type = "material"
 rarity = "common"
+`)
+}
+
+func validFusionRecipesTOML() string {
+	return strings.TrimSpace(`
+[[fusion_recipes]]
+id = "fusion-engineering-route-frame"
+name = "Engineering Route Frame"
+description = "Build a base display frame."
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "sitone-engineering"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item-crafting-fragment"
+quantity = 3
+
+[[fusion_recipes.outputs]]
+kind = "item"
+id = "item-crafting-fragment"
+quantity = 1
 `)
 }
 

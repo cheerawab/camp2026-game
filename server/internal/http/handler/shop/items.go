@@ -1,12 +1,16 @@
 package shop
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 
 	"github.com/sitcon-tw/camp2026-game/internal/content"
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
+	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
 )
 
 // ListItems godoc
@@ -20,15 +24,22 @@ import (
 // @Failure 503 {object} httpx.ProblemDetails
 // @Router /shop/items [get]
 func (h *Handler) ListItems(w http.ResponseWriter, r *http.Request) {
-	if _, ok := currentPlayer(w, r); !ok {
+	player, ok := currentPlayer(w, r)
+	if !ok {
 		return
 	}
-	if !h.requireContent(w, r) {
+	if !h.requireContent(w, r) || !h.requireDatabase(w, r) {
+		return
+	}
+
+	redeemed, err := h.redeemedItemIDs(r.Context(), player.ID)
+	if err != nil {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "shop items unavailable"))
 		return
 	}
 
 	httpx.WriteJSON(w, http.StatusOK, ItemListResponse{
-		Items: shopItemResponses(shopItems(h.content)),
+		Items: shopItemResponses(shopItems(h.content), redeemed),
 	})
 }
 
@@ -45,10 +56,11 @@ func (h *Handler) ListItems(w http.ResponseWriter, r *http.Request) {
 // @Failure 503 {object} httpx.ProblemDetails
 // @Router /shop/items/{itemID} [get]
 func (h *Handler) GetItem(w http.ResponseWriter, r *http.Request) {
-	if _, ok := currentPlayer(w, r); !ok {
+	player, ok := currentPlayer(w, r)
+	if !ok {
 		return
 	}
-	if !h.requireContent(w, r) {
+	if !h.requireContent(w, r) || !h.requireDatabase(w, r) {
 		return
 	}
 
@@ -59,8 +71,14 @@ func (h *Handler) GetItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	redeemed, err := h.itemRedeemed(r.Context(), player.ID, item.ID)
+	if err != nil {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "shop item unavailable"))
+		return
+	}
+
 	httpx.WriteJSON(w, http.StatusOK, ItemDetailResponse{
-		Item: shopItemResponse(item),
+		Item: shopItemResponse(item, redeemed),
 	})
 }
 
@@ -83,19 +101,20 @@ func shopItemByID(store *content.Store, itemID string) (content.Item, bool) {
 	return item, true
 }
 
-func shopItemResponses(items []content.Item) []ShopItemResponse {
+func shopItemResponses(items []content.Item, redeemed map[string]struct{}) []ShopItemResponse {
 	if len(items) == 0 {
 		return nil
 	}
 
 	out := make([]ShopItemResponse, 0, len(items))
 	for _, item := range items {
-		out = append(out, shopItemResponse(item))
+		_, isRedeemed := redeemed[item.ID]
+		out = append(out, shopItemResponse(item, isRedeemed))
 	}
 	return out
 }
 
-func shopItemResponse(item content.Item) ShopItemResponse {
+func shopItemResponse(item content.Item, redeemed bool) ShopItemResponse {
 	return ShopItemResponse{
 		ID:             item.ID,
 		Name:           item.Name,
@@ -103,5 +122,41 @@ func shopItemResponse(item content.Item) ShopItemResponse {
 		Rarity:         item.Rarity,
 		Description:    item.Description,
 		PriceOpenPower: item.PriceOpenPower,
+		Redeemed:       redeemed,
 	}
+}
+
+func (h *Handler) redeemedItemIDs(ctx context.Context, playerID string) (map[string]struct{}, error) {
+	cursor, err := h.db.Collection(mongomodel.ShopPurchasesCollection).Find(
+		ctx,
+		bson.M{"player_id": playerID},
+		options.Find().SetSort(bson.D{{Key: "item_id", Value: 1}}),
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		_ = cursor.Close(ctx)
+	}()
+
+	var purchases []mongomodel.ShopPurchase
+	if err := cursor.All(ctx, &purchases); err != nil {
+		return nil, err
+	}
+	out := make(map[string]struct{}, len(purchases))
+	for _, purchase := range purchases {
+		out[purchase.ItemID] = struct{}{}
+	}
+	return out, nil
+}
+
+func (h *Handler) itemRedeemed(ctx context.Context, playerID string, itemID string) (bool, error) {
+	count, err := h.db.Collection(mongomodel.ShopPurchasesCollection).CountDocuments(ctx, bson.M{
+		"player_id": playerID,
+		"item_id":   itemID,
+	})
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
 }
