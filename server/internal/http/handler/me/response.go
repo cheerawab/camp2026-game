@@ -13,6 +13,34 @@ type StatusResponse struct {
 	AvatarURL string       `json:"avatarUrl,omitempty" example:"https://example.test/avatar/alice.png"`
 }
 
+type HomeResponse struct {
+	Player   StatusResponse       `json:"player"`
+	Summary  HomeSummaryResponse  `json:"summary"`
+	TeamRank *TeamRankResponse    `json:"teamRank,omitempty"`
+	Actions  []HomeActionResponse `json:"actions"`
+}
+
+type HomeSummaryResponse struct {
+	OpenPower   int `json:"openPower" example:"1280"`
+	SitoneCount int `json:"sitoneCount" example:"8"`
+	ItemCount   int `json:"itemCount" example:"29"`
+}
+
+type TeamRankResponse struct {
+	Type          string `json:"type" example:"open_power"`
+	Rank          int    `json:"rank" example:"2"`
+	TeamID        string `json:"teamId" example:"8M4RXP"`
+	Name          string `json:"name" example:"Blue Team"`
+	Score         int    `json:"score" example:"1188"`
+	GapToPrevious int    `json:"gapToPrevious" example:"72"`
+}
+
+type HomeActionResponse struct {
+	ID      string `json:"id" example:"battle"`
+	Label   string `json:"label" example:"知識王戰"`
+	Enabled bool   `json:"enabled" example:"true"`
+}
+
 type QRCodeResponse struct {
 	QRCodeToken string `json:"qrcodeToken" example:"qr_token_123456"`
 }

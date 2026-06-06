@@ -76,7 +76,7 @@ func (h *Handler) Purchase(w http.ResponseWriter, r *http.Request) {
 		Quantity:       purchaseQuantity,
 		PriceOpenPower: item.PriceOpenPower,
 		OpenPower:      result.openPower,
-		Item:           shopItemResponse(item),
+		Item:           shopItemResponse(item, true),
 	})
 }
 

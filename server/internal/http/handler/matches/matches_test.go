@@ -36,6 +36,15 @@ func TestOpenPowerReward(t *testing.T) {
 	}
 }
 
+func TestMatchRewardKeysUseMatchAndPlayer(t *testing.T) {
+	if got := matchRewardRecordID("match_123", "P1"); got != "open_power_reward_match_123_P1" {
+		t.Fatalf("unexpected reward record id: %q", got)
+	}
+	if got := matchRewardSource("match_123", "P1"); got != "quiz_match:match_123:player:P1" {
+		t.Fatalf("unexpected reward source: %q", got)
+	}
+}
+
 func TestAllPlayersReady(t *testing.T) {
 	match := mongomodel.Match{
 		Players: []mongomodel.MatchPlayer{

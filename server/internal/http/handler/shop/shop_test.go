@@ -34,10 +34,27 @@ func TestShopItemResponse(t *testing.T) {
 		Rarity:         "common",
 		Description:    "小石造型合成使用的基礎素材。",
 		PriceOpenPower: 50,
-	})
+	}, true)
 
-	if response.ID != "item-crafting-fragment" || response.PriceOpenPower != 50 {
+	if response.ID != "item-crafting-fragment" || response.PriceOpenPower != 50 || !response.Redeemed {
 		t.Fatalf("unexpected shop item response: %#v", response)
+	}
+}
+
+func TestShopItemResponsesIncludesRedeemedState(t *testing.T) {
+	responses := shopItemResponses([]content.Item{
+		{ID: "item-a", Name: "A", Type: "material", Rarity: "common", PriceOpenPower: 10},
+		{ID: "item-b", Name: "B", Type: "material", Rarity: "common", PriceOpenPower: 20},
+	}, map[string]struct{}{"item-b": {}})
+
+	if len(responses) != 2 {
+		t.Fatalf("expected 2 responses, got %#v", responses)
+	}
+	if responses[0].Redeemed {
+		t.Fatalf("expected first item not redeemed: %#v", responses[0])
+	}
+	if !responses[1].Redeemed {
+		t.Fatalf("expected second item redeemed: %#v", responses[1])
 	}
 }
 

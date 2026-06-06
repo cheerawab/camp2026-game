@@ -23,6 +23,8 @@ type Store struct {
 	sitonesByID       map[string]Sitone
 	items             []Item
 	itemsByID         map[string]Item
+	fusionRecipes     []FusionRecipe
+	fusionRecipesByID map[string]FusionRecipe
 	quizQuestions     []QuizQuestion
 	quizQuestionsByID map[string]QuizQuestion
 }
@@ -55,6 +57,17 @@ func Load(dir string) (*Store, error) {
 		return nil, err
 	}
 
+	fusionRecipesPath := filepath.Join(resolvedDir, fusionRecipesFile)
+	fusionRecipesDoc, err := loadTOMLFile[fusionRecipesDocument](fusionRecipesPath)
+	if err != nil {
+		return nil, err
+	}
+
+	fusionRecipes, fusionRecipesByID, err := validateFusionRecipes(fusionRecipesPath, fusionRecipesDoc.FusionRecipes, sitonesByID, itemsByID)
+	if err != nil {
+		return nil, err
+	}
+
 	quizQuestionsPath := filepath.Join(resolvedDir, quizQuestionsFile)
 	quizQuestions, quizQuestionsByID, err := loadQuizQuestions(quizQuestionsPath)
 	if err != nil {
@@ -66,6 +79,8 @@ func Load(dir string) (*Store, error) {
 		sitonesByID:       sitonesByID,
 		items:             items,
 		itemsByID:         itemsByID,
+		fusionRecipes:     fusionRecipes,
+		fusionRecipesByID: fusionRecipesByID,
 		quizQuestions:     quizQuestions,
 		quizQuestionsByID: quizQuestionsByID,
 	}, nil

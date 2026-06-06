@@ -58,7 +58,7 @@ func (h *Handler) ListItems(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) findPlayerItems(ctx context.Context, playerID string) ([]mongomodel.PlayerItem, error) {
 	cursor, err := h.db.Collection(mongomodel.PlayerItemsCollection).Find(
 		ctx,
-		bson.M{"player_id": playerID},
+		bson.M{"player_id": playerID, "quantity": bson.M{"$gt": 0}},
 		options.Find().SetSort(bson.D{{Key: "item_id", Value: 1}}),
 	)
 	if err != nil {

@@ -30,6 +30,7 @@ func New(dep Dependencies) *Handler {
 }
 
 func (h *Handler) RegisterRoutes(api chi.Router) {
+	api.Get("/me/home", h.Home)
 	api.Get("/me/status", h.Status)
 	api.Get("/me/sitones", h.ListSitones)
 	api.Get("/me/items", h.ListItems)

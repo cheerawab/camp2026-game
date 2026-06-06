@@ -171,6 +171,130 @@ const docTemplate = `{
                 }
             }
         },
+        "/fusions": {
+            "post": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Consumes the recipe inputs and grants recipe outputs to the authenticated player.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fusions"
+                ],
+                "summary": "Create fusion",
+                "parameters": [
+                    {
+                        "description": "Fusion request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/fusions.CreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/fusions.CreateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/fusions/recipes": {
+            "get": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Lists enabled fusion recipes and whether the authenticated player has enough materials.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "fusions"
+                ],
+                "summary": "List fusion recipes",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/fusions.RecipeListResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
         "/healthz": {
             "get": {
                 "description": "Confirms the HTTP process is alive and the database is reachable.",
@@ -186,6 +310,68 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/system.StatusResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/leaderboards": {
+            "get": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Lists team rankings by open power, sitone count, or completed match score.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "leaderboards"
+                ],
+                "summary": "List team leaderboard",
+                "parameters": [
+                    {
+                        "enum": [
+                            "open_power",
+                            "sitones",
+                            "matches"
+                        ],
+                        "type": "string",
+                        "description": "Leaderboard type",
+                        "name": "type",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/leaderboards.ListResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
                         }
                     },
                     "503": {
@@ -266,6 +452,87 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/matches.JoinMatchRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/matches.JoinMatchResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/matches/join-by-qr": {
+            "post": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Joins a waiting match by scanning either a match invite code token or the host player's QR token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "matches"
+                ],
+                "summary": "Join match room by QR code",
+                "parameters": [
+                    {
+                        "description": "Join by QR request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/matches.JoinByQRRequest"
                         }
                     }
                 ],
@@ -555,6 +822,49 @@ const docTemplate = `{
                 }
             }
         },
+        "/me/home": {
+            "get": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Returns the authenticated player's home page summary, resource counts, and open power team rank.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "me"
+                ],
+                "summary": "Get current player home summary",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/me.HomeResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
         "/me/items": {
             "get": {
                 "security": [
@@ -702,6 +1012,70 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/qr/resolve": {
+            "post": {
+                "description": "Resolves a player QR token into a public player summary without exposing auth credentials.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "qr"
+                ],
+                "summary": "Resolve player QR code",
+                "parameters": [
+                    {
+                        "description": "QR resolve request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/qr.ResolveRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/qr.ResolveResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
                         "schema": {
                             "$ref": "#/definitions/httpx.ProblemDetails"
                         }
@@ -1028,6 +1402,107 @@ const docTemplate = `{
                 }
             }
         },
+        "fusions.CreateRequest": {
+            "type": "object",
+            "required": [
+                "recipeId"
+            ],
+            "properties": {
+                "recipeId": {
+                    "type": "string",
+                    "example": "fusion-engineering-route-frame"
+                }
+            }
+        },
+        "fusions.CreateResponse": {
+            "type": "object",
+            "properties": {
+                "fusionId": {
+                    "type": "string",
+                    "example": "fusion_abc123"
+                },
+                "recipe": {
+                    "$ref": "#/definitions/fusions.FusionRecipeResponse"
+                }
+            }
+        },
+        "fusions.FusionComponentResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "item-crafting-fragment"
+                },
+                "kind": {
+                    "type": "string",
+                    "example": "item"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "合成碎片"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "example": 3
+                },
+                "rarity": {
+                    "type": "string",
+                    "example": "common"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "material"
+                }
+            }
+        },
+        "fusions.FusionRecipeResponse": {
+            "type": "object",
+            "properties": {
+                "available": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "description": {
+                    "type": "string",
+                    "example": "把工程小石與合成碎片組合成基地展示用的收藏外框。"
+                },
+                "enabled": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "id": {
+                    "type": "string",
+                    "example": "fusion-engineering-route-frame"
+                },
+                "inputs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/fusions.FusionComponentResponse"
+                    }
+                },
+                "name": {
+                    "type": "string",
+                    "example": "工程路線展示框"
+                },
+                "outputs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/fusions.FusionComponentResponse"
+                    }
+                }
+            }
+        },
+        "fusions.RecipeListResponse": {
+            "type": "object",
+            "properties": {
+                "recipes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/fusions.FusionRecipeResponse"
+                    }
+                }
+            }
+        },
         "httpx.ErrorDetail": {
             "type": "object",
             "properties": {
@@ -1062,6 +1537,57 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "string"
+                }
+            }
+        },
+        "leaderboards.ListResponse": {
+            "type": "object",
+            "properties": {
+                "currentTeam": {
+                    "$ref": "#/definitions/leaderboards.TeamRankResponse"
+                },
+                "gapToPrevious": {
+                    "type": "integer",
+                    "example": 72
+                },
+                "teams": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/leaderboards.TeamRankResponse"
+                    }
+                },
+                "type": {
+                    "type": "string",
+                    "example": "open_power"
+                }
+            }
+        },
+        "leaderboards.TeamRankResponse": {
+            "type": "object",
+            "properties": {
+                "current": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "metric": {
+                    "type": "string",
+                    "example": "OP"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Blue Team"
+                },
+                "rank": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "score": {
+                    "type": "integer",
+                    "example": 1188
+                },
+                "teamId": {
+                    "type": "string",
+                    "example": "8M4RXP"
                 }
             }
         },
@@ -1153,6 +1679,20 @@ const docTemplate = `{
                 "status": {
                     "type": "string",
                     "example": "active"
+                }
+            }
+        },
+        "matches.JoinByQRRequest": {
+            "type": "object",
+            "required": [
+                "qrcodeToken"
+            ],
+            "properties": {
+                "qrcodeToken": {
+                    "type": "string",
+                    "maxLength": 512,
+                    "minLength": 4,
+                    "example": "qr_token_123456"
                 }
             }
         },
@@ -1267,6 +1807,10 @@ const docTemplate = `{
                 "nickname": {
                     "type": "string",
                     "example": "Alice"
+                },
+                "openPowerReward": {
+                    "type": "integer",
+                    "example": 105
                 },
                 "playerId": {
                     "type": "string",
@@ -1472,6 +2016,60 @@ const docTemplate = `{
                 }
             }
         },
+        "me.HomeActionResponse": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "id": {
+                    "type": "string",
+                    "example": "battle"
+                },
+                "label": {
+                    "type": "string",
+                    "example": "知識王戰"
+                }
+            }
+        },
+        "me.HomeResponse": {
+            "type": "object",
+            "properties": {
+                "actions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/me.HomeActionResponse"
+                    }
+                },
+                "player": {
+                    "$ref": "#/definitions/me.StatusResponse"
+                },
+                "summary": {
+                    "$ref": "#/definitions/me.HomeSummaryResponse"
+                },
+                "teamRank": {
+                    "$ref": "#/definitions/me.TeamRankResponse"
+                }
+            }
+        },
+        "me.HomeSummaryResponse": {
+            "type": "object",
+            "properties": {
+                "itemCount": {
+                    "type": "integer",
+                    "example": 29
+                },
+                "openPower": {
+                    "type": "integer",
+                    "example": 1280
+                },
+                "sitoneCount": {
+                    "type": "integer",
+                    "example": 8
+                }
+            }
+        },
         "me.ItemListResponse": {
             "type": "object",
             "properties": {
@@ -1621,7 +2219,95 @@ const docTemplate = `{
                 }
             }
         },
+        "me.TeamRankResponse": {
+            "type": "object",
+            "properties": {
+                "gapToPrevious": {
+                    "type": "integer",
+                    "example": 72
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Blue Team"
+                },
+                "rank": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "score": {
+                    "type": "integer",
+                    "example": 1188
+                },
+                "teamId": {
+                    "type": "string",
+                    "example": "8M4RXP"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "open_power"
+                }
+            }
+        },
         "me.TeamResponse": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "Blue Team"
+                },
+                "teamId": {
+                    "type": "string",
+                    "example": "8M4RXP"
+                }
+            }
+        },
+        "qr.PlayerSummaryResponse": {
+            "type": "object",
+            "properties": {
+                "avatarUrl": {
+                    "type": "string",
+                    "example": "https://example.test/avatar/alice.png"
+                },
+                "nickname": {
+                    "type": "string",
+                    "example": "Alice"
+                },
+                "openPower": {
+                    "type": "integer",
+                    "example": 1280
+                },
+                "playerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                },
+                "team": {
+                    "$ref": "#/definitions/qr.TeamResponse"
+                }
+            }
+        },
+        "qr.ResolveRequest": {
+            "type": "object",
+            "required": [
+                "qrcodeToken"
+            ],
+            "properties": {
+                "qrcodeToken": {
+                    "type": "string",
+                    "maxLength": 512,
+                    "minLength": 4,
+                    "example": "qr_token_123456"
+                }
+            }
+        },
+        "qr.ResolveResponse": {
+            "type": "object",
+            "properties": {
+                "player": {
+                    "$ref": "#/definitions/qr.PlayerSummaryResponse"
+                }
+            }
+        },
+        "qr.TeamResponse": {
             "type": "object",
             "properties": {
                 "name": {
@@ -1715,6 +2401,10 @@ const docTemplate = `{
                 "rarity": {
                     "type": "string",
                     "example": "common"
+                },
+                "redeemed": {
+                    "type": "boolean",
+                    "example": false
                 },
                 "type": {
                     "type": "string",
