@@ -56,25 +56,22 @@ export function ShopPage() {
         {/* 簡單資訊 */}
         <>{/* TODO: */}</>
         {/* 商品列表 */}
-        <>
-          {/* TODO: 新增標籤篩選按鈕 */}
-          <div className="grid gap-y-2">
-            {SHOP_ITEMS.map((item) => {
-              return (
-                <ShopItemCard
-                  id={item.id}
-                  name={item.name}
-                  description={item.description}
-                  price={item.price}
-                  tags={item.tags}
-                  purchased={item?.purchased}
-                  pictureSrc={item.pictureSrc}
-                  className=""
-                />
-              )
-            })}
-          </div>
-        </>
+        {/* TODO: 新增標籤篩選按鈕 */}
+        <div className="grid gap-y-2">
+          {SHOP_ITEMS.map((item) => {
+            return (
+              <ShopItemCard
+                id={item.id}
+                name={item.name}
+                description={item.description}
+                price={item.price}
+                tags={item.tags}
+                purchased={item?.purchased}
+                pictureSrc={item.pictureSrc}
+              />
+            )
+          })}
+        </div>
       </main>
       <Toaster />
     </>

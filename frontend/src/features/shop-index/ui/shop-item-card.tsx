@@ -1,6 +1,6 @@
 import { Badge } from "@/shared/ui/badge"
 import { Button } from "@/shared/ui/button"
-import { cn } from "@/shared/utils/cn"
+import { Card, CardContent } from "@/shared/ui/card"
 import { useNavigate } from "@tanstack/react-router"
 import { Info, ShoppingCart, Check } from "lucide-react"
 import { toast } from "sonner"
@@ -19,7 +19,6 @@ type ShopItemCardType = {
   tags: Array<string>
   purchased?: boolean
   pictureSrc: string
-  className?: string
 }
 
 export function ShopItemCard({
@@ -30,7 +29,6 @@ export function ShopItemCard({
   tags,
   purchased = false,
   pictureSrc,
-  className,
 }: ShopItemCardType) {
   const navigate = useNavigate()
 
@@ -55,51 +53,51 @@ export function ShopItemCard({
     )
   }
   return (
-    <div
-      className={cn(
-        "bg-accent border-foreground rounded-lg border-2 px-8 py-4",
-        className,
-      )}
-      id={`item-${id}`}
-    >
-      <div className="flex gap-4">
-        <div className="basis-1/3">
-          <img
-            src={pictureSrc}
-            alt={name}
-            className="aspect-square h-full rounded-lg"
-          />
-        </div>
-        <div className="grid basis-2/3 gap-2">
-          <div className="flex justify-between">
-            <div className="flex gap-2">
-              {tags.map((item) => {
-                return <Badge key={item}>{item}</Badge>
-              })}
+    <Card>
+      <CardContent>
+        <div className="flex gap-4">
+          <div className="basis-1/3">
+            <img
+              src={pictureSrc}
+              alt={name}
+              className="aspect-square h-full rounded-lg"
+            />
+          </div>
+          <div className="grid basis-2/3 gap-2">
+            <div className="flex justify-between">
+              <div className="flex gap-2">
+                {tags.map((item) => {
+                  return (
+                    <Badge variant="outline" key={item}>
+                      {item}
+                    </Badge>
+                  )
+                })}
+              </div>
+              <Badge>{price} OP</Badge>
             </div>
-            <Badge>{price} OP</Badge>
-          </div>
-          <div className="text-2xl font-bold">{name}</div>
-          <div className="text-muted-foreground">{description}</div>
-          <div className="flex gap-2">
-            <Button variant="secondary" className="flex-1" onClick={onInspect}>
-              <Info />
-              資訊
-            </Button>
-            {purchased ? (
-              <Button variant="outline" disabled className="flex-1">
-                <Check />
-                已擁有
+            <div className="text-2xl font-bold">{name}</div>
+            <div className="text-muted-foreground">{description}</div>
+            <div className="grid grid-cols-2 gap-2">
+              <Button variant="secondary" onClick={onInspect}>
+                <Info />
+                資訊
               </Button>
-            ) : (
-              <Button className="flex-1" onClick={onPurchase}>
-                <ShoppingCart />
-                購買
-              </Button>
-            )}
+              {purchased ? (
+                <Button variant="outline" disabled>
+                  <Check />
+                  已擁有
+                </Button>
+              ) : (
+                <Button onClick={onPurchase}>
+                  <ShoppingCart />
+                  購買
+                </Button>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }
