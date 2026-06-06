@@ -1,4 +1,4 @@
-import { ShopItemCard } from "@/features/shop/ui/shop-item-card"
+import { ShopItemCard } from "@/features/shop-index/ui/shop-item-card"
 import { Toaster } from "@/shared/ui/sonner"
 
 const SHOP_ITEMS = [
