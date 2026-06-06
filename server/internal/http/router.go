@@ -14,8 +14,11 @@ import (
 	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
 	authhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/auth"
 	cataloghandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/catalog"
+	fusionshandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/fusions"
+	leaderboardshandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/leaderboards"
 	matcheshandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/matches"
 	mehandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/me"
+	qrhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/qr"
 	shophandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/shop"
 	systemhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/system"
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
@@ -69,13 +72,24 @@ func registerRoutes(api chi.Router, dep Dependencies) {
 	cataloghandler.New(cataloghandler.Dependencies{
 		Content: dep.Content,
 	}).RegisterRoutes(api)
+	qrhandler.New(qrhandler.Dependencies{
+		MongoDB: dep.MongoDB,
+	}).RegisterRoutes(api)
 	mehandler.New(mehandler.Dependencies{
 		Content: dep.Content,
+		MongoDB: dep.MongoDB,
+	}).RegisterRoutes(api.With(authctx.RequirePlayer(dep.MongoDB)))
+	leaderboardshandler.New(leaderboardshandler.Dependencies{
 		MongoDB: dep.MongoDB,
 	}).RegisterRoutes(api.With(authctx.RequirePlayer(dep.MongoDB)))
 	matcheshandler.New(matcheshandler.Dependencies{
 		Content: dep.Content,
 		MongoDB: dep.MongoDB,
+	}).RegisterRoutes(api.With(authctx.RequirePlayer(dep.MongoDB)))
+	fusionshandler.New(fusionshandler.Dependencies{
+		Content:     dep.Content,
+		MongoClient: dep.MongoClient,
+		MongoDB:     dep.MongoDB,
 	}).RegisterRoutes(api.With(authctx.RequirePlayer(dep.MongoDB)))
 	shophandler.New(shophandler.Dependencies{
 		Content:     dep.Content,

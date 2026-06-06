@@ -57,7 +57,6 @@ func TestRemovedRoutes(t *testing.T) {
 		{method: http.MethodGet, path: "/api/"},
 		{method: http.MethodGet, path: "/api/me"},
 		{method: http.MethodGet, path: "/api/me/state"},
-		{method: http.MethodGet, path: "/api/me/home"},
 		{method: http.MethodGet, path: "/api/me/sitones/S9K2QA"},
 		{method: http.MethodGet, path: "/api/me/items/I8M4RX"},
 		{method: http.MethodGet, path: "/api/me/open-power"},
@@ -152,6 +151,7 @@ func TestMatchRoutesRequireAuthentication(t *testing.T) {
 	}{
 		{method: http.MethodPost, path: "/api/matches"},
 		{method: http.MethodPost, path: "/api/matches/join"},
+		{method: http.MethodPost, path: "/api/matches/join-by-qr"},
 		{method: http.MethodGet, path: "/api/matches/M8RXP2"},
 		{method: http.MethodPost, path: "/api/matches/M8RXP2/ready"},
 		{method: http.MethodPost, path: "/api/matches/M8RXP2/answers"},
@@ -176,6 +176,7 @@ func TestMatchRoutesRequireDatabase(t *testing.T) {
 	}{
 		{method: http.MethodPost, path: "/api/matches"},
 		{method: http.MethodPost, path: "/api/matches/join"},
+		{method: http.MethodPost, path: "/api/matches/join-by-qr"},
 		{method: http.MethodGet, path: "/api/matches/M8RXP2"},
 		{method: http.MethodPost, path: "/api/matches/M8RXP2/ready"},
 		{method: http.MethodPost, path: "/api/matches/M8RXP2/answers"},
@@ -196,6 +197,7 @@ func TestMeRoutesRequireAuthentication(t *testing.T) {
 	})
 
 	for _, path := range []string{
+		"/api/me/home",
 		"/api/me/status",
 		"/api/me/qrcode",
 		"/api/me/sitones",
@@ -215,6 +217,7 @@ func TestMeRoutesRequireDatabase(t *testing.T) {
 	})
 
 	for _, path := range []string{
+		"/api/me/home",
 		"/api/me/status",
 		"/api/me/qrcode",
 		"/api/me/sitones",
@@ -364,12 +367,17 @@ func TestSwaggerJSON(t *testing.T) {
 		"/catalog/items",
 		"/catalog/sitones",
 		"/healthz",
+		"/fusions",
+		"/fusions/recipes",
+		"/leaderboards",
 		"/me/items",
+		"/me/home",
 		"/me/qrcode",
 		"/me/sitones",
 		"/me/status",
 		"/matches",
 		"/matches/join",
+		"/matches/join-by-qr",
 		"/matches/{matchID}",
 		"/matches/{matchID}/answers",
 		"/matches/{matchID}/events",
@@ -377,6 +385,7 @@ func TestSwaggerJSON(t *testing.T) {
 		"/shop/items",
 		"/shop/items/{itemID}",
 		"/shop/purchases",
+		"/qr/resolve",
 		"AuthCookieAuth",
 		"camp2026_auth",
 	} {
@@ -401,7 +410,6 @@ func TestSwaggerJSON(t *testing.T) {
 		"/me",
 		"/me/state",
 		"/me/open-power",
-		"/me/home",
 		"/users/state",
 		"/activities",
 		"/activities/{activityID}",
@@ -435,12 +443,18 @@ func TestSwaggerJSON(t *testing.T) {
 	assertSwaggerSecurity(t, spec.Paths, "/auth/logout", http.MethodPost, true)
 	assertSwaggerSecurity(t, spec.Paths, "/catalog/items", http.MethodGet, false)
 	assertSwaggerSecurity(t, spec.Paths, "/catalog/sitones", http.MethodGet, false)
+	assertSwaggerSecurity(t, spec.Paths, "/qr/resolve", http.MethodPost, false)
+	assertSwaggerSecurity(t, spec.Paths, "/fusions", http.MethodPost, true)
+	assertSwaggerSecurity(t, spec.Paths, "/fusions/recipes", http.MethodGet, true)
+	assertSwaggerSecurity(t, spec.Paths, "/leaderboards", http.MethodGet, true)
+	assertSwaggerSecurity(t, spec.Paths, "/me/home", http.MethodGet, true)
 	assertSwaggerSecurity(t, spec.Paths, "/me/status", http.MethodGet, true)
 	assertSwaggerSecurity(t, spec.Paths, "/me/qrcode", http.MethodGet, true)
 	assertSwaggerSecurity(t, spec.Paths, "/me/sitones", http.MethodGet, true)
 	assertSwaggerSecurity(t, spec.Paths, "/me/items", http.MethodGet, true)
 	assertSwaggerSecurity(t, spec.Paths, "/matches", http.MethodPost, true)
 	assertSwaggerSecurity(t, spec.Paths, "/matches/join", http.MethodPost, true)
+	assertSwaggerSecurity(t, spec.Paths, "/matches/join-by-qr", http.MethodPost, true)
 	assertSwaggerSecurity(t, spec.Paths, "/matches/{matchID}", http.MethodGet, true)
 	assertSwaggerSecurity(t, spec.Paths, "/matches/{matchID}/ready", http.MethodPost, true)
 	assertSwaggerSecurity(t, spec.Paths, "/matches/{matchID}/answers", http.MethodPost, true)

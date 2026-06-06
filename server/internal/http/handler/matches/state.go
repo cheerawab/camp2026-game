@@ -144,32 +144,31 @@ func (h *Handler) shouldAdvanceRound(ctx context.Context, match mongomodel.Match
 }
 
 func (h *Handler) writeMatchRewards(ctx context.Context, match mongomodel.Match) error {
-	records := make([]any, 0, len(match.Players))
 	now := match.CompletedAt
 	if now.IsZero() {
 		now = time.Now()
 	}
 
 	for _, player := range match.Players {
-		id, err := newID("open_power")
-		if err != nil {
-			return err
-		}
-		records = append(records, mongomodel.OpenPowerRecord{
-			ID:        id,
+		record := mongomodel.OpenPowerRecord{
+			ID:        matchRewardRecordID(match.ID, player.PlayerID),
 			PlayerID:  player.PlayerID,
 			Amount:    openPowerReward(player.Score),
 			Reason:    "quiz_match_completed",
-			Source:    match.ID,
+			Source:    matchRewardSource(match.ID, player.PlayerID),
 			CreatedAt: now,
-		})
+		}
+		_, err := h.db.Collection(mongomodel.OpenPowerRecordsCollection).UpdateOne(
+			ctx,
+			bson.M{"_id": record.ID},
+			bson.M{"$setOnInsert": record},
+			options.UpdateOne().SetUpsert(true),
+		)
+		if err != nil {
+			return err
+		}
 	}
-	if len(records) == 0 {
-		return nil
-	}
-
-	_, err := h.db.Collection(mongomodel.OpenPowerRecordsCollection).InsertMany(ctx, records)
-	return err
+	return nil
 }
 
 func (h *Handler) buildMatchState(ctx context.Context, match mongomodel.Match) (MatchStateResponse, error) {
@@ -228,7 +227,9 @@ func (h *Handler) buildMatchState(ctx context.Context, match mongomodel.Match) (
 		}
 		if match.Status == mongomodel.MatchStatusCompleted {
 			score := player.Score
+			reward := openPowerReward(player.Score)
 			playerResponse.Score = &score
+			playerResponse.OpenPowerReward = &reward
 		}
 		response.Players = append(response.Players, playerResponse)
 	}

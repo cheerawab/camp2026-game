@@ -15,6 +15,7 @@ type ShopItemResponse struct {
 	Rarity         string `json:"rarity" example:"common"`
 	Description    string `json:"description" example:"小石造型合成使用的基礎素材。"`
 	PriceOpenPower int    `json:"priceOpenPower" example:"50"`
+	Redeemed       bool   `json:"redeemed" example:"false"`
 }
 
 type PurchaseRequest struct {

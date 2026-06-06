@@ -10,6 +10,10 @@ type JoinMatchRequest struct {
 	Code string `json:"code" validate:"required,min=4,max=16" example:"ABC123"`
 }
 
+type JoinByQRRequest struct {
+	QRCodeToken string `json:"qrcodeToken" validate:"required,min=4,max=512" example:"qr_token_123456"`
+}
+
 type AnswerRequest struct {
 	QuestionID string `json:"questionId" validate:"required" example:"quiz-001"`
 	Choice     string `json:"choice" validate:"required,oneof=A B C D" example:"A"`
@@ -42,6 +46,7 @@ type MatchPlayerResponse struct {
 	Ready                   bool   `json:"ready" example:"true"`
 	AnsweredCurrentQuestion bool   `json:"answeredCurrentQuestion,omitempty" example:"true"`
 	Score                   *int   `json:"score,omitempty" example:"850"`
+	OpenPowerReward         *int   `json:"openPowerReward,omitempty" example:"105"`
 }
 
 type MatchQuestionResponse struct {
