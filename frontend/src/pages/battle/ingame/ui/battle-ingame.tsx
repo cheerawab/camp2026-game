@@ -41,7 +41,6 @@ export function BattleIngamePage() {
               <BattleWaitingBar
                 value={quizData.time.current}
                 max={quizData.time.max}
-                color="a"
               />
             </div>
           </CardContent>
