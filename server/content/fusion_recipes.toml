@@ -1,0 +1,20 @@
+[[fusion_recipes]]
+id = "fusion-engineering-route-frame"
+name = "工程路線展示框"
+description = "把工程小石與合成碎片組合成基地展示用的收藏外框。"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "sitone-engineering"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item-crafting-fragment"
+quantity = 3
+
+[[fusion_recipes.outputs]]
+kind = "item"
+id = "item-theme-ticket"
+quantity = 1
