@@ -1,9 +1,8 @@
 import { BattleWaitingBar } from "@/features/battle-waiting/ui/battle-waiting-bar"
 import { Button } from "@/shared/ui/button"
 import { Card, CardContent } from "@/shared/ui/card"
-import { Progress } from "@/shared/ui/progress"
 import { StatusDot } from "@/shared/ui/status-dot"
-import { Clock, Hourglass, Timer, Watch } from "lucide-react"
+import { Hourglass } from "lucide-react"
 
 const quizData = {
   progress: {
