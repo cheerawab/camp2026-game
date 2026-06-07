@@ -5,32 +5,32 @@ const data = [
   {
     teamName: "A",
     pictureSrc: "https://placehold.co/100x100/svg",
-    score: 'A?'
+    score: "A?",
   },
   {
     teamName: "B",
     pictureSrc: "https://placehold.co/100x100/svg",
-    score: 'B?'
+    score: "B?",
   },
   {
     teamName: "C",
     pictureSrc: "https://placehold.co/100x100/svg",
-    score: 'C?'
+    score: "C?",
   },
   {
     teamName: "A",
     pictureSrc: "https://placehold.co/100x100/svg",
-    score: 'A?'
+    score: "A?",
   },
   {
     teamName: "A",
     pictureSrc: "https://placehold.co/100x100/svg",
-    score: 'A?'
+    score: "A?",
   },
   {
     teamName: "A",
     pictureSrc: "https://placehold.co/100x100/svg",
-    score: 'A?'
+    score: "A?",
   },
 ]
 
@@ -41,7 +41,9 @@ export function LeaderboardBattle() {
     <div className="grid gap-y-2">
       {data.map((item, index) => {
         return (
-          <Card className={index + 1 === highlight ? "bg-secondary font-bold" : ""}>
+          <Card
+            className={index + 1 === highlight ? "bg-secondary font-bold" : ""}
+          >
             <CardContent className="flex items-center gap-x-4">
               <span>#{index + 1}</span>
               <img src={item.pictureSrc} className="h-12" />
