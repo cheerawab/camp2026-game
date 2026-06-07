@@ -1,5 +1,4 @@
 import { Card, CardContent } from "@/shared/ui/card"
-import { cn } from "@/shared/utils"
 
 const data = [
   {
