@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/shared/ui/card"
+import { Card } from "@/shared/ui/card"
 import { Separator } from "@/shared/ui/separator"
 import { cn } from "@/shared/utils"
 
