@@ -418,9 +418,11 @@ function StoneCard({ stone, mode }: { stone: Stone; mode: CollectionMode }) {
               ? "尚未收集"
               : "未取得"}
         </span>
-        <span className="text-muted-foreground text-[11px] font-semibold">
-          {stone.owned ? "可用於收藏展示" : "剪影狀態"}
-        </span>
+        {!stone.owned && (
+          <span className="text-muted-foreground text-[11px] font-semibold">
+            剪影狀態
+          </span>
+        )}
       </div>
     </Card>
   )
