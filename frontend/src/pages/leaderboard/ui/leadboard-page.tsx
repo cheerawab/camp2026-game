@@ -8,7 +8,7 @@ export function LeaderboardPage() {
     <main className="mx-auto w-full max-w-sm gap-y-2 py-4">
       <PageHeader title="小隊排行榜" headline="Leaderboard" />
       <Tabs defaultValue="op">
-        <TabsList className="mx-auto">
+        <TabsList className="w-full">
           <TabsTrigger value="op">開源力</TabsTrigger>
           <TabsTrigger value="sitone">小石</TabsTrigger>
         </TabsList>
