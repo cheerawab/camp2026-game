@@ -1,8 +1,9 @@
-import { BattleWaitingBar } from "@/features/battle-waiting/ui/battle-waiting-bar"
+import BattleIngameScoreBar from "@/features/battle-ingame/ui/battle-ingame-score-bar"
+import { BattleIngameTeam } from "@/features/battle-ingame/ui/battle-ingame-team"
+import { Badge } from "@/shared/ui/badge"
 import { Button } from "@/shared/ui/button"
 import { Card, CardContent } from "@/shared/ui/card"
-import { StatusDot } from "@/shared/ui/status-dot"
-import { Hourglass } from "lucide-react"
+import { Separator } from "@/shared/ui/separator"
 
 const quizData = {
   progress: {
@@ -24,85 +25,93 @@ const quizData = {
   state: [true, false],
 }
 
+const teamDataA = [
+  {
+    name: "A 小石",
+    type: "靈光",
+    pictureSrc: "https://placehold.co/100x100/svg?text=A",
+  },
+  {
+    name: "B 小石",
+    type: "靈光",
+    pictureSrc: "https://placehold.co/100x100/svg?text=B",
+  },
+  {
+    name: "C 小石",
+    type: "靈光",
+    pictureSrc: "https://placehold.co/100x100/svg?text=C",
+  },
+  {
+    name: "D 小石",
+    type: "靈光",
+    pictureSrc: "https://placehold.co/100x100/svg?text=D",
+  },
+  {
+    name: "E 小石",
+    type: "靈光",
+    pictureSrc: "https://placehold.co/100x100/svg?text=E",
+  },
+]
+
 export function BattleIngamePage() {
   return (
     <>
-      <main className="mx-auto grid w-full max-w-sm gap-2 py-4">
-        {/* 題目 */}
+      <main className="mx-auto grid w-full max-w-sm gap-y-2 px-2 py-4">
+        {/* 分數 - 時間 - 分數 */}
+        <div className="grid grid-cols-3 pb-2 text-center">
+          <div>
+            <div className="text-lg font-bold">125</div>
+            <div className="text-muted-foreground text-xs">混凝土</div>
+          </div>
+          <div className="flex items-end justify-center">
+            <div className="text-4xl font-bold">18</div>
+            <div className="text-lg">s</div>
+          </div>
+          <div>
+            <div className="text-lg font-bold">256</div>
+            <div className="text-muted-foreground text-xs">義大利麵</div>
+          </div>
+        </div>
+        {/*<BattleIngameScoreBar a={125} b={256} />*/}
         <Card>
-          <CardContent className="grid gap-y-2">
-            <span className="text-muted-foreground text-sm font-bold uppercase">
-              {quizData.type}
-            </span>
-            <span className="text-2xl font-bold">{quizData.question}</span>
-            <div className="flex items-center gap-2">
-              <Hourglass className="spin" />
-              <BattleWaitingBar
-                value={quizData.time.current}
-                max={quizData.time.max}
-              />
+          <CardContent className="grid">
+            {/* 題目 */}
+            <div className="grid gap-y-0 pb-2">
+              <span className="text-muted-foreground text-sm font-bold uppercase">
+                {quizData.type}
+              </span>
+              <span className="text-2xl font-bold">{quizData.question}</span>
             </div>
+            {/**/}
+            <Separator />
+            {/* 選項 */}
+            {quizData.answers.map((item, index) => {
+              return (
+                <>
+                  <Button
+                    variant="ghost"
+                    className="h-fit justify-start rounded-none py-2 pl-0"
+                  >
+                    <span className="border-accent-foreground bg-accent text-muted-foreground rounded-lg border-2 px-4 py-2">
+                      {["A", "B", "C", "D"][index]}
+                    </span>
+                    <span className="text-lg">{item}</span>
+                  </Button>
+                  {index < 3 && <Separator />}
+                </>
+              )
+            })}
           </CardContent>
         </Card>
-        {/* 選項 */}
-        {quizData.answers.map((item, index) => {
-          return (
-            <Button variant="outline" className="h-fit justify-start">
-              <span className="border-muted-foreground bg-muted text-muted-foreground rounded-lg border-2 px-4 py-2 text-lg">
-                {["A", "B", "C", "D"][index]}
-              </span>
-              <span className="text-lg">{item}</span>
-            </Button>
-          )
-        })}
-        {/* 作答情形 */}
-        <div className="grid grid-cols-2 gap-x-2">
-          <Card>
-            <CardContent>
-              <div className="flex items-center gap-x-2">
-                <StatusDot tone="warning" />
-                <span className="text-lg font-bold">你</span>
-              </div>
-              <span>尚未作答</span>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent>
-              <div className="flex items-center gap-x-2">
-                <StatusDot tone="success" />
-                <span className="text-lg font-bold">對手</span>
-              </div>
-              <span>已作答</span>
-            </CardContent>
-          </Card>
-        </div>
+        {/* 小石資訊 */}
+        <Card>
+          <CardContent className="flex">
+            <BattleIngameTeam team={teamDataA} highlight={2} />
+            <Separator orientation="vertical" />
+            <BattleIngameTeam team={teamDataA} highlight={2} reverse />
+          </CardContent>
+        </Card>
       </main>
-
-      <style>
-        {`
-        @keyframes hourGlassSpin {
-          0% {
-            transform: rotate(0deg);
-          }
-          40% {
-          transform: rotate(200deg);
-          }
-          60% {
-            transform: rotate(170deg);
-          }
-          70%{
-            transform: rotate(180deg);
-          }
-          100% {
-          transform: rotate(180deg);
-          }
-        }
-
-        .spin {
-        animation: hourGlassSpin 1s infinite linear;
-        }
-      `}
-      </style>
     </>
   )
 }
