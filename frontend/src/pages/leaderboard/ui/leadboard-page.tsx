@@ -1,4 +1,3 @@
-import { LeaderboardBattle } from "@/features/leaderboard/ui/leaderboard-battle"
 import { LeaderboardOp } from "@/features/leaderboard/ui/leaderboard-op"
 import { LeaderboardSitone } from "@/features/leaderboard/ui/leaderboard-sitone"
 import { PageHeader } from "@/shared/ui/page-header"
@@ -12,16 +11,12 @@ export function LeaderboardPage() {
         <TabsList className="mx-auto">
           <TabsTrigger value="op">開源力</TabsTrigger>
           <TabsTrigger value="sitone">小石</TabsTrigger>
-          <TabsTrigger value="battle">知識王戰</TabsTrigger>
         </TabsList>
         <TabsContent value="op">
           <LeaderboardOp />
         </TabsContent>
         <TabsContent value="sitone">
           <LeaderboardSitone />
-        </TabsContent>
-        <TabsContent value="battle">
-          <LeaderboardBattle />
         </TabsContent>
       </Tabs>
     </main>
