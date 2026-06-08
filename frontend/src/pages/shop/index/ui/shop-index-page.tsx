@@ -1,6 +1,8 @@
 import { ShopItemCard } from "@/features/shop-index/ui/shop-item-card"
+import { Badge } from "@/shared/ui/badge"
 import { PageHeader } from "@/shared/ui/page-header"
 import { Toaster } from "@/shared/ui/sonner"
+import { DollarSign } from "lucide-react"
 
 const SHOP_ITEMS = [
   {
@@ -52,11 +54,22 @@ export function ShopPage() {
     <>
       <main className="mx-auto grid w-full max-w-sm gap-y-2 py-4">
         {/* 標題 & 返回 */}
-        <PageHeader title="商店" headline="Item Shop" />
-        {/* 簡單資訊 */}
-        <>{/* TODO: */}</>
+        <PageHeader
+          title="商店"
+          headline="Item Shop"
+          rightSlot={
+            <div className="flex flex-col items-end">
+              <span className="text-muted-foreground text-sm font-bold">
+                你現在持有開源力
+              </span>
+              <Badge className="h-fit">
+                <DollarSign className="h-4 w-4" />
+                1000 OP
+              </Badge>
+            </div>
+          }
+        />
         {/* 商品列表 */}
-        {/* TODO: 新增標籤篩選按鈕 */}
         <div className="grid gap-y-2">
           {SHOP_ITEMS.map((item) => {
             return (
