@@ -20,7 +20,7 @@ export function LeaderboardPage() {
               距離第一名的差距不大，僅僅 20 OP，何不嘗試拼一下呢？
             </span>
           </div>
-          <div className="basis-1/4 flex items-center justify-center">
+          <div className="flex basis-1/4 items-center justify-center">
             <span className="border-foreground bg-secondary rotate-3 rounded-lg border-2 p-5 text-2xl font-bold">
               #2
             </span>
