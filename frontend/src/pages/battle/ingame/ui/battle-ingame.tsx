@@ -1,6 +1,4 @@
-import BattleIngameScoreBar from "@/features/battle-ingame/ui/battle-ingame-score-bar"
 import { BattleIngameTeam } from "@/features/battle-ingame/ui/battle-ingame-team"
-import { Badge } from "@/shared/ui/badge"
 import { Button } from "@/shared/ui/button"
 import { Card, CardContent } from "@/shared/ui/card"
 import { Separator } from "@/shared/ui/separator"

@@ -1,5 +1,3 @@
-import { cn } from "@/shared/utils"
-
 type BattleIngameScoreBarType = {
   a: number
   b: number
