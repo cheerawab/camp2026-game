@@ -67,7 +67,7 @@ export function LeaderboardOp() {
                 className="absolute top-0 left-0 z-10 h-full w-full object-cover"
               />
               {/* z-20 半透明圖層（增加前景文字對比） */}
-              <div className="absolute top-0 left-0 h-full w-full z-20 bg-background/50" />
+              <div className="bg-background/50 absolute top-0 left-0 z-20 h-full w-full" />
               {/* z-30 隊伍各項資訊 */}
               <img src={item.pictureSrc} className="z-30 h-14 rounded-lg" />
               <div className="z-20 flex flex-1 justify-between">
