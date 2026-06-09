@@ -1,6 +1,4 @@
 import { useState } from "react"
-import { Link } from "@tanstack/react-router"
-import { ArrowLeft } from "lucide-react"
 
 import { Button } from "@/shared/ui/button"
 import { Card } from "@/shared/ui/card"
