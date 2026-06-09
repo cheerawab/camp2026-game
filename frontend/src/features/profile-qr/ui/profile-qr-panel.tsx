@@ -25,21 +25,21 @@ function tokenBit(token: string, index: number) {
 
 function createPassCodeCells(token: string) {
   return Array.from({ length: 169 }, (_, index) => {
-  const x = index % 13
-  const y = Math.floor(index / 13)
-  const finder = (x < 4 && y < 4) || (x > 8 && y < 4) || (x < 4 && y > 8)
-  const timing = (x === 6 && y % 2 === 0) || (y === 6 && x % 2 === 0)
-  const quietCorner = x > 9 && y > 9
+    const x = index % 13
+    const y = Math.floor(index / 13)
+    const finder = (x < 4 && y < 4) || (x > 8 && y < 4) || (x < 4 && y > 8)
+    const timing = (x === 6 && y % 2 === 0) || (y === 6 && x % 2 === 0)
+    const quietCorner = x > 9 && y > 9
 
-  if (finder || timing) {
-    return true
-  }
+    if (finder || timing) {
+      return true
+    }
 
-  if (quietCorner) {
-    return false
-  }
+    if (quietCorner) {
+      return false
+    }
 
-  return tokenBit(token, index)
+    return tokenBit(token, index)
   })
 }
 
@@ -62,7 +62,7 @@ export function ProfileQrPanel() {
             <span className="text-muted-foreground block text-xs font-black tracking-widest uppercase">
               玩家身份
             </span>
-            <h2 className="mb-1 text-[28px] font-black leading-none tracking-tight">
+            <h2 className="mb-1 text-[28px] leading-none font-black tracking-tight">
               {profile.nickname}
             </h2>
             <p className="text-muted-foreground">

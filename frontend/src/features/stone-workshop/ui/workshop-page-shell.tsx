@@ -23,7 +23,7 @@ export function WorkshopPageShell({
         aria-hidden
       />
       {/* fixed header */}
-      <header className="bg-paper fixed top-0 left-1/2 z-20 w-[min(100%,430px)] -translate-x-1/2 grid grid-cols-[44px_1fr_auto] items-center gap-3 px-4 pt-6 pb-3">
+      <header className="bg-paper fixed top-0 left-1/2 z-20 grid w-[min(100%,430px)] -translate-x-1/2 grid-cols-[44px_1fr_auto] items-center gap-3 px-4 pt-6 pb-3">
         <Link
           to="/"
           aria-label="返回營隊基地"

@@ -74,12 +74,12 @@ export function LoginPanel() {
       </div>
 
       <div className="mb-10">
-        <Badge className="mb-3 rounded-full border-2 border-ink bg-secondary px-2.5 py-1 text-[0.8rem] font-black text-foreground hover:bg-secondary">
+        <Badge className="border-ink bg-secondary text-foreground hover:bg-secondary mb-3 rounded-full border-2 px-2.5 py-1 text-[0.8rem] font-black">
           營隊遊戲工具
         </Badge>
         <h1
           id="login-title"
-          className="font-black leading-[1.04] tracking-[-0.045em]"
+          className="leading-[1.04] font-black tracking-[-0.045em]"
           style={{ fontSize: "clamp(2.25rem, 12vw, 3.18rem)" }}
         >
           開源小石基地
@@ -88,7 +88,10 @@ export function LoginPanel() {
 
       <form onSubmit={handleSubmit} noValidate className="grid gap-6">
         <div className="grid gap-3">
-          <label htmlFor="camp-login-code" className="text-[0.95rem] font-black">
+          <label
+            htmlFor="camp-login-code"
+            className="text-[0.95rem] font-black"
+          >
             營隊登入碼
           </label>
           <Input
@@ -106,7 +109,7 @@ export function LoginPanel() {
             <p
               id="login-error"
               role="alert"
-              className="border-ink bg-destructive rounded-[14px] border-2 px-2.5 py-1.5 text-[0.82rem] font-bold leading-snug text-white"
+              className="border-ink bg-destructive rounded-[14px] border-2 px-2.5 py-1.5 text-[0.82rem] leading-snug font-bold text-white"
             >
               找不到這組登入資訊，請確認代碼或詢問隊輔。
             </p>
@@ -119,7 +122,6 @@ export function LoginPanel() {
           進入基地
         </Button>
       </form>
-
     </section>
   )
 }
@@ -163,10 +165,10 @@ function CampBadge() {
         aria-hidden="true"
       />
       <div>
-        <strong className="block text-[0.92rem] font-black leading-[1.05] tracking-tight">
+        <strong className="block text-[0.92rem] leading-[1.05] font-black tracking-tight">
           SITCON
         </strong>
-        <span className="text-muted-foreground mt-0.5 block text-[0.78rem] font-extrabold leading-[1.05]">
+        <span className="text-muted-foreground mt-0.5 block text-[0.78rem] leading-[1.05] font-extrabold">
           Camp 2026
         </span>
       </div>

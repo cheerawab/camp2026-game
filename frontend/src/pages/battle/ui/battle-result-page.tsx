@@ -161,7 +161,9 @@ export function BattleResultPage() {
       {/* 動作區 */}
       <Separator className="my-2" />
       <Button asChild>
-        <Link to="/"><Home /> 返回首頁</Link>
+        <Link to="/">
+          <Home /> 返回首頁
+        </Link>
       </Button>
     </main>
   )

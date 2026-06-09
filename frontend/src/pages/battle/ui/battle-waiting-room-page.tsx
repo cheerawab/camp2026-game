@@ -54,12 +54,17 @@ export function BattleWaitingRoomPage() {
           <Separator orientation="vertical" />
           <Dialog>
             <DialogTrigger asChild>
-              <img src={qrCode} className="cursor-pointer rounded-lg transition-transform hover:scale-105" />
+              <img
+                src={qrCode}
+                className="cursor-pointer rounded-lg transition-transform hover:scale-105"
+              />
             </DialogTrigger>
             <DialogContent className="flex flex-col items-center gap-4">
               <DialogTitle>掃描 QR Code 加入房間</DialogTitle>
-              <img src={qrCode} className="w-64 h-64" />
-              <span className="text-4xl font-bold tracking-[1rem]">{roomCode}</span>
+              <img src={qrCode} className="h-64 w-64" />
+              <span className="text-4xl font-bold tracking-[1rem]">
+                {roomCode}
+              </span>
             </DialogContent>
           </Dialog>
         </CardContent>

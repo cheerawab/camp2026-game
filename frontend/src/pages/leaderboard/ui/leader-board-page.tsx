@@ -17,30 +17,123 @@ type TeamRow = {
 
 const RANKS: Record<Tab, TeamRow[]> = {
   op: [
-    { rank: 1, name: "山羌小隊", value: "1260 OP", badge: "連勝 4 場",    colorClass: "bg-pebble-spark" },
-    { rank: 2, name: "松鼠小隊", value: "1188 OP", badge: "小石 42 顆",   colorClass: "bg-pebble-engineer", mine: true },
-    { rank: 3, name: "雲豹小隊", value: "1110 OP", badge: "答題命中 82%", colorClass: "bg-pebble-resonate" },
-    { rank: 4, name: "水鹿小隊", value: "980 OP",  badge: "今日新增 90 OP", colorClass: "bg-pebble-explore" },
-    { rank: 5, name: "飛鼠小隊", value: "910 OP",  badge: "收藏進度 68%", colorClass: "bg-pebble-play" },
+    {
+      rank: 1,
+      name: "山羌小隊",
+      value: "1260 OP",
+      badge: "連勝 4 場",
+      colorClass: "bg-pebble-spark",
+    },
+    {
+      rank: 2,
+      name: "松鼠小隊",
+      value: "1188 OP",
+      badge: "小石 42 顆",
+      colorClass: "bg-pebble-engineer",
+      mine: true,
+    },
+    {
+      rank: 3,
+      name: "雲豹小隊",
+      value: "1110 OP",
+      badge: "答題命中 82%",
+      colorClass: "bg-pebble-resonate",
+    },
+    {
+      rank: 4,
+      name: "水鹿小隊",
+      value: "980 OP",
+      badge: "今日新增 90 OP",
+      colorClass: "bg-pebble-explore",
+    },
+    {
+      rank: 5,
+      name: "飛鼠小隊",
+      value: "910 OP",
+      badge: "收藏進度 68%",
+      colorClass: "bg-pebble-play",
+    },
   ],
   stones: [
-    { rank: 1, name: "雲豹小隊", value: "58 顆", badge: "本週 +12 顆", colorClass: "bg-pebble-resonate" },
-    { rank: 2, name: "松鼠小隊", value: "42 顆", badge: "本週 +7 顆",  colorClass: "bg-pebble-engineer", mine: true },
-    { rank: 3, name: "山羌小隊", value: "39 顆", badge: "本週 +5 顆",  colorClass: "bg-pebble-spark" },
-    { rank: 4, name: "飛鼠小隊", value: "31 顆", badge: "本週 +3 顆",  colorClass: "bg-pebble-play" },
-    { rank: 5, name: "水鹿小隊", value: "24 顆", badge: "本週 +2 顆",  colorClass: "bg-pebble-explore" },
+    {
+      rank: 1,
+      name: "雲豹小隊",
+      value: "58 顆",
+      badge: "本週 +12 顆",
+      colorClass: "bg-pebble-resonate",
+    },
+    {
+      rank: 2,
+      name: "松鼠小隊",
+      value: "42 顆",
+      badge: "本週 +7 顆",
+      colorClass: "bg-pebble-engineer",
+      mine: true,
+    },
+    {
+      rank: 3,
+      name: "山羌小隊",
+      value: "39 顆",
+      badge: "本週 +5 顆",
+      colorClass: "bg-pebble-spark",
+    },
+    {
+      rank: 4,
+      name: "飛鼠小隊",
+      value: "31 顆",
+      badge: "本週 +3 顆",
+      colorClass: "bg-pebble-play",
+    },
+    {
+      rank: 5,
+      name: "水鹿小隊",
+      value: "24 顆",
+      badge: "本週 +2 顆",
+      colorClass: "bg-pebble-explore",
+    },
   ],
   battle: [
-    { rank: 1, name: "山羌小隊", value: "連勝 4", badge: "勝率 78%", colorClass: "bg-pebble-spark" },
-    { rank: 2, name: "水鹿小隊", value: "連勝 2", badge: "勝率 65%", colorClass: "bg-pebble-explore" },
-    { rank: 3, name: "松鼠小隊", value: "連勝 1", badge: "勝率 60%", colorClass: "bg-pebble-engineer", mine: true },
-    { rank: 4, name: "飛鼠小隊", value: "0 連勝", badge: "勝率 50%", colorClass: "bg-pebble-play" },
-    { rank: 5, name: "雲豹小隊", value: "0 連勝", badge: "勝率 44%", colorClass: "bg-pebble-resonate" },
+    {
+      rank: 1,
+      name: "山羌小隊",
+      value: "連勝 4",
+      badge: "勝率 78%",
+      colorClass: "bg-pebble-spark",
+    },
+    {
+      rank: 2,
+      name: "水鹿小隊",
+      value: "連勝 2",
+      badge: "勝率 65%",
+      colorClass: "bg-pebble-explore",
+    },
+    {
+      rank: 3,
+      name: "松鼠小隊",
+      value: "連勝 1",
+      badge: "勝率 60%",
+      colorClass: "bg-pebble-engineer",
+      mine: true,
+    },
+    {
+      rank: 4,
+      name: "飛鼠小隊",
+      value: "0 連勝",
+      badge: "勝率 50%",
+      colorClass: "bg-pebble-play",
+    },
+    {
+      rank: 5,
+      name: "雲豹小隊",
+      value: "0 連勝",
+      badge: "勝率 44%",
+      colorClass: "bg-pebble-resonate",
+    },
   ],
 }
 
 const TABS: { key: Tab; label: string }[] = [
-  { key: "op",     label: "開源力" },
+  { key: "op", label: "開源力" },
   { key: "stones", label: "小石" },
   { key: "battle", label: "知識王戰" },
 ]
@@ -74,7 +167,11 @@ export function LeaderBoardPage() {
       </Card>
 
       {/* 分類 Tabs */}
-      <div className="grid grid-cols-3 gap-2" role="tablist" aria-label="排行榜分類">
+      <div
+        className="grid grid-cols-3 gap-2"
+        role="tablist"
+        aria-label="排行榜分類"
+      >
         {TABS.map(({ key, label }) => (
           <Button
             key={key}

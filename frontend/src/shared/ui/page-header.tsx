@@ -9,7 +9,12 @@ type PageHeaderType = {
   rightSlot?: ReactNode
 }
 
-export function PageHeader({ title, headline, backTo = "/", rightSlot }: PageHeaderType) {
+export function PageHeader({
+  title,
+  headline,
+  backTo = "/",
+  rightSlot,
+}: PageHeaderType) {
   return (
     <div className="flex items-start gap-x-4 py-2">
       <Link

@@ -1,10 +1,34 @@
 import { Link } from "@tanstack/react-router"
 
-const PLAYER = { name: "阿洛", squad: "松鼠小隊", power: 430, stones: 8, items: 29, rank: 12 }
+const PLAYER = {
+  name: "阿洛",
+  squad: "松鼠小隊",
+  power: 430,
+  stones: 8,
+  items: 29,
+  rank: 12,
+}
 
-const ACTIONS: { label: string; desc: string; tone: string; to: string; primary?: boolean }[] = [
-  { label: "知識王戰", desc: "建立或掃碼加入對戰", tone: "#E76F3C", primary: true, to: "/battle" },
-  { label: "個人 QR Code", desc: "現場關卡驗證身份", tone: "#356B58", to: "/profile/qr" },
+const ACTIONS: {
+  label: string
+  desc: string
+  tone: string
+  to: string
+  primary?: boolean
+}[] = [
+  {
+    label: "知識王戰",
+    desc: "建立或掃碼加入對戰",
+    tone: "#E76F3C",
+    primary: true,
+    to: "/battle",
+  },
+  {
+    label: "個人 QR Code",
+    desc: "現場關卡驗證身份",
+    tone: "#356B58",
+    to: "/profile/qr",
+  },
   { label: "商店", desc: "使用開源力兌換外觀", tone: "#F4C84A", to: "/shop" },
 ]
 
@@ -12,7 +36,12 @@ const COLLECTIONS = [
   { label: "小石收藏", count: "8 種", tone: "#4F8CC9", to: "/stones" },
   { label: "道具背包", count: "29 件", tone: "#31A886", to: "/inventory" },
   { label: "小石合成", count: "工作台", tone: "#9A75D6", to: "/stones/fusion" },
-  { label: "排行榜", count: `#${PLAYER.rank}`, tone: "#E96F86", to: "/leaderboard" },
+  {
+    label: "排行榜",
+    count: `#${PLAYER.rank}`,
+    tone: "#E96F86",
+    to: "/leaderboard",
+  },
   { label: "公開圖鑑", count: "查詢", tone: "#6B725F", to: "/codex" },
 ] as const
 
@@ -69,7 +98,9 @@ export function HomeBasePage() {
       <style>{styles}</style>
       <section className="hb-canvas">
         <header className="hb-player-card" aria-label="玩家狀態">
-          <div className="hb-avatar" aria-hidden="true">洛</div>
+          <div className="hb-avatar" aria-hidden="true">
+            洛
+          </div>
           <div className="hb-player-copy">
             <p className="hb-eyebrow">CAMP BASE</p>
             <h1>{PLAYER.name}</h1>
@@ -87,20 +118,39 @@ export function HomeBasePage() {
             <h2>先開始知識王戰，其他都放在下方快速入口。</h2>
             <p>首頁不放每日任務或世界事件；只放玩家現場真的會點的功能。</p>
           </div>
-          <Link to="/battle" className="hb-btn hb-start-battle" style={{ display: "grid", placeItems: "center", textDecoration: "none" }}>開始 / 加入對戰</Link>
+          <Link
+            to="/battle"
+            className="hb-btn hb-start-battle"
+            style={{
+              display: "grid",
+              placeItems: "center",
+              textDecoration: "none",
+            }}
+          >
+            開始 / 加入對戰
+          </Link>
         </section>
 
         <section className="hb-quick-stats" aria-label="快速摘要">
-          <div><span>小石</span><strong>{PLAYER.stones}</strong></div>
-          <div><span>道具</span><strong>{PLAYER.items}</strong></div>
-          <div><span>排行</span><strong>#{PLAYER.rank}</strong></div>
+          <div>
+            <span>小石</span>
+            <strong>{PLAYER.stones}</strong>
+          </div>
+          <div>
+            <span>道具</span>
+            <strong>{PLAYER.items}</strong>
+          </div>
+          <div>
+            <span>排行</span>
+            <strong>#{PLAYER.rank}</strong>
+          </div>
         </section>
 
         <section className="hb-action-grid" aria-label="核心入口">
           {ACTIONS.map((action) => (
             <article
               key={action.label}
-              className={`hb-action-card${action.primary ? " primary" : ""}`}
+              className={`hb-action-card${action.primary ? "primary" : ""}`}
             >
               <div
                 className="hb-stone-dot"
@@ -111,7 +161,17 @@ export function HomeBasePage() {
                 <h3>{action.label}</h3>
                 <p>{action.desc}</p>
               </div>
-              <Link to={action.to} className="hb-btn" style={{ display: "grid", placeItems: "center", textDecoration: "none" }}>開啟</Link>
+              <Link
+                to={action.to}
+                className="hb-btn"
+                style={{
+                  display: "grid",
+                  placeItems: "center",
+                  textDecoration: "none",
+                }}
+              >
+                開啟
+              </Link>
             </article>
           ))}
         </section>
@@ -123,7 +183,12 @@ export function HomeBasePage() {
           </div>
           <div className="hb-collection-grid">
             {COLLECTIONS.map((item) => (
-              <Link key={item.label} to={item.to} className="hb-collection-tile" style={{ textDecoration: "none" }}>
+              <Link
+                key={item.label}
+                to={item.to}
+                className="hb-collection-tile"
+                style={{ textDecoration: "none" }}
+              >
                 <span
                   className="hb-tile-mark"
                   style={{ background: item.tone }}
@@ -138,7 +203,9 @@ export function HomeBasePage() {
 
         <section className="hb-base-snapshot" aria-label="基地展示摘要">
           <div className="hb-mini-map" aria-hidden="true">
-            <span /><span /><span />
+            <span />
+            <span />
+            <span />
           </div>
           <div>
             <h2>目前基地：營燈前哨</h2>

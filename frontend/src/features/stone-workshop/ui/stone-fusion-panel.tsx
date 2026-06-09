@@ -68,7 +68,7 @@ export function StoneFusionPanel() {
   return (
     <div className="flex flex-col pb-2">
       <Card
-        className="bg-surface-raised fixed top-[84px] left-1/2 z-10 w-[calc(min(100vw,430px)-2rem)] -translate-x-1/2 grid grid-cols-[86px_1fr] items-center gap-3 rounded-[22px] px-3.5 py-3"
+        className="bg-surface-raised fixed top-[84px] left-1/2 z-10 grid w-[calc(min(100vw,430px)-2rem)] -translate-x-1/2 grid-cols-[86px_1fr] items-center gap-3 rounded-[22px] px-3.5 py-3"
         aria-label="合成結果預覽"
       >
         <div

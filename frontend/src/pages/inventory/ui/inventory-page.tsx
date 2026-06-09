@@ -3,12 +3,60 @@ import { Link } from "@tanstack/react-router"
 import { ArrowLeft } from "lucide-react"
 
 const BAG_ITEMS = [
-  { id: "map-thread", name: "地圖棉線", type: "素材", rarity: "常見", count: 8, tone: "#4F8CC9", description: "用來標記基地佈景上的探索路線。" },
-  { id: "camp-rivet", name: "營釘鉚扣", type: "素材", rarity: "常見", count: 12, tone: "#31A886", description: "可替收藏卡加上工程感邊框。" },
-  { id: "lantern-ticket", name: "營燈佈景券", type: "外觀", rarity: "稀有", count: 1, tone: "#F4C84A", description: "替小隊基地換上暖黃營燈主題。" },
-  { id: "radio-pin", name: "小隊電波徽章", type: "活動紀念", rarity: "稀有", count: 2, tone: "#E96F86", description: "和隊友完成同步挑戰後取得。" },
-  { id: "stage-strip", name: "舞台彩帶", type: "外觀", rarity: "常見", count: 3, tone: "#9A75D6", description: "能讓展示櫃多一條娛樂系標記。" },
-  { id: "decode-card", name: "解題提示卡", type: "活動紀念", rarity: "傳說", count: 1, tone: "#E76F3C", description: "完成一場高難度知識王戰後留下的紀念卡。" },
+  {
+    id: "map-thread",
+    name: "地圖棉線",
+    type: "素材",
+    rarity: "常見",
+    count: 8,
+    tone: "#4F8CC9",
+    description: "用來標記基地佈景上的探索路線。",
+  },
+  {
+    id: "camp-rivet",
+    name: "營釘鉚扣",
+    type: "素材",
+    rarity: "常見",
+    count: 12,
+    tone: "#31A886",
+    description: "可替收藏卡加上工程感邊框。",
+  },
+  {
+    id: "lantern-ticket",
+    name: "營燈佈景券",
+    type: "外觀",
+    rarity: "稀有",
+    count: 1,
+    tone: "#F4C84A",
+    description: "替小隊基地換上暖黃營燈主題。",
+  },
+  {
+    id: "radio-pin",
+    name: "小隊電波徽章",
+    type: "活動紀念",
+    rarity: "稀有",
+    count: 2,
+    tone: "#E96F86",
+    description: "和隊友完成同步挑戰後取得。",
+  },
+  {
+    id: "stage-strip",
+    name: "舞台彩帶",
+    type: "外觀",
+    rarity: "常見",
+    count: 3,
+    tone: "#9A75D6",
+    description: "能讓展示櫃多一條娛樂系標記。",
+  },
+  {
+    id: "decode-card",
+    name: "解題提示卡",
+    type: "活動紀念",
+    rarity: "傳說",
+    count: 1,
+    tone: "#E76F3C",
+    description: "完成一場高難度知識王戰後留下的紀念卡。",
+  },
 ]
 
 const FILTERS = ["全部", "素材", "外觀", "活動紀念"]
@@ -17,7 +65,11 @@ type BagItem = (typeof BAG_ITEMS)[number]
 
 function ItemIcon({ tone, count }: { tone: string; count: number }) {
   return (
-    <div className="inv-item-icon" style={{ "--tone": tone } as React.CSSProperties} aria-hidden="true">
+    <div
+      className="inv-item-icon"
+      style={{ "--tone": tone } as React.CSSProperties}
+      aria-hidden="true"
+    >
       <span className="inv-stripe" />
       <strong>{count}</strong>
     </div>
@@ -46,7 +98,9 @@ function ItemCard({ item }: { item: BagItem }) {
 function EmptyBag() {
   return (
     <section className="inv-empty-card" aria-label="空背包狀態">
-      <div className="inv-empty-icon" aria-hidden="true">＋</div>
+      <div className="inv-empty-icon" aria-hidden="true">
+        ＋
+      </div>
       <h3>這個分類目前沒有道具</h3>
       <p>可以到商店兌換，或在現場活動完成挑戰後取得。</p>
       <button type="button">前往商店</button>
@@ -99,7 +153,9 @@ const styles = `
 export function InventoryPage() {
   const [filter, setFilter] = useState("全部")
   const visibleItems =
-    filter === "全部" ? BAG_ITEMS : BAG_ITEMS.filter((item) => item.type === filter)
+    filter === "全部"
+      ? BAG_ITEMS
+      : BAG_ITEMS.filter((item) => item.type === filter)
   const totalCount = BAG_ITEMS.reduce((sum, item) => sum + item.count, 0)
 
   return (
@@ -107,7 +163,14 @@ export function InventoryPage() {
       <style>{styles}</style>
       <section className="inv-canvas">
         <header className="inv-top-bar">
-          <Link to="/" aria-label="返回" className="border-ink bg-card text-ink focus-visible:outline-power grid size-11 shrink-0 place-items-center rounded-2xl border-2 transition-transform focus-visible:outline-3 focus-visible:outline-offset-2 active:translate-y-px" style={{ textDecoration: "none" }}><ArrowLeft className="size-5" aria-hidden /></Link>
+          <Link
+            to="/"
+            aria-label="返回"
+            className="border-ink bg-card text-ink focus-visible:outline-power grid size-11 shrink-0 place-items-center rounded-2xl border-2 transition-transform focus-visible:outline-3 focus-visible:outline-offset-2 active:translate-y-px"
+            style={{ textDecoration: "none" }}
+          >
+            <ArrowLeft className="size-5" aria-hidden />
+          </Link>
           <div>
             <p className="inv-eyebrow">FIELD BAG</p>
             <h1>道具背包</h1>
@@ -121,13 +184,24 @@ export function InventoryPage() {
             <strong>{totalCount}</strong>
             <p>素材、外觀與活動紀念都會先收在這裡。</p>
           </div>
-          <div className="inv-bag-mark" aria-hidden="true"><span /></div>
+          <div className="inv-bag-mark" aria-hidden="true">
+            <span />
+          </div>
         </section>
 
         <section className="inv-stats-row" aria-label="分類數量">
-          <div><span>素材</span><strong>20</strong></div>
-          <div><span>外觀</span><strong>4</strong></div>
-          <div><span>紀念</span><strong>3</strong></div>
+          <div>
+            <span>素材</span>
+            <strong>20</strong>
+          </div>
+          <div>
+            <span>外觀</span>
+            <strong>4</strong>
+          </div>
+          <div>
+            <span>紀念</span>
+            <strong>3</strong>
+          </div>
         </section>
 
         <nav className="inv-filters" aria-label="背包分類">
@@ -143,9 +217,11 @@ export function InventoryPage() {
         </nav>
 
         <section className="inv-item-list" aria-label="道具列表">
-          {visibleItems.length > 0
-            ? visibleItems.map((item) => <ItemCard key={item.id} item={item} />)
-            : <EmptyBag />}
+          {visibleItems.length > 0 ? (
+            visibleItems.map((item) => <ItemCard key={item.id} item={item} />)
+          ) : (
+            <EmptyBag />
+          )}
         </section>
       </section>
     </main>

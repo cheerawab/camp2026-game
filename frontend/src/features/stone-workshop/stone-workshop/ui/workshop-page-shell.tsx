@@ -11,7 +11,6 @@ type WorkshopPageShellProps = {
   children: ReactNode
 }
 
-
 export function WorkshopPageShell({
   title,
   eyebrow,

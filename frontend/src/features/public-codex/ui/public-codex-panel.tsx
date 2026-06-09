@@ -146,7 +146,7 @@ export function PublicCodexPanel() {
                 {entry.rarity}
               </span>
             </div>
-            <h3 className="mb-1 text-[17px] font-black leading-tight tracking-tight">
+            <h3 className="mb-1 text-[17px] leading-tight font-black tracking-tight">
               {entry.name}
             </h3>
             <p className="text-muted-foreground text-[13px] leading-relaxed">
