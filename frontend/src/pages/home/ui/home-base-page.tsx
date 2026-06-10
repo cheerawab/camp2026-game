@@ -150,7 +150,7 @@ export function HomeBasePage() {
           {ACTIONS.map((action) => (
             <article
               key={action.label}
-              className={`hb-action-card${action.primary ? "primary" : ""}`}
+              className={`hb-action-card${action.primary ? " primary" : ""}`}
             >
               <div
                 className="hb-stone-dot"
