@@ -51,10 +51,7 @@ export function ProfileQrPanel() {
   return (
     <div className="flex flex-col gap-3.5">
       <Card className="border-ink rounded-[var(--radius)] border-2 py-0 shadow-[4px_4px_0_rgba(23,35,58,0.14)]">
-        <CardContent
-          className="grid items-center gap-3.5 p-4"
-          style={{ gridTemplateColumns: "70px 1fr" }}
-        >
+        <CardContent className="grid grid-cols-[70px_1fr] items-center gap-3.5 p-4">
           <div className="bg-power border-ink flex h-[70px] w-[70px] items-center justify-center rounded-[24px] border-2 text-3xl font-black">
             {profile.avatarInitial}
           </div>
@@ -77,7 +74,7 @@ export function ProfileQrPanel() {
           <div
             role="img"
             aria-label="玩家身份通行碼圖樣"
-            className="border-ink mx-auto mb-5 grid aspect-square w-full max-w-[306px] grid-cols-[repeat(13,1fr)] gap-1 rounded-[18px] border-4 bg-[#fffdf5] p-[18px]"
+            className="bg-card border-ink mx-auto mb-5 grid aspect-square w-full max-w-[306px] grid-cols-[repeat(13,1fr)] gap-1 rounded-[18px] border-4 p-[18px]"
           >
             {passCodeCells.map((filled, index) => (
               <span
