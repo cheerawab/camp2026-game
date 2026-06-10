@@ -43,136 +43,143 @@ const COLLECTIONS: {
   colorClass: string
   to: string
 }[] = [
-  { label: "小石收藏", count: "8 種",  colorClass: "bg-pebble-explore",   to: "/stones" },
-  { label: "道具背包", count: "29 件", colorClass: "bg-pebble-engineer",  to: "/inventory" },
-  { label: "小石合成", count: "工作台", colorClass: "bg-pebble-play",     to: "/stones/fusion" },
-  { label: "排行榜",   count: `#${PLAYER.rank}`, colorClass: "bg-pebble-resonate", to: "/leaderboard" },
-  { label: "公開圖鑑", count: "查詢",  colorClass: "bg-moss/60",          to: "/codex" },
+  {
+    label: "小石收藏",
+    count: "8 種",
+    colorClass: "bg-pebble-explore",
+    to: "/stones",
+  },
+  {
+    label: "道具背包",
+    count: "29 件",
+    colorClass: "bg-pebble-engineer",
+    to: "/inventory",
+  },
+  {
+    label: "小石合成",
+    count: "工作台",
+    colorClass: "bg-pebble-play",
+    to: "/stones/fusion",
+  },
+  {
+    label: "排行榜",
+    count: `#${PLAYER.rank}`,
+    colorClass: "bg-pebble-resonate",
+    to: "/leaderboard",
+  },
+  { label: "公開圖鑑", count: "查詢", colorClass: "bg-moss/60", to: "/codex" },
 ]
-
-const styles = `
-  .hb-screen{min-height:100vh;display:flex;justify-content:center;background:#F5E9D2}
-  .hb-canvas{width:min(100%,430px);min-height:100vh;padding:18px 16px 30px}
-  .hb-btn{min-height:46px;border:2px solid #17233A;border-radius:17px;background:#E76F3C;color:#FFF8E9;box-shadow:3px 3px 0 rgba(0,0,0,.18);font-weight:950;font-family:inherit;cursor:pointer}
-  .hb-btn:focus-visible{outline:3px solid #17233A;outline-offset:3px}
-  .hb-btn:active{transform:translate(1px,1px)}
-  .hb-eyebrow{margin:0 0 4px;color:#6B725F;font-size:12px;font-weight:950;letter-spacing:.08em}
-  .hb-player-card{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;padding:14px;border:2px solid #17233A;border-radius:26px;background:#FFF8E9;box-shadow:4px 4px 0 rgba(23,35,58,.14)}
-  .hb-avatar{width:64px;height:64px;display:grid;place-items:center;border:2px solid #17233A;border-radius:22px;background:#F4C84A;font-size:26px;font-weight:950}
-  .hb-player-copy h1{margin:0;font-size:29px;line-height:1;letter-spacing:-.04em}
-  .hb-player-copy span{color:#6B725F;font-weight:850}
-  .hb-power-chip{min-width:76px;padding:8px 9px;border:2px solid #17233A;border-radius:18px;background:#17233A;color:#FFF8E9;text-align:center}
-  .hb-power-chip span{display:block;color:rgba(255,248,233,.72);font-size:11px;font-weight:950}
-  .hb-power-chip strong{font-size:23px}
-  .hb-primary-panel{margin-top:14px;padding:18px;border:2px solid #17233A;border-radius:30px;background:#17233A;color:#FFF8E9;box-shadow:5px 5px 0 rgba(23,35,58,.16)}
-  .hb-primary-panel .hb-eyebrow,.hb-primary-panel p{color:rgba(255,248,233,.75)}
-  .hb-primary-panel h2{margin:0;font-size:27px;line-height:1.16;letter-spacing:-.045em}
-  .hb-primary-panel p{margin:8px 0 14px;line-height:1.65}
-  .hb-start-battle{width:100%}
-  .hb-quick-stats{margin-top:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-  .hb-quick-stats div{padding:12px 8px;border:2px solid #D8C29A;border-radius:18px;background:#FFF4D4;text-align:center}
-  .hb-quick-stats span{display:block;color:#6B725F;font-size:12px;font-weight:950}
-  .hb-quick-stats strong{font-size:24px}
-  .hb-action-grid{margin-top:14px;display:grid;gap:10px}
-  .hb-action-card{display:grid;grid-template-columns:42px 1fr 68px;gap:10px;align-items:center;padding:13px;border:2px solid #17233A;border-radius:22px;background:#FFF8E9}
-  .hb-action-card.primary{background:#FFF4D4}
-  .hb-stone-dot{width:42px;height:42px;border:2px solid #17233A;border-radius:16px 20px 14px 18px;transform:rotate(-7deg)}
-  .hb-action-card h3{margin:0 0 3px;font-size:18px}
-  .hb-action-card p{margin:0;color:#6B725F;font-size:13px;line-height:1.45}
-  .hb-action-card .hb-btn{min-height:40px;background:#FFF8E9;color:#17233A;box-shadow:2px 2px 0 rgba(23,35,58,.14)}
-  .hb-collection-panel,.hb-base-snapshot{margin-top:14px;padding:15px;border:2px solid #17233A;border-radius:22px;background:#FFF8E9}
-  .hb-section-head h2{margin:0 0 12px;font-size:22px;letter-spacing:-.04em}
-  .hb-collection-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-  .hb-collection-tile{display:grid;grid-template-columns:24px 1fr;gap:7px;align-items:center;min-height:66px;padding:10px;background:#FFF4D4;color:#17233A;text-align:left;border:2px solid #17233A;border-radius:17px;font-family:inherit;cursor:pointer}
-  .hb-collection-tile small{grid-column:2;color:#6B725F;font-size:12px}
-  .hb-collection-tile strong{font-weight:900}
-  .hb-tile-mark{grid-row:span 2;width:24px;height:24px;border:2px solid #17233A;border-radius:9px 12px 8px 10px}
-  .hb-base-snapshot{display:grid;grid-template-columns:82px 1fr;gap:13px;align-items:center;background:#FFF4D4}
-  .hb-mini-map{position:relative;height:76px;border:2px solid #17233A;border-radius:20px;background:#FFF8E9}
-  .hb-mini-map span{position:absolute;width:18px;height:18px;border:2px solid #17233A;border-radius:8px}
-  .hb-mini-map span:nth-child(1){left:14px;top:14px;background:#F4C84A}
-  .hb-mini-map span:nth-child(2){right:15px;top:24px;background:#E76F3C}
-  .hb-mini-map span:nth-child(3){left:31px;bottom:12px;background:#356B58}
-  .hb-base-snapshot h2{margin:0 0 5px;font-size:18px}
-  .hb-base-snapshot p{margin:0;color:#6B725F;line-height:1.55;font-size:13px}
-`
 
 export function HomeBasePage() {
   return (
-    <main className="hb-screen" aria-label="營隊基地首頁">
-      <style>{styles}</style>
-      <section className="hb-canvas">
-        <header className="hb-player-card" aria-label="玩家狀態">
-          <div className="hb-avatar" aria-hidden="true">
+    <main
+      className="bg-paper text-ink flex min-h-svh justify-center"
+      aria-label="營隊基地首頁"
+    >
+      <section className="grid min-h-svh w-full max-w-[430px] content-start gap-3 px-4 py-[18px] pb-[30px]">
+        {/* 玩家狀態 */}
+        <header
+          className="bg-card border-ink grid grid-cols-[64px_1fr_auto] items-center gap-3 rounded-[26px] border-2 p-3.5"
+          style={{ boxShadow: "4px 4px 0 rgba(23,35,58,.14)" }}
+          aria-label="玩家狀態"
+        >
+          <div
+            className="bg-pebble-spark border-ink grid size-16 place-items-center rounded-[22px] border-2 text-[26px] font-black"
+            aria-hidden
+          >
             洛
           </div>
-          <div className="hb-player-copy">
-            <p className="hb-eyebrow">CAMP BASE</p>
-            <h1>{PLAYER.name}</h1>
-            <span>{PLAYER.squad}</span>
+          <div>
+            <p className="text-muted-foreground mb-1 text-xs font-black tracking-[0.08em] uppercase">
+              Camp Base
+            </p>
+            <h1 className="text-[29px] leading-none font-black tracking-[-0.04em]">
+              {PLAYER.name}
+            </h1>
+            <span className="text-muted-foreground font-bold">
+              {PLAYER.squad}
+            </span>
           </div>
-          <div className="hb-power-chip" aria-label={`開源力 ${PLAYER.power}`}>
-            <span>OP</span>
-            <strong>{PLAYER.power}</strong>
+          <div
+            className="bg-ink text-primary-foreground min-w-[76px] rounded-[18px] border-2 border-transparent px-[9px] py-2 text-center"
+            aria-label={`開源力 ${PLAYER.power}`}
+          >
+            <span className="text-primary-foreground/70 block text-[11px] font-black">
+              OP
+            </span>
+            <strong className="text-[23px] font-black">{PLAYER.power}</strong>
           </div>
         </header>
 
-        <section className="hb-primary-panel" aria-label="主要行動">
-          <div>
-            <p className="hb-eyebrow">現在最重要</p>
-            <h2>先開始知識王戰，其他都放在下方快速入口。</h2>
-            <p>首頁不放每日任務或世界事件；只放玩家現場真的會點的功能。</p>
-          </div>
+        {/* 主要行動 */}
+        <section
+          className="bg-ink text-primary-foreground rounded-[30px] border-2 border-transparent p-[18px]"
+          style={{ boxShadow: "5px 5px 0 rgba(23,35,58,.16)" }}
+          aria-label="主要行動"
+        >
+          <p className="text-primary-foreground/75 mb-1 text-xs font-black tracking-[0.08em] uppercase">
+            現在最重要
+          </p>
+          <h2 className="mb-2 text-[27px] leading-[1.16] font-black tracking-[-0.045em]">
+            先開始知識王戰，其他都放在下方快速入口。
+          </h2>
+          <p className="text-primary-foreground/75 mb-3.5 leading-[1.65]">
+            首頁不放每日任務或世界事件；只放玩家現場真的會點的功能。
+          </p>
           <Link
             to="/battle"
-            className="hb-btn hb-start-battle"
-            style={{
-              display: "grid",
-              placeItems: "center",
-              textDecoration: "none",
-            }}
+            className="border-ink bg-primary text-primary-foreground focus-visible:outline-power grid min-h-[46px] w-full place-items-center rounded-[17px] border-2 text-base font-black no-underline transition-transform focus-visible:outline-3 focus-visible:outline-offset-2 active:translate-y-px"
+            style={{ boxShadow: "3px 3px 0 rgba(0,0,0,.18)" }}
           >
             開始 / 加入對戰
           </Link>
         </section>
 
-        <section className="hb-quick-stats" aria-label="快速摘要">
-          <div>
-            <span>小石</span>
-            <strong>{PLAYER.stones}</strong>
-          </div>
-          <div>
-            <span>道具</span>
-            <strong>{PLAYER.items}</strong>
-          </div>
-          <div>
-            <span>排行</span>
-            <strong>#{PLAYER.rank}</strong>
-          </div>
+        {/* 快速摘要 */}
+        <section className="grid grid-cols-3 gap-[9px]" aria-label="快速摘要">
+          {[
+            { label: "小石", value: PLAYER.stones },
+            { label: "道具", value: PLAYER.items },
+            { label: "排行", value: `#${PLAYER.rank}` },
+          ].map(({ label, value }) => (
+            <div
+              key={label}
+              className="bg-surface-raised border-border rounded-[18px] border-2 px-2 py-3 text-center"
+            >
+              <span className="text-muted-foreground block text-xs font-black">
+                {label}
+              </span>
+              <strong className="text-[24px] font-black">{value}</strong>
+            </div>
+          ))}
         </section>
 
-        <section className="hb-action-grid" aria-label="核心入口">
+        {/* 核心入口 */}
+        <section className="grid gap-[10px]" aria-label="核心入口">
           {ACTIONS.map((action) => (
             <article
               key={action.label}
-              className={`hb-action-card${action.primary ? " primary" : ""}`}
+              className={[
+                "bg-card border-ink grid grid-cols-[42px_1fr_68px] items-center gap-[10px] rounded-[22px] border-2 p-[13px]",
+                action.primary ? "bg-surface-raised" : "",
+              ].join(" ")}
             >
               <div
-                className={`hb-stone-dot ${action.colorClass}`}
-                aria-hidden="true"
+                className={`border-ink size-[42px] -rotate-[7deg] rounded-[16px_20px_14px_18px] border-2 ${action.colorClass}`}
+                aria-hidden
               />
               <div>
-                <h3>{action.label}</h3>
-                <p>{action.desc}</p>
+                <h3 className="mb-[3px] text-[18px] font-black">
+                  {action.label}
+                </h3>
+                <p className="text-muted-foreground m-0 text-[13px] leading-[1.45]">
+                  {action.desc}
+                </p>
               </div>
               <Link
                 to={action.to}
-                className="hb-btn"
-                style={{
-                  display: "grid",
-                  placeItems: "center",
-                  textDecoration: "none",
-                }}
+                className="bg-card border-ink focus-visible:outline-power grid min-h-[40px] place-items-center rounded-[17px] border-2 text-sm font-black no-underline transition-transform focus-visible:outline-3 focus-visible:outline-offset-2 active:translate-y-px"
+                style={{ boxShadow: "2px 2px 0 rgba(23,35,58,.14)" }}
               >
                 開啟
               </Link>
@@ -180,39 +187,57 @@ export function HomeBasePage() {
           ))}
         </section>
 
-        <section className="hb-collection-panel" aria-label="收藏與查詢">
-          <div className="hb-section-head">
-            <p className="hb-eyebrow">COLLECT &amp; CHECK</p>
-            <h2>收藏、背包、合成、排行</h2>
-          </div>
-          <div className="hb-collection-grid">
+        {/* 收藏與查詢 */}
+        <section
+          className="bg-card border-ink rounded-[22px] border-2 p-[15px]"
+          aria-label="收藏與查詢"
+        >
+          <p className="text-muted-foreground mb-1 text-xs font-black tracking-[0.08em] uppercase">
+            Collect &amp; Check
+          </p>
+          <h2 className="mb-3 text-[22px] font-black tracking-[-0.04em]">
+            收藏、背包、合成、排行
+          </h2>
+          <div className="grid grid-cols-2 gap-[9px]">
             {COLLECTIONS.map((item) => (
               <Link
                 key={item.label}
                 to={item.to}
-                className="hb-collection-tile"
-                style={{ textDecoration: "none" }}
+                className="bg-surface-raised border-ink grid min-h-[66px] grid-cols-[24px_1fr] items-center gap-[7px] rounded-[17px] border-2 px-[10px] py-[10px] text-inherit no-underline transition-transform active:translate-y-px"
               >
                 <span
-                  className={`hb-tile-mark ${item.colorClass}`}
-                  aria-hidden="true"
+                  className={`border-ink row-span-2 size-6 rounded-[9px_12px_8px_10px] border-2 ${item.colorClass}`}
+                  aria-hidden
                 />
-                <strong>{item.label}</strong>
-                <small>{item.count}</small>
+                <strong className="block font-black">{item.label}</strong>
+                <small className="text-muted-foreground block text-xs font-bold">
+                  {item.count}
+                </small>
               </Link>
             ))}
           </div>
         </section>
 
-        <section className="hb-base-snapshot" aria-label="基地展示摘要">
-          <div className="hb-mini-map" aria-hidden="true">
-            <span />
-            <span />
-            <span />
+        {/* 基地展示摘要 */}
+        <section
+          className="bg-surface-raised border-ink grid grid-cols-[82px_1fr] items-center gap-[13px] rounded-[22px] border-2 p-[15px]"
+          aria-label="基地展示摘要"
+        >
+          <div
+            className="bg-card border-ink relative h-[76px] rounded-[20px] border-2"
+            aria-hidden
+          >
+            <span className="bg-pebble-spark border-ink absolute top-[14px] left-[14px] size-[18px] rounded-lg border-2" />
+            <span className="bg-primary border-ink absolute top-[24px] right-[15px] size-[18px] rounded-lg border-2" />
+            <span className="bg-moss border-ink absolute bottom-[12px] left-[31px] size-[18px] rounded-lg border-2" />
           </div>
           <div>
-            <h2>目前基地：營燈前哨</h2>
-            <p>基地展示只做狀態摘要，不搶主要操作位置。</p>
+            <h2 className="mb-[5px] text-[18px] font-black">
+              目前基地：營燈前哨
+            </h2>
+            <p className="text-muted-foreground text-[13px] leading-[1.55]">
+              基地展示只做狀態摘要，不搶主要操作位置。
+            </p>
           </div>
         </section>
       </section>
