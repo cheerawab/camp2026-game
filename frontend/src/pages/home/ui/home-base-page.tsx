@@ -12,38 +12,43 @@ const PLAYER = {
 const ACTIONS: {
   label: string
   desc: string
-  tone: string
+  colorClass: string
   to: string
   primary?: boolean
 }[] = [
   {
     label: "知識王戰",
     desc: "建立或掃碼加入對戰",
-    tone: "#E76F3C",
+    colorClass: "bg-primary",
     primary: true,
     to: "/battle",
   },
   {
     label: "個人 QR Code",
     desc: "現場關卡驗證身份",
-    tone: "#356B58",
+    colorClass: "bg-moss",
     to: "/profile/qr",
   },
-  { label: "商店", desc: "使用開源力兌換外觀", tone: "#F4C84A", to: "/shop" },
+  {
+    label: "商店",
+    desc: "使用開源力兌換外觀",
+    colorClass: "bg-pebble-spark",
+    to: "/shop",
+  },
 ]
 
-const COLLECTIONS = [
-  { label: "小石收藏", count: "8 種", tone: "#4F8CC9", to: "/stones" },
-  { label: "道具背包", count: "29 件", tone: "#31A886", to: "/inventory" },
-  { label: "小石合成", count: "工作台", tone: "#9A75D6", to: "/stones/fusion" },
-  {
-    label: "排行榜",
-    count: `#${PLAYER.rank}`,
-    tone: "#E96F86",
-    to: "/leaderboard",
-  },
-  { label: "公開圖鑑", count: "查詢", tone: "#6B725F", to: "/codex" },
-] as const
+const COLLECTIONS: {
+  label: string
+  count: string
+  colorClass: string
+  to: string
+}[] = [
+  { label: "小石收藏", count: "8 種",  colorClass: "bg-pebble-explore",   to: "/stones" },
+  { label: "道具背包", count: "29 件", colorClass: "bg-pebble-engineer",  to: "/inventory" },
+  { label: "小石合成", count: "工作台", colorClass: "bg-pebble-play",     to: "/stones/fusion" },
+  { label: "排行榜",   count: `#${PLAYER.rank}`, colorClass: "bg-pebble-resonate", to: "/leaderboard" },
+  { label: "公開圖鑑", count: "查詢",  colorClass: "bg-moss/60",          to: "/codex" },
+]
 
 const styles = `
   .hb-screen{min-height:100vh;display:flex;justify-content:center;background:#F5E9D2}
@@ -153,8 +158,7 @@ export function HomeBasePage() {
               className={`hb-action-card${action.primary ? " primary" : ""}`}
             >
               <div
-                className="hb-stone-dot"
-                style={{ background: action.tone }}
+                className={`hb-stone-dot ${action.colorClass}`}
                 aria-hidden="true"
               />
               <div>
@@ -190,8 +194,7 @@ export function HomeBasePage() {
                 style={{ textDecoration: "none" }}
               >
                 <span
-                  className="hb-tile-mark"
-                  style={{ background: item.tone }}
+                  className={`hb-tile-mark ${item.colorClass}`}
                   aria-hidden="true"
                 />
                 <strong>{item.label}</strong>
