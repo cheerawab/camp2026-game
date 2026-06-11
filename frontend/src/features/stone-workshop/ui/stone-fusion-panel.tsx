@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react"
+import type { ReactNode } from "react"
 
 import { Button } from "@/shared/ui/button"
 import { Card } from "@/shared/ui/card"
@@ -66,21 +67,21 @@ export function StoneFusionPanel() {
   )
 
   return (
-    <div className="flex flex-col pb-2">
+    <div className="flex flex-1 flex-col gap-3 pb-3">
       <Card
-        className="bg-surface-raised fixed top-[84px] left-1/2 z-10 grid w-[calc(min(100vw,430px)-2rem)] -translate-x-1/2 grid-cols-[86px_1fr] items-center gap-3 rounded-[22px] px-3.5 py-3"
+        className="bg-surface-raised grid grid-cols-[92px_1fr] items-center gap-3 rounded-[22px] p-4 py-4"
         aria-label="合成結果預覽"
       >
         <div
           className={[
-            "border-ink grid size-[86px] rotate-[-6deg] place-items-center rounded-[26px_32px_22px_28px] border-2",
+            "border-ink grid size-[92px] rotate-[-6deg] place-items-center rounded-[28px_34px_24px_30px] border-2",
             selectedStone?.bgClassName ?? "bg-pebble-engineer",
           ].join(" ")}
           aria-hidden
         >
           <span
             className={[
-              "border-card size-11 rounded-[16px] border-[3px]",
+              "border-card size-12 rounded-[18px] border-[3px]",
               selectedMaterial?.bgClassName ?? "bg-pebble-explore",
             ].join(" ")}
           />
@@ -92,63 +93,62 @@ export function StoneFusionPanel() {
           <h2 className="text-2xl leading-tight font-extrabold tracking-normal">
             工程路線展示框
           </h2>
-          <p className="text-muted-foreground mt-1 text-sm leading-5 font-medium">
+          <p className="text-muted-foreground mt-1 text-sm leading-6 font-medium">
             把工程小石與地圖素材組合成基地展示用的收藏外框。
           </p>
         </div>
       </Card>
 
-      <div className="mt-[124px] space-y-2 pb-24">
-        <PickerSection
-          title="選小石"
-          description="不會消耗所有同類，只消耗本次選定數量。"
-        >
-          {stones.map((stone, index) => (
-            <PickCard
-              key={stone.id}
-              item={stone}
-              selected={selectedStoneId === stone.id}
-              onSelect={() => setSelectedStoneId(stone.id)}
-              autoFocus={index === 0}
-            />
-          ))}
-        </PickerSection>
+      <PickerSection
+        title="選小石"
+        description="不會消耗所有同類，只消耗本次選定數量。"
+      >
+        {stones.map((stone, index) => (
+          <PickCard
+            key={stone.id}
+            item={stone}
+            selected={selectedStoneId === stone.id}
+            onSelect={() => setSelectedStoneId(stone.id)}
+            autoFocus={index === 0}
+          />
+        ))}
+      </PickerSection>
 
-        <PickerSection title="選素材" description="數量不足會無法合成。">
-          {materials.map((material) => (
-            <PickCard
-              key={material.id}
-              item={material}
-              selected={selectedMaterialId === material.id}
-              onSelect={() => setSelectedMaterialId(material.id)}
-            />
-          ))}
-        </PickerSection>
-      </div>
+      <PickerSection title="選素材" description="數量不足會無法合成。">
+        {materials.map((material) => (
+          <PickCard
+            key={material.id}
+            item={material}
+            selected={selectedMaterialId === material.id}
+            onSelect={() => setSelectedMaterialId(material.id)}
+          />
+        ))}
+      </PickerSection>
 
-      <Card className="fixed bottom-4 left-1/2 z-20 mt-6 grid w-[calc(min(100vw,430px)-2rem)] -translate-x-1/2 grid-cols-[1fr_116px] items-center gap-2 rounded-[20px] px-3 py-2">
+      <Card className="sticky bottom-3 mt-1 grid grid-cols-[1fr_132px] items-center gap-2 rounded-[22px] p-3 py-3">
         <div className="min-w-0">
           <span className="text-muted-foreground block text-xs font-bold">
             消耗
           </span>
-          <strong className="block truncate text-sm font-bold">
+          <strong className="block truncate text-base font-bold">
             1 小石 + 3 素材
           </strong>
-          <span
-            className="text-muted-foreground mt-0.5 block truncate text-[11px] leading-4 font-medium"
-            aria-live="polite"
-          >
-            {status}
-          </span>
         </div>
         <Button
           type="button"
-          className="min-h-9 rounded-2xl px-3 text-sm font-bold"
+          className="min-h-11 rounded-2xl px-3 text-sm font-bold"
           onClick={() => setStatus("已合成：工程路線展示框。")}
         >
           確認合成
         </Button>
       </Card>
+
+      <p
+        className="text-muted-foreground mx-1 text-sm leading-6 font-medium"
+        aria-live="polite"
+      >
+        {status}
+      </p>
     </div>
   )
 }
@@ -160,15 +160,13 @@ function PickerSection({
 }: {
   title: string
   description: string
-  children: React.ReactNode
+  children: ReactNode
 }) {
   return (
-    <Card className="rounded-[22px] px-3 py-1.5">
-      <div className="mb-0 flex items-start justify-between gap-3">
-        <h2 className="pt-5 text-[20px] leading-none font-extrabold">
-          {title}
-        </h2>
-        <small className="text-muted-foreground max-w-[150px] pt-5 text-right text-[11px] leading-4 font-medium">
+    <Card className="rounded-[22px] p-3 py-3">
+      <div className="mb-2 flex items-start justify-between gap-3">
+        <h2 className="text-[21px] leading-tight font-extrabold">{title}</h2>
+        <small className="text-muted-foreground max-w-[150px] text-right text-xs leading-5 font-medium">
           {description}
         </small>
       </div>
@@ -193,7 +191,7 @@ function PickCard({
       type="button"
       variant={selected ? "secondary" : "outline"}
       className={[
-        "bg-surface-raised grid h-auto min-h-[60px] grid-cols-[40px_1fr] justify-start gap-2 rounded-[18px] p-2 text-left shadow-none",
+        "bg-surface-raised grid h-auto min-h-[66px] grid-cols-[42px_1fr] justify-start gap-2 rounded-[18px] p-2.5 text-left shadow-none",
         selected ? "border-ink" : "border-border",
       ].join(" ")}
       onClick={onSelect}
@@ -202,7 +200,7 @@ function PickCard({
     >
       <span
         className={[
-          "border-ink size-10 rounded-[14px_18px_12px_16px] border-2",
+          "border-ink size-[42px] rounded-[14px_18px_12px_16px] border-2",
           item.bgClassName,
         ].join(" ")}
         aria-hidden

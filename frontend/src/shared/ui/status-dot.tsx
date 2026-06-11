@@ -11,7 +11,7 @@ type StatusDotProps = {
 
 export function StatusDot({ tone, className }: StatusDotProps) {
   return (
-    <span
+    <div
       className={cn(
         "size-2 rounded-full",
         statusToneClassNames[tone].dot,
