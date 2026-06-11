@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react"
-import type { CSSProperties } from "react"
 
 import { Button } from "@/shared/ui/button"
 import { Card } from "@/shared/ui/card"
@@ -198,40 +197,19 @@ export function StoneCollectionPanel() {
             type="explore"
             owned
             count={3}
-            className="absolute"
-            style={{
-              position: "absolute",
-              top: 12,
-              right: 42,
-              zIndex: 10,
-              transform: "rotate(-8deg) scale(0.88)",
-            }}
+            className="absolute top-[12px] right-[42px] z-10 scale-[0.88] -rotate-[8deg]"
           />
           <StoneShape
             type="spark"
             owned
             count={2}
-            className="absolute"
-            style={{
-              position: "absolute",
-              top: 32,
-              right: 4,
-              zIndex: 20,
-              transform: "rotate(13deg) scale(0.78)",
-            }}
+            className="absolute top-[32px] right-1 z-20 scale-[0.78] rotate-[13deg]"
           />
           <StoneShape
             type="echo"
             owned
             count={4}
-            className="absolute"
-            style={{
-              position: "absolute",
-              top: 58,
-              right: 30,
-              zIndex: 30,
-              transform: "rotate(-3deg) scale(0.72)",
-            }}
+            className="absolute top-[58px] right-[30px] z-30 scale-[0.72] -rotate-[3deg]"
           />
         </div>
       </Card>
@@ -433,13 +411,11 @@ function StoneShape({
   owned,
   count,
   className = "",
-  style,
 }: {
   type: Exclude<StoneTypeKey, "all">
   owned: boolean
   count: number
   className?: string
-  style?: CSSProperties
 }) {
   const meta = typeMeta(type)
   return (
@@ -449,7 +425,6 @@ function StoneShape({
         owned ? meta.bgClassName : "bg-muted",
         className,
       ].join(" ")}
-      style={style}
       aria-hidden
     >
       <span className="border-ink/30 bg-card/45 absolute top-2 left-2 h-3.5 w-6 rotate-[-18deg] rounded-[12px_8px_10px_7px] border" />

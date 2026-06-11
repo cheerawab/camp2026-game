@@ -1,0 +1,246 @@
+import { Link } from "@tanstack/react-router"
+
+const PLAYER = {
+  name: "阿洛",
+  squad: "松鼠小隊",
+  power: 430,
+  stones: 8,
+  items: 29,
+  rank: 12,
+}
+
+const ACTIONS: {
+  label: string
+  desc: string
+  colorClass: string
+  to: string
+  primary?: boolean
+}[] = [
+  {
+    label: "知識王戰",
+    desc: "建立或掃碼加入對戰",
+    colorClass: "bg-primary",
+    primary: true,
+    to: "/battle",
+  },
+  {
+    label: "個人 QR Code",
+    desc: "現場關卡驗證身份",
+    colorClass: "bg-moss",
+    to: "/profile/qr",
+  },
+  {
+    label: "商店",
+    desc: "使用開源力兌換外觀",
+    colorClass: "bg-pebble-spark",
+    to: "/shop",
+  },
+]
+
+const COLLECTIONS: {
+  label: string
+  count: string
+  colorClass: string
+  to: string
+}[] = [
+  {
+    label: "小石收藏",
+    count: "8 種",
+    colorClass: "bg-pebble-explore",
+    to: "/stones",
+  },
+  {
+    label: "道具背包",
+    count: "29 件",
+    colorClass: "bg-pebble-engineer",
+    to: "/inventory",
+  },
+  {
+    label: "小石合成",
+    count: "工作台",
+    colorClass: "bg-pebble-play",
+    to: "/stones/fusion",
+  },
+  {
+    label: "排行榜",
+    count: `#${PLAYER.rank}`,
+    colorClass: "bg-pebble-resonate",
+    to: "/leaderboard",
+  },
+  { label: "公開圖鑑", count: "查詢", colorClass: "bg-moss/60", to: "/codex" },
+]
+
+export function HomeBasePage() {
+  return (
+    <main
+      className="bg-paper text-ink flex min-h-svh justify-center"
+      aria-label="營隊基地首頁"
+    >
+      <section className="grid min-h-svh w-full max-w-[430px] content-start gap-3 px-4 py-[18px] pb-[30px]">
+        {/* 玩家狀態 */}
+        <header
+          className="bg-card border-ink grid grid-cols-[64px_1fr_auto] items-center gap-3 rounded-[26px] border-2 p-3.5"
+          style={{ boxShadow: "4px 4px 0 rgba(23,35,58,.14)" }}
+          aria-label="玩家狀態"
+        >
+          <div
+            className="bg-pebble-spark border-ink grid size-16 place-items-center rounded-[22px] border-2 text-[26px] font-black"
+            aria-hidden
+          >
+            洛
+          </div>
+          <div>
+            <p className="text-muted-foreground mb-1 text-xs font-black tracking-[0.08em] uppercase">
+              Camp Base
+            </p>
+            <h1 className="text-[29px] leading-none font-black tracking-[-0.04em]">
+              {PLAYER.name}
+            </h1>
+            <span className="text-muted-foreground font-bold">
+              {PLAYER.squad}
+            </span>
+          </div>
+          <div
+            className="bg-ink text-primary-foreground min-w-[76px] rounded-[18px] border-2 border-transparent px-[9px] py-2 text-center"
+            aria-label={`開源力 ${PLAYER.power}`}
+          >
+            <span className="text-primary-foreground/70 block text-[11px] font-black">
+              OP
+            </span>
+            <strong className="text-[23px] font-black">{PLAYER.power}</strong>
+          </div>
+        </header>
+
+        {/* 主要行動 */}
+        <section
+          className="bg-ink text-primary-foreground rounded-[30px] border-2 border-transparent p-[18px]"
+          style={{ boxShadow: "5px 5px 0 rgba(23,35,58,.16)" }}
+          aria-label="主要行動"
+        >
+          <p className="text-primary-foreground/75 mb-1 text-xs font-black tracking-[0.08em] uppercase">
+            現在最重要
+          </p>
+          <h2 className="mb-2 text-[27px] leading-[1.16] font-black tracking-[-0.045em]">
+            先開始知識王戰，其他都放在下方快速入口。
+          </h2>
+          <p className="text-primary-foreground/75 mb-3.5 leading-[1.65]">
+            首頁不放每日任務或世界事件；只放玩家現場真的會點的功能。
+          </p>
+          <Link
+            to="/battle"
+            className="border-ink bg-primary text-primary-foreground focus-visible:outline-power grid min-h-[46px] w-full place-items-center rounded-[17px] border-2 text-base font-black no-underline transition-transform focus-visible:outline-3 focus-visible:outline-offset-2 active:translate-y-px"
+            style={{ boxShadow: "3px 3px 0 rgba(0,0,0,.18)" }}
+          >
+            開始 / 加入對戰
+          </Link>
+        </section>
+
+        {/* 快速摘要 */}
+        <section className="grid grid-cols-3 gap-[9px]" aria-label="快速摘要">
+          {[
+            { label: "小石", value: PLAYER.stones },
+            { label: "道具", value: PLAYER.items },
+            { label: "排行", value: `#${PLAYER.rank}` },
+          ].map(({ label, value }) => (
+            <div
+              key={label}
+              className="bg-surface-raised border-border rounded-[18px] border-2 px-2 py-3 text-center"
+            >
+              <span className="text-muted-foreground block text-xs font-black">
+                {label}
+              </span>
+              <strong className="text-[24px] font-black">{value}</strong>
+            </div>
+          ))}
+        </section>
+
+        {/* 核心入口 */}
+        <section className="grid gap-[10px]" aria-label="核心入口">
+          {ACTIONS.map((action) => (
+            <article
+              key={action.label}
+              className={[
+                "bg-card border-ink grid grid-cols-[42px_1fr_68px] items-center gap-[10px] rounded-[22px] border-2 p-[13px]",
+                action.primary ? "bg-surface-raised" : "",
+              ].join(" ")}
+            >
+              <div
+                className={`border-ink size-[42px] -rotate-[7deg] rounded-[16px_20px_14px_18px] border-2 ${action.colorClass}`}
+                aria-hidden
+              />
+              <div>
+                <h3 className="mb-[3px] text-[18px] font-black">
+                  {action.label}
+                </h3>
+                <p className="text-muted-foreground m-0 text-[13px] leading-[1.45]">
+                  {action.desc}
+                </p>
+              </div>
+              <Link
+                to={action.to}
+                className="bg-card border-ink focus-visible:outline-power grid min-h-[40px] place-items-center rounded-[17px] border-2 text-sm font-black no-underline transition-transform focus-visible:outline-3 focus-visible:outline-offset-2 active:translate-y-px"
+                style={{ boxShadow: "2px 2px 0 rgba(23,35,58,.14)" }}
+              >
+                開啟
+              </Link>
+            </article>
+          ))}
+        </section>
+
+        {/* 收藏與查詢 */}
+        <section
+          className="bg-card border-ink rounded-[22px] border-2 p-[15px]"
+          aria-label="收藏與查詢"
+        >
+          <p className="text-muted-foreground mb-1 text-xs font-black tracking-[0.08em] uppercase">
+            Collect &amp; Check
+          </p>
+          <h2 className="mb-3 text-[22px] font-black tracking-[-0.04em]">
+            收藏、背包、合成、排行
+          </h2>
+          <div className="grid grid-cols-2 gap-[9px]">
+            {COLLECTIONS.map((item) => (
+              <Link
+                key={item.label}
+                to={item.to}
+                className="bg-surface-raised border-ink grid min-h-[66px] grid-cols-[24px_1fr] items-center gap-[7px] rounded-[17px] border-2 px-[10px] py-[10px] text-inherit no-underline transition-transform active:translate-y-px"
+              >
+                <span
+                  className={`border-ink row-span-2 size-6 rounded-[9px_12px_8px_10px] border-2 ${item.colorClass}`}
+                  aria-hidden
+                />
+                <strong className="block font-black">{item.label}</strong>
+                <small className="text-muted-foreground block text-xs font-bold">
+                  {item.count}
+                </small>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* 基地展示摘要 */}
+        <section
+          className="bg-surface-raised border-ink grid grid-cols-[82px_1fr] items-center gap-[13px] rounded-[22px] border-2 p-[15px]"
+          aria-label="基地展示摘要"
+        >
+          <div
+            className="bg-card border-ink relative h-[76px] rounded-[20px] border-2"
+            aria-hidden
+          >
+            <span className="bg-pebble-spark border-ink absolute top-[14px] left-[14px] size-[18px] rounded-lg border-2" />
+            <span className="bg-primary border-ink absolute top-[24px] right-[15px] size-[18px] rounded-lg border-2" />
+            <span className="bg-moss border-ink absolute bottom-[12px] left-[31px] size-[18px] rounded-lg border-2" />
+          </div>
+          <div>
+            <h2 className="mb-[5px] text-[18px] font-black">
+              目前基地：營燈前哨
+            </h2>
+            <p className="text-muted-foreground text-[13px] leading-[1.55]">
+              基地展示只做狀態摘要，不搶主要操作位置。
+            </p>
+          </div>
+        </section>
+      </section>
+    </main>
+  )
+}
