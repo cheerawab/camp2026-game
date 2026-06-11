@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react"
+import type { ReactNode } from "react"
 
 import { Button } from "@/shared/ui/button"
 import { Card } from "@/shared/ui/card"
@@ -159,7 +160,7 @@ function PickerSection({
 }: {
   title: string
   description: string
-  children: React.ReactNode
+  children: ReactNode
 }) {
   return (
     <Card className="rounded-[22px] p-3 py-3">

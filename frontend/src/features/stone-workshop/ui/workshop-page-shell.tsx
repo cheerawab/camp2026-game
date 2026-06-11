@@ -7,7 +7,7 @@ import { Button } from "@/shared/ui/button"
 type WorkshopPageShellProps = {
   title: string
   eyebrow: string
-  description: string
+  description?: string
   children: ReactNode
 }
 
