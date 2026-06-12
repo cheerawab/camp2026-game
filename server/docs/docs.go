@@ -1510,8 +1510,7 @@ const docTemplate = `{
                 "token": {
                     "type": "string",
                     "maxLength": 512,
-                    "minLength": 16,
-                    "example": "eyJjYW1wMjAyNiI6InBsYXllci0wMSJ9"
+                    "example": "token-1"
                 }
             }
         },
@@ -2674,6 +2673,33 @@ const docTemplate = `{
                 },
                 "team": {
                     "$ref": "#/definitions/me.TeamResponse"
+                },
+                "teamMembers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/me.TeamMemberResponse"
+                    }
+                }
+            }
+        },
+        "me.TeamMemberResponse": {
+            "type": "object",
+            "properties": {
+                "avatarUrl": {
+                    "type": "string",
+                    "example": "https://example.test/avatar/alice.png"
+                },
+                "nickname": {
+                    "type": "string",
+                    "example": "Alice"
+                },
+                "playerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                },
+                "role": {
+                    "type": "string",
+                    "example": "staff"
                 }
             }
         },

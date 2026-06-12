@@ -3,9 +3,8 @@ definitions:
   apimodel.AuthLoginRequest:
     properties:
       token:
-        example: eyJjYW1wMjAyNiI6InBsYXllci0wMSJ9
+        example: token-1
         maxLength: 512
-        minLength: 16
         type: string
     required:
     - token
@@ -821,6 +820,25 @@ definitions:
         type: string
       team:
         $ref: '#/definitions/me.TeamResponse'
+      teamMembers:
+        items:
+          $ref: '#/definitions/me.TeamMemberResponse'
+        type: array
+    type: object
+  me.TeamMemberResponse:
+    properties:
+      avatarUrl:
+        example: https://example.test/avatar/alice.png
+        type: string
+      nickname:
+        example: Alice
+        type: string
+      playerId:
+        example: 7H9K2Q
+        type: string
+      role:
+        example: staff
+        type: string
     type: object
   me.TeamRankResponse:
     properties:
