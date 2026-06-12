@@ -1,5 +1,7 @@
 version: "3.9"
 
+# This file starts only the frontend container.
+# Run with the repository root compose.yaml so the "backend" service exists for /api proxying.
 services:
   frontend:
     build: .
