@@ -20,6 +20,7 @@ import (
 	mehandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/me"
 	qrhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/qr"
 	shophandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/shop"
+	staffhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/staff"
 	systemhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/system"
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
 )
@@ -96,6 +97,10 @@ func registerRoutes(api chi.Router, dep Dependencies) {
 		MongoClient: dep.MongoClient,
 		MongoDB:     dep.MongoDB,
 	}).RegisterRoutes(api.With(authctx.RequirePlayer(dep.MongoDB)))
+	staffhandler.New(staffhandler.Dependencies{
+		Content: dep.Content,
+		MongoDB: dep.MongoDB,
+	}).RegisterRoutes(api.With(authctx.RequireStaff(dep.MongoDB)))
 
 	registerSwaggerRoutes(api)
 }
