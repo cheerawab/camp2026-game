@@ -1,20 +1,1121 @@
+# Imported from the fusion tree CSV.
+
 [[fusion_recipes]]
-id = "fusion-engineering-route-frame"
-name = "工程路線展示框"
-description = "把工程小石與合成碎片組合成基地展示用的收藏外框。"
+id = "recipe_explore_2022_maze_s1_s2"
+branch_id = "branch_2022_maze"
+type = "exploration"
+stage_from = 1
+stage_to = 2
+name = "2022 迷宮小石"
+description = "牠把營地地圖看成一座迷宮，走錯路也會順手標記新的發現。比起找到出口，牠更在意自己是不是換了一種想法。"
+story = "牠把營地地圖看成一座迷宮，走錯路也會順手標記新的發現。比起找到出口，牠更在意自己是不是換了一種想法。"
+review_title = "SITCON 2022 Cat in a Maze"
+review_url = "https://sitcon.org/2022/"
 enabled = true
 
 [[fusion_recipes.inputs]]
 kind = "sitone"
-id = "sitone-engineering"
+id = "stone_explorer_base"
 quantity = 1
 
 [[fusion_recipes.inputs]]
 kind = "item"
-id = "item-crafting-fragment"
-quantity = 3
+id = "item_maze_map"
+quantity = 1
 
 [[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_2022_maze"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_explore_2022_maze_s2_s3"
+branch_id = "branch_2022_maze"
+type = "exploration"
+stage_from = 2
+stage_to = 3
+name = "2022 破牆貓小石"
+description = "牠研究迷宮規則研究到一半，突然決定從牆邊走出自己的路。後來大家發現，原來探索不只是在路上走，也是在規則外思考。"
+story = "牠研究迷宮規則研究到一半，突然決定從牆邊走出自己的路。後來大家發現，原來探索不只是在路上走，也是在規則外思考。"
+review_title = "SITCON 2022 Cat in a Maze"
+review_url = "https://sitcon.org/2022/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_2022_maze"
+quantity = 1
+
+[[fusion_recipes.inputs]]
 kind = "item"
-id = "item-theme-ticket"
+id = "item_cat_paw_print"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_2022_break_wall_cat"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_explore_2026_backpack_s1_s2"
+branch_id = "branch_2026_camp"
+type = "exploration"
+stage_from = 1
+stage_to = 2
+name = "營地背包小石"
+description = "牠把貼紙、名牌、備用線材都塞進包包，準備在 2026 營隊裡探索下一個任務。包包有點重，但每一格都裝著一段交流。"
+story = "牠把貼紙、名牌、備用線材都塞進包包，準備在 2026 營隊裡探索下一個任務。包包有點重，但每一格都裝著一段交流。"
+review_title = "從文組轉生成年會總召 ft. 社群新手跳坑指北"
+review_url = "https://sitcon.org/2026/agenda/5ff864/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_explorer_base"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_adventure_backpack"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_camp_backpack"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_explore_2026_camp_s2_s3"
+branch_id = "branch_2026_camp"
+type = "exploration"
+stage_from = 2
+stage_to = 3
+name = "2026 營地探險小石"
+description = "牠在課程、題目、隊輔任務和交流時間之間穿梭，慢慢把營隊走成一張自己的地圖。牠不只是完成任務，也把遇見的人和問題帶回基地。"
+story = "牠在課程、題目、隊輔任務和交流時間之間穿梭，慢慢把營隊走成一張自己的地圖。牠不只是完成任務，也把遇見的人和問題帶回基地。"
+review_title = "SITCON 2026 議程表"
+review_url = "https://sitcon.org/2026/agenda/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_camp_backpack"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_mission_map"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_2026_camp_explorer"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_explore_2024_booth_s1_s2"
+branch_id = "branch_2024_star_village"
+type = "exploration"
+stage_from = 1
+stage_to = 2
+name = "攤位小石"
+description = "牠身上貼滿攤位貼紙，每張都代表一次開口問問題的勇氣。貼紙越多，牠越像一本會走路的社群地圖。"
+story = "牠身上貼滿攤位貼紙，每張都代表一次開口問問題的勇氣。貼紙越多，牠越像一本會走路的社群地圖。"
+review_title = "開源星手村議程"
+review_url = "https://sitcon.org/2024/agenda/5b0c91/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_explorer_base"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_booth_sticker"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_booth"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_explore_2024_star_village_s2_s3"
+branch_id = "branch_2024_star_village"
+type = "exploration"
+stage_from = 2
+stage_to = 3
+name = "星手村嚮導小石"
+description = "牠學會把第一次參加的人帶到有趣的入口，讓開源不再像遠方的村莊。每次有人問路，牠都會多介紹一個值得認識的人。"
+story = "牠學會把第一次參加的人帶到有趣的入口，讓開源不再像遠方的村莊。每次有人問路，牠都會多介紹一個值得認識的人。"
+review_title = "開源星手村議程"
+review_url = "https://sitcon.org/2024/agenda/5b0c91/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_booth"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_star_village_signpost"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_star_village_guide"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_explore_2019_blackbox_s1_s2"
+branch_id = "branch_2019_blackbox"
+type = "exploration"
+stage_from = 1
+stage_to = 2
+name = "2019 黑箱小石"
+description = "牠撿到一個神祕箱子，裡面裝著看似會自己決定一切的演算法。牠決定先不要害怕，而是把箱子慢慢打開。"
+story = "牠撿到一個神祕箱子，裡面裝著看似會自己決定一切的演算法。牠決定先不要害怕，而是把箱子慢慢打開。"
+review_title = "SITCON 2019 開箱演算法"
+review_url = "https://sitcon.org/2019/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_explorer_base"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_black_box_sticker"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_2019_blackbox"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_explore_2019_algorithm_s2_s3"
+branch_id = "branch_2019_blackbox"
+type = "exploration"
+stage_from = 2
+stage_to = 3
+name = "2019 開箱演算法小石"
+description = "牠把黑箱拆成一格一格的工具，終於看見裡面的選擇與假設。開箱之後，牠不只會用工具，也開始問工具為什麼這樣運作。"
+story = "牠把黑箱拆成一格一格的工具，終於看見裡面的選擇與假設。開箱之後，牠不只會用工具，也開始問工具為什麼這樣運作。"
+review_title = "SITCON 2019 開箱演算法"
+review_url = "https://sitcon.org/2019/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_2019_blackbox"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_toolbox_key"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_2019_unboxed_algorithm"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_inspiration_2021_abacus_s1_s2"
+branch_id = "branch_2021_abacus"
+type = "inspiration"
+stage_from = 1
+stage_to = 2
+name = "2021 算盤小石"
+description = "牠把一顆顆算珠推來推去，像是在摸索計算機最早的影子。每一次撥動，都是現代技術往前疊起來的一小步。"
+story = "牠把一顆顆算珠推來推去，像是在摸索計算機最早的影子。每一次撥動，都是現代技術往前疊起來的一小步。"
+review_title = "SITCON 2021 算盤的後裔"
+review_url = "https://sitcon.org/2021/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_inspiration_base"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_wooden_abacus"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_2021_abacus"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_inspiration_2021_abacus_s2_s3"
+branch_id = "branch_2021_abacus"
+type = "inspiration"
+stage_from = 2
+stage_to = 3
+name = "2021 算盤後裔小石"
+description = "牠站在前人留下的筆記上，看見工具如何一代一代變成今天的電腦。牠知道自己不是從零開始，所以更願意把學到的東西留下來。"
+story = "牠站在前人留下的筆記上，看見工具如何一代一代變成今天的電腦。牠知道自己不是從零開始，所以更願意把學到的東西留下來。"
+review_title = "SITCON 2021 算盤的後裔"
+review_url = "https://sitcon.org/2021/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_2021_abacus"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_predecessor_notes"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_2021_abacus_descendant"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_inspiration_prompt_s1_s2"
+branch_id = "branch_prompt_human_after_all"
+type = "inspiration"
+stage_from = 1
+stage_to = 2
+name = "Prompt 小石"
+description = "牠發現同一個問題，換個問法就會長出不同答案。於是牠開始練習把模糊的想法，變成可以被討論的句子。"
+story = "牠發現同一個問題，換個問法就會長出不同答案。於是牠開始練習把模糊的想法，變成可以被討論的句子。"
+review_title = "AI 時代未來人才議程"
+review_url = "https://sitcon.org/2024/agenda/92fe91/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_inspiration_base"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_prompt_card"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_prompt"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_inspiration_human_after_all_s2_s3"
+branch_id = "branch_prompt_human_after_all"
+type = "inspiration"
+stage_from = 2
+stage_to = 3
+name = "Human After All 小石"
+description = "牠看著 AI 產生的答案，開始思考人類到底該負責哪一部分。最後牠把答案收起來，先問了一個更好的問題。"
+story = "牠看著 AI 產生的答案，開始思考人類到底該負責哪一部分。最後牠把答案收起來，先問了一個更好的問題。"
+review_title = "Human After All 論壇"
+review_url = "https://sitcon.org/2024/agenda/439688/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_prompt"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_human_label"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_human_after_all"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_inspiration_sticky_note_s1_s2"
+branch_id = "branch_2024_notes"
+type = "inspiration"
+stage_from = 1
+stage_to = 2
+name = "便利貼小石"
+description = "牠把課堂上聽到的關鍵字貼得到處都是，連自己頭上也沒有放過。雖然版面有點亂，但每張便利貼都抓住了一個剛冒出來的念頭。"
+story = "牠把課堂上聽到的關鍵字貼得到處都是，連自己頭上也沒有放過。雖然版面有點亂，但每張便利貼都抓住了一個剛冒出來的念頭。"
+review_title = "SITCON 2024 議程表"
+review_url = "https://sitcon.org/2024/agenda/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_inspiration_base"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_sticky_note"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_sticky_note"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_inspiration_shared_notes_s2_s3"
+branch_id = "branch_2024_notes"
+type = "inspiration"
+stage_from = 2
+stage_to = 3
+name = "課程共筆小石"
+description = "牠把自己的筆記接到大家的共筆裡，讓孤單的理解變成共同的記憶。有人補了一行說明，牠就多亮一點。"
+story = "牠把自己的筆記接到大家的共筆裡，讓孤單的理解變成共同的記憶。有人補了一行說明，牠就多亮一點。"
+review_title = "SITCON 2024 議程表"
+review_url = "https://sitcon.org/2024/agenda/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_sticky_note"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_shared_notes_link"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_course_shared_notes"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_inspiration_2024_finite_s1_s2"
+branch_id = "branch_2024_finite_infinite"
+type = "inspiration"
+stage_from = 1
+stage_to = 2
+name = "2024 有限小石"
+description = "牠知道時間、體力和注意力都有限，所以開始學會選擇真正重要的問題。限制沒有讓牠停下來，反而讓牠的思考更清楚。"
+story = "牠知道時間、體力和注意力都有限，所以開始學會選擇真正重要的問題。限制沒有讓牠停下來，反而讓牠的思考更清楚。"
+review_title = "SITCON 2024 有限與無限"
+review_url = "https://sitcon.org/2024/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_inspiration_base"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_finite_label"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_2024_finite"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_inspiration_2024_infinite_s2_s3"
+branch_id = "branch_2024_finite_infinite"
+type = "inspiration"
+stage_from = 2
+stage_to = 3
+name = "2024 無限靈感小石"
+description = "牠在有限的營隊時間裡，收集到超過預期的想法。牠發現無限不是什麼都做，而是讓一個問題延伸到下一個人手上。"
+story = "牠在有限的營隊時間裡，收集到超過預期的想法。牠發現無限不是什麼都做，而是讓一個問題延伸到下一個人手上。"
+review_title = "SITCON 2024 有限與無限"
+review_url = "https://sitcon.org/2024/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_2024_finite"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_infinite_star_map"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_2024_infinite_inspiration"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_resonance_2024_community_handshake_s1_s2"
+branch_id = "branch_2024_star_village_exchange"
+type = "resonance"
+stage_from = 1
+stage_to = 2
+name = "社群握手小石"
+description = "牠第一次伸手時有點緊張，但對方也剛好想認識新朋友。兩隻手碰在一起，小隊基地就多了一段可以回看的連結。"
+story = "牠第一次伸手時有點緊張，但對方也剛好想認識新朋友。兩隻手碰在一起，小隊基地就多了一段可以回看的連結。"
+review_title = "開源星手村議程"
+review_url = "https://sitcon.org/2024/agenda/5b0c91/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_resonance_base"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_student_community_card"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_community_handshake"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_resonance_2024_star_village_exchange_s2_s3"
+branch_id = "branch_2024_star_village_exchange"
+type = "resonance"
+stage_from = 2
+stage_to = 3
+name = "星手村交流小石"
+description = "牠把不同學生社群的故事排成一張地圖，最後沒有真正分出誰比較厲害。因為每一場交流結束後，大家都多帶走了一點經驗。"
+story = "牠把不同學生社群的故事排成一張地圖，最後沒有真正分出誰比較厲害。因為每一場交流結束後，大家都多帶走了一點經驗。"
+review_title = "開源星手村議程"
+review_url = "https://sitcon.org/2024/agenda/5b0c91/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_community_handshake"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_star_village_badge"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_star_village_exchange"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_resonance_consensus_draft_s1_s2"
+branch_id = "branch_student_autonomy"
+type = "resonance"
+stage_from = 1
+stage_to = 2
+name = "共識草稿小石"
+description = "牠把大家七嘴八舌的意見整理成一份還能修改的草稿。每個人都留下一點痕跡，規則才不只是某個人的決定。"
+story = "牠把大家七嘴八舌的意見整理成一份還能修改的草稿。每個人都留下一點痕跡，規則才不只是某個人的決定。"
+review_title = "社團經營不再靠通靈：SITCON 教你用開源思維升級領導技能"
+review_url = "https://sitcon.org/2026/agenda/aef34b/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_resonance_base"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_charter_draft"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_consensus_draft"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_resonance_student_autonomy_s2_s3"
+branch_id = "branch_student_autonomy"
+type = "resonance"
+stage_from = 2
+stage_to = 3
+name = "學生自治小石"
+description = "牠開始想像學生自治也能被公開討論、共同維護。每一次投票或提案，都像把社群往透明的方向推一點。"
+story = "牠開始想像學生自治也能被公開討論、共同維護。每一次投票或提案，都像把社群往透明的方向推一點。"
+review_title = "社團經營不再靠通靈：SITCON 教你用開源思維升級領導技能"
+review_url = "https://sitcon.org/2026/agenda/aef34b/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_consensus_draft"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_transparent_proposal"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_student_autonomy"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_resonance_contribution_s1_s2"
+branch_id = "branch_open_source_route"
+type = "resonance"
+stage_from = 1
+stage_to = 2
+name = "貢獻小石"
+description = "牠第一次送出貢獻時，只改了一個小地方。可是有人說謝謝之後，牠發現開源不是距離很遠的大事。"
+story = "牠第一次送出貢獻時，只改了一個小地方。可是有人說謝謝之後，牠發現開源不是距離很遠的大事。"
+review_title = "開源社群探險議程"
+review_url = "https://sitcon.org/2024/agenda/e58595/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_resonance_base"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_contribution_sticker"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_contribution"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_resonance_open_source_route_s2_s3"
+branch_id = "branch_open_source_route"
+type = "resonance"
+stage_from = 2
+stage_to = 3
+name = "Open Source 路線小石"
+description = "牠沿著 issue、commit、review 一路往前走，慢慢看懂社群如何協作。路線不一定直，但每一步都有人可以一起走。"
+story = "牠沿著 issue、commit、review 一路往前走，慢慢看懂社群如何協作。路線不一定直，但每一步都有人可以一起走。"
+review_title = "開源社群探險議程"
+review_url = "https://sitcon.org/2024/agenda/e58595/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_contribution"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_open_source_roadmap"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_open_source_route"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_resonance_2020_tour_flag_s1_s2"
+branch_id = "branch_2020_tour_group"
+type = "resonance"
+stage_from = 1
+stage_to = 2
+name = "2020 導遊旗小石"
+description = "牠舉起小旗子，帶第一次參加 SITCON 的人認識年會攤位和工作人員。總會讓人想開口問問題。"
+story = "牠舉起小旗子，帶第一次參加 SITCON 的人認識年會攤位和工作人員。總會讓人想開口問問題。"
+review_title = "SITCON 2020"
+review_url = "https://sitcon.org/2020/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_resonance_base"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_tour_flag"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_2020_tour_flag"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_resonance_2020_tour_group_s2_s3"
+branch_id = "branch_2020_tour_group"
+type = "resonance"
+stage_from = 2
+stage_to = 3
+name = "2020 SITCON 導遊團小石"
+description = "牠把一群陌生人帶成一小隊，從攤位走到議程，再走到新的朋友身邊。導覽結束後，大家手上多了地圖，心裡也多了方向。"
+story = "牠把一群陌生人帶成一小隊，從攤位走到議程，再走到新的朋友身邊。導覽結束後，大家手上多了地圖，心裡也多了方向。"
+review_title = "SITCON 2020"
+review_url = "https://sitcon.org/2020/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_2020_tour_flag"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_venue_route"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_2020_sitcon_tour_group"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_engineering_docker_s1_s2"
+branch_id = "branch_kubernetes_devops_sre"
+type = "engineering"
+stage_from = 1
+stage_to = 2
+name = "Docker 小石"
+description = "牠把環境裝進小小的容器裡，終於不用再說「我這邊可以跑」。每次啟動成功，牠都會安心地點一下頭。"
+story = "牠把環境裝進小小的容器裡，終於不用再說「我這邊可以跑」。每次啟動成功，牠都會安心地點一下頭。"
+review_title = "SITCON 2024 Kubernetes、DevOps 和 SRE"
+review_url = "https://sitcon.org/2024/agenda/2de5e9/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_engineering_base"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_container_sticker"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_docker"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_engineering_kubernetes_s2_s3"
+branch_id = "branch_kubernetes_devops_sre"
+type = "engineering"
+stage_from = 2
+stage_to = 3
+name = "Kubernetes 小石"
+description = "牠不再只照顧一個容器，而是開始管理一整群忙碌的小服務。混亂沒有消失，但牠學會讓混亂有秩序地運轉。"
+story = "牠不再只照顧一個容器，而是開始管理一整群忙碌的小服務。混亂沒有消失，但牠學會讓混亂有秩序地運轉。"
+review_title = "SITCON 2024 Kubernetes、DevOps 和 SRE"
+review_url = "https://sitcon.org/2024/agenda/2de5e9/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_docker"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_cluster_core"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_kubernetes"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_engineering_gpg_s1_s2"
+branch_id = "branch_gpg_crypto_gatekeeper"
+type = "engineering"
+stage_from = 1
+stage_to = 2
+name = "GPG 小石"
+description = "牠把訊息封進信封前，先確認鑰匙是不是交到對的人手上。安全不是神祕咒語，而是一連串可以被驗證的動作。"
+story = "牠把訊息封進信封前，先確認鑰匙是不是交到對的人手上。安全不是神祕咒語，而是一連串可以被驗證的動作。"
+review_title = "GPG 議程"
+review_url = "https://sitcon.org/2024/agenda/3cdcb1/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_engineering_base"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_public_key_tag"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_gpg"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_engineering_crypto_gatekeeper_s2_s3"
+branch_id = "branch_gpg_crypto_gatekeeper"
+type = "engineering"
+stage_from = 2
+stage_to = 3
+name = "加密守門員小石"
+description = "牠站在資料門口，一邊檢查簽章，一邊提醒大家不要把信任交給直覺。每一次驗證，都是替社群多守住一點安心。"
+story = "牠站在資料門口，一邊檢查簽章，一邊提醒大家不要把信任交給直覺。每一次驗證，都是替社群多守住一點安心。"
+review_title = "GPG 議程"
+review_url = "https://sitcon.org/2024/agenda/3cdcb1/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_gpg"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_signature_inkpad"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_crypto_gatekeeper"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_engineering_test_s1_s2"
+branch_id = "branch_test_clean_code"
+type = "engineering"
+stage_from = 1
+stage_to = 2
+name = "測試小石"
+description = "牠在每次改動前都先放下一個小小測試，像替未來的自己留路標。失敗的紅燈不會讓牠沮喪，只會告訴牠問題在哪裡。"
+story = "牠在每次改動前都先放下一個小小測試，像替未來的自己留路標。失敗的紅燈不會讓牠沮喪，只會告訴牠問題在哪裡。"
+review_title = "寫測試議程"
+review_url = "https://sitcon.org/2024/agenda/d000a0/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_engineering_base"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_test_sticker"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_test"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_engineering_clean_code_s2_s3"
+branch_id = "branch_test_clean_code"
+type = "engineering"
+stage_from = 2
+stage_to = 3
+name = "Clean Code 小石"
+description = "牠把可以動的程式整理成別人也看得懂的樣子。程式碼變乾淨之後，下一個接手的人終於不用先深呼吸。"
+story = "牠把可以動的程式整理成別人也看得懂的樣子。程式碼變乾淨之後，下一個接手的人終於不用先深呼吸。"
+review_title = "Clean Code 議程"
+review_url = "https://sitcon.org/2024/agenda/02dc3b/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_test"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_clean_spec"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_clean_code"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_engineering_terminal_s1_s2"
+branch_id = "branch_terminal_system_intern"
+type = "engineering"
+stage_from = 1
+stage_to = 2
+name = "終端機小石"
+description = "牠盯著黑底白字的畫面，慢慢覺得命令列其實沒有那麼可怕。每輸入一行指令，牠就多理解一點工具和系統的關係。"
+story = "牠盯著黑底白字的畫面，慢慢覺得命令列其實沒有那麼可怕。每輸入一行指令，牠就多理解一點工具和系統的關係。"
+review_title = "十倍開發！解脫雙手拋棄滑鼠的開發環境"
+review_url = "https://sitcon.org/2026/agenda/c1d927/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_engineering_base"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_terminal_cursor"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_terminal"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_engineering_system_intern_s2_s3"
+branch_id = "branch_terminal_system_intern"
+type = "engineering"
+stage_from = 2
+stage_to = 3
+name = "系統實習小石"
+description = "牠從文件、原始碼和社群對話中學會真正的實習不是只完成任務。它更像走進一個系統，理解它如何被很多人一起維護。"
+story = "牠從文件、原始碼和社群對話中學會真正的實習不是只完成任務。它更像走進一個系統，理解它如何被很多人一起維護。"
+review_title = "上線是起點：觀測×重構×擴充的系統迭代術"
+review_url = "https://sitcon.org/2026/agenda/d06ebf/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_terminal"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_system_docs"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_system_intern"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_entertainment_microphone_s1_s2"
+branch_id = "branch_lightning_talk"
+type = "entertainment"
+stage_from = 1
+stage_to = 2
+name = "麥克風小石"
+description = "牠站上舞台時還有點發抖，但第一句話說出口後，燈光就沒有那麼刺眼了。分享不一定完美，但會讓想法開始流動。"
+story = "牠站上舞台時還有點發抖，但第一句話說出口後，燈光就沒有那麼刺眼了。分享不一定完美，但會讓想法開始流動。"
+review_title = "Lightning Talk 議程"
+review_url = "https://sitcon.org/2024/agenda/0e35dc/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_entertainment_base"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_microphone"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_microphone"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_entertainment_lightning_talk_s2_s3"
+branch_id = "branch_lightning_talk"
+type = "entertainment"
+stage_from = 2
+stage_to = 3
+name = "Lightning Talk 小石"
+description = "牠把一個很大的故事壓進短短幾分鐘，留下最亮的那一段。時間一到，掌聲提醒牠勇氣也可以很精簡。"
+story = "牠把一個很大的故事壓進短短幾分鐘，留下最亮的那一段。時間一到，掌聲提醒牠勇氣也可以很精簡。"
+review_title = "Lightning Talk 議程"
+review_url = "https://sitcon.org/2024/agenda/0e35dc/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_microphone"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_lightning_talk_script"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_lightning_talk"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_entertainment_p5js_s1_s2"
+branch_id = "branch_p5js_tech_art"
+type = "entertainment"
+stage_from = 1
+stage_to = 2
+name = "p5.js 小石"
+description = "牠把程式寫成會動的圖案，第一次發現錯誤訊息也可能通往作品。螢幕亮起來時，技術忽然變得很像舞台。"
+story = "牠把程式寫成會動的圖案，第一次發現錯誤訊息也可能通往作品。螢幕亮起來時，技術忽然變得很像舞台。"
+review_title = "p5.js 議程"
+review_url = "https://sitcon.org/2024/agenda/f01c4f/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_entertainment_base"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_canvas_code"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_p5js"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_entertainment_tech_art_s2_s3"
+branch_id = "branch_p5js_tech_art"
+type = "entertainment"
+stage_from = 2
+stage_to = 3
+name = "科技藝術小石"
+description = "牠把座標、顏色和互動揉在一起，做出一個會回應人的小世界。原來創作也可以是理解技術的一種方式。"
+story = "牠把座標、顏色和互動揉在一起，做出一個會回應人的小世界。原來創作也可以是理解技術的一種方式。"
+review_title = "p5.js 議程"
+review_url = "https://sitcon.org/2024/agenda/f01c4f/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_p5js"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_pixel_paint"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_tech_art"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_entertainment_espresso_s1_s2"
+branch_id = "branch_espresso_ten_minutes"
+type = "entertainment"
+stage_from = 1
+stage_to = 2
+name = "Espresso 小石"
+description = "牠把想講的內容濃縮成一小杯，苦一點但很醒腦。短短十分鐘，也能讓人帶走一個新問題。"
+story = "牠把想講的內容濃縮成一小杯，苦一點但很醒腦。短短十分鐘，也能讓人帶走一個新問題。"
+review_title = "SITCON 2024 CFP"
+review_url = "https://sitcon.org/2024/cfp/normal/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_entertainment_base"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_espresso_cup"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_espresso"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_entertainment_ten_minute_s2_s3"
+branch_id = "branch_espresso_ten_minutes"
+type = "entertainment"
+stage_from = 2
+stage_to = 3
+name = "十分鐘精華小石"
+description = "牠學會在時間結束前，把最重要的概念送到聽眾手上。不是講得越多越好，而是讓人願意繼續查下去。"
+story = "牠學會在時間結束前，把最重要的概念送到聽眾手上。不是講得越多越好，而是讓人願意繼續查下去。"
+review_title = "SITCON 2024 CFP"
+review_url = "https://sitcon.org/2024/cfp/normal/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_espresso"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_essence_timer"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_ten_minute_essence"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_entertainment_2024_ribbon_s1_s2"
+branch_id = "branch_2024_polaroid_night"
+type = "entertainment"
+stage_from = 1
+stage_to = 2
+name = "2024 彩帶小石"
+description = "牠把活動現場的笑聲、掌聲和混亂都捲進彩帶裡。每次彩帶散開，基地就多一點營隊的聲音。"
+story = "牠把活動現場的笑聲、掌聲和混亂都捲進彩帶裡。每次彩帶散開，基地就多一點營隊的聲音。"
+review_title = "SITCON 2024"
+review_url = "https://sitcon.org/2024/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_entertainment_base"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_ribbon"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_2024_ribbon"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_entertainment_2024_polaroid_s2_s3"
+branch_id = "branch_2024_polaroid_night"
+type = "entertainment"
+stage_from = 2
+stage_to = 3
+name = "2024 最後一晚拍立得小石"
+description = "把最後一晚的合照收進小小底片，連沒有說出口的感謝也一起留下。"
+story = "把最後一晚的合照收進小小底片，連沒有說出口的感謝也一起留下。"
+review_title = "SITCON 2024"
+review_url = "https://sitcon.org/2024/"
+enabled = true
+
+[[fusion_recipes.inputs]]
+kind = "sitone"
+id = "stone_2024_ribbon"
+quantity = 1
+
+[[fusion_recipes.inputs]]
+kind = "item"
+id = "item_polaroid_film"
+quantity = 1
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_2024_last_night_polaroid"
 quantity = 1

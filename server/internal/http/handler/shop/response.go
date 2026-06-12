@@ -9,22 +9,22 @@ type ItemDetailResponse struct {
 }
 
 type ShopItemResponse struct {
-	ID             string `json:"id" example:"item-crafting-fragment"`
-	Name           string `json:"name" example:"合成碎片"`
+	ID             string `json:"id" example:"item_adventure_backpack"`
+	Name           string `json:"name" example:"冒險背包"`
 	Type           string `json:"type" example:"material"`
 	Rarity         string `json:"rarity" example:"common"`
-	Description    string `json:"description" example:"小石造型合成使用的基礎素材。"`
+	Description    string `json:"description" example:"冒險背包，可用於小石合成。"`
 	PriceOpenPower int    `json:"priceOpenPower" example:"50"`
 	Redeemed       bool   `json:"redeemed" example:"false"`
 }
 
 type PurchaseRequest struct {
-	ItemID string `json:"itemId" validate:"required" example:"item-crafting-fragment"`
+	ItemID string `json:"itemId" validate:"required" example:"item_adventure_backpack"`
 }
 
 type PurchaseResponse struct {
 	PurchaseID     string           `json:"purchaseId" example:"purchase_abc123"`
-	ItemID         string           `json:"itemId" example:"item-crafting-fragment"`
+	ItemID         string           `json:"itemId" example:"item_adventure_backpack"`
 	Quantity       int              `json:"quantity" example:"1"`
 	PriceOpenPower int              `json:"priceOpenPower" example:"50"`
 	OpenPower      int              `json:"openPower" example:"1230"`

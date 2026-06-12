@@ -2,7 +2,6 @@ package me
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -80,7 +79,7 @@ func mapPlayerSitones(store *content.Store, records []mongomodel.PlayerSitone) (
 	for _, record := range records {
 		sitone, ok := store.GetSitone(record.SitoneID)
 		if !ok {
-			return nil, fmt.Errorf("sitone %q not found", record.SitoneID)
+			continue
 		}
 		out = append(out, PlayerSitoneResponse{
 			ID:       record.ID,

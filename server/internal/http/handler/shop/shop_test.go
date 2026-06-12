@@ -7,36 +7,32 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
-func TestShopItemsOnlyIncludesEnabledPurchasableItems(t *testing.T) {
+func TestShopItemsIncludesAllEnabledPurchasableContentItems(t *testing.T) {
 	store := loadTestContent(t)
 
 	items := shopItems(store)
-	if len(items) != 2 {
-		t.Fatalf("expected 2 shop items, got %#v", items)
+	if len(items) != 40 {
+		t.Fatalf("expected 40 shop items, got %#v", items)
 	}
-	if items[0].ID != "item-crafting-fragment" || items[0].PriceOpenPower != 50 {
+	if items[0].ID != "item_adventure_backpack" || items[0].PriceOpenPower != 50 {
 		t.Fatalf("unexpected first shop item: %#v", items[0])
 	}
-	if items[1].ID != "item-theme-ticket" || items[1].PriceOpenPower != 200 {
-		t.Fatalf("unexpected second shop item: %#v", items[1])
-	}
-
-	if _, ok := shopItemByID(store, "item-memory-tag"); ok {
-		t.Fatal("expected non-purchasable item to be excluded")
+	if _, ok := shopItemByID(store, "item_polaroid_film"); !ok {
+		t.Fatal("expected imported polaroid film item to be purchasable")
 	}
 }
 
 func TestShopItemResponse(t *testing.T) {
 	response := shopItemResponse(content.Item{
-		ID:             "item-crafting-fragment",
-		Name:           "合成碎片",
+		ID:             "item_adventure_backpack",
+		Name:           "冒險背包",
 		Type:           "material",
 		Rarity:         "common",
-		Description:    "小石造型合成使用的基礎素材。",
+		Description:    "冒險背包，可用於小石合成。",
 		PriceOpenPower: 50,
 	}, true)
 
-	if response.ID != "item-crafting-fragment" || response.PriceOpenPower != 50 || !response.Redeemed {
+	if response.ID != "item_adventure_backpack" || response.PriceOpenPower != 50 || !response.Redeemed {
 		t.Fatalf("unexpected shop item response: %#v", response)
 	}
 }

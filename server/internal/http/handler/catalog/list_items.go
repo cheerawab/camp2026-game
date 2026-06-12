@@ -12,11 +12,11 @@ type ItemListResponse struct {
 }
 
 type ItemResponse struct {
-	ID          string `json:"id" example:"item-crafting-fragment"`
-	Name        string `json:"name" example:"合成碎片"`
+	ID          string `json:"id" example:"item_adventure_backpack"`
+	Name        string `json:"name" example:"冒險背包"`
 	Type        string `json:"type" example:"material"`
 	Rarity      string `json:"rarity" example:"common"`
-	Description string `json:"description" example:"小石造型合成使用的基礎素材。"`
+	Description string `json:"description" example:"冒險背包，可用於小石合成。"`
 }
 
 // ListItems godoc

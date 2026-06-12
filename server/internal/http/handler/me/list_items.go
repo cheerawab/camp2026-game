@@ -2,7 +2,6 @@ package me
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -80,7 +79,7 @@ func mapPlayerItems(store *content.Store, records []mongomodel.PlayerItem) ([]Pl
 	for _, record := range records {
 		item, ok := store.GetItem(record.ItemID)
 		if !ok {
-			return nil, fmt.Errorf("item %q not found", record.ItemID)
+			continue
 		}
 		out = append(out, PlayerItemResponse{
 			ID:       record.ID,

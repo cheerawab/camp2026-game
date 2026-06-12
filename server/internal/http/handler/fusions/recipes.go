@@ -135,8 +135,15 @@ func (h *Handler) recipeResponse(recipe content.FusionRecipe, inventory inventor
 	}
 	return FusionRecipeResponse{
 		ID:          recipe.ID,
+		BranchID:    recipe.BranchID,
+		Type:        recipe.Type,
+		StageFrom:   recipe.StageFrom,
+		StageTo:     recipe.StageTo,
 		Name:        recipe.Name,
 		Description: recipe.Description,
+		Story:       recipe.Story,
+		ReviewTitle: recipe.ReviewTitle,
+		ReviewURL:   recipe.ReviewURL,
 		Enabled:     recipe.Enabled,
 		Available:   recipeAvailable(recipe, inventory),
 		Inputs:      inputs,

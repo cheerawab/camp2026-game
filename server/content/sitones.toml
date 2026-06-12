@@ -1,29 +1,181 @@
 [[sitones]]
-id = "sitone-exploration"
-name = "探索型小石"
+id = "stone_2019_blackbox"
+name = "2019 黑箱小石"
 type = "exploration"
-rarity = "base"
+rarity = "common"
 style = "default"
-description = "逛攤位、問問題、參與社群事件。"
+description = "牠撿到一個神祕箱子，裡面裝著看似會自己決定一切的演算法。牠決定先不要害怕，而是把箱子慢慢打開。"
 
 [[sitones]]
-id = "sitone-inspiration"
-name = "靈光型小石"
-type = "inspiration"
-rarity = "base"
+id = "stone_2019_unboxed_algorithm"
+name = "2019 開箱演算法小石"
+type = "exploration"
+rarity = "rare"
 style = "default"
-description = "提問、回答、做筆記、完成反思。"
+description = "牠把黑箱拆成一格一格的工具，終於看見裡面的選擇與假設。開箱之後，牠不只會用工具，也開始問工具為什麼這樣運作。"
 
 [[sitones]]
-id = "sitone-resonance"
-name = "共鳴型小石"
+id = "stone_2020_sitcon_tour_group"
+name = "2020 SITCON 導遊團小石"
 type = "resonance"
-rarity = "base"
+rarity = "rare"
 style = "default"
-description = "幫助隊友、跨隊合作、社交互動。"
+description = "牠把一群陌生人帶成一小隊，從攤位走到議程，再走到新的朋友身邊。導覽結束後，大家手上多了地圖，心裡也多了方向。"
 
 [[sitones]]
-id = "sitone-engineering"
+id = "stone_2020_tour_flag"
+name = "2020 導遊旗小石"
+type = "resonance"
+rarity = "common"
+style = "default"
+description = "牠舉起小旗子，帶第一次參加 SITCON 的人認識年會攤位和工作人員。總會讓人想開口問問題。"
+
+[[sitones]]
+id = "stone_2021_abacus"
+name = "2021 算盤小石"
+type = "inspiration"
+rarity = "common"
+style = "default"
+description = "牠把一顆顆算珠推來推去，像是在摸索計算機最早的影子。每一次撥動，都是現代技術往前疊起來的一小步。"
+
+[[sitones]]
+id = "stone_2021_abacus_descendant"
+name = "2021 算盤後裔小石"
+type = "inspiration"
+rarity = "rare"
+style = "default"
+description = "牠站在前人留下的筆記上，看見工具如何一代一代變成今天的電腦。牠知道自己不是從零開始，所以更願意把學到的東西留下來。"
+
+[[sitones]]
+id = "stone_2022_break_wall_cat"
+name = "2022 破牆貓小石"
+type = "exploration"
+rarity = "rare"
+style = "default"
+description = "牠研究迷宮規則研究到一半，突然決定從牆邊走出自己的路。後來大家發現，原來探索不只是在路上走，也是在規則外思考。"
+
+[[sitones]]
+id = "stone_2022_maze"
+name = "2022 迷宮小石"
+type = "exploration"
+rarity = "common"
+style = "default"
+description = "牠把營地地圖看成一座迷宮，走錯路也會順手標記新的發現。比起找到出口，牠更在意自己是不是換了一種想法。"
+
+[[sitones]]
+id = "stone_2024_finite"
+name = "2024 有限小石"
+type = "inspiration"
+rarity = "common"
+style = "default"
+description = "牠知道時間、體力和注意力都有限，所以開始學會選擇真正重要的問題。限制沒有讓牠停下來，反而讓牠的思考更清楚。"
+
+[[sitones]]
+id = "stone_2024_infinite_inspiration"
+name = "2024 無限靈感小石"
+type = "inspiration"
+rarity = "rare"
+style = "default"
+description = "牠在有限的營隊時間裡，收集到超過預期的想法。牠發現無限不是什麼都做，而是讓一個問題延伸到下一個人手上。"
+
+[[sitones]]
+id = "stone_2024_last_night_polaroid"
+name = "2024 最後一晚拍立得小石"
+type = "entertainment"
+rarity = "rare"
+style = "default"
+description = "把最後一晚的合照收進小小底片，連沒有說出口的感謝也一起留下。"
+
+[[sitones]]
+id = "stone_2024_ribbon"
+name = "2024 彩帶小石"
+type = "entertainment"
+rarity = "common"
+style = "default"
+description = "牠把活動現場的笑聲、掌聲和混亂都捲進彩帶裡。每次彩帶散開，基地就多一點營隊的聲音。"
+
+[[sitones]]
+id = "stone_2026_camp_explorer"
+name = "2026 營地探險小石"
+type = "exploration"
+rarity = "rare"
+style = "default"
+description = "牠在課程、題目、隊輔任務和交流時間之間穿梭，慢慢把營隊走成一張自己的地圖。牠不只是完成任務，也把遇見的人和問題帶回基地。"
+
+[[sitones]]
+id = "stone_booth"
+name = "攤位小石"
+type = "exploration"
+rarity = "common"
+style = "default"
+description = "牠身上貼滿攤位貼紙，每張都代表一次開口問問題的勇氣。貼紙越多，牠越像一本會走路的社群地圖。"
+
+[[sitones]]
+id = "stone_camp_backpack"
+name = "營地背包小石"
+type = "exploration"
+rarity = "common"
+style = "default"
+description = "牠把貼紙、名牌、備用線材都塞進包包，準備在 2026 營隊裡探索下一個任務。包包有點重，但每一格都裝著一段交流。"
+
+[[sitones]]
+id = "stone_clean_code"
+name = "Clean Code 小石"
+type = "engineering"
+rarity = "rare"
+style = "default"
+description = "牠把可以動的程式整理成別人也看得懂的樣子。程式碼變乾淨之後，下一個接手的人終於不用先深呼吸。"
+
+[[sitones]]
+id = "stone_community_handshake"
+name = "社群握手小石"
+type = "resonance"
+rarity = "common"
+style = "default"
+description = "牠第一次伸手時有點緊張，但對方也剛好想認識新朋友。兩隻手碰在一起，小隊基地就多了一段可以回看的連結。"
+
+[[sitones]]
+id = "stone_consensus_draft"
+name = "共識草稿小石"
+type = "resonance"
+rarity = "common"
+style = "default"
+description = "牠把大家七嘴八舌的意見整理成一份還能修改的草稿。每個人都留下一點痕跡，規則才不只是某個人的決定。"
+
+[[sitones]]
+id = "stone_contribution"
+name = "貢獻小石"
+type = "resonance"
+rarity = "common"
+style = "default"
+description = "牠第一次送出貢獻時，只改了一個小地方。可是有人說謝謝之後，牠發現開源不是距離很遠的大事。"
+
+[[sitones]]
+id = "stone_course_shared_notes"
+name = "課程共筆小石"
+type = "inspiration"
+rarity = "rare"
+style = "default"
+description = "牠把自己的筆記接到大家的共筆裡，讓孤單的理解變成共同的記憶。有人補了一行說明，牠就多亮一點。"
+
+[[sitones]]
+id = "stone_crypto_gatekeeper"
+name = "加密守門員小石"
+type = "engineering"
+rarity = "rare"
+style = "default"
+description = "牠站在資料門口，一邊檢查簽章，一邊提醒大家不要把信任交給直覺。每一次驗證，都是替社群多守住一點安心。"
+
+[[sitones]]
+id = "stone_docker"
+name = "Docker 小石"
+type = "engineering"
+rarity = "common"
+style = "default"
+description = "牠把環境裝進小小的容器裡，終於不用再說「我這邊可以跑」。每次啟動成功，牠都會安心地點一下頭。"
+
+[[sitones]]
+id = "stone_engineering_base"
 name = "工程型小石"
 type = "engineering"
 rarity = "base"
@@ -31,9 +183,177 @@ style = "default"
 description = "修 bug、分享解法、完成技術任務。"
 
 [[sitones]]
-id = "sitone-entertainment"
+id = "stone_entertainment_base"
 name = "娛樂型小石"
 type = "entertainment"
 rarity = "base"
 style = "default"
 description = "參與晚會、團康、活動事件。"
+
+[[sitones]]
+id = "stone_espresso"
+name = "Espresso 小石"
+type = "entertainment"
+rarity = "common"
+style = "default"
+description = "牠把想講的內容濃縮成一小杯，苦一點但很醒腦。短短十分鐘，也能讓人帶走一個新問題。"
+
+[[sitones]]
+id = "stone_explorer_base"
+name = "探索型小石"
+type = "exploration"
+rarity = "base"
+style = "default"
+description = "逛攤位、問問題、參與社群事件。"
+
+[[sitones]]
+id = "stone_gpg"
+name = "GPG 小石"
+type = "engineering"
+rarity = "common"
+style = "default"
+description = "牠把訊息封進信封前，先確認鑰匙是不是交到對的人手上。安全不是神祕咒語，而是一連串可以被驗證的動作。"
+
+[[sitones]]
+id = "stone_human_after_all"
+name = "Human After All 小石"
+type = "inspiration"
+rarity = "rare"
+style = "default"
+description = "牠看著 AI 產生的答案，開始思考人類到底該負責哪一部分。最後牠把答案收起來，先問了一個更好的問題。"
+
+[[sitones]]
+id = "stone_inspiration_base"
+name = "靈光型小石"
+type = "inspiration"
+rarity = "base"
+style = "default"
+description = "提問、回答、做筆記、完成反思。"
+
+[[sitones]]
+id = "stone_kubernetes"
+name = "Kubernetes 小石"
+type = "engineering"
+rarity = "rare"
+style = "default"
+description = "牠不再只照顧一個容器，而是開始管理一整群忙碌的小服務。混亂沒有消失，但牠學會讓混亂有秩序地運轉。"
+
+[[sitones]]
+id = "stone_lightning_talk"
+name = "Lightning Talk 小石"
+type = "entertainment"
+rarity = "rare"
+style = "default"
+description = "牠把一個很大的故事壓進短短幾分鐘，留下最亮的那一段。時間一到，掌聲提醒牠勇氣也可以很精簡。"
+
+[[sitones]]
+id = "stone_microphone"
+name = "麥克風小石"
+type = "entertainment"
+rarity = "common"
+style = "default"
+description = "牠站上舞台時還有點發抖，但第一句話說出口後，燈光就沒有那麼刺眼了。分享不一定完美，但會讓想法開始流動。"
+
+[[sitones]]
+id = "stone_open_source_route"
+name = "Open Source 路線小石"
+type = "resonance"
+rarity = "rare"
+style = "default"
+description = "牠沿著 issue、commit、review 一路往前走，慢慢看懂社群如何協作。路線不一定直，但每一步都有人可以一起走。"
+
+[[sitones]]
+id = "stone_p5js"
+name = "p5.js 小石"
+type = "entertainment"
+rarity = "common"
+style = "default"
+description = "牠把程式寫成會動的圖案，第一次發現錯誤訊息也可能通往作品。螢幕亮起來時，技術忽然變得很像舞台。"
+
+[[sitones]]
+id = "stone_prompt"
+name = "Prompt 小石"
+type = "inspiration"
+rarity = "common"
+style = "default"
+description = "牠發現同一個問題，換個問法就會長出不同答案。於是牠開始練習把模糊的想法，變成可以被討論的句子。"
+
+[[sitones]]
+id = "stone_resonance_base"
+name = "共鳴型小石"
+type = "resonance"
+rarity = "base"
+style = "default"
+description = "幫助隊友、跨隊合作、社交互動。"
+
+[[sitones]]
+id = "stone_star_village_exchange"
+name = "星手村交流小石"
+type = "resonance"
+rarity = "rare"
+style = "default"
+description = "牠把不同學生社群的故事排成一張地圖，最後沒有真正分出誰比較厲害。因為每一場交流結束後，大家都多帶走了一點經驗。"
+
+[[sitones]]
+id = "stone_star_village_guide"
+name = "星手村嚮導小石"
+type = "exploration"
+rarity = "rare"
+style = "default"
+description = "牠學會把第一次參加的人帶到有趣的入口，讓開源不再像遠方的村莊。每次有人問路，牠都會多介紹一個值得認識的人。"
+
+[[sitones]]
+id = "stone_sticky_note"
+name = "便利貼小石"
+type = "inspiration"
+rarity = "common"
+style = "default"
+description = "牠把課堂上聽到的關鍵字貼得到處都是，連自己頭上也沒有放過。雖然版面有點亂，但每張便利貼都抓住了一個剛冒出來的念頭。"
+
+[[sitones]]
+id = "stone_student_autonomy"
+name = "學生自治小石"
+type = "resonance"
+rarity = "rare"
+style = "default"
+description = "牠開始想像學生自治也能被公開討論、共同維護。每一次投票或提案，都像把社群往透明的方向推一點。"
+
+[[sitones]]
+id = "stone_system_intern"
+name = "系統實習小石"
+type = "engineering"
+rarity = "rare"
+style = "default"
+description = "牠從文件、原始碼和社群對話中學會真正的實習不是只完成任務。它更像走進一個系統，理解它如何被很多人一起維護。"
+
+[[sitones]]
+id = "stone_tech_art"
+name = "科技藝術小石"
+type = "entertainment"
+rarity = "rare"
+style = "default"
+description = "牠把座標、顏色和互動揉在一起，做出一個會回應人的小世界。原來創作也可以是理解技術的一種方式。"
+
+[[sitones]]
+id = "stone_ten_minute_essence"
+name = "十分鐘精華小石"
+type = "entertainment"
+rarity = "rare"
+style = "default"
+description = "牠學會在時間結束前，把最重要的概念送到聽眾手上。不是講得越多越好，而是讓人願意繼續查下去。"
+
+[[sitones]]
+id = "stone_terminal"
+name = "終端機小石"
+type = "engineering"
+rarity = "common"
+style = "default"
+description = "牠盯著黑底白字的畫面，慢慢覺得命令列其實沒有那麼可怕。每輸入一行指令，牠就多理解一點工具和系統的關係。"
+
+[[sitones]]
+id = "stone_test"
+name = "測試小石"
+type = "engineering"
+rarity = "common"
+style = "default"
+description = "牠在每次改動前都先放下一個小小測試，像替未來的自己留路標。失敗的紅燈不會讓牠沮喪，只會告訴牠問題在哪裡。"

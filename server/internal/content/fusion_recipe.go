@@ -20,8 +20,15 @@ var validFusionKinds = map[string]struct{}{
 
 type FusionRecipe struct {
 	ID          string            `toml:"id"`
+	BranchID    string            `toml:"branch_id"`
+	Type        string            `toml:"type"`
+	StageFrom   int               `toml:"stage_from"`
+	StageTo     int               `toml:"stage_to"`
 	Name        string            `toml:"name"`
 	Description string            `toml:"description"`
+	Story       string            `toml:"story"`
+	ReviewTitle string            `toml:"review_title"`
+	ReviewURL   string            `toml:"review_url"`
 	Enabled     bool              `toml:"enabled"`
 	Inputs      []FusionComponent `toml:"inputs"`
 	Outputs     []FusionComponent `toml:"outputs"`
@@ -89,6 +96,23 @@ func validateFusionRecipes(
 		if recipe.Name == "" {
 			errs = append(errs, fmt.Errorf("%s.name is required", location))
 		}
+		if recipe.Type != "" {
+			if _, ok := validSitoneTypes[recipe.Type]; !ok {
+				errs = append(errs, fmt.Errorf("%s.type must be one of %s", location, sortedKeys(validSitoneTypes)))
+			}
+		}
+		if recipe.StageFrom < 0 {
+			errs = append(errs, fmt.Errorf("%s.stage_from must be greater than or equal to 0", location))
+		}
+		if recipe.StageTo < 0 {
+			errs = append(errs, fmt.Errorf("%s.stage_to must be greater than or equal to 0", location))
+		}
+		if (recipe.StageFrom == 0) != (recipe.StageTo == 0) {
+			errs = append(errs, fmt.Errorf("%s.stage_from and stage_to must be provided together", location))
+		}
+		if recipe.StageFrom > 0 && recipe.StageTo <= recipe.StageFrom {
+			errs = append(errs, fmt.Errorf("%s.stage_to must be greater than stage_from", location))
+		}
 		if len(recipe.Inputs) == 0 {
 			errs = append(errs, fmt.Errorf("%s.inputs is required", location))
 		}
@@ -152,8 +176,13 @@ func validateFusionComponents(
 
 func normalizeFusionRecipe(recipe FusionRecipe) FusionRecipe {
 	recipe.ID = strings.TrimSpace(recipe.ID)
+	recipe.BranchID = strings.TrimSpace(recipe.BranchID)
+	recipe.Type = strings.TrimSpace(recipe.Type)
 	recipe.Name = strings.TrimSpace(recipe.Name)
 	recipe.Description = strings.TrimSpace(recipe.Description)
+	recipe.Story = strings.TrimSpace(recipe.Story)
+	recipe.ReviewTitle = strings.TrimSpace(recipe.ReviewTitle)
+	recipe.ReviewURL = strings.TrimSpace(recipe.ReviewURL)
 	for i := range recipe.Inputs {
 		recipe.Inputs[i] = normalizeFusionComponent(recipe.Inputs[i])
 	}

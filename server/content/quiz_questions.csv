@@ -1,11 +1,950 @@
 id,prompt,choice_a,choice_b,choice_c,choice_d,correct_choice,explanation
-quiz-001,Which command initializes a new Git repository,git init,git clone,git status,git add,A,git init creates a new repository in the current directory.
-quiz-002,Which HTTP status usually means resource not found,200,201,404,503,C,404 is the standard not found status.
-quiz-003,Which layer commonly stores application state in MongoDB,Collection,Header,Cookie,Route,A,MongoDB stores documents inside collections.
-quiz-004,Which method is commonly used to create a REST resource,GET,POST,OPTIONS,TRACE,B,POST is commonly used to create resources.
-quiz-005,Which format is this question bank using,CSV,TOML,XML,YAML,A,The quiz question bank is stored as CSV.
-quiz-006,Which Go package is used for HTTP handlers,net/http,fmt,os,path/filepath,A,The net/http package provides HTTP server primitives.
-quiz-007,Which field should not be exposed to clients,auth token,nickname,team name,avatar url,A,Auth tokens are secrets and should not be exposed.
-quiz-008,Which response type is used for API errors,problem json,plain text,html,image,A,This API uses application/problem+json for errors.
-quiz-009,Which value means a player is ready,ready=true,ready=false,status=waiting,status=missing,A,A ready flag set to true marks the player ready.
-quiz-010,Which event stream format is server to client,SSE,SMTP,FTP,DNS,A,SSE streams events from the server to the client.
+quiz-001,RNN 又稱為循環神經網路，LSTM 為其衍伸，最主要的差異為 LSTM 中加入三個控制用開關，請問開關為下列何者？,輸入(input),輸出(output),遺忘(forget),以上皆是,D,正確答案是 D：以上皆是。
+quiz-002,RNN 又稱為循環神經網路，LSTM 為其衍伸，最主要的差異為 LSTM 中加入三個控制用開關，請問開關組合為下列何者？,inside / forget / outside,input / forget / output,input / remove / output,inside / remove / outside,B,正確答案是 B：input / forget / output。
+quiz-003,在 Linux 中，執行指令 chmod 664 後該檔案權限會變成下列何者？,-rw-rw-rw-,-rw-rw----,-rw-rw-r-x,-rw-rw--r-,C,正確答案是 C：-rw-rw-r-x。
+quiz-004,下列何者並非 SHA-2 家族中的標準？,SHA-256,SHA-512,SHA-384,SHA-1024,D,正確答案是 D：SHA-1024。
+quiz-005,下列關於 K means 敘述，何者錯誤？,為 Cluster 一種,每次執行群中心都是固定的,多用來處理 Discrete data,屬於 Unsupervised Learning,B,正確答案是 B：每次執行群中心都是固定的。
+quiz-006,CSS 中 padding 這個屬性在下時，如下兩個值（ex: padding: 20px 0px），他兩個值分別依序代表了和那些方位與內部元件的距離呢？,上左與下右,上下與左右,右下與左上,左右與上下,B,正確答案是 B：上下與左右。
+quiz-007,許多政府機關的網站的角落都會有 ::: 請問這是什麼？,方便非視覺閱讀的「導盲磚」（亦稱做定位點）,政府網站的秘密溝通代碼，那些冒號都不是冒號,告訴你這是網站最重要的內容在哪,是政府網站的代碼,A,正確答案是 A：方便非視覺閱讀的「導盲磚」（亦稱做定位點）。
+quiz-008,請問 SITCON 從哪一屆開始有除了有 SITCON 娘也有 SITCON 郎？,SITCON 2014,SITCON 2015,SITCON 2016,SITCON 2017,B,正確答案是 B：SITCON 2015。
+quiz-009,PT Sans 為俄國非襯線字體，開發於 1998 年紀念彼得大帝對於俄國知識傳播的貢獻，該字體該國資訊公眾基礎工程之一，目前可透過 Google Fonts 線上字體中使用該字體。請問哪一年的 SITCON 主視覺採用該字體為標準字？,SITCON 2013,SITCON 2014,SITCON 2015,SITCON 2016,C,正確答案是 C：SITCON 2015。
+quiz-010,ITSA 從第一年 SITCON 2013 即開始支持我們的活動，請問其現階段的全銜為何？,教育部資通訊軟體創新人才推升計畫推動中心,教育部資訊軟體人才培育計畫,中研院自由軟體鑄造場,教育部軟體工程聯盟,A,正確答案是 A：教育部資通訊軟體創新人才推升計畫推動中心。
+quiz-011,二進位表示法的 0101 在十進位表示法中寫成？,4,5,6,7,B,正確答案是 B：5。
+quiz-012,二進位表示法的 0110 在十進位表示法中寫成？,4,5,6,7,C,正確答案是 C：6。
+quiz-013,二進位表示法的 0111 在十進位表示法中寫成？,4,5,6,7,D,正確答案是 D：7。
+quiz-014,二進位表示法的 1000 在十進位表示法中寫成？,7,8,9,10,B,正確答案是 B：8。
+quiz-015,二進位表示法的 1001 在十進位表示法中寫成？,7,8,9,10,C,正確答案是 C：9。
+quiz-016,下列何者不是音樂檔的檔案格式？,.pdf,.wav,.mid,.mp3,A,正確答案是 A：.pdf。
+quiz-017,下列何者不是「資訊安全」所要確保的資訊特性？,機密性(Confidentiality),完整性(Integrity),可用性(Avail ability),可延伸性(Scalability)。,D,正確答案是 D：可延伸性(Scalability)。。
+quiz-018,下列何者為歐盟通用資料保護規則（GDPR）所保護的個資內容？,Cookie,個人電子信箱,社群網站活動紀錄,以上皆是,D,正確答案是 D：以上皆是。
+quiz-019,資訊安全中的「社交工程（Social Engineering）」主要是透過什麼樣弱點，來達成對資訊安全的攻擊方式？,技術缺憾,人性弱點,設備故障,後門程式的掩護。,B,正確答案是 B：人性弱點。
+quiz-020,已知一規則定義如下： F0 = 0、F1 = 1、Fn = Fn-1 + Fn-2，請問此規則名為？,畢氏定理,費氏數列,二項氏定理,測不準定律,B,正確答案是 B：費氏數列。
+quiz-021,若有一演算法，其執行時間固定不變，請問該演算法時間複雜度為？,O(1),O(n),O(logn),O(0),A,正確答案是 A：O(1)。
+quiz-022,下列關於演算法與資料結構的說明，何者錯誤？,資料結構討論電腦中資料儲存的方式,演算法討論解決問題的方法,資料結構的好壞只會影響程式判讀層面,透過資料結構與的演算法，可提升程式效能,C,正確答案是 C：資料結構的好壞只會影響程式判讀層面。
+quiz-023,機器學習是一門設計如何讓演算法能夠學習的電腦科學，請問機器學習的典型應用領域包含下列何者？,概念學習,預設模型,分群,以上皆是,D,正確答案是 D：以上皆是。
+quiz-024,在 Bash 中，下列選項何者可以用來表示註解？,#,//,rem,/* */,A,正確答案是 A：#。
+quiz-025,在 cmd.exe 中，下列哪一個指令可以用來刪除檔案？,del,rmdir,rem,rm,D,正確答案是 D：rm。
+quiz-026,下列文書編輯套裝軟體，何者為開放原始碼？,Microsoft Office,WPS Office,iWork,LibreOffice,D,正確答案是 D：LibreOffice。
+quiz-027,誰是今年 SITCON 2018 總召？,小蘭,工藤,毛利,柯南,B,正確答案是 B：工藤。
+quiz-028,SITCON 2018 年會地點在哪？,中央研究院人工智慧科學館,中央研究院社會科學館,中央研究院人文社會科學館,我是誰我在哪,C,正確答案是 C：中央研究院人文社會科學館。
+quiz-029,以下何者不符合正規表達式「aa+b+」？,aab,abb,aaab,aabb,B,正確答案是 B：abb。
+quiz-030,以下何者不符合正規表達式「ab+a+b」？,aab,abaab,abbab,abbaab,A,正確答案是 A：aab。
+quiz-031,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 add $t0, $t1, $t2，問 $t0=？",0,1,2,3,D,正確答案是 D：3。
+quiz-032,使用 CSS 為網頁排版時，「單位」是很重要的，請問 CSS 不支援下列哪一種單位？,em,vh,%,小石,D,正確答案是 D：小石。
+quiz-033,請問下列何者為 SITCON 2018 之贊助單位？,曉數碼,趨勢科技,微軟,以上皆是,D,正確答案是 D：以上皆是。
+quiz-034,請問下列何者為 SITCON 2018 之合作夥伴？,鴻寬科技,張國周製藥,TWNIC,以上皆是,D,正確答案是 D：以上皆是。
+quiz-035,請問下列何者為 SITCON 2018 之贊助夥伴？,祐生基金會,KKBOX,Dcard,以上皆是,D,正確答案是 D：以上皆是。
+quiz-036,請問下列何者為 SITCON 2018 之合作單位？,ITSA,COSCUP,經濟部資策會,以上皆是,D,正確答案是 D：以上皆是。
+quiz-037,請問最基本的邏輯運算子符號不包含下列何者？,AND,OR,NOR,NOT,C,正確答案是 C：NOR。
+quiz-038,請問 AR 的全稱為？,虛擬實境,擴增實境,混合實境,以上皆非,B,正確答案是 B：擴增實境。
+quiz-039,請問 VR 的全稱為？,虛擬實境,擴增實境,混合實境,以上皆非,A,正確答案是 A：虛擬實境。
+quiz-040,請問 MR 的全稱為？,虛擬實境,擴增實境,混合實境,以上皆非,C,正確答案是 C：混合實境。
+quiz-041,"CSS 得以用直接輸入 RBG 的數值來表達描述物件的顏色，請問 rgba(0, 0, 0, 0.5); 意味著這是什麼顏色？",百分之 50 半透明的黑色,百分之 0.5 半透明的黑色,百分之 50 半透明的白色,百分之 0.5 半透明的白色,A,正確答案是 A：百分之 50 半透明的黑色。
+quiz-042,"CSS 得以用直接輸入 RBG 的數值來表達描述物件的顏色，請問 rgba(255, 255, 255, 0.5); 意味著這是什麼顏色？",百分之 50 半透明的黑色,百分之 0.5 半透明的黑色,百分之 50 半透明的白色,百分之 0.5 半透明的白色,C,正確答案是 C：百分之 50 半透明的白色。
+quiz-043,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 add $t0, $t1, $t2，問 $t1=？",0,1,2,3,B,正確答案是 B：1。
+quiz-044,何者不是文字編碼方式？,ASCII,Unicode,TTF,Big5,C,正確答案是 C：TTF。
+quiz-045,TCP 協定的主要功能不包含以下哪一項？,加密,建立連線,重送,控制流量,A,正確答案是 A：加密。
+quiz-046,N 層二元樹，其節點數最多有幾個？,2N,N^2,2N-1,2^N-1,D,正確答案是 D：2^N-1。
+quiz-047,下列何者不是 Uber 現有服務？,Express Pool,Uber Eats,Uber Bike,以上皆非,D,正確答案是 D：以上皆非。
+quiz-048,常聽到的 4G、5G 的「G」是什麼意思？,Generation,Gigabtyes,Gap,Genus,A,正確答案是 A：Generation。
+quiz-049,在 IPv4 中，使用 32 位元共 4 組，每組位元最大值為多少？,255,256,257,258,A,正確答案是 A：255。
+quiz-050,下列何者非 Linux Kernel 的功能？,Process control,Memory management,File System management,System call controller,D,正確答案是 D：System call controller。
+quiz-051,下列何者為 GNU General Public License （GPL）的精神？,開發 GPL 的團體不可以經由該軟體的服務來取得服務的費用,GPL 的授權之軟體，乃為自由軟體，任何人皆可擁有他,GPL 授權下，為保護智慧財產權，不需要公布其原始碼,經過修改過後 open source 均為修改者或是修改團體所擁有，不需要回饋,B,正確答案是 B：GPL 的授權之軟體，乃為自由軟體，任何人皆可擁有他。
+quiz-052,過去傳統的 IDE 為用來傳輸硬碟資料的一個介面，一般而言，過去的傳統普通 PC，允許幾個 IDE 介面與裝置？,3 個,4 個,5 個,6 個,B,正確答案是 B：4 個。
+quiz-053,一般而言安裝 Linux 至少要有哪兩個 partition？,root / swap,root / cache,root / home,root / media,A,正確答案是 A：root / swap。
+quiz-054,過去的 Linux 系統中，利用執行級別（Runlevel）作為不同的執行模式，根據執行級別通常分為 7 等，分別是從 0 到 6，請問下列級別中，何者正確？,0 : 重新開機,3：純文字介面登入，多人單工環境,5：X-Window 登入模式，多人多工模式,6 : 停機、關機,C,正確答案是 C：5：X-Window 登入模式，多人多工模式。
+quiz-055,在 ASCII 中，48 用來代表什麼？,0,1,2,3,A,正確答案是 A：0。
+quiz-056,下列何者是今日議程之一？,格鬥遊戲 AI 開發經驗談,「我寫故我在」社群媒體裡的憂鬱蹤跡,泡沫列車：一趟加密貨幣的經濟之旅,雷系魔法師也能煎牛排！,C,正確答案是 C：泡沫列車：一趟加密貨幣的經濟之旅。
+quiz-057,下列何者是今日議程之一？,BGP Hijacking: new ways to mass surveillance,The evolving role of mobile communication in everyday logistics,"Mobile connection: Permanently online, permanently connected.",Analysis and Improvement of IOTA PoW Implementation,D,正確答案是 D：Analysis and Improvement of IOTA PoW Implementation。
+quiz-058,下列何者是今日議程之一？,雷系魔法師也能煎牛排！,「我寫故我在」社群媒體裡的憂鬱蹤跡,直播邊看邊好玩：探討遊戲挑戰及持續意圖,"想學 OS, 從 MINIX 開始",D,"正確答案是 D：想學 OS, 從 MINIX 開始。"
+quiz-059,下列何者是今日議程之一？,網路身分的真與假：談網路實名制,格鬥遊戲 AI 開發經驗談,從學生到放火實習生的奇幻旅程,「我寫故我在」社群媒體裡的憂鬱蹤跡,C,正確答案是 C：從學生到放火實習生的奇幻旅程。
+quiz-060,16 進位的 A 是 10 進位的多少？,10,11,12,13,A,正確答案是 A：10。
+quiz-061,Linux 系統中，有五個次目錄必須與根目錄同一分割槽，不可獨立分割，請問下列何者不始於為此五次目錄？,/var,/lib,/etc,/bin,A,正確答案是 A：/var。
+quiz-062,Linux 系統中，有五個次目錄必須與根目錄同一分割槽，不可獨立分割，請問下列何者屬於此五個次目錄之一？,/log,/dev,/usr,/var,B,正確答案是 B：/dev。
+quiz-063,"在 C++ 中，定義一陣列 int arr[5] = {1, 2, 3, 4, 5};，請問 arr[1] 的數值為多少？",1,2,3,4,B,正確答案是 B：2。
+quiz-064,一個 byte 有八個 bit，一個英文字元佔有一個 byte，請問一個中文字元有幾個 bit？,1,8,2,16,D,正確答案是 D：16。
+quiz-065,在 C++ 中，下列型態何者不在標準規範中？,point,int,char,string,A,正確答案是 A：point。
+quiz-066,在 C++ 中，用來表示「不等於」的運算子是下列何者？,!=,@=,#=,$=,A,正確答案是 A：!=。
+quiz-067,在 C++ 中，用來表示「賦值」的運算子為下列何者？,=,->,>,<,A,正確答案是 A：=。
+quiz-068,現行的 HTTPS 採用何種方式對網頁資料進行加密？,對稱式金鑰密碼法,非對稱式金鑰密碼法,兩者並用,可能是對稱式金鑰密碼法，也可能是非對稱式金鑰密碼法,C,正確答案是 C：兩者並用。
+quiz-069,數位簽章，又稱公鑰數位簽章，是一種類似寫在紙上的普通的物理簽名，但是使用了公鑰加密領域的技術實現，用於鑑別數位信息的方法。對一個檔案進行加密與數位簽章後，仍不能提供下列何種安全需求？,完整性,機密性,不可否認性,不可重用性,B,正確答案是 B：機密性。
+quiz-070,電腦資料存取控制的安全是經由下列何種流程來確保？,驗證→識別→授權,識別→驗證→授權,驗證→授權,識別→授權,B,正確答案是 B：識別→驗證→授權。
+quiz-071,chroot 是在 UNIX 系統的一個操作，針對正在運作的軟體行程和它的子行程，改變它外顯的根目錄。chroot 程式可歸類為何種資安相關的應用？,Firewall,Sandbox,Honeypot,以上皆非,B,正確答案是 B：Sandbox。
+quiz-072,下列哪一個 Linux 指令可以列出目前本機與其它連網設備的網路連線？,man,ls,netstat,ifconfig,C,正確答案是 C：netstat。
+quiz-073,下列哪一個 Linux 指令可以列出目前的目錄的清單？,ls,man,netstat,ifconfig,A,正確答案是 A：ls。
+quiz-074,下列哪一個 Linux 指令可以查看 Linux 中的指令幫助、配置文件幫助等訊息？,ls,ifconfig,netstat,man,D,正確答案是 D：man。
+quiz-075,有關一次性密碼 (one-time password) 的說明，下列何者正確？,一次性發給多個密碼,第一次申請帳號時，臨時發給使用者的預設密碼,只使用一次即丟棄的密碼,這只是理論上的概念，無法實作出來,C,正確答案是 C：只使用一次即丟棄的密碼。
+quiz-076,有關 SHA-1 的敍述，下列何者錯誤？,是一種密碼雜湊函數,訊息摘要為160位元,設計原理相似於 MD4 和 MD5,至今尚未被破解,D,正確答案是 D：至今尚未被破解。
+quiz-077,在作業系統中，一組 processes 陷入互相等待的情況，造成 processes 無法往下執行，稱為 deadlock。一般來說 deadlock 成立有四個必要條件，下列何者為非？,Mutual exclusion,Hold & wait,Circular waiting,Preemption,D,正確答案是 D：Preemption。
+quiz-078,在 Linux 系統中，「ls」是顯示檔案的檔名與相關屬性，「-al」則表示列出所有的檔案詳細的權限與屬性。下列有關檔案類型權限的敘述，何者正確？,r 代表可刪除,w 代表可寫,x 代表可執行,- 代表無權限,A,正確答案是 A：r 代表可刪除。
+quiz-079,在 Linux 中，若有一個檔案的類型與權限資料為「-rwxr-xr--」，關於其說明何者錯誤？,擁有者的權限為可讀、可寫、可執行,同群組使用者權限為可讀可執行,其他使用者無任何權限,這個檔名為檔案,C,正確答案是 C：其他使用者無任何權限。
+quiz-080,下列有關 Linux 之指令，何者錯誤？,chgrp ：改變檔案所屬群組,chown ：改變檔案擁有者,chmod ：改變檔案的權限,上列敘述接錯誤,D,正確答案是 D：上列敘述接錯誤。
+quiz-081,正規表示法就是用在字串的處理上面的一項「表示式」，請問下列選項中，何者可以篩選出電子信箱？,([A-Za-z][0-9])*[\\\+\-\*]([A-Z][0-9])*,\w+([-+.']\w+)*@\w+\.\w+([-.]\w+)*,"^([\w-\.]+)((\[[0-9]{1,3}\.[0-9]{1,3}{2,4})$",([-+.']\w+)\w+([-.]\w+)*\.\w+([-.]\w+),B,正確答案是 B：\w+([-+.']\w+)*@\w+\.\w+([-.]\w+)*。
+quiz-082,哪種程式語言是以縮排來分辨程式中不同的區塊（block）？,C/C++,Python,JavaScript,Go,B,正確答案是 B：Python。
+quiz-083,下列時間複雜度是指數時間？,O(1),O(n^2),O(2^n),O(logn),C,正確答案是 C：O(2^n)。
+quiz-084,Node.js 用的是下列何種 JavaScript engine？,WebKit,Rhino,V8,Chakra,C,正確答案是 C：V8。
+quiz-085,下列哪個並不屬於 IPC（Inter-Process Communication）的方法之一？,Pipe,Signal,Shared Memory,Message Handle,D,正確答案是 D：Message Handle。
+quiz-086,有許多方法可以解決 Critical Section Problem，以下的哪種方法並無法防止此現象？,Mutex,Semaphore,Peterson's Solution,Bacon's Algorithm,D,正確答案是 D：Bacon's Algorithm。
+quiz-087,何者並非 HTML5 所新增的特點？,<!DOCTYPE html5>,<!DOCTYPE html>,autofocus,<canvas> tag,A,正確答案是 A：<!DOCTYPE html5>。
+quiz-088,近年來有了許多 NoSQL 的資料庫，以下何者並不是 NoSQL？,PostgreSQL,Neo4j,MongoDB,Redis,A,正確答案是 A：PostgreSQL。
+quiz-089,Hadoop 是近年來處理大量資料的一大利器，請問該系統是利用何種運算架構來實作？,MobReplace,MapReduce,MapReduct,ModReject,B,正確答案是 B：MapReduce。
+quiz-090,在 Linux 中，執行指令 chmod 664 後該檔案權限會變成下列何者？,-rw-rw-rw-,-rw-rw----,-rw-rw-r-x,-rw-rw--r-,C,正確答案是 C：-rw-rw-r-x。
+quiz-091,下列何者並非 SHA-2 家族中的標準？,SHA-256,SHA-512,SHA-384,SHA-1024,D,正確答案是 D：SHA-1024。
+quiz-092,數位簽章是為了保證何種性質而存在？,機密性,不可否認性,完整性,特殊性,B,正確答案是 B：不可否認性。
+quiz-093,破解 RSA 金鑰的困難主要是下列何者？,乘法速度太慢,產生大質數很困難,沒有快速的質數篩法,沒有有效的因數分解演算法,D,正確答案是 D：沒有有效的因數分解演算法。
+quiz-094,rsync 與 cp 這兩個程式皆可以複製檔案，兩者的比較，何者正確？,rsync 可以透過 SSH 傳輸,rsync 可以保存原本的檔案權限,cp -u 與 rsync 使用相同 update 演算法,cp 無法顯示複製的進度,C,正確答案是 C：cp -u 與 rsync 使用相同 update 演算法。
+quiz-095,在 C++ 中，「#pragma once」的用途是？,Race conditoon,Include guard,Interrupt,Data collision,B,正確答案是 B：Include guard。
+quiz-096,Python3 的 built-in type 不包含哪種？,complex,list,array,dict,C,正確答案是 C：array。
+quiz-097,何者是 ES6 的新保留字？,instanceof,yield,var,default,B,正確答案是 B：yield。
+quiz-098,下列哪個 JavaScript code 的執行結果為 false？,undefined == undefined,10 == '10',NaN === NaN,[]+![] == 'false',C,正確答案是 C：NaN === NaN。
+quiz-099,下列哪個 JavaScript code 的執行結果為 true？,[1] + [] == '1',[] == [],typeof [] == 'Array',1 === true,A,正確答案是 A：[1] + [] == '1'。
+quiz-100,dd 這個公用程式的功能何者為非？,清除磁碟分割,製作開機USB,將檔案改成全部大寫,幫程式碼縮排,D,正確答案是 D：幫程式碼縮排。
+quiz-101,MIT Lisence 的敘述何者正確？,不需在重置物納入該授權,可與其他授權條款並存,被授權人不可出版軟體重製物,GPL 不相容,B,正確答案是 B：可與其他授權條款並存。
+quiz-102,哪個語法是 ES6 為了解決 callback 問題所加入的概念？,monad,await,promise,list comprehension,C,正確答案是 C：promise。
+quiz-103,"[j for i in range(2,int(sqrt(n))) for j in range(i*2, n, i)]，這段 Python code 會出現甚麼？",1 至 n 的倍數,1 至 n 的質數,1 至 n 的幸運數,1 至 n 的合數,D,正確答案是 D：1 至 n 的合數。
+quiz-104,SSH 的預設 port 是哪個？,23,22,80,66,B,正確答案是 B：22。
+quiz-105,DHCP 的預設 port 是哪個？,66&67,35&36,67&68,76&86,C,正確答案是 C：67&68。
+quiz-106,現行 HTTPS 是利用何種協定來建立安全連線的？,SSL,TLE,TLS,TTL,C,正確答案是 C：TLS。
+quiz-107,下列何者定義了 TLS 的標準？,RFC 7540,RFC 5246,IEEE 802.1X,IEEE 754,B,正確答案是 B：RFC 5246。
+quiz-108,下列何者定義了 VLAN 的標準？,RFC 7540,RFC 6749,IEEE 802.1Q,IEEE 802.1aq,C,正確答案是 C：IEEE 802.1Q。
+quiz-109,一個應用程式可以不用經過大幅修改，而依照不同使用者使用不同語言、日期格式與數字格式的的設計我們稱為甚麼？,i10n,i18n,L18n,I17n,B,正確答案是 B：i18n。
+quiz-110,下列何者定義了 Oauth2 的標準？,RFC 6749,RFC 7540,IEEE 802.1ap,IEEE 802.1aq,A,正確答案是 A：RFC 6749。
+quiz-111,由於 Linux 有許多的 distribution，每家提供的軟體包管理器都不一樣，下列何者不是軟體包管理器？,pacman,pcman,Zypper,APT,B,正確答案是 B：pcman。
+quiz-112,i18n 的全稱是？,intersection,incorporation,internationalization,incorporation,C,正確答案是 C：internationalization。
+quiz-113,L10n 的全稱是？,logistician,lmfaotion,localization,legalization,C,正確答案是 C：localization。
+quiz-114,可以用哪個程式查詢從本地到另一個 IP Address 所經過的 router？,ifconfig,traceroute,nslookup,ping,B,正確答案是 B：traceroute。
+quiz-115,下列哪個 IP 不屬於 192.168.144.0/23 這個網段的？,192.168.145.241,192.168.143.2,192.168.144.1,192.168.144.254,B,正確答案是 B：192.168.143.2。
+quiz-116,Java 是哪一間公司推出的？,Microdsoft,Amazon,Sun,WWE,C,正確答案是 C：Sun。
+quiz-117,下列有關中間人攻擊的敘述，何者錯誤？,攻擊者使用公鑰交換來攔截消息，取代他自己的公鑰發給被請求方,攻擊者可以竊聽或是竄改,攻擊者可能竊聽但不竄改資料,目前尚沒有防禦中間人攻擊的方法,D,正確答案是 D：目前尚沒有防禦中間人攻擊的方法。
+quiz-118,Fitbit 與 Pebble 皆有 SSL 傳輸加密，推測此兩項產品無法使用何種攻擊？,中間人攻擊,雲端服務,阻斷服務攻擊,以上皆是,A,正確答案是 A：中間人攻擊。
+quiz-119,Skimer 為目前已知的第一個 ATM 惡意程式，請問關於 Skimer 的敘述何者正確 ？,最早出現在 2007 年，遠端植入到 ATM 上,透過客製化中介軟體來操作 ATM 的周邊裝置,前已知在外流傳的變種共有三種,以上皆是,B,正確答案是 B：透過客製化中介軟體來操作 ATM 的周邊裝置。
+quiz-120,AI 技術廣泛應用在資安產品中，請問下列哪項有運用AI技術？,變臉詐騙阻擋,惡意巨集偵測,垃圾郵件阻擋,以上皆是,D,正確答案是 D：以上皆是。
+quiz-121,二元樹中，post-order Traversal 為下列何種方法？,VLR,LVR,LRV,以上皆非,C,正確答案是 C：LRV。
+quiz-122,在二元樹走訪的方法中，我們常聽到 LVR、LRV、VLR 三種方法，請問 L 代表？,移動到 Left child,移動到 Left side,Leave the program,Leave the number,A,正確答案是 A：移動到 Left child。
+quiz-123,在二元樹走訪的方法中，我們常聽到 LVR、LRV、VLR 三種方法，請問 V 代表？,voice，輸出當前 node 值,vacancy，表示當前 node 為空白,vacation，程式暫停,Visiting，對當前的 node 進行print、assign或其他操作,D,正確答案是 D：Visiting，對當前的 node 進行print、assign或其他操作。
+quiz-124,下列關於 SOREBRECT 勒索病毒的敘述何者錯誤？,為無檔案式威脅和勒索病毒相結合,最終目標是將系統上的檔案加密,不善匿蹤,採集樣本困難,C,正確答案是 C：不善匿蹤。
+quiz-125,下列關於「變臉詐騙」的敘述，何者為真？,為高成本高收益的詐騙手段,以紙本郵件為攻擊途徑,要求使用者限時用比特幣付贖,以上皆是,C,正確答案是 C：要求使用者限時用比特幣付贖。
+quiz-126,NeoPocket 為一種 ATM 惡意程式，請問有關 NeoPocket 敘述何者錯誤？,資訊竊取程式，不在乎鈔票,攻擊手法為中間人攻擊,自動方式安裝到 ATM 提款機上，經常與提款機的周邊裝置溝通,成功要件為熟悉 Diebold Agilis® 軟體並了解系統架構,C,正確答案是 C：自動方式安裝到 ATM 提款機上，經常與提款機的周邊裝置溝通。
+quiz-127,Linux 的系統設定檔通常位於哪個資料夾下？,/var,/etc,/mnt,/usr,B,正確答案是 B：/etc。
+quiz-128,Linux 的 inode 是用來紀錄與檔案相關資訊，以下哪個不是 inode 會記錄的東西？,檔案權限,類型,owner,檔名,D,正確答案是 D：檔名。
+quiz-129,Vim 是一個強大的編輯器，但許多人不小心開啟了 Vim 卻不知道如何離開，請問下列哪個指令可以輕鬆關閉 Vim？,qeqweqwrqwer,Ctrl-Alt-Delete,Ctrl-C,以上皆非,D,正確答案是 D：以上皆非。
+quiz-130,Vim 可以快速地將小寫改成大寫，請問是哪一個指令可以？,gu,gU,gg,gl,B,正確答案是 B：gU。
+quiz-131,二元樹中，in-order Traversal 為下列何種方法？,VLR,LVR,LRV,以上皆非,B,正確答案是 B：LVR。
+quiz-132,在二元樹走訪的方法中，我們常聽到 LVR、LRV、VLR 三種方法，請問 R 代表？,Register the program,Register the number,移動到 Right child,移動到 Right side,C,正確答案是 C：移動到 Right child。
+quiz-133,RNN 又稱為循環神經網路，LSTM 為其衍伸，最主要的差異為 LSTM 中加入 input / forget / output 三個控制用開關，請問這些開關與相對應作用組合下列何者正確？,Input gate 控制前一個以及當前時刻的新資訊,Forget gate主要用來控制從隱藏層節點中要忘記哪些資訊,Output gate 控制哪些資訊可以通過,以上皆是,D,正確答案是 D：以上皆是。
+quiz-134,RNN 又稱為循環神經網路，下列有關 RNN 的敘述，何者錯誤？,主要用來處理序列性資料，如圖片、影片等,為基於時間狀態的循環機制,對前面的資訊記憶並應用於當前的輸出共同計算,根據架構又分為 Elman 與 Jordan 類型,A,正確答案是 A：主要用來處理序列性資料，如圖片、影片等。
+quiz-135,請問關於 LR 剖析器，下列敘述何者正確？,屬於 Top - down 上下文分析,由左至右處理輸入字串,Left derivation,以上皆是,C,正確答案是 C：Left derivation。
+quiz-136,Yacc 所產生的就解析器為下列何種,LL(0),LL(1),LALR,SLR,C,正確答案是 C：LALR。
+quiz-137,請問看見 .mil 的網域名稱，代表該單位屬於？,教育與學術機構,政府機關單位,財團法人、基金會等非官方組織,軍事單位,D,正確答案是 D：軍事單位。
+quiz-138,下列何者不為 JBDC 的四種 type 之一？,JDBC-ODBC Bridge driver,Native-API/all Java driver,AllJava/Net-protocol driver,All Java/Native-protocol driver,B,正確答案是 B：Native-API/all Java driver。
+quiz-139,CSS 中 margin 這個屬性在下時，如下四個值（ex: margin: 20px 0px 20px 20px），他四個值分別依序代表了和那些方位與鄰近物件的距離呢？,上下左右,上右下左,上右下左,上左下右,C,正確答案是 C：上右下左。
+quiz-140,CSS 中 padding 這個屬性在下時，如下四個值（ex: padding: 20px 0px 20px 20px），他四個值分別依序代表了和那些方位與內部元件的距離呢？,上下左右,上右下左,上右下左,上左下右,B,正確答案是 B：上右下左。
+quiz-141,CSS 中 margin 這個屬性在下時，如下兩個值（ex: margin: 20px 0px），他兩個值分別依序代表了和那些方位與鄰近物件的距離呢？,上下與左右,上左與下右,左右與上下,右下與左上,A,正確答案是 A：上下與左右。
+quiz-142,政府機關的網站為符合 NCC 無障礙設計的規範，會在網站中加入「導盲磚」（亦稱做定位點），請問他是下列哪個符號,???,!!!,|||,:::,D,正確答案是 D：:::。
+quiz-143,下列哪一種語言不需要 ; 結尾？,C++,Python,Java,Verilog,B,正確答案是 B：Python。
+quiz-144,在 C++ 中，程式結尾通常要加什麼符號？,分號,句號,冒號,空白,A,正確答案是 A：分號。
+quiz-145,根據 TIOBE 編程社區統計 2017 最可能流行的語言是？,Java,C++,Python,Verilog,A,正確答案是 A：Java。
+quiz-146,在 C++ 中，「//」的用途是？,註解,開頭,宣告,結尾,A,正確答案是 A：註解。
+quiz-147,下列何者非 open source 優點？,多人維護,Debug 速度快,專人維護,程式較安全,C,正確答案是 C：專人維護。
+quiz-148,下列哪一種語言屬於硬體描述語言？,Verilog,C++,Python,JavaScript,A,正確答案是 A：Verilog。
+quiz-149,在 C++ 中，下列哪一個字詞不是保留字？,counter,case,break,if,A,正確答案是 A：counter。
+quiz-150,下列何者並非 Linux 的優點？,良好的多人多工環境，資源分配平均,除了免費之外，線上更新速度快，除錯與安全性均較佳,為 open source 的授權，故而具有 open source 的所有優缺點,以上皆是,D,正確答案是 D：以上皆是。
+quiz-151,下列哪一個函式不存在於 C++ 中 vector 的 STL 中？,relength(),resize(),reserve(),size(),A,正確答案是 A：relength()。
+quiz-152,在 C++ 中，保留字「void」代表什麼？,不用回傳值,一般格式規定,回傳數字,回傳字串,A,正確答案是 A：不用回傳值。
+quiz-153,SITCON 2018 是 SITCON 的第幾屆年會？,3,5,6,8,C,正確答案是 C：6。
+quiz-154,在 Python 3 中，print('SITCON 2018') 會得到什麼輸出結果？,print('SITCON 2018'),sitcon 2018,SITCON 2018',SITCON 2018,D,正確答案是 D：SITCON 2018。
+quiz-155,以下何者為開源的圖像處理軟體？,Photoshop,Photocap,GIMP,Lightroom,C,正確答案是 C：GIMP。
+quiz-156,於 SITCON 2016 新登場的吉祥物為下列何者？,SITCON 娘,小莎,小啄,小石,D,正確答案是 D：小石。
+quiz-157,自然語言通常是指一種自然地隨文化演化的語言，自然語言處理則是要讓電腦能妥善的處理自然語言，其最終目標是要讓電腦能「理解」自然語言。請問推測下列和者為自然語言處理的應用？,問答辨識系統,機器翻譯,資訊索引,以上皆是,D,正確答案是 D：以上皆是。
+quiz-158,Deep learinging 為時下最熱門的研究領域之一，請問下列何者不為常見的神經網路模型？,NN,RNN,CNN,ZNN,D,正確答案是 D：ZNN。
+quiz-159,請問要輸入什麼才能離開 Vim？,Ctrl-C,:exit,:),:q,D,正確答案是 D：:q。
+quiz-160,請問第一屆 SITCON 辦在下列何處？,台科大,中央研究院 人文科學館,國立科學工藝博物館,台大,A,正確答案是 A：台科大。
+quiz-161,請問 SITCON 有一個帶領大家認識學生計算機年會的活動，是下列何者？,閃電秀,導遊團,Unconference,大地遊戲,B,正確答案是 B：導遊團。
+quiz-162,請問 SITCON 小編群沒有在下列何者平台發文過？,Facebook,Plurk,Instagram,推特,C,正確答案是 C：Instagram。
+quiz-163,勒索病毒服務簡稱為？,RaaS,LaaS,KaaS,MaaS,A,正確答案是 A：RaaS。
+quiz-164,近年來，資安漏洞與危機頻傳，2017 年惡名昭彰的勒索病毒 WannaCry 更是造成全球陷入資安風報，更有資安公司大膽預言，2018 年 ___________ 將是犯罪集團主要獲利模式，請推測 _________ 中為下列何者？,比特幣,數位勒索,變臉詐騙,釣魚網站,B,正確答案是 B：數位勒索。
+quiz-165,去年，FCC 宣布廢除什麼，引發了資訊界一片譁然？,電腦平等性原則,網路中立性原則,資訊公平性原則,手機差異性原則,B,正確答案是 B：網路中立性原則。
+quiz-166,二進位表示法的 1010 在十進位表示法中寫成？,10,11,12,13,A,正確答案是 A：10。
+quiz-167,二進位表示法的 1011 在十進位表示法中寫成？,10,11,12,13,B,正確答案是 B：11。
+quiz-168,二進位表示法的 1100 在十進位表示法中寫成？,10,11,12,13,C,正確答案是 C：12。
+quiz-169,二進位表示法的 1101 在十進位表示法中寫成？,12,13,14,15,B,正確答案是 B：13。
+quiz-170,二進位表示法的 1110 在十進位表示法中寫成？,12,13,14,15,C,正確答案是 C：14。
+quiz-171,二進位表示法的 1111 在十進位表示法中寫成？,13,14,15,16,C,正確答案是 C：15。
+quiz-172,以下何者符合正規表達式「ab*ab」？,aab,ababa,abbbaab,ababbba,A,正確答案是 A：aab。
+quiz-173,以下何者符合正規表達式「a+b」？,abbb,ba,bab,aab,D,正確答案是 D：aab。
+quiz-174,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 add $t0, $t1, $t2，問 $t2=？",0,1,2,3,C,正確答案是 C：2。
+quiz-175,十六進位表示法的 a0 在二進位表示法中可以表示成？,1010 0000,1010 1111,1001 1111,1011 0000,A,正確答案是 A：1010 0000。
+quiz-176,十六進位表示法的 62 在二進位表示法中可以表示成？,0110 0001,0101 1000,0110 0010,1010 0101,C,正確答案是 C：0110 0010。
+quiz-177,1 GB 等於多少 MB？,1000,10000,1024,1042,C,正確答案是 C：1024。
+quiz-178,1 MB 等於多少 KB？,1024,2048,1000,10000,A,正確答案是 A：1024。
+quiz-179,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 sub $t2, $t1, $t0，問 $t1=？",0,1,2,3,B,正確答案是 B：1。
+quiz-180,下列何者是今日議程之一？,BGP Hijacking: new ways to mass surveillance,Use AI to make our own anime girl face,No More Crypto Fails,The evolving role of mobile communication in everyday logistics,B,正確答案是 B：Use AI to make our own anime girl face。
+quiz-181,下列何者並非今日議程之一？,泡沫列車：一趟加密貨幣的經濟之旅,從 V8 Javascript 引擎淺談現代編譯技術,從學生到放火實習生的奇幻旅程,蘊含著強大力量的 GTK 啊，封印解除！,B,正確答案是 B：從 V8 Javascript 引擎淺談現代編譯技術。
+quiz-182,下列何者並非今日議程之一？,奔跑吧！台北：遊戲開發經驗分享,我單槍匹馬的開源貢獻之路,現代檔案系統 ZFS 的簡介與應用,校園資訊系統的困境與嘗試改善,D,正確答案是 D：校園資訊系統的困境與嘗試改善。
+quiz-183,下列何者並非今日議程之一？,計算中的遊戲與模仿,「我寫故我在」社群媒體裡的憂鬱蹤跡,讀 scheme 魔法書 SICP,由淺入坑區塊鏈～從認識架構到應用智能合約！,B,正確答案是 B：「我寫故我在」社群媒體裡的憂鬱蹤跡。
+quiz-184,下列何者並非今日議程之一？,瀏覽器開發與開源經驗,計算中的遊戲與模仿,直播邊看邊好玩：探討遊戲挑戰及持續意圖,CCNS Radio - 社辦點歌電台,C,正確答案是 C：直播邊看邊好玩：探討遊戲挑戰及持續意圖。
+quiz-185,下列何者並非今日議程之一？,網路身分的真與假：談網路實名制,瀏覽器開發與開源經驗,由淺入坑區塊鏈～從認識架構到應用智能合約！,Vault 7 考古挖寶記,A,正確答案是 A：網路身分的真與假：談網路實名制。
+quiz-186,下列哪一種雜湊演算法不容易遭受 Hash Collision?,SHA-1,SHA-256,MD5,MD4,B,正確答案是 B：SHA-256。
+quiz-187,請問標準 UML 中，下列何者符號代表 start ？,○,●,㊣,◎,B,正確答案是 B：●。
+quiz-188,若要純粹以 CSS 建置 RWD 網頁，不會用到下面哪一種 CSS 語法？,mid-width,max-width,@keyframes,@media,C,正確答案是 C：@keyframes。
+quiz-189,CSS3 新增了一個可用於計算數值的功能，請問該語法為？,opacity,calc,display,em,B,正確答案是 B：calc。
+quiz-190,SITCON 的 Logo 於 2014 年正式定稿為現今的版本，請問此 Logo 圖像部分為何種物品？,指南針,橘子,蘋果,香蕉,A,正確答案是 A：指南針。
+quiz-191,向量繪圖軟體為藝術與設計創作者很重要的創作工具之一，請問下列何者是開源的向量繪圖軟體？,illustrator,Inkscape,GIMP,Open Office,B,正確答案是 B：Inkscape。
+quiz-192,在 Python3 中，下列哪一種模式可以寫入文件且不清空前內容？,a,r+,w,w+,A,正確答案是 A：a。
+quiz-193,請問 0011 1010 之 2 補數為多少？,0011 1010,1100 0101,1100 0110,1101 0101,C,正確答案是 C：1100 0110。
+quiz-194,請問 0011 1010 之 1 補數為多少？,0011 1010,1100 0101,1100 0110,1101 0101,B,正確答案是 B：1100 0101。
+quiz-195,請問下列關於資料結構中， Stack 的敘述何者錯誤？,FIFO,利用 push 加入新資料,利用 pop 移出資料,只允許在一端進行操作,A,正確答案是 A：FIFO。
+quiz-196,請問下列關於資料結構中， Queue 的敘述何者錯誤？,FIFO,可以將資料由 front 刪除,rear 亦可以進行刪除操作,Queue 可以設計成環狀,C,正確答案是 C：rear 亦可以進行刪除操作。
+quiz-197,請問關於 XOR 的 Truth table 何者正確？,"(1,1) => 1","(1,0) => 0","(0,0) => 0","(0,1) => 1",D,"正確答案是 D：(0,1) => 1。"
+quiz-198,雲端運算有三大服務，請問不包含下列何者？,IaaS,FaaS,PaaS,SaaS,B,正確答案是 B：FaaS。
+quiz-199,雲端運算仍在發展中，目前普遍認同的雲端運算服務是 SPI 模型，請問 SPI 所指的服務不包含下列何者？,軟體,平台,基礎建設,公共建設,D,正確答案是 D：公共建設。
+quiz-200,請問下列關於 IaaS（Infrastructure as a Service）的敘述，何者錯誤？,降低了硬體運算資源取得的門檻,需要運算資源時，可立即獲得資源,使用者需要理解雲端運算背後的架構,可依使用者的需求動態彈性縮放,C,正確答案是 C：使用者需要理解雲端運算背後的架構。
+quiz-201,請問下列關於 PaaS（Platform as a Service）的敘述，何者錯誤？,將應用程式開發環境以服務的型式來提供,降低了開發與部署應用程式的門檻,開發人員不需要先建置開發環境的硬體平臺,無法結合其他形式的雲端服務,D,正確答案是 D：無法結合其他形式的雲端服務。
+quiz-202,截至 2017 年，在 GitHub 上最多專案的語言是？,Python,CSS,JavaScript,Go,C,正確答案是 C：JavaScript。
+quiz-203,140.128.77.10/25 這個網段有多少可用的 IP？,128,123,126,100,C,正確答案是 C：126。
+quiz-204,為了防止 Broadcast Storm，我們可以使用甚麼協定？,STP,HTTP,TCP,SNP,A,正確答案是 A：STP。
+quiz-205,有許多與語言都可以藉由 transpiler 轉換成 JavaScript code，下列哪個語言不可以被轉換成 JavaScript？,PureScript,CoffeScript,PostScript,TypeScript,C,正確答案是 C：PostScript。
+quiz-206,"x, y = y, x，請問這段 Python code 的功能是甚麼？",相乘,相加,交換,切割,C,正確答案是 C：交換。
+quiz-207,下列哪個 JavaScript code 的執行結果為 true？,null > 0,null == 0,null >= 0,以上皆非,C,正確答案是 C：null >= 0。
+quiz-208,下列哪個 JavaScript code 的執行結果為 false？,Math.max() < Math.min(),undefined == null,Infinity == Infinity,1 instanceof Number,D,正確答案是 D：1 instanceof Number。
+quiz-209,若有一個二元樹，樹高為 h ，節點樹為 2^h-1 ，請問該二元樹又稱為？,Peferct Binary Tree,Full Binary Tree,Ideal Binary Tree,Complete Binary Tree,A,正確答案是 A：Peferct Binary Tree。
+quiz-210,若有一個二元樹，樹高為 h ，子節點個數不是為 0 就是 2，請問該二元樹又稱為？,Peferct Binary Tree,Full Binary Tree,Ideal Binary Tree,Complete Binary Tree,B,正確答案是 B：Full Binary Tree。
+quiz-211,若有一個二元樹，高度為 k ，已知它至少有 2^(k-1) 個節點，最多可能有 2^k - 1 個節點，請問該二元樹為？,Peferct Binary Tree,Full Binary Tree,Ideal Binary Tree,Complete Binary Tree,D,正確答案是 D：Complete Binary Tree。
+quiz-212,下列有關 BinarySearch Tree 的敘述何者正確？,左子樹的鍵值均大於樹根的鍵值,右子樹的所有鍵值均小於樹根的鍵值。,左子樹和右子樹亦是二元搜尋樹,以上皆正確,C,正確答案是 C：左子樹和右子樹亦是二元搜尋樹。
+quiz-213,下列何者非樹的結構？,Root,Siblings,Parent,以上皆為樹的結構,D,正確答案是 D：以上皆為樹的結構。
+quiz-214,二元樹中，VLR Traversal 為下列何種方法？,pre-order,in-order,post-order,以上皆非,A,正確答案是 A：pre-order。
+quiz-215,可以通過什麼按鍵組合來關閉 X window？,Ctrl-Alt-Backspace,Ctrl-Alt-Del,Ctrl-Z,fiwpqwmwekdmv,A,正確答案是 A：Ctrl-Alt-Backspace。
+quiz-216,數位簽章應用了公鑰密碼領域使用的單向函數原理。下列關於單向函數的敘述，何者正確？,對於輸入，函數值容易計算，但是給一個隨機輸入的函數值，無法算出原始輸入,單向函數是否存在計算機科學中，是一個已經被證明的問題,單向函數存在，將證明複雜性類 P/NP 問題中，P 不等於 NP。,以上皆非,C,正確答案是 C：單向函數存在，將證明複雜性類 P/NP 問題中，P 不等於 NP。。
+quiz-217,正規語法（Regular Grammar）是一種相當簡單的語法，後期發展成為重要的程式設計工具。此種標準的正規語法後來被稱為正規表達式（Regular Expression）。下列關於正規表達式符號之意義，何者正確？,^ ：匹配輸入字串的結束位置,$ ：匹配輸入字串的開始位置,* ：匹配前面的子運算式零次或多次,+ ：匹配後面的子運算式一次或多次,C,正確答案是 C：* ：匹配前面的子運算式零次或多次。
+quiz-218,正規語法（Regular Grammar）是一種相當簡單的語法，後期發展成為重要的程式設計工具。此種標準的正規語法後來被稱為正規表達式（Regular Expression）。下列關於正規表達式符號之意義，何者錯誤？,\B：匹配非單詞邊界,\D：匹配一個數位字元,\n ：匹配一個分行符號,\S：匹配任何非空白字元,B,正確答案是 B：\D：匹配一個數位字元。
+quiz-219,CNN 又稱為卷積神經網路，基本結構包含兩層，請問第一層與第二層的順序分別為？,池化層 / 卷積層,卷積層 / 池化層,植入層 / 池化層,池化層 / 植入層,B,正確答案是 B：卷積層 / 池化層。
+quiz-220,CNN 又稱為卷積神經網路，其中一層稱做卷基層，關於卷積層的敘述，何者錯誤？,目的主要擷取出重要特徵,經過不停移動找出同樣的局部特徵,採用降維採樣,確認不同特徵間的位置關係,C,正確答案是 C：採用降維採樣。
+quiz-221,CNN 又稱為卷積神經網路，基本結構包含兩層，其中一層稱做池化層，請問關於池化層的敘述，何者錯誤？,採用降維採樣,將卷積取得的結果進行壓縮,會盡可能保留重要的資訊,最常見的池化方式為最佳池化（optimization pooling）,D,正確答案是 D：最常見的池化方式為最佳池化（optimization pooling）。
+quiz-222,RNN 又稱為循環神經網路，LSTM 為其衍伸，最主要的差異為 LSTM 中加入三個控制用開關，請問開關不包含下列何者？,輸入(input),移除(remove),輸出(output),遺忘(forget),B,正確答案是 B：移除(remove)。
+quiz-223,ATM 是由下列金融卡交易訊息交換規格來溝通？,ISO/IEC 8859-1,ISO 8601,ISO 8583,ISO/IEC 80000,C,正確答案是 C：ISO 8583。
+quiz-224,Processing 是一個提供給藝術創作者的一個開源的 IDE ，請問其不支援用哪個語言？,Java,Javascript,Python,Ruby,D,正確答案是 D：Ruby。
+quiz-225,請問下列何者不為剖析器？,LL,LR,LALR,LSR,D,正確答案是 D：LSR。
+quiz-226,下列哪一種語言是所謂的低階語言？,Assembly,C++,Python,Java,A,正確答案是 A：Assembly。
+quiz-227,Linux 目錄樹配置標準 FHS，主要定義那三段目錄，下列何者為非？,root,/usr,/var,/bin,D,正確答案是 D：/bin。
+quiz-228,橢圓曲線密碼學，一種建立公開密鑰加密的演算法。下列關於橢圓取線密碼學，何者敘述錯誤？,基於橢圓曲線數學,公開密鑰加密又稱為非對稱加密,它需要一個金鑰,加解密所需時間較長,C,正確答案是 C：它需要一個金鑰。
+quiz-229,學生計算機年會的縮寫為？,SITCQN,sitcon,STICON,SITCON,D,正確答案是 D：SITCON。
+quiz-230,在開發者笑話中，我們常比喻「什麼」與「什麼」的差異，就好像狗與熱狗？,C# 與 Objecct C,C 與 C++,HTML 與 CSS,Java 與 JavaScript,D,正確答案是 D：Java 與 JavaScript。
+quiz-231,網際網路原始開發用途是？,軍事,建築,民用,工業,A,正確答案是 A：軍事。
+quiz-232,下列哪一種程式語言最古老？,Fortran,C,Java,Verilog,A,正確答案是 A：Fortran。
+quiz-233,在 C 語言中，int 型態能存取的最大值為多少？,2147483647,2147483648,2147483649,2147483650,A,正確答案是 A：2147483647。
+quiz-234,在 C 語言中，int 型態能存取的最小值為多少？,–2147483648,–2147483647,–2147483650,–2147483651,A,正確答案是 A：–2147483648。
+quiz-235,OSI 的網路架構總共有幾層？,7,6,5,4,A,正確答案是 A：7。
+quiz-236,下列哪一個協定最常被拿來應用於傳送影片等串流？,TCP,UDP,DHCP,FTP,A,正確答案是 A：TCP。
+quiz-237,為了因應 IP 位址的缺乏，目前正在推動 IP 第幾版的普及？,6,7,8,9,A,正確答案是 A：6。
+quiz-238,在 IPv6 中，每一組 4 個 16 位元數字用什麼符號隔開？,冒號,分號,逗號,句號,A,正確答案是 A：冒號。
+quiz-239,請問全球共有幾台 root DNS server？,13,14,15,16,A,正確答案是 A：13。
+quiz-240,下列哪一種協定不是應用於收發信？,TCP,SMTP,POP3,IMAP,A,正確答案是 A：TCP。
+quiz-241,下列何者並非程式語言？,Ruby,Go,GoG,R,C,正確答案是 C：GoG。
+quiz-242,下列公司與其對應的 VR 產品何者配對錯誤？,HTC / Vive,Sony / PlayStation VR,Google / Oculus,Samsung / Gear VR,C,正確答案是 C：Google / Oculus。
+quiz-243,誰被譽為「現代電腦之父」？,舍恩伯格,艾倫圖靈,溫特沃斯,以上皆非,B,正確答案是 B：艾倫圖靈。
+quiz-244,下列何者非瀏覽器？,Firefox,Safari,UA Browser,Opera,C,正確答案是 C：UA Browser。
+quiz-245,在 C library，關於 strcpy()，下列何者敘述錯誤？,會自動偵測以 '\0' 為結尾,不需要指定長度,當 *src 長度大於 *dest 時會 buffer overflow,可以複製任何類型資料,D,正確答案是 D：可以複製任何類型資料。
+quiz-246,C 語言中「i++」是指？,先 i+1，再用 i,先用 i ，再將 i+1,i 加兩個1,不具任何意義,B,正確答案是 B：先用 i ，再將 i+1。
+quiz-247,二進位表示法的 0001 在十進位表示法中寫成？,0,1,2,3,B,正確答案是 B：1。
+quiz-248,二進位表示法的 0010 在十進位表示法中寫成？,0,1,2,3,C,正確答案是 C：2。
+quiz-249,二進位表示法的 0011 在十進位表示法中寫成？,0,1,2,3,D,正確答案是 D：3。
+quiz-250,二進位表示法的 0100 在十進位表示法中寫成？,4,5,6,7,A,正確答案是 A：4。
+quiz-251,以下何者符合正規表達式「a+b+」？,aa,aab,ba,bbb,B,正確答案是 B：aab。
+quiz-252,以下何者符合正規表達式「a*b*」？,aba,bab,bbb,bba,C,正確答案是 C：bbb。
+quiz-253,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 add $t0, $t1, $t2，問 $t1=？",0,1,2,3,B,正確答案是 B：1。
+quiz-254,SITCON 官方網站為 sitcon.org/ ，請問看見 .org 的網域名稱，代表該單位屬於？,教育與學術機構,傳教機構,財團法人、基金會等非官方組織,軍事單位,C,正確答案是 C：財團法人、基金會等非官方組織。
+quiz-255,請問想要讀取資料庫的資料，SQL 必須下什麼指令？,CREATE,SELECT,GET,READ,B,正確答案是 B：SELECT。
+quiz-256,請問想要更新資料庫的資料，SQL 必須下什麼指令？,UPDATE,POST,WRITE,PATCH,A,正確答案是 A：UPDATE。
+quiz-257,請問哪一年的 SITCON badge 名牌採取純燙金與燙白的設計？以製造出符合 The Ture Hackers,SITCON 2015,SITCON 2016,SITCON 2017,SITCON 2018,A,正確答案是 A：SITCON 2015。
+quiz-258,SITCON 2017 為讓會眾更深入理解「網路中立與資訊自由」是為了讓在網路上的資訊取得與流通變得更方便， 大會特別安排「SITCON 電影院」播放了核部紀錄片呢？,捍衛網權,網羅人生,遊戲結束，未完待續,網路總動員,A,正確答案是 A：捍衛網權。
+quiz-259,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 sub $t2, $t1, $t0，問 $t2=？",0,1,2,3,B,正確答案是 B：1。
+quiz-260,在 C 語言中，有一段程式碼 for (i = 0; i < n; i++) { … }，下列何者對此程式碼的描述錯誤？,第一次進 for 迴圈時先使 i=0,當 i<n 則跳出迴圈,每次迴圈的最後將 i=i+1,以上描述皆正確,B,正確答案是 B：當 i<n 則跳出迴圈。
+quiz-261,在版本控制中，將本地端的修改送回檔案庫，稱為？,add,push,commit,init,C,正確答案是 C：commit。
+quiz-262,在版本控制中，當兩方更動同一份檔案會發生衝突，稱為？,Collision,Conflict,Fight,Hit,B,正確答案是 B：Conflict。
+quiz-263,DevOps 視為 ______、_________、_________ 的交集，請問 ________ 不包含下列何者？,Development,Operations,QA,VC,D,正確答案是 D：VC。
+quiz-264,SITCON 2017 的紀念品為何者？,抱枕,牙套,徽章,眼罩,A,正確答案是 A：抱枕。
+quiz-265,在 Android Studio 出現之前，Google 官方支援的開發 IDE 是？,Xcode,Eclipse,Visual Studio,Notepad++,B,正確答案是 B：Eclipse。
+quiz-266,下列何者是 Ubuntu 的套件管理程式？,APT,YUM,DNF,DPKG,A,正確答案是 A：APT。
+quiz-267,在版本控制中，將本地端的修改送回檔案庫，稱為？,add,push,commit,init,C,正確答案是 C：commit。
+quiz-268,下列何者不為版本控制軟體？,SVK,Git,BitKeeper,Devops,D,正確答案是 D：Devops。
+quiz-269,請問 DevOps 是下列哪兩個字的組成？,Development 和 Operations,Develop 和 Operate,Developer 和 Operator,Developing 和 Operating,A,正確答案是 A：Development 和 Operations。
+quiz-270,十六進位表示法的 ff 在二進位表示法中可以表示成？,1111 0000,0000 1111,0000 0000,1111 1111,D,正確答案是 D：1111 1111。
+quiz-271,十六進位表示法的 91 在二進位表示法中可以表示成？,1000 0001,1001 0001,0111 1001,0001 1001,B,正確答案是 B：1001 0001。
+quiz-272,現在常聽到的人工智慧 AI 英文全名是？,Artificial Intelligence,Acknowledged Interface,Amazing Influence,American Internet,A,正確答案是 A：Artificial Intelligence。
+quiz-273,現在常聽到的機器學習 ML 英文全名是？,Machanism Lecture,Machine Learning,Machine Laughing,Magic Live,B,正確答案是 B：Machine Learning。
+quiz-274,現在常聽到的深度學習 DL 英文全名是？,Dangerous Lion,Different Language,Dog Laughing,Deep Learing,D,正確答案是 D：Deep Learing。
+quiz-275,在 C 語言中，int 具有多少 bits？,8,16,32,64,B,正確答案是 B：16。
+quiz-276,在 C 語言中，char 具有多少 bits？,8,16,32,64,A,正確答案是 A：8。
+quiz-277,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 sub $t2, $t1, $t0，問 $t0=？",0,1,2,3,A,正確答案是 A：0。
+quiz-278,Linux 目錄樹配置標準 FHS，定義的目錄資訊，主要分為四種，下列何者為非？,shareable,unshareable,static,dynamic,D,正確答案是 D：dynamic。
+quiz-279,加密與解密的演算法是一種數學運算公式，主要目的是將明文轉換成密文，密碼學基本的數學運算概念有三種，下列何者為非？,取代,置換,相乘,迭代,D,正確答案是 D：迭代。
+quiz-280,正規語法（Regular Grammar）是一種相當簡單的語法。此種標準的正規語法後來被稱為正規表達式（Regular Expression）。下列關於正規表達式語法，何者敘述錯誤？,[0-9] ：比對含數字之字串,[a-z0-9]：比對含數字或小寫字母之字串,b[aeiou]t ：比對bat、bet、bit、bot、but,[aeiouAEIOU] ：比對不含母音之字串,D,正確答案是 D：[aeiouAEIOU] ：比對不含母音之字串。
+quiz-281,所謂的三向交握（Three-way Handshake）是下列哪一個協定建立虛擬連線（virtual connection）的方式？,TCP,UDP,ARP,SMTP,A,正確答案是 A：TCP。
+quiz-282,下列何者並非以人工智慧為題材的科幻電影？,關鍵少數（Hidden Figures）,A.I.人工智慧（A.I. Artificial Intelligence）,變人（Bicentennial Man）,銀翼殺手（Blade Runner）,A,正確答案是 A：關鍵少數（Hidden Figures）。
+quiz-283,在《神鬼駭客：史諾登》中，主角最後將什麼計畫透漏給記者？,稜角計劃,稜鏡計劃,CIA 計劃,他沒有透漏任何東西,B,正確答案是 B：稜鏡計劃。
+quiz-284,何者不包括在 TCP/IP 協定組合中？,DNS,ASP,ARP,HTTP,B,正確答案是 B：ASP。
+quiz-285,下列敘述何者正確？,IPv4 位址為 64 Bits,IPv6 位址為 128 Bits,IPv4 位址通常以「4 段式、16 進位」表示,「203.74.205.256」為正確的 IPv4 位址,B,正確答案是 B：IPv6 位址為 128 Bits。
+quiz-286,知名搜尋引擎 Yahoo! 創始人來自哪個國家？,美國,波蘭,台灣,俄羅斯,C,正確答案是 C：台灣。
+quiz-287,自然語言處理（NLP）目標是要讓電腦能「理解」自然語言。一般而言，NLP 處理分為五大流程，請問下列何者不為自然語言處理的處理流程？,Tokensize,POS tagging,facing,Semantics,C,正確答案是 C：facing。
+quiz-288,Deep learinging 為時下最熱門的研究領域之一，當中常利用神經網路模型進行訓練，請問下列關於各神經網路模型的敘述，何者錯誤？,CNN 為卷積神經網路，第一層為池化層，第二層為卷基層，,RNN 為循環神經網路，主要用來處理序列性資料。,LSTM 可以說是 RNN 的延伸為，其差異為 LSTM 加入三個控制開關,Word2vec 又分為 CBOW 與 Skip-gram 兩種模型,A,正確答案是 A：CNN 為卷積神經網路，第一層為池化層，第二層為卷基層，。
+quiz-289,請問 SITCON 的 Telegram 討論群組，ID 為何？,@SITCONtw,@SITCON,@SITCONgeneral,@SITCONorg,C,正確答案是 C：@SITCONgeneral。
+quiz-290,網際網路犯罪中心將變臉詐騙分為五大類型，不包含下列何者？,假發票詐騙,執行長詐騙,假冒成律師,假冒成警察,D,正確答案是 D：假冒成警察。
+quiz-291,下列哪一種資安攻擊手法不需要強大的資訊技能？,SQL Injection,Click jacking,Social Engineering,Domain name hijacking,C,正確答案是 C：Social Engineering。
+quiz-292,當一個瀏覽器試圖連線開啟 https://www.facebook.com/ 時，瀏覽器不會做下列哪件事？,偷偷查看使用者 D 槽文件,與網頁伺服器建立加密的安全連線,檢查網頁伺服器是否能夠提供有效的憑證,使用 HTTP 通訊協定向網頁伺服器要求傳送網頁內容,A,正確答案是 A：偷偷查看使用者 D 槽文件。
+quiz-293,請問下列關於二元樹的敘述，何者錯誤？,原理是 Divide and Conquer,時間複雜度最差為 O(N),時間複雜度最佳為 O(logN),空間複雜度為 O(logN),D,正確答案是 D：空間複雜度為 O(logN)。
+quiz-294,下列關於 Binary Heap 的敘述，何者正確？,其二元樹的樹根數字，總是小於等於左右小孩的數字,插入的時間複雜度為 O(logN),求極值的時間複雜度為 O(N),刪除的時間複雜度為 O(logN),C,正確答案是 C：求極值的時間複雜度為 O(N)。
+quiz-295,目前廣泛被各大 Linux 發行版採用的 init 程式是？,Upstart,systemd,systemctl,initctl,B,正確答案是 B：systemd。
+quiz-296,下列何者是今日議程之一？,你媽知道你在寫 Functional 嗎？,校園資訊系統的困境與嘗試改善,前端工程的過去、現在與未來,格鬥遊戲 AI 開發經驗談,A,正確答案是 A：你媽知道你在寫 Functional 嗎？。
+quiz-297,下列何者是今日議程之一？,重拾數位時代的公民權,奔跑吧！台北：遊戲開發經驗分享,雷系魔法師也能煎牛排！,直播邊看邊好玩：探討遊戲挑戰及持續意圖,B,正確答案是 B：奔跑吧！台北：遊戲開發經驗分享。
+quiz-298,下列何者是今日議程之一？,網路身分的真與假：談網路實名制,蘊含著強大力量的 GTK 啊，封印解除！,用 Electron 實踐跨平臺桌面程式,直播邊看邊好玩：探討遊戲挑戰及持續意圖,B,正確答案是 B：蘊含著強大力量的 GTK 啊，封印解除！。
+quiz-299,下列何者是今日議程之一？,從 V8 Javascript 引擎淺談現代編譯技術,寫寫你的美好：一起打造「藝術產生器」吧！,600 秒學會 UI 設計,校園資訊系統的困境與嘗試改善,C,正確答案是 C：600 秒學會 UI 設計。
+quiz-300,請問下列關於 SaaS（Software as a Service）的敘述，何者錯誤？,將軟體以服務的型式來提供,單租戶型式,降低了使用軟體的門檻,使用者透過網路即可使用軟體,B,正確答案是 B：單租戶型式。
+quiz-301,CSS3 新增了酷炫的文字陰影，請問 text-shadow: 5px 5px 10px #FF0000; 這條程式中的 10px 代表這是什麼意思？,陰影與本體水平位移 10px,陰影與本體垂直位移 10px,陰影為模糊 10px 陰影,陰影的顏色,C,正確答案是 C：陰影為模糊 10px 陰影。
+quiz-302,請問哪年的 SITCON 主視覺中特別以藍色或粉紅色標注了 ING 三個字？,SITCON 2015,SITCON 2016,SITCON 2017,SITCON 2018,C,正確答案是 C：SITCON 2017。
+quiz-303,國中國文課本中的作家琦君，其著名的做作品「橘子紅了」，是以每年橘子紅的時節為延伸的言情小說作品； SITCON 的猶如橘子般的指南針 Logo 也有曾經紅了的時節，請問該事件發生在哪一年？,SITCON 2014,SITCON 2015,SITCON 2016,SITCON 2017,B,正確答案是 B：SITCON 2015。
+quiz-304,SITCON 的黑客松活動其名稱為何？,HackGen 駭客松,HackThon 駭客世代,HackGen 駭客世代,HackGen 少年世代,C,正確答案是 C：HackGen 駭客世代。
+quiz-305,二元樹中，LRV Traversal 為下列何種方法？,pre-order,in-order,post-order,以上皆非,C,正確答案是 C：post-order。
+quiz-306,二元樹中，pre-order Traversal 可以簡稱為？,VLR,LVR,LRV,以上皆非,A,正確答案是 A：VLR。
+quiz-307,變臉詐騙簡稱為 BEC ，又稱為商務電子郵件入侵，其兩大攻擊技巧，分別為「竊取帳號登入憑證」與下列何者？,單純利用電子郵件,假冒成律師,假發票詐騙,竊取資料,A,正確答案是 A：單純利用電子郵件。
+quiz-308,網路釣魚為變臉詐騙最常見的手法之一，下列有關於網路釣魚的敘述，何者錯誤？,典型的網路釣魚攻擊會使用電子郵件挾帶一個經過偽裝的連結。,郵件內隨附 PDF 檔案是網路釣魚慣用的伎倆之一,網路釣魚郵件當中，有時挾帶惡意的 HTML 檔案,以上皆正確,D,正確答案是 D：以上皆正確。
+quiz-309,年初 Intel 處理器爆發兩大漏洞分別為 Meltdown 和 Spectre，關於兩者的敘述何者正確？,Spectre 所影響的是 Intel 處理器,Meltdown 可讓駭客竊取系統核心、快取檔案內的資料,Spectre 漏洞所影響的處理器包括：Intel、AMD 及 ARM,Meltdown 應用程式在記憶體內的敏感資料可能遭到存取,C,正確答案是 C：Spectre 漏洞所影響的處理器包括：Intel、AMD 及 ARM。
+quiz-310,根據〈利用 ATM 惡意程式大發利市 〉一文中，將ATM 攻擊分為兩大類，按進入 ATM 方式可分別為？,臨機操作方式與網路進入方式,硬體操作方式與軟體操作方式,設備解密方式與惡意攻擊方式,實體攻擊方式與遠端攻擊方式,A,正確答案是 A：臨機操作方式與網路進入方式。
+quiz-311,關於 Melissa 病毒的敘述何者為非？,製作者以脫衣舞孃的名字為病毒命名,通過郵件傳播,為蠕蟲病毒,運用Word軟體里的宏運算編寫而成,C,正確答案是 C：為蠕蟲病毒。
+quiz-312,請問下列有關於 SVM 的敘述，何者錯誤？,全稱為 Support Vector Machine,與 Logistic Regression 相同屬於一種分類器方法,目前應用範圍僅在資訊安全領域,在自然語言處理（NLP）應用中，比 Bag-of-words 或是 Tf-idf 效果更好,C,正確答案是 C：目前應用範圍僅在資訊安全領域。
+quiz-313,下列關於資料結構 Tree 的敘述何者錯誤？,樹的節點個數是一或多個有限集合,存在一個節點稱為根節點,跟節點的階層（Level）為 0,每個節點擁有的子節點數稱為「分支度」（Dregree）,C,正確答案是 C：跟節點的階層（Level）為 0。
+quiz-314,下列關於二元樹（Binary Tree）的敘述何者錯誤？,每個節點最多只能有 2 節點,節點個數無限集合,節點各數可為的空集合,二元樹的節點可以分成兩個沒有交集的子樹,B,正確答案是 B：節點個數無限集合。
+quiz-315,二元樹中，LVR Traversal 為下列何種方法？,pre-order,in-order,post-order,以上皆非,B,正確答案是 B：in-order。
+quiz-316,在使用 bash 的時候，用哪個按鍵組合可以將程式放到背景並暫停？,Ctrl-Q,Ctrl-Alt-Delete,Ctrl-Space,Ctrl-Z,D,正確答案是 D：Ctrl-Z。
+quiz-317,數位簽章應用了公鑰密碼領域使用的單向函數原理。下列關於單向函數的敘述，何者正確？,對於輸入，函數值容易計算，但給出一個隨機輸入的函數值，無法算出原始輸入,單向函數是否存在計算機科學中，是一個已經被證明的問題,單向函數存在，將證明複雜性類 P/NP 問題中，P 不等於 NP。,以上皆非,C,正確答案是 C：單向函數存在，將證明複雜性類 P/NP 問題中，P 不等於 NP。。
+quiz-318,正規語法（Regular Grammar）是一種相當簡單的語法，後期發展成為重要的程式設計工具。此種標準的正規語法後來被稱為正規表達式（Regular Expression）。下列關於正規表達式符號之意義，何者正確？,^ ：匹配輸入字串的結束位置,$ ：匹配輸入字串的開始位置,* ：匹配前面的子運算式零次或多次,+ ：匹配後面的子運算式一次或多次,C,正確答案是 C：* ：匹配前面的子運算式零次或多次。
+quiz-319,正規語法（Regular Grammar）是一種相當簡單的語法，後期發展成為重要的程式設計工具。此種標準的正規語法後來被稱為正規表達式（Regular Expression）。下列關於正規表達式符號之意義，何者錯誤？,\B：匹配非單詞邊界,\D：匹配一個數位字元,\n ：匹配一個分行符號,\S：匹配任何非空白字元,B,正確答案是 B：\D：匹配一個數位字元。
+quiz-320,CNN 又稱為卷積神經網路，基本結構包含兩層，請問第一層與第二層的順序分別為？,池化層 / 卷積層,卷積層 / 池化層,植入層 / 池化層,池化層 / 植入層,B,正確答案是 B：卷積層 / 池化層。
+quiz-321,CNN 又稱為卷積神經網路，其中一層稱做卷基層，關於卷積層的敘述，何者錯誤？,目的主要擷取出重要特徵,經過不停移動找出同樣的局部特徵,採用降維採樣,確認不同特徵間的位置關係,C,正確答案是 C：採用降維採樣。
+quiz-322,CNN 又稱為卷積神經網路，基本結構包含兩層，其中一層稱做池化層，請問關於池化層的敘述，何者錯誤？,採用降維採樣,將卷積取得的結果進行壓縮,會盡可能保留重要的資訊,最常見的池化方式為最佳池化（optimization pooling）,D,正確答案是 D：最常見的池化方式為最佳池化（optimization pooling）。
+quiz-323,RNN 又稱為循環神經網路，LSTM 為其衍伸，最主要的差異為 LSTM 中加入三個控制用開關，請問開關不包含下列何者？,輸入(input),移除(remove),輸出(output),遺忘(forget),B,正確答案是 B：移除(remove)。
+quiz-324,ATM 是由下列金融卡交易訊息交換規格來溝通？,ISO/IEC 8859-1,ISO 8601,ISO 8583,ISO/IEC 80000,C,正確答案是 C：ISO 8583。
+quiz-325,Processing 是一個提供給藝術創作者的一個開源的 IDE ，請問其不支援用哪個語言？,Java,Javascript,Python,Ruby,D,正確答案是 D：Ruby。
+quiz-326,請問下列何者不為剖析器？,LL,LR,LALR,LSR,D,正確答案是 D：LSR。
+quiz-327,下列哪一種語言是所謂的低階語言？,Assembly,C++,Python,Java,A,正確答案是 A：Assembly。
+quiz-328,Linux 目錄樹配置標準 FHS，主要定義那三段目錄，下列何者為非？,root,/usr,/var,/bin,D,正確答案是 D：/bin。
+quiz-329,橢圓曲線密碼學，一種建立公開密鑰加密的演算法。下列關於橢圓取線密碼學，何者敘述錯誤？,基於橢圓曲線數學,公開密鑰加密又稱為非對稱加密,它需要一個金鑰,加解密所需時間較長,C,正確答案是 C：它需要一個金鑰。
+quiz-330,學生計算機年會的縮寫為？,SITCQN,sitcon,STICON,SITCON,D,正確答案是 D：SITCON。
+quiz-331,在開發者笑話中，我們常比喻「什麼」與「什麼」的差異，就好像狗與熱狗？,C# 與 Objecct C,C 與 C++,HTML 與 CSS,Java 與 JavaScript,D,正確答案是 D：Java 與 JavaScript。
+quiz-332,網際網路原始開發用途是？,軍事,建築,民用,工業,A,正確答案是 A：軍事。
+quiz-333,下列哪一種程式語言最古老？,Fortran,C,Java,Verilog,A,正確答案是 A：Fortran。
+quiz-334,在 C 語言中，int 型態能存取的最大值為多少？,2147483647,2147483648,2147483649,2147483650,A,正確答案是 A：2147483647。
+quiz-335,在 C 語言中，int 型態能存取的最小值為多少？,–2147483648,–2147483647,–2147483650,–2147483651,A,正確答案是 A：–2147483648。
+quiz-336,OSI 的網路架構總共有幾層？,7,6,5,4,A,正確答案是 A：7。
+quiz-337,下列哪一個協定最常被拿來應用於傳送影片等串流？,TCP,UDP,DHCP,FTP,A,正確答案是 A：TCP。
+quiz-338,為了因應 IP 位址的缺乏，目前正在推動 IP 第幾版的普及？,6,7,8,9,A,正確答案是 A：6。
+quiz-339,在 IPv6 中，每一組 4 個 16 位元數字用什麼符號隔開？,冒號,分號,逗號,句號,A,正確答案是 A：冒號。
+quiz-340,請問全球共有幾台 root DNS server？,13,14,15,16,A,正確答案是 A：13。
+quiz-341,下列哪一種協定不是應用於收發信？,TCP,SMTP,POP3,IMAP,A,正確答案是 A：TCP。
+quiz-342,下列何者並非程式語言？,Ruby,Go,GoG,R,C,正確答案是 C：GoG。
+quiz-343,下列公司與其對應的 VR 產品何者配對錯誤？,HTC / Vive,Sony / PlayStation VR,Google / Oculus,Samsung / Gear VR,C,正確答案是 C：Google / Oculus。
+quiz-344,誰被譽為「現代電腦之父」？,舍恩伯格,艾倫圖靈,溫特沃斯,以上皆非,B,正確答案是 B：艾倫圖靈。
+quiz-345,下列何者非瀏覽器？,Firefox,Safari,UA Browser,Opera,C,正確答案是 C：UA Browser。
+quiz-346,在 C library，關於 strcpy()，下列何者敘述錯誤？,會自動偵測以 '\0' 為結尾,不需要指定長度,當 *src 長度大於 *dest 時會 buffer overflow,可以複製任何類型資料,D,正確答案是 D：可以複製任何類型資料。
+quiz-347,C 語言中「i++」是指？,先 i+1，再用 i,先用 i ，再將 i+1,i 加兩個1,不具任何意義,B,正確答案是 B：先用 i ，再將 i+1。
+quiz-348,二進位表示法的 0001 在十進位表示法中寫成？,0,1,2,3,B,正確答案是 B：1。
+quiz-349,二進位表示法的 0010 在十進位表示法中寫成？,0,1,2,3,C,正確答案是 C：2。
+quiz-350,二進位表示法的 0011 在十進位表示法中寫成？,0,1,2,3,D,正確答案是 D：3。
+quiz-351,二進位表示法的 0100 在十進位表示法中寫成？,4,5,6,7,A,正確答案是 A：4。
+quiz-352,以下何者符合正規表達式「a+b+」？,aa,aab,ba,bbb,B,正確答案是 B：aab。
+quiz-353,以下何者符合正規表達式「a*b*」？,aba,bab,bbb,bba,C,正確答案是 C：bbb。
+quiz-354,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 add $t0, $t1, $t2，問 $t1=？",0,1,2,3,B,正確答案是 B：1。
+quiz-355,SITCON 官方網站為 sitcon.org/ ，請問看見 .org 的網域名稱，代表該單位屬於？,教育與學術機構,傳教機構,財團法人、基金會等非官方組織,軍事單位,C,正確答案是 C：財團法人、基金會等非官方組織。
+quiz-356,請問想要讀取資料庫的資料，SQL 必須下什麼指令？,CREATE,SELECT,GET,READ,B,正確答案是 B：SELECT。
+quiz-357,請問想要更新資料庫的資料，SQL 必須下什麼指令？,UPDATE,POST,WRITE,PATCH,A,正確答案是 A：UPDATE。
+quiz-358,請問哪一年的 SITCON badge 名牌採取純燙金與燙白的設計？以製造出符合 The Ture Hackers,SITCON 2015,SITCON 2016,SITCON 2017,SITCON 2018,A,正確答案是 A：SITCON 2015。
+quiz-359,SITCON 2017 為讓會眾更深入理解「網路中立與資訊自由」是為了讓在網路上的資訊取得與流通變得更方便， 大會特別安排「SITCON 電影院」播放了核部紀錄片呢？,捍衛網權,網羅人生,遊戲結束，未完待續,網路總動員,A,正確答案是 A：捍衛網權。
+quiz-360,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 sub $t2, $t1, $t0，問 $t2=？",0,1,2,3,B,正確答案是 B：1。
+quiz-361,在 C 語言中，有一段程式碼 for (i = 0; i < n; i++) { … }，下列何者對此程式碼的描述錯誤？,第一次進 for 迴圈時先使 i=0,當 i<n 則跳出迴圈,每次迴圈的最後將 i=i+1,以上描述皆正確,B,正確答案是 B：當 i<n 則跳出迴圈。
+quiz-362,在版本控制中，將本地端的修改送回檔案庫，稱為？,add,push,commit,init,C,正確答案是 C：commit。
+quiz-363,在版本控制中，當兩方更動同一份檔案會發生衝突，稱為？,Collision,Conflict,Fight,Hit,B,正確答案是 B：Conflict。
+quiz-364,DevOps 視為 ______、_________、_________ 的交集，請問 ________ 不包含下列何者？,Development,Operations,QA,VC,D,正確答案是 D：VC。
+quiz-365,SITCON 2017 的紀念品為何者？,抱枕,牙套,徽章,眼罩,A,正確答案是 A：抱枕。
+quiz-366,在 Android Studio 出現之前，Google 官方支援的開發 IDE 是？,Xcode,Eclipse,Visual Studio,Notepad++,B,正確答案是 B：Eclipse。
+quiz-367,下列何者是 Ubuntu 的套件管理程式？,APT,YUM,DNF,DPKG,A,正確答案是 A：APT。
+quiz-368,在版本控制中，將本地端的修改送回檔案庫，稱為？,add,push,commit,init,C,正確答案是 C：commit。
+quiz-369,下列何者不為版本控制軟體？,SVK,Git,BitKeeper,Devops,D,正確答案是 D：Devops。
+quiz-370,請問 DevOps 是下列哪兩個字的組成？,Development 和 Operations,Develop 和 Operate,Developer 和 Operator,Developing 和 Operating,A,正確答案是 A：Development 和 Operations。
+quiz-371,十六進位表示法的 ff 在二進位表示法中可以表示成？,1111 0000,0000 1111,0000 0000,1111 1111,D,正確答案是 D：1111 1111。
+quiz-372,十六進位表示法的 91 在二進位表示法中可以表示成？,1000 0001,1001 0001,0111 1001,0001 1001,B,正確答案是 B：1001 0001。
+quiz-373,現在常聽到的人工智慧 AI 英文全名是？,Artificial Intelligence,Acknowledged Interface,Amazing Influence,American Internet,A,正確答案是 A：Artificial Intelligence。
+quiz-374,現在常聽到的機器學習 ML 英文全名是？,Machanism Lecture,Machine Learning,Machine Laughing,Magic Live,B,正確答案是 B：Machine Learning。
+quiz-375,現在常聽到的深度學習 DL 英文全名是？,Dangerous Lion,Different Language,Dog Laughing,Deep Learing,D,正確答案是 D：Deep Learing。
+quiz-376,在 C 語言中，int 具有多少 bits？,8,16,32,64,B,正確答案是 B：16。
+quiz-377,在 C 語言中，char 具有多少 bits？,8,16,32,64,A,正確答案是 A：8。
+quiz-378,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 sub $t2, $t1, $t0，問 $t0=？",0,1,2,3,A,正確答案是 A：0。
+quiz-379,Linux 目錄樹配置標準 FHS，定義的目錄資訊，主要分為四種，下列何者為非？,shareable,unshareable,static,dynamic,D,正確答案是 D：dynamic。
+quiz-380,加密與解密的演算法是一種數學運算公式，主要目的是將明文轉換成密文，密碼學基本的數學運算概念有三種，下列何者為非？,取代,置換,相乘,迭代,D,正確答案是 D：迭代。
+quiz-381,正規語法（Regular Grammar）是一種相當簡單的語法。此種標準的正規語法後來被稱為正規表達式（Regular Expression）。下列關於正規表達式語法，何者敘述錯誤？,[0-9] ：比對含數字之字串,[a-z0-9]：比對含數字或小寫字母之字串,b[aeiou]t ：比對bat、bet、bit、bot、but,[aeiouAEIOU] ：比對不含母音之字串,D,正確答案是 D：[aeiouAEIOU] ：比對不含母音之字串。
+quiz-382,所謂的三向交握（Three-way Handshake）是下列哪一個協定建立虛擬連線（virtual connection）的方式？,TCP,UDP,ARP,SMTP,A,正確答案是 A：TCP。
+quiz-383,下列何者並非以人工智慧為題材的科幻電影？,關鍵少數（Hidden Figures）,A.I.人工智慧（A.I. Artificial Intelligence）,變人（Bicentennial Man）,銀翼殺手（Blade Runner）,A,正確答案是 A：關鍵少數（Hidden Figures）。
+quiz-384,在《神鬼駭客：史諾登》中，主角最後將什麼計畫透漏給記者？,稜角計劃,稜鏡計劃,CIA 計劃,他沒有透漏任何東西,B,正確答案是 B：稜鏡計劃。
+quiz-385,何者不包括在 TCP/IP 協定組合中？,DNS,ASP,ARP,HTTP,B,正確答案是 B：ASP。
+quiz-386,下列敘述何者正確？,IPv4 位址為 64 Bits,IPv6 位址為 128 Bits,IPv4 位址通常以「4 段式、16 進位」表示,「203.74.205.256」為正確的 IPv4 位址,B,正確答案是 B：IPv6 位址為 128 Bits。
+quiz-387,知名搜尋引擎 Yahoo! 創始人來自哪個國家？,美國,波蘭,台灣,俄羅斯,C,正確答案是 C：台灣。
+quiz-388,自然語言處理（NLP）目標是要讓電腦能「理解」自然語言。一般而言，NLP 處理分為五大流程，請問下列何者不為自然語言處理的處理流程？,Tokensize,POS tagging,facing,Semantics,C,正確答案是 C：facing。
+quiz-389,Deep learinging 為時下最熱門的研究領域之一，當中常利用神經網路模型進行訓練，請問下列關於各神經網路模型的敘述，何者錯誤？,CNN 為卷積神經網路，第一層為池化層，第二層為卷基層，,RNN 為循環神經網路，主要用來處理序列性資料。,LSTM 可以說是 RNN 的延伸為，其差異為 LSTM 加入三個控制開關,Word2vec 又分為 CBOW 與 Skip-gram 兩種模型,A,正確答案是 A：CNN 為卷積神經網路，第一層為池化層，第二層為卷基層，。
+quiz-390,請問 SITCON 的 Telegram 討論群組，ID 為何？,@SITCONtw,@SITCON,@SITCONgeneral,@SITCONorg,C,正確答案是 C：@SITCONgeneral。
+quiz-391,網際網路犯罪中心將變臉詐騙分為五大類型，不包含下列何者？,假發票詐騙,執行長詐騙,假冒成律師,假冒成警察,D,正確答案是 D：假冒成警察。
+quiz-392,下列哪一種資安攻擊手法不需要強大的資訊技能？,SQL Injection,Click jacking,Social Engineering,Domain name hijacking,C,正確答案是 C：Social Engineering。
+quiz-393,當一個瀏覽器試圖連線開啟 https://www.facebook.com/ 時，瀏覽器不會做下列哪件事？,偷偷查看使用者 D 槽文件,與網頁伺服器建立加密的安全連線,檢查網頁伺服器是否能夠提供有效的憑證,使用 HTTP 通訊協定向網頁伺服器要求傳送網頁內容,A,正確答案是 A：偷偷查看使用者 D 槽文件。
+quiz-394,請問下列關於二元樹的敘述，何者錯誤？,原理是 Divide and Conquer,時間複雜度最差為 O(N),時間複雜度最佳為 O(logN),空間複雜度為 O(logN),D,正確答案是 D：空間複雜度為 O(logN)。
+quiz-395,下列關於 Binary Heap 的敘述，何者正確？,其二元樹的樹根數字，總是小於等於左右小孩的數字,插入的時間複雜度為 O(logN),求極值的時間複雜度為 O(N),刪除的時間複雜度為 O(logN),C,正確答案是 C：求極值的時間複雜度為 O(N)。
+quiz-396,目前廣泛被各大 Linux 發行版採用的 init 程式是？,Upstart,systemd,systemctl,initctl,B,正確答案是 B：systemd。
+quiz-397,下列何者是今日議程之一？,你媽知道你在寫 Functional 嗎？,校園資訊系統的困境與嘗試改善,前端工程的過去、現在與未來,格鬥遊戲 AI 開發經驗談,A,正確答案是 A：你媽知道你在寫 Functional 嗎？。
+quiz-398,下列何者是今日議程之一？,重拾數位時代的公民權,奔跑吧！台北：遊戲開發經驗分享,雷系魔法師也能煎牛排！,直播邊看邊好玩：探討遊戲挑戰及持續意圖,B,正確答案是 B：奔跑吧！台北：遊戲開發經驗分享。
+quiz-399,下列何者是今日議程之一？,網路身分的真與假：談網路實名制,蘊含著強大力量的 GTK 啊，封印解除！,用 Electron 實踐跨平臺桌面程式,直播邊看邊好玩：探討遊戲挑戰及持續意圖,B,正確答案是 B：蘊含著強大力量的 GTK 啊，封印解除！。
+quiz-400,下列何者是今日議程之一？,從 V8 Javascript 引擎淺談現代編譯技術,寫寫你的美好：一起打造「藝術產生器」吧！,600 秒學會 UI 設計,校園資訊系統的困境與嘗試改善,C,正確答案是 C：600 秒學會 UI 設計。
+quiz-401,請問下列關於 SaaS（Software as a Service）的敘述，何者錯誤？,將軟體以服務的型式來提供,單租戶型式,降低了使用軟體的門檻,使用者透過網路即可使用軟體,B,正確答案是 B：單租戶型式。
+quiz-402,CSS3 新增了酷炫的文字陰影，請問 text-shadow: 5px 5px 10px #FF0000; 這條程式中的 10px 代表這是什麼意思？,陰影與本體水平位移 10px,陰影與本體垂直位移 10px,陰影為模糊 10px 陰影,陰影的顏色,C,正確答案是 C：陰影為模糊 10px 陰影。
+quiz-403,請問哪年的 SITCON 主視覺中特別以藍色或粉紅色標注了 ING 三個字？,SITCON 2015,SITCON 2016,SITCON 2017,SITCON 2018,C,正確答案是 C：SITCON 2017。
+quiz-404,國中國文課本中的作家琦君，其著名的做作品「橘子紅了」，是以每年橘子紅的時節為延伸的言情小說作品； SITCON 的猶如橘子般的指南針 Logo 也有曾經紅了的時節，請問該事件發生在哪一年？,SITCON 2014,SITCON 2015,SITCON 2016,SITCON 2017,B,正確答案是 B：SITCON 2015。
+quiz-405,SITCON 的黑客松活動其名稱為何？,HackGen 駭客松,HackThon 駭客世代,HackGen 駭客世代,HackGen 少年世代,C,正確答案是 C：HackGen 駭客世代。
+quiz-406,二元樹中，LRV Traversal 為下列何種方法？,pre-order,in-order,post-order,以上皆非,C,正確答案是 C：post-order。
+quiz-407,二元樹中，pre-order Traversal 可以簡稱為？,VLR,LVR,LRV,以上皆非,A,正確答案是 A：VLR。
+quiz-408,變臉詐騙簡稱為 BEC ，又稱為商務電子郵件入侵，其兩大攻擊技巧，分別為「竊取帳號登入憑證」與下列何者？,單純利用電子郵件,假冒成律師,假發票詐騙,竊取資料,A,正確答案是 A：單純利用電子郵件。
+quiz-409,網路釣魚為變臉詐騙最常見的手法之一，下列有關於網路釣魚的敘述，何者錯誤？,典型的網路釣魚攻擊會使用電子郵件挾帶一個經過偽裝但卻指向網路釣魚網站的連結。,郵件內隨附 PDF 檔案是網路釣魚慣用的伎倆之一,網路釣魚郵件當中，有時挾帶惡意的 HTML 檔案,以上皆正確,D,正確答案是 D：以上皆正確。
+quiz-410,年初 Intel 處理器爆發兩大漏洞分別為 Meltdown 和 Spectre，關於兩者的敘述何者正確？,Spectre 所影響的是 Intel 處理器,Meltdown 可讓駭客竊取系統核心、快取檔案內的資料,Spectre 漏洞所影響的處理器包括：Intel、AMD 及 ARM,Meltdown 應用程式在記憶體內的敏感資料可能遭到存取,C,正確答案是 C：Spectre 漏洞所影響的處理器包括：Intel、AMD 及 ARM。
+quiz-411,根據〈利用 ATM 惡意程式大發利市 〉一文中，將ATM 攻擊分為兩大類，按進入 ATM 方式可分別為？,臨機操作方式與網路進入方式,硬體操作方式與軟體操作方式,設備解密方式與惡意攻擊方式,實體攻擊方式與遠端攻擊方式,A,正確答案是 A：臨機操作方式與網路進入方式。
+quiz-412,關於 Melissa 病毒的敘述何者為非？,製作者以脫衣舞孃的名字為病毒命名,通過郵件傳播,為蠕蟲病毒,運用Word軟體里的宏運算編寫而成,C,正確答案是 C：為蠕蟲病毒。
+quiz-413,請問下列有關於 SVM 的敘述，何者錯誤？,全稱為 Support Vector Machine,與 Logistic Regression 相同屬於一種分類器方法,目前應用範圍僅在資訊安全領域,在自然語言處理（NLP）應用中，比 Bag-of-words 或是 Tf-idf 效果更好,C,正確答案是 C：目前應用範圍僅在資訊安全領域。
+quiz-414,下列關於資料結構 Tree 的敘述何者錯誤？,樹的節點個數是一或多個有限集合,存在一個節點稱為根節點,跟節點的階層（Level）為 0,每個節點擁有的子節點數稱為「分支度」（Dregree）,C,正確答案是 C：跟節點的階層（Level）為 0。
+quiz-415,下列關於二元樹（Binary Tree）的敘述何者錯誤？,每個節點最多只能有 2 節點,節點個數無限集合,節點各數可為的空集合,二元樹的節點可以分成兩個沒有交集的子樹,B,正確答案是 B：節點個數無限集合。
+quiz-416,二元樹中，LVR Traversal 為下列何種方法？,pre-order,in-order,post-order,以上皆非,B,正確答案是 B：in-order。
+quiz-417,在使用 bash 的時候，用哪個按鍵組合可以將程式放到背景並暫停？,Ctrl-Q,Ctrl-Alt-Delete,Ctrl-Space,Ctrl-Z,D,正確答案是 D：Ctrl-Z。
+quiz-418,RNN 又稱為循環神經網路，LSTM 為其衍伸，最主要的差異為 LSTM 中加入 input / forget / output 三個控制用開關，請問這些開關與相對應作用組合下列何者正確？,Input gate 控制前一個以及當前時刻的新資訊,Forget gate主要用來控制從隱藏層節點中要忘記哪些資訊,Output gate 控制哪些資訊可以通過,以上皆是,D,正確答案是 D：以上皆是。
+quiz-419,RNN 又稱為循環神經網路，下列有關 RNN 的敘述，何者錯誤？,主要用來處理序列性資料，如圖片、影片等,為基於時間狀態的循環機制,對前面的資訊記憶並應用於當前的輸出共同計算,根據架構又分為 Elman 與 Jordan 類型,A,正確答案是 A：主要用來處理序列性資料，如圖片、影片等。
+quiz-420,請問關於 LR 剖析器，下列敘述何者正確？,屬於 Top - down 上下文分析,由左至右處理輸入字串,Left derivation,以上皆是,C,正確答案是 C：Left derivation。
+quiz-421,Yacc 所產生的就解析器為下列何種,LL(0),LL(1),LALR,SLR,C,正確答案是 C：LALR。
+quiz-422,請問看見 .mil 的網域名稱，代表該單位屬於？,教育與學術機構,政府機關單位,財團法人、基金會等非官方組織,軍事單位,D,正確答案是 D：軍事單位。
+quiz-423,下列何者不為 JBDC 的四種 type 之一？,JDBC-ODBC Bridge driver,Native-API/all Java driver,AllJava/Net-protocol driver,All Java/Native-protocol driver,B,正確答案是 B：Native-API/all Java driver。
+quiz-424,CSS 中 margin 這個屬性在下時，如下四個值（ex: margin: 20px 0px 20px 20px），他四個值分別依序代表了和那些方位與鄰近物件的距離呢？,上下左右,上右下左,上右下左,上左下右,C,正確答案是 C：上右下左。
+quiz-425,CSS 中 padding 這個屬性在下時，如下四個值（ex: padding: 20px 0px 20px 20px），他四個值分別依序代表了和那些方位與內部元件的距離呢？,上下左右,上右下左,上右下左,上左下右,B,正確答案是 B：上右下左。
+quiz-426,CSS 中 margin 這個屬性在下時，如下兩個值（ex: margin: 20px 0px），他兩個值分別依序代表了和那些方位與鄰近物件的距離呢？,上下與左右,上左與下右,左右與上下,右下與左上,A,正確答案是 A：上下與左右。
+quiz-427,政府機關的網站為符合 NCC 無障礙設計的規範，會在網站中加入「導盲磚」（亦稱做定位點），請問他是下列哪個符號,???,!!!,|||,:::,D,正確答案是 D：:::。
+quiz-428,下列哪一種語言不需要 ; 結尾？,C++,Python,Java,Verilog,B,正確答案是 B：Python。
+quiz-429,在 C++ 中，程式結尾通常要加什麼符號？,分號,句號,冒號,空白,A,正確答案是 A：分號。
+quiz-430,根據 TIOBE 編程社區統計 2017 最可能流行的語言是？,Java,C++,Python,Verilog,A,正確答案是 A：Java。
+quiz-431,在 C++ 中，「//」的用途是？,註解,開頭,宣告,結尾,A,正確答案是 A：註解。
+quiz-432,下列何者非 open source 優點？,多人維護,Debug 速度快,專人維護,程式較安全,C,正確答案是 C：專人維護。
+quiz-433,下列哪一種語言屬於硬體描述語言？,Verilog,C++,Python,JavaScript,A,正確答案是 A：Verilog。
+quiz-434,在 C++ 中，下列哪一個字詞不是保留字？,counter,case,break,if,A,正確答案是 A：counter。
+quiz-435,下列何者並非 Linux 的優點？,良好的多人多工環境，資源分配平均,除了免費之外，線上更新速度快，除錯與安全性均較佳,為 open source 的授權，故而具有 open source 的所有優缺點,以上皆是,D,正確答案是 D：以上皆是。
+quiz-436,下列哪一個函式不存在於 C++ 中 vector 的 STL 中？,relength(),resize(),reserve(),size(),A,正確答案是 A：relength()。
+quiz-437,在 C++ 中，保留字「void」代表什麼？,不用回傳值,一般格式規定,回傳數字,回傳字串,A,正確答案是 A：不用回傳值。
+quiz-438,SITCON 2018 是 SITCON 的第幾屆年會？,3,5,6,8,C,正確答案是 C：6。
+quiz-439,在 Python 3 中，print('SITCON 2018') 會得到什麼輸出結果？,print('SITCON 2018'),sitcon 2018,SITCON 2018',SITCON 2018,D,正確答案是 D：SITCON 2018。
+quiz-440,以下何者為開源的圖像處理軟體？,Photoshop,Photocap,GIMP,Lightroom,C,正確答案是 C：GIMP。
+quiz-441,於 SITCON 2016 新登場的吉祥物為下列何者？,SITCON 娘,小莎,小啄,小石,D,正確答案是 D：小石。
+quiz-442,自然語言通常是指一種自然地隨文化演化的語言，自然語言處理則是要讓電腦能妥善的處理自然語言，其最終目標是要讓電腦能「理解」自然語言。請問推測下列和者為自然語言處理的應用？,問答辨識系統,機器翻譯,資訊索引,以上皆是,D,正確答案是 D：以上皆是。
+quiz-443,Deep learinging 為時下最熱門的研究領域之一，請問下列何者不為常見的神經網路模型？,NN,RNN,CNN,ZNN,D,正確答案是 D：ZNN。
+quiz-444,請問要輸入什麼才能離開 Vim？,Ctrl-C,:exit,:),:q,D,正確答案是 D：:q。
+quiz-445,請問第一屆 SITCON 辦在下列何處？,台科大,中央研究院 人文科學館,國立科學工藝博物館,台大,A,正確答案是 A：台科大。
+quiz-446,請問 SITCON 有一個帶領大家認識學生計算機年會的活動，是下列何者？,閃電秀,導遊團,Unconference,大地遊戲,B,正確答案是 B：導遊團。
+quiz-447,請問 SITCON 小編群沒有在下列何者平台發文過？,Facebook,Plurk,Instagram,推特,C,正確答案是 C：Instagram。
+quiz-448,勒索病毒服務簡稱為？,RaaS,LaaS,KaaS,MaaS,A,正確答案是 A：RaaS。
+quiz-449,近年來，資安漏洞與危機頻傳，2017 年惡名昭彰的勒索病毒 WannaCry 更是造成全球陷入資安風報，更有資安公司大膽預言，2018 年 ___________ 將是犯罪集團主要獲利模式，請推測 _________ 中為下列何者？,比特幣,數位勒索,變臉詐騙,釣魚網站,B,正確答案是 B：數位勒索。
+quiz-450,去年，FCC 宣布廢除什麼，引發了資訊界一片譁然？,電腦平等性原則,網路中立性原則,資訊公平性原則,手機差異性原則,B,正確答案是 B：網路中立性原則。
+quiz-451,二進位表示法的 1010 在十進位表示法中寫成？,10,11,12,13,A,正確答案是 A：10。
+quiz-452,二進位表示法的 1011 在十進位表示法中寫成？,10,11,12,13,B,正確答案是 B：11。
+quiz-453,二進位表示法的 1100 在十進位表示法中寫成？,10,11,12,13,C,正確答案是 C：12。
+quiz-454,二進位表示法的 1101 在十進位表示法中寫成？,12,13,14,15,B,正確答案是 B：13。
+quiz-455,二進位表示法的 1110 在十進位表示法中寫成？,12,13,14,15,C,正確答案是 C：14。
+quiz-456,二進位表示法的 1111 在十進位表示法中寫成？,13,14,15,16,C,正確答案是 C：15。
+quiz-457,以下何者符合正規表達式「ab*ab」？,aab,ababa,abbbaab,ababbba,A,正確答案是 A：aab。
+quiz-458,以下何者符合正規表達式「a+b」？,abbb,ba,bab,aab,D,正確答案是 D：aab。
+quiz-459,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 add $t0, $t1, $t2，問 $t2=？",0,1,2,3,C,正確答案是 C：2。
+quiz-460,十六進位表示法的 a0 在二進位表示法中可以表示成？,1010 0000,1010 1111,1001 1111,1011 0000,A,正確答案是 A：1010 0000。
+quiz-461,十六進位表示法的 62 在二進位表示法中可以表示成？,0110 0001,0101 1000,0110 0010,1010 0101,C,正確答案是 C：0110 0010。
+quiz-462,1 GB 等於多少 MB？,1000,10000,1024,1042,C,正確答案是 C：1024。
+quiz-463,1 MB 等於多少 KB？,1024,2048,1000,10000,A,正確答案是 A：1024。
+quiz-464,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 sub $t2, $t1, $t0，問 $t1=？",0,1,2,3,B,正確答案是 B：1。
+quiz-465,下列何者是今日議程之一？,BGP Hijacking: new ways to mass surveillance,Use AI to make our own anime girl face,No More Crypto Fails,The evolving role of mobile communication in everyday logistics,B,正確答案是 B：Use AI to make our own anime girl face。
+quiz-466,下列何者並非今日議程之一？,泡沫列車：一趟加密貨幣的經濟之旅,從 V8 Javascript 引擎淺談現代編譯技術,從學生到放火實習生的奇幻旅程,蘊含著強大力量的 GTK 啊，封印解除！,B,正確答案是 B：從 V8 Javascript 引擎淺談現代編譯技術。
+quiz-467,下列何者並非今日議程之一？,奔跑吧！台北：遊戲開發經驗分享,我單槍匹馬的開源貢獻之路,現代檔案系統 ZFS 的簡介與應用,校園資訊系統的困境與嘗試改善,D,正確答案是 D：校園資訊系統的困境與嘗試改善。
+quiz-468,下列何者並非今日議程之一？,計算中的遊戲與模仿,「我寫故我在」社群媒體裡的憂鬱蹤跡,讀 scheme 魔法書 SICP,由淺入坑區塊鏈～從認識架構到應用智能合約！,B,正確答案是 B：「我寫故我在」社群媒體裡的憂鬱蹤跡。
+quiz-469,下列何者並非今日議程之一？,瀏覽器開發與開源經驗,計算中的遊戲與模仿,直播邊看邊好玩：探討遊戲挑戰及持續意圖,CCNS Radio - 社辦點歌電台,C,正確答案是 C：直播邊看邊好玩：探討遊戲挑戰及持續意圖。
+quiz-470,下列何者並非今日議程之一？,網路身分的真與假：談網路實名制,瀏覽器開發與開源經驗,由淺入坑區塊鏈～從認識架構到應用智能合約！,Vault 7 考古挖寶記,A,正確答案是 A：網路身分的真與假：談網路實名制。
+quiz-471,下列哪一種雜湊演算法不容易遭受 Hash Collision?,SHA-1,SHA-256,MD5,MD4,B,正確答案是 B：SHA-256。
+quiz-472,請問標準 UML 中，下列何者符號代表 start ？,○,●,㊣,◎,B,正確答案是 B：●。
+quiz-473,若要純粹以 CSS 建置 RWD 網頁，不會用到下面哪一種 CSS 語法？,mid-width,max-width,@keyframes,@media,C,正確答案是 C：@keyframes。
+quiz-474,CSS3 新增了一個可用於計算數值的功能，請問該語法為？,opacity,calc,display,em,B,正確答案是 B：calc。
+quiz-475,SITCON 的 Logo 於 2014 年正式定稿為現今的版本，請問此 Logo 圖像部分為何種物品？,指南針,橘子,蘋果,香蕉,A,正確答案是 A：指南針。
+quiz-476,向量繪圖軟體為藝術與設計創作者很重要的創作工具之一，請問下列何者是開源的向量繪圖軟體？,illustrator,Inkscape,GIMP,Open Office,B,正確答案是 B：Inkscape。
+quiz-477,在 Python3 中，下列哪一種模式可以寫入文件且不清空前內容？,a,r+,w,w+,A,正確答案是 A：a。
+quiz-478,請問 0011 1010 之 2 補數為多少？,0011 1010,1100 0101,1100 0110,1101 0101,C,正確答案是 C：1100 0110。
+quiz-479,請問 0011 1010 之 1 補數為多少？,0011 1010,1100 0101,1100 0110,1101 0101,B,正確答案是 B：1100 0101。
+quiz-480,請問下列關於資料結構中， Stack 的敘述何者錯誤？,FIFO,利用 push 加入新資料,利用 pop 移出資料,只允許在一端進行操作,A,正確答案是 A：FIFO。
+quiz-481,請問下列關於資料結構中， Queue 的敘述何者錯誤？,FIFO,可以將資料由 front 刪除,rear 亦可以進行刪除操作,Queue 可以設計成環狀,C,正確答案是 C：rear 亦可以進行刪除操作。
+quiz-482,請問關於 XOR 的 Truth table 何者正確？,"(1,1) => 1","(1,0) => 0","(0,0) => 0","(0,1) => 1",D,"正確答案是 D：(0,1) => 1。"
+quiz-483,雲端運算有三大服務，請問不包含下列何者？,IaaS,FaaS,PaaS,SaaS,B,正確答案是 B：FaaS。
+quiz-484,雲端運算仍在發展中，目前普遍認同的雲端運算服務是 SPI 模型，請問 SPI 所指的服務不包含下列何者？,軟體,平台,基礎建設,公共建設,D,正確答案是 D：公共建設。
+quiz-485,請問下列關於 IaaS（Infrastructure as a Service）的敘述，何者錯誤？,降低了硬體運算資源取得的門檻,需要運算資源時，可立即獲得資源,使用者需要理解雲端運算背後的架構,可依使用者的需求動態彈性縮放,C,正確答案是 C：使用者需要理解雲端運算背後的架構。
+quiz-486,請問下列關於 PaaS（Platform as a Service）的敘述，何者錯誤？,將應用程式開發環境以服務的型式來提供,降低了開發與部署應用程式的門檻,開發人員不需要先建置開發環境的硬體平臺,無法結合其他形式的雲端服務,D,正確答案是 D：無法結合其他形式的雲端服務。
+quiz-487,截至 2017 年，在 GitHub 上最多專案的語言是？,Python,CSS,JavaScript,Go,C,正確答案是 C：JavaScript。
+quiz-488,140.128.77.10/25 這個網段有多少可用的 IP？,128,123,126,100,C,正確答案是 C：126。
+quiz-489,為了防止 Broadcast Storm，我們可以使用甚麼協定？,STP,HTTP,TCP,SNP,A,正確答案是 A：STP。
+quiz-490,有許多與語言都可以藉由 transpiler 轉換成 JavaScript code，下列哪個語言不可以被轉換成 JavaScript？,PureScript,CoffeScript,PostScript,TypeScript,C,正確答案是 C：PostScript。
+quiz-491,"x, y = y, x，請問這段 Python code 的功能是甚麼？",相乘,相加,交換,切割,C,正確答案是 C：交換。
+quiz-492,下列哪個 JavaScript code 的執行結果為 true？,null > 0,null == 0,null >= 0,以上皆非,C,正確答案是 C：null >= 0。
+quiz-493,下列哪個 JavaScript code 的執行結果為 false？,Math.max() < Math.min(),undefined == null,Infinity == Infinity,1 instanceof Number,D,正確答案是 D：1 instanceof Number。
+quiz-494,若有一個二元樹，樹高為 h ，節點樹為 2^h-1 ，請問該二元樹又稱為？,Peferct Binary Tree,Full Binary Tree,Ideal Binary Tree,Complete Binary Tree,A,正確答案是 A：Peferct Binary Tree。
+quiz-495,若有一個二元樹，樹高為 h ，子節點個數不是為 0 就是 2，請問該二元樹又稱為？,Peferct Binary Tree,Full Binary Tree,Ideal Binary Tree,Complete Binary Tree,B,正確答案是 B：Full Binary Tree。
+quiz-496,若有一個二元樹，高度為 k ，已知它至少有 2^(k-1) 個節點，最多可能有 2^k - 1 個節點，請問該二元樹為？,Peferct Binary Tree,Full Binary Tree,Ideal Binary Tree,Complete Binary Tree,D,正確答案是 D：Complete Binary Tree。
+quiz-497,下列有關 BinarySearch Tree 的敘述何者正確？,左子樹的鍵值均大於樹根的鍵值,右子樹的所有鍵值均小於樹根的鍵值。,左子樹和右子樹亦是二元搜尋樹,以上皆正確,C,正確答案是 C：左子樹和右子樹亦是二元搜尋樹。
+quiz-498,下列何者非樹的結構？,Root,Siblings,Parent,以上皆為樹的結構,D,正確答案是 D：以上皆為樹的結構。
+quiz-499,二元樹中，VLR Traversal 為下列何種方法？,pre-order,in-order,post-order,以上皆非,A,正確答案是 A：pre-order。
+quiz-500,可以通過什麼按鍵組合來關閉 X window？,Ctrl-Alt-Backspace,Ctrl-Alt-Del,Ctrl-Z,fiwpqwmwekdmv,A,正確答案是 A：Ctrl-Alt-Backspace。
+quiz-501,16 進位的 A 是 10 進位的多少？,10,11,12,13,A,正確答案是 A：10。
+quiz-502,Linux 系統中，有五個次目錄必須與根目錄同一分割槽，不可獨立分割，請問下列何者不始於為此五次目錄？,/var,/lib,/etc,/bin,A,正確答案是 A：/var。
+quiz-503,Linux 系統中，有五個次目錄必須與根目錄同一分割槽，不可獨立分割，請問下列何者屬於此五個次目錄之一？,/log,/dev,/usr,/var,B,正確答案是 B：/dev。
+quiz-504,"在 C++ 中，定義一陣列 int arr[5] = {1, 2, 3, 4, 5};，請問 arr[1] 的數值為多少？",1,2,3,4,B,正確答案是 B：2。
+quiz-505,一個 byte 有八個 bit，一個英文字元佔有一個 byte，請問一個中文字元有幾個 bit？,1,8,2,16,D,正確答案是 D：16。
+quiz-506,在 C++ 中，下列型態何者不在標準規範中？,point,int,char,string,A,正確答案是 A：point。
+quiz-507,在 C++ 中，用來表示「不等於」的運算子是下列何者？,!=,@=,#=,$=,A,正確答案是 A：!=。
+quiz-508,在 C++ 中，用來表示「賦值」的運算子為下列何者？,=,->,>,<,A,正確答案是 A：=。
+quiz-509,現行的 HTTPS 採用何種方式對網頁資料進行加密？,對稱式金鑰密碼法,非對稱式金鑰密碼法,兩者並用,可能是對稱式金鑰密碼法，也可能是非對稱式金鑰密碼法,C,正確答案是 C：兩者並用。
+quiz-510,數位簽章，又稱公鑰數位簽章，是一種類似寫在紙上的普通的物理簽名，但是使用了公鑰加密領域的技術實現，用於鑑別數位信息的方法。對一個檔案進行加密與數位簽章後，仍不能提供下列何種安全需求？,完整性,機密性,不可否認性,不可重用性,B,正確答案是 B：機密性。
+quiz-511,電腦資料存取控制的安全是經由下列何種流程來確保？,驗證→識別→授權,識別→驗證→授權,驗證→授權,識別→授權,B,正確答案是 B：識別→驗證→授權。
+quiz-512,chroot 是在 UNIX 系統的一個操作，針對正在運作的軟體行程和它的子行程，改變它外顯的根目錄。chroot 程式可歸類為何種資安相關的應用？,Firewall,Sandbox,Honeypot,以上皆非,B,正確答案是 B：Sandbox。
+quiz-513,下列哪一個 Linux 指令可以列出目前本機與其它連網設備的網路連線？,man,ls,netstat,ifconfig,C,正確答案是 C：netstat。
+quiz-514,下列哪一個 Linux 指令可以列出目前的目錄的清單？,ls,man,netstat,ifconfig,A,正確答案是 A：ls。
+quiz-515,下列哪一個 Linux 指令可以查看 Linux 中的指令幫助、配置文件幫助等訊息？,ls,ifconfig,netstat,man,D,正確答案是 D：man。
+quiz-516,有關一次性密碼 (one-time password) 的說明，下列何者正確？,一次性發給多個密碼,第一次申請帳號時，臨時發給使用者的預設密碼,只使用一次即丟棄的密碼,這只是理論上的概念，無法實作出來,C,正確答案是 C：只使用一次即丟棄的密碼。
+quiz-517,有關 SHA-1 的敍述，下列何者錯誤？,是一種密碼雜湊函數,訊息摘要為160位元,設計原理相似於 MD4 和 MD5,至今尚未被破解,D,正確答案是 D：至今尚未被破解。
+quiz-518,在作業系統中，一組 processes 陷入互相等待的情況，造成 processes 無法往下執行，稱為 deadlock。一般來說 deadlock 成立有四個必要條件，下列何者為非？,Mutual exclusion,Hold & wait,Circular waiting,Preemption,D,正確答案是 D：Preemption。
+quiz-519,在 Linux 系統中，「ls」是顯示檔案的檔名與相關屬性，「-al」則表示列出所有的檔案詳細的權限與屬性。下列有關檔案類型權限的敘述，何者正確？,r 代表可刪除,w 代表可寫,x 代表可執行,- 代表無權限,A,正確答案是 A：r 代表可刪除。
+quiz-520,在 Linux 中，若有一個檔案的類型與權限資料為「-rwxr-xr--」，關於其說明何者錯誤？,擁有者的權限為可讀、可寫、可執行,同群組使用者權限為可讀可執行,其他使用者無任何權限,這個檔名為檔案,C,正確答案是 C：其他使用者無任何權限。
+quiz-521,下列有關 Linux 之指令，何者錯誤？,chgrp ：改變檔案所屬群組,chown ：改變檔案擁有者,chmod ：改變檔案的權限,上列敘述接錯誤,D,正確答案是 D：上列敘述接錯誤。
+quiz-522,正規表示法就是用在字串的處理上面的一項「表示式」，請問下列選項中，何者可以篩選出電子信箱？,([A-Za-z][0-9])*[\\\+\-\*]([A-Z][0-9])*,\w+([-+.']\w+)*@\w+\.\w+([-.]\w+)*,"^([\w-\.]+)((\[[0-9]{1,3}\.[0-9]{1,3}{2,4})$",([-+.']\w+)\w+([-.]\w+)*\.\w+([-.]\w+),B,正確答案是 B：\w+([-+.']\w+)*@\w+\.\w+([-.]\w+)*。
+quiz-523,哪種程式語言是以縮排來分辨程式中不同的區塊（block）？,C/C++,Python,JavaScript,Go,B,正確答案是 B：Python。
+quiz-524,下列時間複雜度是指數時間？,O(1),O(n^2),O(2^n),O(logn),C,正確答案是 C：O(2^n)。
+quiz-525,Node.js 用的是下列何種 JavaScript engine？,WebKit,Rhino,V8,Chakra,C,正確答案是 C：V8。
+quiz-526,下列哪個並不屬於 IPC（Inter-Process Communication）的方法之一？,Pipe,Signal,Shared Memory,Message Handle,D,正確答案是 D：Message Handle。
+quiz-527,有許多方法可以解決 Critical Section Problem，以下的哪種方法並無法防止此現象？,Mutex,Semaphore,Peterson's Solution,Bacon's Algorithm,D,正確答案是 D：Bacon's Algorithm。
+quiz-528,何者並非 HTML5 所新增的特點？,<!DOCTYPE html5>,<!DOCTYPE html>,autofocus,<canvas> tag,A,正確答案是 A：<!DOCTYPE html5>。
+quiz-529,近年來有了許多 NoSQL 的資料庫，以下何者並不是 NoSQL？,PostgreSQL,Neo4j,MongoDB,Redis,A,正確答案是 A：PostgreSQL。
+quiz-530,Hadoop 是近年來處理大量資料的一大利器，請問該系統是利用何種運算架構來實作？,MobReplace,MapReduce,MapReduct,ModReject,B,正確答案是 B：MapReduce。
+quiz-531,在 Linux 中，執行指令 chmod 664 後該檔案權限會變成下列何者？,-rw-rw-rw-,-rw-rw----,-rw-rw-r-x,-rw-rw--r-,C,正確答案是 C：-rw-rw-r-x。
+quiz-532,下列何者並非 SHA-2 家族中的標準？,SHA-256,SHA-512,SHA-384,SHA-1024,D,正確答案是 D：SHA-1024。
+quiz-533,數位簽章是為了保證何種性質而存在？,機密性,不可否認性,完整性,特殊性,B,正確答案是 B：不可否認性。
+quiz-534,破解 RSA 金鑰的困難主要是下列何者？,乘法速度太慢,產生大質數很困難,沒有快速的質數篩法,沒有有效的因數分解演算法,D,正確答案是 D：沒有有效的因數分解演算法。
+quiz-535,rsync 與 cp 這兩個程式皆可以複製檔案，兩者的比較，何者正確？,rsync 可以透過 SSH 傳輸,rsync 可以保存原本的檔案權限,cp -u 與 rsync 使用相同 update 演算法,cp 無法顯示複製的進度,C,正確答案是 C：cp -u 與 rsync 使用相同 update 演算法。
+quiz-536,在 C++ 中，「#pragma once」的用途是？,Race conditoon,Include guard,Interrupt,Data collision,B,正確答案是 B：Include guard。
+quiz-537,Python3 的 built-in type 不包含哪種？,complex,list,array,dict,C,正確答案是 C：array。
+quiz-538,何者是 ES6 的新保留字？,instanceof,yield,var,default,B,正確答案是 B：yield。
+quiz-539,下列哪個 JavaScript code 的執行結果為 false？,undefined == undefined,10 == '10',NaN === NaN,[]+![] == 'false',C,正確答案是 C：NaN === NaN。
+quiz-540,下列哪個 JavaScript code 的執行結果為 true？,[1] + [] == '1',[] == [],typeof [] == 'Array',1 === true,A,正確答案是 A：[1] + [] == '1'。
+quiz-541,dd 這個公用程式的功能何者為非？,清除磁碟分割,製作開機USB,將檔案改成全部大寫,幫程式碼縮排,D,正確答案是 D：幫程式碼縮排。
+quiz-542,MIT Lisence 的敘述何者正確？,不需在重置物納入該授權,可與其他授權條款並存,被授權人不可出版軟體重製物,GPL 不相容,B,正確答案是 B：可與其他授權條款並存。
+quiz-543,哪個語法是 ES6 為了解決 callback 問題所加入的概念？,monad,await,promise,list comprehension,C,正確答案是 C：promise。
+quiz-544,"[j for i in range(2,int(sqrt(n))) for j in range(i*2, n, i)]，這段 Python code 會出現甚麼？",1 至 n 的倍數,1 至 n 的質數,1 至 n 的幸運數,1 至 n 的合數,D,正確答案是 D：1 至 n 的合數。
+quiz-545,SSH 的預設 port 是哪個？,23,22,80,66,B,正確答案是 B：22。
+quiz-546,DHCP 的預設 port 是哪個？,66&67,35&36,67&68,76&86,C,正確答案是 C：67&68。
+quiz-547,現行 HTTPS 是利用何種協定來建立安全連線的？,SSL,TLE,TLS,TTL,C,正確答案是 C：TLS。
+quiz-548,下列何者定義了 TLS 的標準？,RFC 7540,RFC 5246,IEEE 802.1X,IEEE 754,B,正確答案是 B：RFC 5246。
+quiz-549,下列何者定義了 VLAN 的標準？,RFC 7540,RFC 6749,IEEE 802.1Q,IEEE 802.1aq,C,正確答案是 C：IEEE 802.1Q。
+quiz-550,一個應用程式可以不用經過大幅修改，而依照不同使用者使用不同語言、日期格式與數字格式的的設計我們稱為甚麼？,i10n,i18n,L18n,I17n,B,正確答案是 B：i18n。
+quiz-551,下列何者定義了 Oauth2 的標準？,RFC 6749,RFC 7540,IEEE 802.1ap,IEEE 802.1aq,A,正確答案是 A：RFC 6749。
+quiz-552,由於 Linux 有許多的 distribution，每家提供的軟體包管理器都不一樣，下列何者不是軟體包管理器？,pacman,pcman,Zypper,APT,B,正確答案是 B：pcman。
+quiz-553,i18n 的全稱是？,intersection,incorporation,internationalization,incorporation,C,正確答案是 C：internationalization。
+quiz-554,L10n 的全稱是？,logistician,lmfaotion,localization,legalization,C,正確答案是 C：localization。
+quiz-555,可以用哪個程式查詢從本地到另一個 IP Address 所經過的 router？,ifconfig,traceroute,nslookup,ping,B,正確答案是 B：traceroute。
+quiz-556,下列哪個 IP 不屬於 192.168.144.0/23 這個網段的？,192.168.145.241,192.168.143.2,192.168.144.1,192.168.144.254,B,正確答案是 B：192.168.143.2。
+quiz-557,Java 是哪一間公司推出的？,Microdsoft,Amazon,Sun,WWE,C,正確答案是 C：Sun。
+quiz-558,下列有關中間人攻擊的敘述，何者錯誤？,攻擊者使用公鑰交換來攔截消息，取代他自己的公鑰發給被請求方,攻擊者可以竊聽或是竄改,攻擊者可能竊聽但不竄改資料,目前尚沒有防禦中間人攻擊的方法,D,正確答案是 D：目前尚沒有防禦中間人攻擊的方法。
+quiz-559,Fitbit 與 Pebble 皆有 SSL 傳輸加密，推測此兩項產品無法使用何種攻擊？,中間人攻擊,雲端服務,阻斷服務攻擊,以上皆是,A,正確答案是 A：中間人攻擊。
+quiz-560,Skimer 為目前已知的第一個 ATM 惡意程式，請問關於 Skimer 的敘述何者正確 ？,最早出現在 2007 年，遠端植入到 ATM 上,透過客製化中介軟體來操作 ATM 的周邊裝置,前已知在外流傳的變種共有三種,以上皆是,B,正確答案是 B：透過客製化中介軟體來操作 ATM 的周邊裝置。
+quiz-561,AI 技術廣泛應用在資安產品中，請問下列哪項有運用AI技術？,變臉詐騙阻擋,惡意巨集偵測,垃圾郵件阻擋,以上皆是,D,正確答案是 D：以上皆是。
+quiz-562,二元樹中，post-order Traversal 為下列何種方法？,VLR,LVR,LRV,以上皆非,C,正確答案是 C：LRV。
+quiz-563,在二元樹走訪的方法中，我們常聽到 LVR、LRV、VLR 三種方法，請問 L 代表？,移動到 Left child,移動到 Left side,Leave the program,Leave the number,A,正確答案是 A：移動到 Left child。
+quiz-564,在二元樹走訪的方法中，我們常聽到 LVR、LRV、VLR 三種方法，請問 V 代表？,voice，輸出當前 node 值,vacancy，表示當前 node 為空白,vacation，程式暫停,Visiting，對當前的 node 進行print、assign或其他操作,D,正確答案是 D：Visiting，對當前的 node 進行print、assign或其他操作。
+quiz-565,下列關於 SOREBRECT 勒索病毒的敘述何者錯誤？,為無檔案式威脅和勒索病毒相結合,最終目標是將系統上的檔案加密,不善匿蹤,採集樣本困難,C,正確答案是 C：不善匿蹤。
+quiz-566,下列關於「變臉詐騙」的敘述，何者為真？,為高成本高收益的詐騙手段,以紙本郵件為攻擊途徑,要求使用者限時用比特幣付贖,以上皆是,C,正確答案是 C：要求使用者限時用比特幣付贖。
+quiz-567,NeoPocket 為一種 ATM 惡意程式，請問有關 NeoPocket 敘述何者錯誤？,資訊竊取程式，不在乎鈔票,攻擊手法為中間人攻擊,自動方式安裝到 ATM 提款機上，經常與提款機的周邊裝置溝通,成功要件為熟悉 Diebold Agilis® 軟體並了解系統架構,C,正確答案是 C：自動方式安裝到 ATM 提款機上，經常與提款機的周邊裝置溝通。
+quiz-568,Linux 的系統設定檔通常位於哪個資料夾下？,/var,/etc,/mnt,/usr,B,正確答案是 B：/etc。
+quiz-569,Linux 的 inode 是用來紀錄與檔案相關資訊，以下哪個不是 inode 會記錄的東西？,檔案權限,類型,owner,檔名,D,正確答案是 D：檔名。
+quiz-570,Vim 是一個強大的編輯器，但許多人不小心開啟了 Vim 卻不知道如何離開，請問下列哪個指令可以輕鬆關閉 Vim？,qeqweqwrqwer,Ctrl-Alt-Delete,Ctrl-C,以上皆非,D,正確答案是 D：以上皆非。
+quiz-571,Vim 可以快速地將小寫改成大寫，請問是哪一個指令可以？,gu,gU,gg,gl,B,正確答案是 B：gU。
+quiz-572,二元樹中，in-order Traversal 為下列何種方法？,VLR,LVR,LRV,以上皆非,B,正確答案是 B：LVR。
+quiz-573,在二元樹走訪的方法中，我們常聽到 LVR、LRV、VLR 三種方法，請問 R 代表？,Register the program,Register the number,移動到 Right child,移動到 Right side,C,正確答案是 C：移動到 Right child。
+quiz-574,RNN 又稱為循環神經網路，LSTM 為其衍伸，最主要的差異為 LSTM 中加入三個控制用開關，請問開關為下列何者？,輸入(input),輸出(output),遺忘(forget),以上皆是,D,正確答案是 D：以上皆是。
+quiz-575,RNN 又稱為循環神經網路，LSTM 為其衍伸，最主要的差異為 LSTM 中加入三個控制用開關，請問開關組合為下列何者？,inside / forget / outside,input / forget / output,input / remove / output,inside / remove / outside,B,正確答案是 B：input / forget / output。
+quiz-576,在 Linux 中，執行指令 chmod 664 後該檔案權限會變成下列何者？,-rw-rw-rw-,-rw-rw----,-rw-rw-r-x,-rw-rw--r-,C,正確答案是 C：-rw-rw-r-x。
+quiz-577,下列何者並非 SHA-2 家族中的標準？,SHA-256,SHA-512,SHA-384,SHA-1024,D,正確答案是 D：SHA-1024。
+quiz-578,下列關於 K means 敘述，何者錯誤？,為 Cluster 一種,每次執行群中心都是固定的,多用來處理 Discrete data,屬於 Unsupervised Learning,B,正確答案是 B：每次執行群中心都是固定的。
+quiz-579,CSS 中 padding 這個屬性在下時，如下兩個值（ex: padding: 20px 0px），他兩個值分別依序代表了和那些方位與內部元件的距離呢？,上左與下右,上下與左右,右下與左上,左右與上下,B,正確答案是 B：上下與左右。
+quiz-580,許多政府機關的網站的角落都會有 ::: 請問這是什麼？,方便非視覺閱讀的「導盲磚」（亦稱做定位點）,政府網站的秘密溝通代碼，那些冒號都不是冒號,告訴你這是網站最重要的內容在哪,是政府網站的代碼,A,正確答案是 A：方便非視覺閱讀的「導盲磚」（亦稱做定位點）。
+quiz-581,請問 SITCON 從哪一屆開始有除了有 SITCON 娘也有 SITCON 郎？,SITCON 2014,SITCON 2015,SITCON 2016,SITCON 2017,B,正確答案是 B：SITCON 2015。
+quiz-582,PT Sans 為俄國非襯線字體，開發於 1998 年紀念彼得大帝對於俄國知識傳播的貢獻，該字體該國資訊公眾基礎工程之一，目前可透過 Google Fonts 線上字體中使用該字體。請問哪一年的 SITCON 主視覺採用該字體為標準字？,SITCON 2013,SITCON 2014,SITCON 2015,SITCON 2016,C,正確答案是 C：SITCON 2015。
+quiz-583,ITSA 從第一年 SITCON 2013 即開始支持我們的活動，請問其現階段的全銜為何？,教育部資通訊軟體創新人才推升計畫推動中心,教育部資訊軟體人才培育計畫,中研院自由軟體鑄造場,教育部軟體工程聯盟,A,正確答案是 A：教育部資通訊軟體創新人才推升計畫推動中心。
+quiz-584,二進位表示法的 0101 在十進位表示法中寫成？,4,5,6,7,B,正確答案是 B：5。
+quiz-585,二進位表示法的 0110 在十進位表示法中寫成？,4,5,6,7,C,正確答案是 C：6。
+quiz-586,二進位表示法的 0111 在十進位表示法中寫成？,4,5,6,7,D,正確答案是 D：7。
+quiz-587,二進位表示法的 1000 在十進位表示法中寫成？,7,8,9,10,B,正確答案是 B：8。
+quiz-588,二進位表示法的 1001 在十進位表示法中寫成？,7,8,9,10,C,正確答案是 C：9。
+quiz-589,下列何者不是音樂檔的檔案格式？,.pdf,.wav,.mid,.mp3,A,正確答案是 A：.pdf。
+quiz-590,下列何者不是「資訊安全」所要確保的資訊特性？,機密性(Confidentiality),完整性(Integrity),可用性(Avail ability),可延伸性(Scalability)。,D,正確答案是 D：可延伸性(Scalability)。。
+quiz-591,下列何者為歐盟通用資料保護規則（GDPR）所保護的個資內容？,Cookie,個人電子信箱,社群網站活動紀錄,以上皆是,D,正確答案是 D：以上皆是。
+quiz-592,資訊安全中的「社交工程（Social Engineering）」主要是透過什麼樣弱點，來達成對資訊安全的攻擊方式？,技術缺憾,人性弱點,設備故障,後門程式的掩護。,B,正確答案是 B：人性弱點。
+quiz-593,已知一規則定義如下： F0 = 0、F1 = 1、Fn = Fn-1 + Fn-2，請問此規則名為？,畢氏定理,費氏數列,二項氏定理,測不準定律,B,正確答案是 B：費氏數列。
+quiz-594,若有一演算法，其執行時間固定不變，請問該演算法時間複雜度為？,O(1),O(n),O(logn),O(0),A,正確答案是 A：O(1)。
+quiz-595,下列關於演算法與資料結構的說明，何者錯誤？,資料結構討論電腦中資料儲存的方式,演算法討論解決問題的方法,資料結構的好壞只會影響程式判讀層面,透過資料結構與的演算法，可提升程式效能,C,正確答案是 C：資料結構的好壞只會影響程式判讀層面。
+quiz-596,機器學習是一門設計如何讓演算法能夠學習的電腦科學，請問機器學習的典型應用領域包含下列何者？,概念學習,預設模型,分群,以上皆是,D,正確答案是 D：以上皆是。
+quiz-597,在 Bash 中，下列選項何者可以用來表示註解？,#,//,rem,/* */,A,正確答案是 A：#。
+quiz-598,在 cmd.exe 中，下列哪一個指令可以用來刪除檔案？,del,rmdir,rem,rm,D,正確答案是 D：rm。
+quiz-599,下列文書編輯套裝軟體，何者為開放原始碼？,Microsoft Office,WPS Office,iWork,LibreOffice,D,正確答案是 D：LibreOffice。
+quiz-600,誰是今年 SITCON 2018 總召？,小蘭,工藤,毛利,柯南,B,正確答案是 B：工藤。
+quiz-601,SITCON 2018 年會地點在哪？,中央研究院人工智慧科學館,中央研究院社會科學館,中央研究院人文社會科學館,我是誰我在哪,C,正確答案是 C：中央研究院人文社會科學館。
+quiz-602,以下何者不符合正規表達式「aa+b+」？,aab,abb,aaab,aabb,B,正確答案是 B：abb。
+quiz-603,以下何者不符合正規表達式「ab+a+b」？,aab,abaab,abbab,abbaab,A,正確答案是 A：aab。
+quiz-604,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 add $t0, $t1, $t2，問 $t0=？",0,1,2,3,D,正確答案是 D：3。
+quiz-605,使用 CSS 為網頁排版時，「單位」是很重要的，請問 CSS 不支援下列哪一種單位？,em,vh,%,小石,D,正確答案是 D：小石。
+quiz-606,請問下列何者為 SITCON 2018 之贊助單位？,曉數碼,趨勢科技,微軟,以上皆是,D,正確答案是 D：以上皆是。
+quiz-607,請問下列何者不為 SITCON 2018 之合作夥伴？,鴻寬科技,張國周製藥,TWNIC,以上皆是,D,正確答案是 D：以上皆是。
+quiz-608,請問下列何者為 SITCON 2018 之贊助夥伴？,祐生基金會,KKBOX,Dcard,以上皆是,D,正確答案是 D：以上皆是。
+quiz-609,請問下列何者為 SITCON 2018 之合作單位？,ITSA,COSCUP,經濟部資策會,以上皆是,D,正確答案是 D：以上皆是。
+quiz-610,請問最基本的邏輯運算子符號不包含下列何者？,AND,OR,NOR,NOT,C,正確答案是 C：NOR。
+quiz-611,請問 AR 的全稱為？,虛擬實境,擴增實境,混合實境,以上皆非,B,正確答案是 B：擴增實境。
+quiz-612,請問 VR 的全稱為？,虛擬實境,擴增實境,混合實境,以上皆非,A,正確答案是 A：虛擬實境。
+quiz-613,請問 MR 的全稱為？,虛擬實境,擴增實境,混合實境,以上皆非,C,正確答案是 C：混合實境。
+quiz-614,"CSS 得以用直接輸入 RBG 的數值來表達描述物件的顏色，請問 rgba(0, 0, 0, 0.5); 意味著這是什麼顏色？",百分之 50 半透明的黑色,百分之 0.5 半透明的黑色,百分之 50 半透明的白色,百分之 0.5 半透明的白色,A,正確答案是 A：百分之 50 半透明的黑色。
+quiz-615,"CSS 得以用直接輸入 RBG 的數值來表達描述物件的顏色，請問 rgba(255, 255, 255, 0.5); 意味著這是什麼顏色？",百分之 50 半透明的黑色,百分之 0.5 半透明的黑色,百分之 50 半透明的白色,百分之 0.5 半透明的白色,C,正確答案是 C：百分之 50 半透明的白色。
+quiz-616,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 add $t0, $t1, $t2，問 $t1=？",0,1,2,3,B,正確答案是 B：1。
+quiz-617,何者不是文字編碼方式？,ASCII,Unicode,TTF,Big5,C,正確答案是 C：TTF。
+quiz-618,TCP 協定的主要功能不包含以下哪一項？,加密,建立連線,重送,控制流量,A,正確答案是 A：加密。
+quiz-619,N 層二元樹，其節點數最多有幾個？,2N,N^2,2N-1,2^N-1,D,正確答案是 D：2^N-1。
+quiz-620,下列何者不是 Uber 現有服務？,Express Pool,Uber Eats,Uber Bike,以上皆非,D,正確答案是 D：以上皆非。
+quiz-621,常聽到的 4G、5G 的「G」是什麼意思？,Generation,Gigabtyes,Gap,Genus,A,正確答案是 A：Generation。
+quiz-622,在 IPv4 中，使用 32 位元共 4 組，每組位元最大值為多少？,255,256,257,258,A,正確答案是 A：255。
+quiz-623,下列何者非 Linux Kernel 的功能？,Process control,Memory management,File System management,System call controller,D,正確答案是 D：System call controller。
+quiz-624,下列何者為 GNU General Public License （GPL）的精神？,開發 GPL 的團體不可以經由該軟體的服務來取得服務的費用,GPL 的授權之軟體，乃為自由軟體，任何人皆可擁有他,GPL 授權下，為保護智慧財產權，不需要公布其原始碼,經過修改過後 open source 均為修改者或是修改團體所擁有，不需要回饋,B,正確答案是 B：GPL 的授權之軟體，乃為自由軟體，任何人皆可擁有他。
+quiz-625,過去傳統的 IDE 為用來傳輸硬碟資料的一個介面，一般而言，過去的傳統普通 PC，允許幾個 IDE 介面與裝置？,3 個,4 個,5 個,6 個,B,正確答案是 B：4 個。
+quiz-626,一般而言安裝 Linux 至少要有哪兩個 partition？,root / swap,root / cache,root / home,root / media,A,正確答案是 A：root / swap。
+quiz-627,過去的 Linux 系統中，利用執行級別（Runlevel）作為不同的執行模式，根據執行級別通常分為 7 等，分別是從 0 到 6，請問下列級別中，何者正確？,0 : 重新開機,3：純文字介面登入，多人單工環境,5：X-Window 登入模式，多人多工模式,6 : 停機、關機,C,正確答案是 C：5：X-Window 登入模式，多人多工模式。
+quiz-628,在 ASCII 中，48 用來代表什麼？,0,1,2,3,A,正確答案是 A：0。
+quiz-629,下列何者是今日議程之一？,格鬥遊戲 AI 開發經驗談,「我寫故我在」社群媒體裡的憂鬱蹤跡,泡沫列車：一趟加密貨幣的經濟之旅,雷系魔法師也能煎牛排！,C,正確答案是 C：泡沫列車：一趟加密貨幣的經濟之旅。
+quiz-630,下列何者是今日議程之一？,BGP Hijacking: new ways to mass surveillance,The evolving role of mobile communication in everyday logistics,"Mobile connection: Permanently online, permanently connected.",Analysis and Improvement of IOTA PoW Implementation,D,正確答案是 D：Analysis and Improvement of IOTA PoW Implementation。
+quiz-631,下列何者是今日議程之一？,雷系魔法師也能煎牛排！,「我寫故我在」社群媒體裡的憂鬱蹤跡,直播邊看邊好玩：探討遊戲挑戰及持續意圖,"想學 OS, 從 MINIX 開始",D,"正確答案是 D：想學 OS, 從 MINIX 開始。"
+quiz-632,下列何者是今日議程之一？,網路身分的真與假：談網路實名制,格鬥遊戲 AI 開發經驗談,從學生到放火實習生的奇幻旅程,「我寫故我在」社群媒體裡的憂鬱蹤跡,C,正確答案是 C：從學生到放火實習生的奇幻旅程。
+quiz-633,RNN 又稱為循環神經網路，LSTM 為其衍伸，最主要的差異為 LSTM 中加入 input / forget / output 三個控制用開關，請問這些開關與相對應作用組合下列何者正確？,Input gate 控制前一個以及當前時刻的新資訊,Forget gate主要用來控制從隱藏層節點中要忘記哪些資訊,Output gate 控制哪些資訊可以通過,以上皆是,D,正確答案是 D：以上皆是。
+quiz-634,RNN 又稱為循環神經網路，下列有關 RNN 的敘述，何者錯誤？,主要用來處理序列性資料，如圖片、影片等,為基於時間狀態的循環機制,對前面的資訊記憶並應用於當前的輸出共同計算,根據架構又分為 Elman 與 Jordan 類型,A,正確答案是 A：主要用來處理序列性資料，如圖片、影片等。
+quiz-635,請問關於 LR 剖析器，下列敘述何者正確？,屬於 Top - down 上下文分析,由左至右處理輸入字串,Left derivation,以上皆是,C,正確答案是 C：Left derivation。
+quiz-636,Yacc 所產生的就解析器為下列何種,LL(0),LL(1),LALR,SLR,C,正確答案是 C：LALR。
+quiz-637,請問看見 .mil 的網域名稱，代表該單位屬於？,教育與學術機構,政府機關單位,財團法人、基金會等非官方組織,軍事單位,D,正確答案是 D：軍事單位。
+quiz-638,下列何者不為 JBDC 的四種 type 之一？,JDBC-ODBC Bridge driver,Native-API/all Java driver,AllJava/Net-protocol driver,All Java/Native-protocol driver,B,正確答案是 B：Native-API/all Java driver。
+quiz-639,CSS 中 margin 這個屬性在下時，如下四個值（ex: margin: 20px 0px 20px 20px），他四個值分別依序代表了和那些方位與鄰近物件的距離呢？,上下左右,上右下左,上右下左,上左下右,C,正確答案是 C：上右下左。
+quiz-640,CSS 中 padding 這個屬性在下時，如下四個值（ex: padding: 20px 0px 20px 20px），他四個值分別依序代表了和那些方位與內部元件的距離呢？,上下左右,上右下左,上右下左,上左下右,B,正確答案是 B：上右下左。
+quiz-641,CSS 中 margin 這個屬性在下時，如下兩個值（ex: margin: 20px 0px），他兩個值分別依序代表了和那些方位與鄰近物件的距離呢？,上下與左右,上左與下右,左右與上下,右下與左上,A,正確答案是 A：上下與左右。
+quiz-642,政府機關的網站為符合 NCC 無障礙設計的規範，會在網站中加入「導盲磚」（亦稱做定位點），請問他是下列哪個符號,???,!!!,|||,:::,D,正確答案是 D：:::。
+quiz-643,下列哪一種語言不需要 ; 結尾？,C++,Python,Java,Verilog,B,正確答案是 B：Python。
+quiz-644,在 C++ 中，程式結尾通常要加什麼符號？,分號,句號,冒號,空白,A,正確答案是 A：分號。
+quiz-645,根據 TIOBE 編程社區統計 2017 最可能流行的語言是？,Java,C++,Python,Verilog,A,正確答案是 A：Java。
+quiz-646,在 C++ 中，「//」的用途是？,註解,開頭,宣告,結尾,A,正確答案是 A：註解。
+quiz-647,下列何者非 open source 優點？,多人維護,Debug 速度快,專人維護,程式較安全,C,正確答案是 C：專人維護。
+quiz-648,下列哪一種語言屬於硬體描述語言？,Verilog,C++,Python,JavaScript,A,正確答案是 A：Verilog。
+quiz-649,在 C++ 中，下列哪一個字詞不是保留字？,counter,case,break,if,A,正確答案是 A：counter。
+quiz-650,下列何者並非 Linux 的優點？,良好的多人多工環境，資源分配平均,除了免費之外，線上更新速度快，除錯與安全性均較佳,為 open source 的授權，故而具有 open source 的所有優缺點,以上皆是,D,正確答案是 D：以上皆是。
+quiz-651,下列哪一個函式不存在於 C++ 中 vector 的 STL 中？,relength(),resize(),reserve(),size(),A,正確答案是 A：relength()。
+quiz-652,在 C++ 中，保留字「void」代表什麼？,不用回傳值,一般格式規定,回傳數字,回傳字串,A,正確答案是 A：不用回傳值。
+quiz-653,SITCON 2018 是 SITCON 的第幾屆年會？,3,5,6,8,C,正確答案是 C：6。
+quiz-654,在 Python 3 中，print('SITCON 2018') 會得到什麼輸出結果？,print('SITCON 2018'),sitcon 2018,SITCON 2018',SITCON 2018,D,正確答案是 D：SITCON 2018。
+quiz-655,以下何者為開源的圖像處理軟體？,Photoshop,Photocap,GIMP,Lightroom,C,正確答案是 C：GIMP。
+quiz-656,於 SITCON 2016 新登場的吉祥物為下列何者？,SITCON 娘,小莎,小啄,小石,D,正確答案是 D：小石。
+quiz-657,自然語言通常是指一種自然地隨文化演化的語言，自然語言處理則是要讓電腦能妥善的處理自然語言，其最終目標是要讓電腦能「理解」自然語言。請問推測下列和者為自然語言處理的應用？,問答辨識系統,機器翻譯,資訊索引,以上皆是,D,正確答案是 D：以上皆是。
+quiz-658,Deep learinging 為時下最熱門的研究領域之一，請問下列何者不為常見的神經網路模型？,NN,RNN,CNN,ZNN,D,正確答案是 D：ZNN。
+quiz-659,請問要輸入什麼才能離開 Vim？,Ctrl-C,:exit,:),:q,D,正確答案是 D：:q。
+quiz-660,請問第一屆 SITCON 辦在下列何處？,台科大,中央研究院 人文科學館,國立科學工藝博物館,台大,A,正確答案是 A：台科大。
+quiz-661,請問 SITCON 有一個帶領大家認識學生計算機年會的活動，是下列何者？,閃電秀,導遊團,Unconference,大地遊戲,B,正確答案是 B：導遊團。
+quiz-662,請問 SITCON 小編群沒有在下列何者平台發文過？,Facebook,Plurk,Instagram,推特,C,正確答案是 C：Instagram。
+quiz-663,勒索病毒服務簡稱為？,RaaS,LaaS,KaaS,MaaS,A,正確答案是 A：RaaS。
+quiz-664,近年來，資安漏洞與危機頻傳，2017 年惡名昭彰的勒索病毒 WannaCry 更是造成全球陷入資安風報，更有資安公司大膽預言，2018 年 ___________ 將是犯罪集團主要獲利模式，請推測 _________ 中為下列何者？,比特幣,數位勒索,變臉詐騙,釣魚網站,B,正確答案是 B：數位勒索。
+quiz-665,去年，FCC 宣布廢除什麼，引發了資訊界一片譁然？,電腦平等性原則,網路中立性原則,資訊公平性原則,手機差異性原則,B,正確答案是 B：網路中立性原則。
+quiz-666,二進位表示法的 1010 在十進位表示法中寫成？,10,11,12,13,A,正確答案是 A：10。
+quiz-667,二進位表示法的 1011 在十進位表示法中寫成？,10,11,12,13,B,正確答案是 B：11。
+quiz-668,二進位表示法的 1100 在十進位表示法中寫成？,10,11,12,13,C,正確答案是 C：12。
+quiz-669,二進位表示法的 1101 在十進位表示法中寫成？,12,13,14,15,B,正確答案是 B：13。
+quiz-670,二進位表示法的 1110 在十進位表示法中寫成？,12,13,14,15,C,正確答案是 C：14。
+quiz-671,二進位表示法的 1111 在十進位表示法中寫成？,13,14,15,16,C,正確答案是 C：15。
+quiz-672,以下何者符合正規表達式「ab*ab」？,aab,ababa,abbbaab,ababbba,A,正確答案是 A：aab。
+quiz-673,以下何者符合正規表達式「a+b」？,abbb,ba,bab,aab,D,正確答案是 D：aab。
+quiz-674,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 add $t0, $t1, $t2，問 $t2=？",0,1,2,3,C,正確答案是 C：2。
+quiz-675,十六進位表示法的 a0 在二進位表示法中可以表示成？,1010 0000,1010 1111,1001 1111,1011 0000,A,正確答案是 A：1010 0000。
+quiz-676,十六進位表示法的 62 在二進位表示法中可以表示成？,0110 0001,0101 1000,0110 0010,1010 0101,C,正確答案是 C：0110 0010。
+quiz-677,1 GB 等於多少 MB？,1000,10000,1024,1042,C,正確答案是 C：1024。
+quiz-678,1 MB 等於多少 KB？,1024,2048,1000,10000,A,正確答案是 A：1024。
+quiz-679,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 sub $t2, $t1, $t0，問 $t1=？",0,1,2,3,B,正確答案是 B：1。
+quiz-680,下列何者是今日議程之一？,BGP Hijacking: new ways to mass surveillance,Use AI to make our own anime girl face,No More Crypto Fails,The evolving role of mobile communication in everyday logistics,B,正確答案是 B：Use AI to make our own anime girl face。
+quiz-681,下列何者並非今日議程之一？,泡沫列車：一趟加密貨幣的經濟之旅,從 V8 Javascript 引擎淺談現代編譯技術,從學生到放火實習生的奇幻旅程,蘊含著強大力量的 GTK 啊，封印解除！,B,正確答案是 B：從 V8 Javascript 引擎淺談現代編譯技術。
+quiz-682,下列何者並非今日議程之一？,奔跑吧！台北：遊戲開發經驗分享,我單槍匹馬的開源貢獻之路,現代檔案系統 ZFS 的簡介與應用,校園資訊系統的困境與嘗試改善,D,正確答案是 D：校園資訊系統的困境與嘗試改善。
+quiz-683,下列何者並非今日議程之一？,計算中的遊戲與模仿,「我寫故我在」社群媒體裡的憂鬱蹤跡,讀 scheme 魔法書 SICP,由淺入坑區塊鏈～從認識架構到應用智能合約！,B,正確答案是 B：「我寫故我在」社群媒體裡的憂鬱蹤跡。
+quiz-684,下列何者並非今日議程之一？,瀏覽器開發與開源經驗,計算中的遊戲與模仿,直播邊看邊好玩：探討遊戲挑戰及持續意圖,CCNS Radio - 社辦點歌電台,C,正確答案是 C：直播邊看邊好玩：探討遊戲挑戰及持續意圖。
+quiz-685,下列何者並非今日議程之一？,網路身分的真與假：談網路實名制,瀏覽器開發與開源經驗,由淺入坑區塊鏈～從認識架構到應用智能合約！,Vault 7 考古挖寶記,A,正確答案是 A：網路身分的真與假：談網路實名制。
+quiz-686,下列哪一種雜湊演算法不容易遭受 Hash Collision?,SHA-1,SHA-256,MD5,MD4,B,正確答案是 B：SHA-256。
+quiz-687,請問標準 UML 中，下列何者符號代表 start ？,○,●,㊣,◎,B,正確答案是 B：●。
+quiz-688,若要純粹以 CSS 建置 RWD 網頁，不會用到下面哪一種 CSS 語法？,mid-width,max-width,@keyframes,@media,C,正確答案是 C：@keyframes。
+quiz-689,CSS3 新增了一個可用於計算數值的功能，請問該語法為？,opacity,calc,display,em,B,正確答案是 B：calc。
+quiz-690,SITCON 的 Logo 於 2014 年正式定稿為現今的版本，請問此 Logo 圖像部分為何種物品？,指南針,橘子,蘋果,香蕉,A,正確答案是 A：指南針。
+quiz-691,向量繪圖軟體為藝術與設計創作者很重要的創作工具之一，請問下列何者是開源的向量繪圖軟體？,illustrator,Inkscape,GIMP,Open Office,B,正確答案是 B：Inkscape。
+quiz-692,在 Python3 中，下列哪一種模式可以寫入文件且不清空前內容？,a,r+,w,w+,A,正確答案是 A：a。
+quiz-693,請問 0011 1010 之 2 補數為多少？,0011 1010,1100 0101,1100 0110,1101 0101,C,正確答案是 C：1100 0110。
+quiz-694,請問 0011 1010 之 1 補數為多少？,0011 1010,1100 0101,1100 0110,1101 0101,B,正確答案是 B：1100 0101。
+quiz-695,請問下列關於資料結構中， Stack 的敘述何者錯誤？,FIFO,利用 push 加入新資料,利用 pop 移出資料,只允許在一端進行操作,A,正確答案是 A：FIFO。
+quiz-696,請問下列關於資料結構中， Queue 的敘述何者錯誤？,FIFO,可以將資料由 front 刪除,rear 亦可以進行刪除操作,Queue 可以設計成環狀,C,正確答案是 C：rear 亦可以進行刪除操作。
+quiz-697,請問關於 XOR 的 Truth table 何者正確？,"(1,1) => 1","(1,0) => 0","(0,0) => 0","(0,1) => 1",D,"正確答案是 D：(0,1) => 1。"
+quiz-698,雲端運算有三大服務，請問不包含下列何者？,IaaS,FaaS,PaaS,SaaS,B,正確答案是 B：FaaS。
+quiz-699,雲端運算仍在發展中，目前普遍認同的雲端運算服務是 SPI 模型，請問 SPI 所指的服務不包含下列何者？,軟體,平台,基礎建設,公共建設,D,正確答案是 D：公共建設。
+quiz-700,請問下列關於 IaaS（Infrastructure as a Service）的敘述，何者錯誤？,降低了硬體運算資源取得的門檻,需要運算資源時，可立即獲得資源,使用者需要理解雲端運算背後的架構,可依使用者的需求動態彈性縮放,C,正確答案是 C：使用者需要理解雲端運算背後的架構。
+quiz-701,請問下列關於 PaaS（Platform as a Service）的敘述，何者錯誤？,將應用程式開發環境以服務的型式來提供,降低了開發與部署應用程式的門檻,開發人員不需要先建置開發環境的硬體平臺,無法結合其他形式的雲端服務,D,正確答案是 D：無法結合其他形式的雲端服務。
+quiz-702,截至 2017 年，在 GitHub 上最多專案的語言是？,Python,CSS,JavaScript,Go,C,正確答案是 C：JavaScript。
+quiz-703,140.128.77.10/25 這個網段有多少可用的 IP？,128,123,126,100,C,正確答案是 C：126。
+quiz-704,為了防止 Broadcast Storm，我們可以使用甚麼協定？,STP,HTTP,TCP,SNP,A,正確答案是 A：STP。
+quiz-705,有許多與語言都可以藉由 transpiler 轉換成 JavaScript code，下列哪個語言不可以被轉換成 JavaScript？,PureScript,CoffeScript,PostScript,TypeScript,C,正確答案是 C：PostScript。
+quiz-706,"x, y = y, x，請問這段 Python code 的功能是甚麼？",相乘,相加,交換,切割,C,正確答案是 C：交換。
+quiz-707,下列哪個 JavaScript code 的執行結果為 true？,null > 0,null == 0,null >= 0,以上皆非,C,正確答案是 C：null >= 0。
+quiz-708,下列哪個 JavaScript code 的執行結果為 false？,Math.max() < Math.min(),undefined == null,Infinity == Infinity,1 instanceof Number,D,正確答案是 D：1 instanceof Number。
+quiz-709,若有一個二元樹，樹高為 h ，節點樹為 2^h-1 ，請問該二元樹又稱為？,Peferct Binary Tree,Full Binary Tree,Ideal Binary Tree,Complete Binary Tree,A,正確答案是 A：Peferct Binary Tree。
+quiz-710,若有一個二元樹，樹高為 h ，子節點個數不是為 0 就是 2，請問該二元樹又稱為？,Peferct Binary Tree,Full Binary Tree,Ideal Binary Tree,Complete Binary Tree,B,正確答案是 B：Full Binary Tree。
+quiz-711,若有一個二元樹，高度為 k ，已知它至少有 2^(k-1) 個節點，最多可能有 2^k - 1 個節點，請問該二元樹為？,Peferct Binary Tree,Full Binary Tree,Ideal Binary Tree,Complete Binary Tree,D,正確答案是 D：Complete Binary Tree。
+quiz-712,下列有關 BinarySearch Tree 的敘述何者正確？,左子樹的鍵值均大於樹根的鍵值,右子樹的所有鍵值均小於樹根的鍵值。,左子樹和右子樹亦是二元搜尋樹,以上皆正確,C,正確答案是 C：左子樹和右子樹亦是二元搜尋樹。
+quiz-713,下列何者非樹的結構？,Root,Siblings,Parent,以上皆為樹的結構,D,正確答案是 D：以上皆為樹的結構。
+quiz-714,二元樹中，VLR Traversal 為下列何種方法？,pre-order,in-order,post-order,以上皆非,A,正確答案是 A：pre-order。
+quiz-715,可以通過什麼按鍵組合來關閉 X window？,Ctrl-Alt-Backspace,Ctrl-Alt-Del,Ctrl-Z,fiwpqwmwekdmv,A,正確答案是 A：Ctrl-Alt-Backspace。
+quiz-716,Linux 裡有許多與系統相關的操作需要有 root 的權限，哪個指令可以幫助我們切換成 root？,su,susu,root,chpass,A,正確答案是 A：su。
+quiz-717,數位簽章應用了公鑰密碼領域使用的單向函數原理。下列關於單向函數的敘述，何者正確？,對於輸入，函數值容易計算，但是給一個隨機輸入的函數值，無法算出原始輸入,單向函數是否存在計算機科學中，是一個已經被證明的問題,單向函數存在，將證明複雜性類 P/NP 問題中，P 不等於 NP。,以上皆非,C,正確答案是 C：單向函數存在，將證明複雜性類 P/NP 問題中，P 不等於 NP。。
+quiz-718,正規語法（Regular Grammar）是一種相當簡單的語法，後期發展成為重要的程式設計工具。此種標準的正規語法後來被稱為正規表達式（Regular Expression）。下列關於正規表達式符號之意義，何者正確？,^ ：匹配輸入字串的結束位置,$ ：匹配輸入字串的開始位置,* ：匹配前面的子運算式零次或多次,+ ：匹配後面的子運算式一次或多次,C,正確答案是 C：* ：匹配前面的子運算式零次或多次。
+quiz-719,正規語法（Regular Grammar）是一種相當簡單的語法，後期發展成為重要的程式設計工具。此種標準的正規語法後來被稱為正規表達式（Regular Expression）。下列關於正規表達式符號之意義，何者錯誤？,\B：匹配非單詞邊界,\D：匹配一個數位字元,\n ：匹配一個分行符號,\S：匹配任何非空白字元,B,正確答案是 B：\D：匹配一個數位字元。
+quiz-720,CNN 又稱為卷積神經網路，基本結構包含兩層，請問第一層與第二層的順序分別為？,池化層 / 卷積層,卷積層 / 池化層,植入層 / 池化層,池化層 / 植入層,B,正確答案是 B：卷積層 / 池化層。
+quiz-721,CNN 又稱為卷積神經網路，其中一層稱做卷基層，關於卷積層的敘述，何者錯誤？,目的主要擷取出重要特徵,經過不停移動找出同樣的局部特徵,採用降維採樣,確認不同特徵間的位置關係,C,正確答案是 C：採用降維採樣。
+quiz-722,CNN 又稱為卷積神經網路，基本結構包含兩層，其中一層稱做池化層，請問關於池化層的敘述，何者錯誤？,採用降維採樣,將卷積取得的結果進行壓縮,會盡可能保留重要的資訊,最常見的池化方式為最佳池化（optimization pooling）,D,正確答案是 D：最常見的池化方式為最佳池化（optimization pooling）。
+quiz-723,RNN 又稱為循環神經網路，LSTM 為其衍伸，最主要的差異為 LSTM 中加入三個控制用開關，請問開關不包含下列何者？,輸入(input),移除(remove),輸出(output),遺忘(forget),B,正確答案是 B：移除(remove)。
+quiz-724,ATM 是由下列金融卡交易訊息交換規格來溝通？,ISO/IEC 8859-1,ISO 8601,ISO 8583,ISO/IEC 80000,C,正確答案是 C：ISO 8583。
+quiz-725,Processing 是一個提供給藝術創作者的一個開源的 IDE ，請問其不支援用哪個語言？,Java,Javascript,Python,Ruby,D,正確答案是 D：Ruby。
+quiz-726,請問下列何者不為剖析器？,LL,LR,LALR,LSR,D,正確答案是 D：LSR。
+quiz-727,下列哪一種語言是所謂的低階語言？,Assembly,C++,Python,Java,A,正確答案是 A：Assembly。
+quiz-728,Linux 目錄樹配置標準 FHS，主要定義那三段目錄，下列何者為非？,root,/usr,/var,/bin,D,正確答案是 D：/bin。
+quiz-729,橢圓曲線密碼學，一種建立公開密鑰加密的演算法。下列關於橢圓取線密碼學，何者敘述錯誤？,基於橢圓曲線數學,公開密鑰加密又稱為非對稱加密,它需要一個金鑰,加解密所需時間較長,C,正確答案是 C：它需要一個金鑰。
+quiz-730,學生計算機年會的縮寫為？,SITCQN,sitcon,STICON,SITCON,D,正確答案是 D：SITCON。
+quiz-731,在開發者笑話中，我們常比喻「什麼」與「什麼」的差異，就好像狗與熱狗？,C# 與 Objecct C,C 與 C++,HTML 與 CSS,Java 與 JavaScript,D,正確答案是 D：Java 與 JavaScript。
+quiz-732,網際網路原始開發用途是？,軍事,建築,民用,工業,A,正確答案是 A：軍事。
+quiz-733,下列哪一種程式語言最古老？,Fortran,C,Java,Verilog,A,正確答案是 A：Fortran。
+quiz-734,在 C 語言中，int 型態能存取的最大值為多少？,2147483647,2147483648,2147483649,2147483650,A,正確答案是 A：2147483647。
+quiz-735,在 C 語言中，int 型態能存取的最小值為多少？,–2147483648,–2147483647,–2147483650,–2147483651,A,正確答案是 A：–2147483648。
+quiz-736,OSI 的網路架構總共有幾層？,7,6,5,4,A,正確答案是 A：7。
+quiz-737,下列哪一個協定最常被拿來應用於傳送影片等串流？,TCP,UDP,DHCP,FTP,A,正確答案是 A：TCP。
+quiz-738,為了因應 IP 位址的缺乏，目前正在推動 IP 第幾版的普及？,6,7,8,9,A,正確答案是 A：6。
+quiz-739,在 IPv6 中，每一組 4 個 16 位元數字用什麼符號隔開？,冒號,分號,逗號,句號,A,正確答案是 A：冒號。
+quiz-740,請問全球共有幾台 root DNS server？,13,14,15,16,A,正確答案是 A：13。
+quiz-741,下列哪一種協定不是應用於收發信？,TCP,SMTP,POP3,IMAP,A,正確答案是 A：TCP。
+quiz-742,下列何者並非程式語言？,Ruby,Go,GoG,R,C,正確答案是 C：GoG。
+quiz-743,下列公司與其對應的 VR 產品何者配對錯誤？,HTC / Vive,Sony / PlayStation VR,Google / Oculus,Samsung / Gear VR,C,正確答案是 C：Google / Oculus。
+quiz-744,誰被譽為「現代電腦之父」？,舍恩伯格,艾倫圖靈,溫特沃斯,以上皆非,B,正確答案是 B：艾倫圖靈。
+quiz-745,下列何者非瀏覽器？,Firefox,Safari,UA Browser,Opera,C,正確答案是 C：UA Browser。
+quiz-746,在 C library，關於 strcpy()，下列何者敘述錯誤？,會自動偵測以 '\0' 為結尾,不需要指定長度,當 *src 長度大於 *dest 時會 buffer overflow,可以複製任何類型資料,D,正確答案是 D：可以複製任何類型資料。
+quiz-747,C 語言中「i++」是指？,先 i+1，再用 i,先用 i ，再將 i+1,i 加兩個1,不具任何意義,B,正確答案是 B：先用 i ，再將 i+1。
+quiz-748,二進位表示法的 0001 在十進位表示法中寫成？,0,1,2,3,B,正確答案是 B：1。
+quiz-749,二進位表示法的 0010 在十進位表示法中寫成？,0,1,2,3,C,正確答案是 C：2。
+quiz-750,二進位表示法的 0011 在十進位表示法中寫成？,0,1,2,3,D,正確答案是 D：3。
+quiz-751,二進位表示法的 0100 在十進位表示法中寫成？,4,5,6,7,A,正確答案是 A：4。
+quiz-752,以下何者符合正規表達式「a+b+」？,aa,aab,ba,bbb,B,正確答案是 B：aab。
+quiz-753,以下何者符合正規表達式「a*b*」？,aba,bab,bbb,bba,C,正確答案是 C：bbb。
+quiz-754,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 add $t0, $t1, $t2，問 $t1=？",0,1,2,3,B,正確答案是 B：1。
+quiz-755,SITCON 官方網站為 sitcon.org/ ，請問看見 .org 的網域名稱，代表該單位屬於？,教育與學術機構,傳教機構,財團法人、基金會等非官方組織,軍事單位,C,正確答案是 C：財團法人、基金會等非官方組織。
+quiz-756,請問想要讀取資料庫的資料，SQL 必須下什麼指令？,CREATE,SELECT,GET,READ,B,正確答案是 B：SELECT。
+quiz-757,請問想要更新資料庫的資料，SQL 必須下什麼指令？,UPDATE,POST,WRITE,PATCH,A,正確答案是 A：UPDATE。
+quiz-758,請問哪一年的 SITCON badge 名牌採取純燙金與燙白的設計？以製造出符合 The Ture Hackers,SITCON 2015,SITCON 2016,SITCON 2017,SITCON 2018,A,正確答案是 A：SITCON 2015。
+quiz-759,SITCON 2017 為讓會眾更深入理解「網路中立與資訊自由」是為了讓在網路上的資訊取得與流通變得更方便， 大會特別安排「SITCON 電影院」播放了核部紀錄片呢？,捍衛網權,網羅人生,遊戲結束，未完待續,網路總動員,A,正確答案是 A：捍衛網權。
+quiz-760,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 sub $t2, $t1, $t0，問 $t2=？",0,1,2,3,B,正確答案是 B：1。
+quiz-761,在 C 語言中，有一段程式碼 for (i = 0; i < n; i++) { … }，下列何者對此程式碼的描述錯誤？,第一次進 for 迴圈時先使 i=0,當 i<n 則跳出迴圈,每次迴圈的最後將 i=i+1,以上描述皆正確,B,正確答案是 B：當 i<n 則跳出迴圈。
+quiz-762,在版本控制中，將本地端的修改送回檔案庫，稱為？,add,push,commit,init,C,正確答案是 C：commit。
+quiz-763,在版本控制中，當兩方更動同一份檔案會發生衝突，稱為？,Collision,Conflict,Fight,Hit,B,正確答案是 B：Conflict。
+quiz-764,DevOps 視為 ______、_________、_________ 的交集，請問 ________ 不包含下列何者？,Development,Operations,QA,VC,D,正確答案是 D：VC。
+quiz-765,SITCON 2017 的紀念品為何者？,抱枕,牙套,徽章,眼罩,A,正確答案是 A：抱枕。
+quiz-766,在 Android Studio 出現之前，Google 官方支援的開發 IDE 是？,Xcode,Eclipse,Visual Studio,Notepad++,B,正確答案是 B：Eclipse。
+quiz-767,下列何者是 Ubuntu 的套件管理程式？,APT,YUM,DNF,DPKG,A,正確答案是 A：APT。
+quiz-768,在版本控制中，將本地端的修改送回檔案庫，稱為？,add,push,commit,init,C,正確答案是 C：commit。
+quiz-769,下列何者不為版本控制軟體？,SVK,Git,BitKeeper,Devops,D,正確答案是 D：Devops。
+quiz-770,請問 DevOps 是下列哪兩個字的組成？,Development 和 Operations,Develop 和 Operate,Developer 和 Operator,Developing 和 Operating,A,正確答案是 A：Development 和 Operations。
+quiz-771,十六進位表示法的 ff 在二進位表示法中可以表示成？,1111 0000,0000 1111,0000 0000,1111 1111,D,正確答案是 D：1111 1111。
+quiz-772,十六進位表示法的 91 在二進位表示法中可以表示成？,1000 0001,1001 0001,0111 1001,0001 1001,B,正確答案是 B：1001 0001。
+quiz-773,現在常聽到的人工智慧 AI 英文全名是？,Artificial Intelligence,Acknowledged Interface,Amazing Influence,American Internet,A,正確答案是 A：Artificial Intelligence。
+quiz-774,現在常聽到的機器學習 ML 英文全名是？,Machanism Lecture,Machine Learning,Machine Laughing,Magic Live,B,正確答案是 B：Machine Learning。
+quiz-775,現在常聽到的深度學習 DL 英文全名是？,Dangerous Lion,Different Language,Dog Laughing,Deep Learing,D,正確答案是 D：Deep Learing。
+quiz-776,在 C 語言中，int 具有多少 bits？,8,16,32,64,B,正確答案是 B：16。
+quiz-777,在 C 語言中，char 具有多少 bits？,8,16,32,64,A,正確答案是 A：8。
+quiz-778,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 sub $t2, $t1, $t0，問 $t0=？",0,1,2,3,A,正確答案是 A：0。
+quiz-779,Linux 目錄樹配置標準 FHS，定義的目錄資訊，主要分為四種，下列何者為非？,shareable,unshareable,static,dynamic,D,正確答案是 D：dynamic。
+quiz-780,加密與解密的演算法是一種數學運算公式，主要目的是將明文轉換成密文，密碼學基本的數學運算概念有三種，下列何者為非？,取代,置換,相乘,迭代,D,正確答案是 D：迭代。
+quiz-781,正規語法（Regular Grammar）是一種相當簡單的語法。此種標準的正規語法後來被稱為正規表達式（Regular Expression）。下列關於正規表達式語法，何者敘述錯誤？,[0-9] ：比對含數字之字串,[a-z0-9]：比對含數字或小寫字母之字串,b[aeiou]t ：比對bat、bet、bit、bot、but,[aeiouAEIOU] ：比對不含母音之字串,D,正確答案是 D：[aeiouAEIOU] ：比對不含母音之字串。
+quiz-782,所謂的三向交握（Three-way Handshake）是下列哪一個協定建立虛擬連線（virtual connection）的方式？,TCP,UDP,ARP,SMTP,A,正確答案是 A：TCP。
+quiz-783,下列何者並非以人工智慧為題材的科幻電影？,關鍵少數（Hidden Figures）,A.I.人工智慧（A.I. Artificial Intelligence）,變人（Bicentennial Man）,銀翼殺手（Blade Runner）,A,正確答案是 A：關鍵少數（Hidden Figures）。
+quiz-784,在《神鬼駭客：史諾登》中，主角最後將什麼計畫透漏給記者？,稜角計劃,稜鏡計劃,CIA 計劃,他沒有透漏任何東西,B,正確答案是 B：稜鏡計劃。
+quiz-785,何者不包括在 TCP/IP 協定組合中？,DNS,ASP,ARP,HTTP,B,正確答案是 B：ASP。
+quiz-786,下列敘述何者正確？,IPv4 位址為 64 Bits,IPv6 位址為 128 Bits,IPv4 位址通常以「4 段式、16 進位」表示,「203.74.205.256」為正確的 IPv4 位址,B,正確答案是 B：IPv6 位址為 128 Bits。
+quiz-787,知名搜尋引擎 Yahoo! 創始人來自哪個國家？,美國,波蘭,台灣,俄羅斯,C,正確答案是 C：台灣。
+quiz-788,自然語言處理（NLP）目標是要讓電腦能「理解」自然語言。一般而言，NLP 處理分為五大流程，請問下列何者不為自然語言處理的處理流程？,Tokensize,POS tagging,facing,Semantics,C,正確答案是 C：facing。
+quiz-789,Deep learinging 為時下最熱門的研究領域之一，當中常利用神經網路模型進行訓練，請問下列關於各神經網路模型的敘述，何者錯誤？,CNN 為卷積神經網路，第一層為池化層，第二層為卷基層，,RNN 為循環神經網路，主要用來處理序列性資料。,LSTM 可以說是 RNN 的延伸為，其差異為 LSTM 加入三個控制開關,Word2vec 又分為 CBOW 與 Skip-gram 兩種模型,A,正確答案是 A：CNN 為卷積神經網路，第一層為池化層，第二層為卷基層，。
+quiz-790,請問 SITCON 的 Telegram 討論群組，ID 為何？,@SITCONtw,@SITCON,@SITCONgeneral,@SITCONorg,C,正確答案是 C：@SITCONgeneral。
+quiz-791,網際網路犯罪中心將變臉詐騙分為五大類型，不包含下列何者？,假發票詐騙,執行長詐騙,假冒成律師,假冒成警察,D,正確答案是 D：假冒成警察。
+quiz-792,下列哪一種資安攻擊手法不需要強大的資訊技能？,SQL Injection,Click jacking,Social Engineering,Domain name hijacking,C,正確答案是 C：Social Engineering。
+quiz-793,當一個瀏覽器試圖連線開啟 https://www.facebook.com/ 時，瀏覽器不會做下列哪件事？,偷偷查看使用者 D 槽文件,與網頁伺服器建立加密的安全連線,檢查網頁伺服器是否能夠提供有效的憑證,使用 HTTP 通訊協定向網頁伺服器要求傳送網頁內容,A,正確答案是 A：偷偷查看使用者 D 槽文件。
+quiz-794,請問下列關於二元樹的敘述，何者錯誤？,原理是 Divide and Conquer,時間複雜度最差為 O(N),時間複雜度最佳為 O(logN),空間複雜度為 O(logN),D,正確答案是 D：空間複雜度為 O(logN)。
+quiz-795,下列關於 Binary Heap 的敘述，何者正確？,其二元樹的樹根數字，總是小於等於左右小孩的數字,插入的時間複雜度為 O(logN),求極值的時間複雜度為 O(N),刪除的時間複雜度為 O(logN),C,正確答案是 C：求極值的時間複雜度為 O(N)。
+quiz-796,目前廣泛被各大 Linux 發行版採用的 init 程式是？,Upstart,systemd,systemctl,initctl,B,正確答案是 B：systemd。
+quiz-797,下列何者是今日議程之一？,你媽知道你在寫 Functional 嗎？,校園資訊系統的困境與嘗試改善,前端工程的過去、現在與未來,格鬥遊戲 AI 開發經驗談,A,正確答案是 A：你媽知道你在寫 Functional 嗎？。
+quiz-798,下列何者是今日議程之一？,重拾數位時代的公民權,奔跑吧！台北：遊戲開發經驗分享,雷系魔法師也能煎牛排！,直播邊看邊好玩：探討遊戲挑戰及持續意圖,B,正確答案是 B：奔跑吧！台北：遊戲開發經驗分享。
+quiz-799,下列何者是今日議程之一？,網路身分的真與假：談網路實名制,蘊含著強大力量的 GTK 啊，封印解除！,用 Electron 實踐跨平臺桌面程式,直播邊看邊好玩：探討遊戲挑戰及持續意圖,B,正確答案是 B：蘊含著強大力量的 GTK 啊，封印解除！。
+quiz-800,下列何者是今日議程之一？,從 V8 Javascript 引擎淺談現代編譯技術,寫寫你的美好：一起打造「藝術產生器」吧！,600 秒學會 UI 設計,校園資訊系統的困境與嘗試改善,C,正確答案是 C：600 秒學會 UI 設計。
+quiz-801,請問下列關於 SaaS（Software as a Service）的敘述，何者錯誤？,將軟體以服務的型式來提供,單租戶型式,降低了使用軟體的門檻,使用者透過網路即可使用軟體,B,正確答案是 B：單租戶型式。
+quiz-802,CSS3 新增了酷炫的文字陰影，請問 text-shadow: 5px 5px 10px #FF0000; 這條程式中的 10px 代表這是什麼意思？,陰影與本體水平位移 10px,陰影與本體垂直位移 10px,陰影為模糊 10px 陰影,陰影的顏色,C,正確答案是 C：陰影為模糊 10px 陰影。
+quiz-803,請問哪年的 SITCON 主視覺中特別以藍色或粉紅色標注了 ING 三個字？,SITCON 2015,SITCON 2016,SITCON 2017,SITCON 2018,C,正確答案是 C：SITCON 2017。
+quiz-804,國中國文課本中的作家琦君，其著名的做作品「橘子紅了」，是以每年橘子紅的時節為延伸的言情小說作品； SITCON 的猶如橘子般的指南針 Logo 也有曾經紅了的時節，請問該事件發生在哪一年？,SITCON 2014,SITCON 2015,SITCON 2016,SITCON 2017,B,正確答案是 B：SITCON 2015。
+quiz-805,SITCON 的黑客松活動其名稱為何？,HackGen 駭客松,HackThon 駭客世代,HackGen 駭客世代,HackGen 少年世代,C,正確答案是 C：HackGen 駭客世代。
+quiz-806,二元樹中，LRV Traversal 為下列何種方法？,pre-order,in-order,post-order,以上皆非,C,正確答案是 C：post-order。
+quiz-807,二元樹中，pre-order Traversal 可以簡稱為？,VLR,LVR,LRV,以上皆非,A,正確答案是 A：VLR。
+quiz-808,變臉詐騙簡稱為 BEC ，又稱為商務電子郵件入侵，其兩大攻擊技巧，分別為「竊取帳號登入憑證」與下列何者？,單純利用電子郵件,假冒成律師,假發票詐騙,竊取資料,A,正確答案是 A：單純利用電子郵件。
+quiz-809,網路釣魚為變臉詐騙最常見的手法之一，下列有關於網路釣魚的敘述，何者錯誤？,典型的網路釣魚攻擊會使用電子郵件挾帶一個經過偽裝但卻指向網路釣魚網站的連結。,郵件內隨附 PDF 檔案是網路釣魚慣用的伎倆之一,網路釣魚郵件當中，有時挾帶惡意的 HTML 檔案,以上皆正確,D,正確答案是 D：以上皆正確。
+quiz-810,年初 Intel 處理器爆發兩大漏洞分別為 Meltdown 和 Spectre，關於兩者的敘述何者正確？,Spectre 所影響的是 Intel 處理器,Meltdown 可讓駭客竊取系統核心、快取檔案內的資料,Spectre 漏洞所影響的處理器包括：Intel、AMD 及 ARM,Meltdown 應用程式在記憶體內的敏感資料可能遭到存取,C,正確答案是 C：Spectre 漏洞所影響的處理器包括：Intel、AMD 及 ARM。
+quiz-811,根據〈利用 ATM 惡意程式大發利市 〉一文中，將ATM 攻擊分為兩大類，按進入 ATM 方式可分別為？,臨機操作方式與網路進入方式,硬體操作方式與軟體操作方式,設備解密方式與惡意攻擊方式,實體攻擊方式與遠端攻擊方式,A,正確答案是 A：臨機操作方式與網路進入方式。
+quiz-812,關於 Melissa 病毒的敘述何者為非？,製作者以脫衣舞孃的名字為病毒命名,通過郵件傳播,為蠕蟲病毒,運用Word軟體里的宏運算編寫而成,C,正確答案是 C：為蠕蟲病毒。
+quiz-813,請問下列有關於 SVM 的敘述，何者錯誤？,全稱為 Support Vector Machine,與 Logistic Regression 相同屬於一種分類器方法,目前應用範圍僅在資訊安全領域,在自然語言處理（NLP）應用中，比 Bag-of-words 或是 Tf-idf 效果更好,C,正確答案是 C：目前應用範圍僅在資訊安全領域。
+quiz-814,下列關於資料結構 Tree 的敘述何者錯誤？,樹的節點個數是一或多個有限集合,存在一個節點稱為根節點,跟節點的階層（Level）為 0,每個節點擁有的子節點數稱為「分支度」（Dregree）,C,正確答案是 C：跟節點的階層（Level）為 0。
+quiz-815,下列關於二元樹（Binary Tree）的敘述何者錯誤？,每個節點最多只能有 2 節點,節點個數無限集合,節點各數可為的空集合,二元樹的節點可以分成兩個沒有交集的子樹,B,正確答案是 B：節點個數無限集合。
+quiz-816,二元樹中，LVR Traversal 為下列何種方法？,pre-order,in-order,post-order,以上皆非,B,正確答案是 B：in-order。
+quiz-817,在使用 bash 的時候，用哪個按鍵組合可以將程式放到背景並暫停？,Ctrl-Q,Ctrl-Alt-Delete,Ctrl-Space,Ctrl-Z,D,正確答案是 D：Ctrl-Z。
+quiz-818,16 進位的 A 是 10 進位的多少？,10,11,12,13,A,正確答案是 A：10。
+quiz-819,Linux 系統中，有五個次目錄必須與根目錄同一分割槽，不可獨立分割，請問下列何者不始於為此五次目錄？,/var,/lib,/etc,/bin,A,正確答案是 A：/var。
+quiz-820,Linux 系統中，有五個次目錄必須與根目錄同一分割槽，不可獨立分割，請問下列何者屬於此五個次目錄之一？,/log,/dev,/usr,/var,B,正確答案是 B：/dev。
+quiz-821,"在 C++ 中，定義一陣列 int arr[5] = {1, 2, 3, 4, 5};，請問 arr[1] 的數值為多少？",1,2,3,4,B,正確答案是 B：2。
+quiz-822,一個 byte 有八個 bit，一個英文字元佔有一個 byte，請問一個中文字元有幾個 bit？,1,8,2,16,D,正確答案是 D：16。
+quiz-823,在 C++ 中，下列型態何者不在標準規範中？,point,int,char,string,A,正確答案是 A：point。
+quiz-824,在 C++ 中，用來表示「不等於」的運算子是下列何者？,!=,@=,#=,$=,A,正確答案是 A：!=。
+quiz-825,在 C++ 中，用來表示「賦值」的運算子為下列何者？,=,->,>,<,A,正確答案是 A：=。
+quiz-826,現行的 HTTPS 採用何種方式對網頁資料進行加密？,對稱式金鑰密碼法,非對稱式金鑰密碼法,兩者並用,可能是對稱式金鑰密碼法，也可能是非對稱式金鑰密碼法,C,正確答案是 C：兩者並用。
+quiz-827,數位簽章，又稱公鑰數位簽章，是一種類似寫在紙上的普通的物理簽名，但是使用了公鑰加密領域的技術實現，用於鑑別數位信息的方法。對一個檔案進行加密與數位簽章後，仍不能提供下列何種安全需求？,完整性,機密性,不可否認性,不可重用性,B,正確答案是 B：機密性。
+quiz-828,電腦資料存取控制的安全是經由下列何種流程來確保？,驗證→識別→授權,識別→驗證→授權,驗證→授權,識別→授權,B,正確答案是 B：識別→驗證→授權。
+quiz-829,chroot 是在 UNIX 系統的一個操作，針對正在運作的軟體行程和它的子行程，改變它外顯的根目錄。chroot 程式可歸類為何種資安相關的應用？,Firewall,Sandbox,Honeypot,以上皆非,B,正確答案是 B：Sandbox。
+quiz-830,下列哪一個 Linux 指令可以列出目前本機與其它連網設備的網路連線？,man,ls,netstat,ifconfig,C,正確答案是 C：netstat。
+quiz-831,下列哪一個 Linux 指令可以列出目前的目錄的清單？,ls,man,netstat,ifconfig,A,正確答案是 A：ls。
+quiz-832,下列哪一個 Linux 指令可以查看 Linux 中的指令幫助、配置文件幫助等訊息？,ls,ifconfig,netstat,man,D,正確答案是 D：man。
+quiz-833,有關一次性密碼 (one-time password) 的說明，下列何者正確？,一次性發給多個密碼,第一次申請帳號時，臨時發給使用者的預設密碼,只使用一次即丟棄的密碼,這只是理論上的概念，無法實作出來,C,正確答案是 C：只使用一次即丟棄的密碼。
+quiz-834,有關 SHA-1 的敍述，下列何者錯誤？,是一種密碼雜湊函數,訊息摘要為160位元,設計原理相似於 MD4 和 MD5,至今尚未被破解,D,正確答案是 D：至今尚未被破解。
+quiz-835,在作業系統中，一組 processes 陷入互相等待的情況，造成 processes 無法往下執行，稱為 deadlock。一般來說 deadlock 成立有四個必要條件，下列何者為非？,Mutual exclusion,Hold & wait,Circular waiting,Preemption,D,正確答案是 D：Preemption。
+quiz-836,在 Linux 系統中，「ls」是顯示檔案的檔名與相關屬性，「-al」則表示列出所有的檔案詳細的權限與屬性。下列有關檔案類型權限的敘述，何者正確？,r 代表可刪除,w 代表可寫,x 代表可執行,- 代表無權限,A,正確答案是 A：r 代表可刪除。
+quiz-837,在 Linux 中，若有一個檔案的類型與權限資料為「-rwxr-xr--」，關於其說明何者錯誤？,擁有者的權限為可讀、可寫、可執行,同群組使用者權限為可讀可執行,其他使用者無任何權限,這個檔名為檔案,C,正確答案是 C：其他使用者無任何權限。
+quiz-838,下列有關 Linux 之指令，何者錯誤？,chgrp ：改變檔案所屬群組,chown ：改變檔案擁有者,chmod ：改變檔案的權限,上列敘述接錯誤,D,正確答案是 D：上列敘述接錯誤。
+quiz-839,正規表示法就是用在字串的處理上面的一項「表示式」，請問下列選項中，何者可以篩選出電子信箱？,([A-Za-z][0-9])*[\\\+\-\*]([A-Z][0-9])*,\w+([-+.']\w+)*@\w+\.\w+([-.]\w+)*,"^([\w-\.]+)((\[[0-9]{1,3}\.[0-9]{1,3}{2,4})$",([-+.']\w+)\w+([-.]\w+)*\.\w+([-.]\w+),B,正確答案是 B：\w+([-+.']\w+)*@\w+\.\w+([-.]\w+)*。
+quiz-840,哪種程式語言是以縮排來分辨程式中不同的區塊（block）？,C/C++,Python,JavaScript,Go,B,正確答案是 B：Python。
+quiz-841,下列時間複雜度是指數時間？,O(1),O(n^2),O(2^n),O(logn),C,正確答案是 C：O(2^n)。
+quiz-842,Node.js 用的是下列何種 JavaScript engine？,WebKit,Rhino,V8,Chakra,C,正確答案是 C：V8。
+quiz-843,下列哪個並不屬於 IPC（Inter-Process Communication）的方法之一？,Pipe,Signal,Shared Memory,Message Handle,D,正確答案是 D：Message Handle。
+quiz-844,有許多方法可以解決 Critical Section Problem，以下的哪種方法並無法防止此現象？,Mutex,Semaphore,Peterson's Solution,Bacon's Algorithm,D,正確答案是 D：Bacon's Algorithm。
+quiz-845,何者並非 HTML5 所新增的特點？,<!DOCTYPE html5>,<!DOCTYPE html>,autofocus,<canvas> tag,A,正確答案是 A：<!DOCTYPE html5>。
+quiz-846,近年來有了許多 NoSQL 的資料庫，以下何者並不是 NoSQL？,PostgreSQL,Neo4j,MongoDB,Redis,A,正確答案是 A：PostgreSQL。
+quiz-847,Hadoop 是近年來處理大量資料的一大利器，請問該系統是利用何種運算架構來實作？,MobReplace,MapReduce,MapReduct,ModReject,B,正確答案是 B：MapReduce。
+quiz-848,在 Linux 中，執行指令 chmod 664 後該檔案權限會變成下列何者？,-rw-rw-rw-,-rw-rw----,-rw-rw-r-x,-rw-rw--r-,C,正確答案是 C：-rw-rw-r-x。
+quiz-849,下列何者並非 SHA-2 家族中的標準？,SHA-256,SHA-512,SHA-384,SHA-1024,D,正確答案是 D：SHA-1024。
+quiz-850,數位簽章是為了保證何種性質而存在？,機密性,不可否認性,完整性,特殊性,B,正確答案是 B：不可否認性。
+quiz-851,破解 RSA 金鑰的困難主要是下列何者？,乘法速度太慢,產生大質數很困難,沒有快速的質數篩法,沒有有效的因數分解演算法,D,正確答案是 D：沒有有效的因數分解演算法。
+quiz-852,rsync 與 cp 這兩個程式皆可以複製檔案，兩者的比較，何者正確？,rsync 可以透過 SSH 傳輸,rsync 可以保存原本的檔案權限,cp -u 與 rsync 使用相同 update 演算法,cp 無法顯示複製的進度,C,正確答案是 C：cp -u 與 rsync 使用相同 update 演算法。
+quiz-853,在 C++ 中，「#pragma once」的用途是？,Race conditoon,Include guard,Interrupt,Data collision,B,正確答案是 B：Include guard。
+quiz-854,Python3 的 built-in type 不包含哪種？,complex,list,array,dict,C,正確答案是 C：array。
+quiz-855,何者是 ES6 的新保留字？,instanceof,yield,var,default,B,正確答案是 B：yield。
+quiz-856,下列哪個 JavaScript code 的執行結果為 false？,undefined == undefined,10 == '10',NaN === NaN,[]+![] == 'false',C,正確答案是 C：NaN === NaN。
+quiz-857,下列哪個 JavaScript code 的執行結果為 true？,[1] + [] == '1',[] == [],typeof [] == 'Array',1 === true,A,正確答案是 A：[1] + [] == '1'。
+quiz-858,dd 這個公用程式的功能何者為非？,清除磁碟分割,製作開機USB,將檔案改成全部大寫,幫程式碼縮排,D,正確答案是 D：幫程式碼縮排。
+quiz-859,MIT Lisence 的敘述何者正確？,不需在重置物納入該授權,可與其他授權條款並存,被授權人不可出版軟體重製物,GPL 不相容,B,正確答案是 B：可與其他授權條款並存。
+quiz-860,哪個語法是 ES6 為了解決 callback 問題所加入的概念？,monad,await,promise,list comprehension,C,正確答案是 C：promise。
+quiz-861,"[j for i in range(2,int(sqrt(n))) for j in range(i*2, n, i)]，這段 Python code 會出現甚麼？",1 至 n 的倍數,1 至 n 的質數,1 至 n 的幸運數,1 至 n 的合數,D,正確答案是 D：1 至 n 的合數。
+quiz-862,SSH 的預設 port 是哪個？,23,22,80,66,B,正確答案是 B：22。
+quiz-863,DHCP 的預設 port 是哪個？,66&67,35&36,67&68,76&86,C,正確答案是 C：67&68。
+quiz-864,現行 HTTPS 是利用何種協定來建立安全連線的？,SSL,TLE,TLS,TTL,C,正確答案是 C：TLS。
+quiz-865,下列何者定義了 TLS 的標準？,RFC 7540,RFC 5246,IEEE 802.1X,IEEE 754,B,正確答案是 B：RFC 5246。
+quiz-866,下列何者定義了 VLAN 的標準？,RFC 7540,RFC 6749,IEEE 802.1Q,IEEE 802.1aq,C,正確答案是 C：IEEE 802.1Q。
+quiz-867,一個應用程式可以不用經過大幅修改，而依照不同使用者使用不同語言、日期格式與數字格式的的設計我們稱為甚麼？,i10n,i18n,L18n,I17n,B,正確答案是 B：i18n。
+quiz-868,下列何者定義了 Oauth2 的標準？,RFC 6749,RFC 7540,IEEE 802.1ap,IEEE 802.1aq,A,正確答案是 A：RFC 6749。
+quiz-869,由於 Linux 有許多的 distribution，每家提供的軟體包管理器都不一樣，下列何者不是軟體包管理器？,pacman,pcman,Zypper,APT,B,正確答案是 B：pcman。
+quiz-870,i18n 的全稱是？,intersection,incorporation,internationalization,incorporation,C,正確答案是 C：internationalization。
+quiz-871,L10n 的全稱是？,logistician,lmfaotion,localization,legalization,C,正確答案是 C：localization。
+quiz-872,可以用哪個程式查詢從本地到另一個 IP Address 所經過的 router？,ifconfig,traceroute,nslookup,ping,B,正確答案是 B：traceroute。
+quiz-873,下列哪個 IP 不屬於 192.168.144.0/23 這個網段的？,192.168.145.241,192.168.143.2,192.168.144.1,192.168.144.254,B,正確答案是 B：192.168.143.2。
+quiz-874,Java 是哪一間公司推出的？,Microdsoft,Amazon,Sun,WWE,C,正確答案是 C：Sun。
+quiz-875,下列有關中間人攻擊的敘述，何者錯誤？,攻擊者使用公鑰交換來攔截消息並轉發，然後取代他自己的公鑰發給被請求的一方,攻擊者可以竊聽或是竄改,攻擊者可能竊聽但不竄改資料,目前尚沒有防禦中間人攻擊的方法,D,正確答案是 D：目前尚沒有防禦中間人攻擊的方法。
+quiz-876,Fitbit 與 Pebble 皆有 SSL 傳輸加密，推測此兩項產品無法使用何種攻擊？,中間人攻擊,雲端服務,阻斷服務攻擊,以上皆是,A,正確答案是 A：中間人攻擊。
+quiz-877,Skimer 為目前已知的第一個 ATM 惡意程式，請問關於 Skimer 的敘述何者正確 ？,最早出現在 2007 年，遠端植入到 ATM 上,透過客製化中介軟體來操作 ATM 的周邊裝置,前已知在外流傳的變種共有三種,以上皆是,B,正確答案是 B：透過客製化中介軟體來操作 ATM 的周邊裝置。
+quiz-878,AI 技術廣泛應用在資安產品中，請問下列哪項有運用AI技術？,變臉詐騙阻擋,惡意巨集偵測,垃圾郵件阻擋,以上皆是,D,正確答案是 D：以上皆是。
+quiz-879,二元樹中，post-order Traversal 為下列何種方法？,VLR,LVR,LRV,以上皆非,C,正確答案是 C：LRV。
+quiz-880,在二元樹走訪的方法中，我們常聽到 LVR、LRV、VLR 三種方法，請問 L 代表？,移動到 Left child,移動到 Left side,Leave the program,Leave the number,A,正確答案是 A：移動到 Left child。
+quiz-881,在二元樹走訪的方法中，我們常聽到 LVR、LRV、VLR 三種方法，請問 V 代表？,voice，輸出當前 node 值,vacancy，表示當前 node 為空白,vacation，程式暫停,Visiting，對當前的 node 進行print、assign或其他操作,D,正確答案是 D：Visiting，對當前的 node 進行print、assign或其他操作。
+quiz-882,下列關於 SOREBRECT 勒索病毒的敘述何者錯誤？,為無檔案式威脅和勒索病毒相結合,最終目標是將系統上的檔案加密,不善匿蹤,採集樣本困難,C,正確答案是 C：不善匿蹤。
+quiz-883,下列關於「變臉詐騙」的敘述，何者為真？,為高成本高收益的詐騙手段,以紙本郵件為攻擊途徑,要求使用者限時用比特幣付贖,以上皆是,C,正確答案是 C：要求使用者限時用比特幣付贖。
+quiz-884,NeoPocket 為一種 ATM 惡意程式，請問有關 NeoPocket 敘述何者錯誤？,資訊竊取程式，不在乎鈔票,攻擊手法為中間人攻擊,自動方式安裝到 ATM 提款機上，經常與提款機的周邊裝置溝通,成功要件為熟悉 Diebold Agilis® 軟體並了解系統架構,C,正確答案是 C：自動方式安裝到 ATM 提款機上，經常與提款機的周邊裝置溝通。
+quiz-885,Linux 的系統設定檔通常位於哪個資料夾下？,/var,/etc,/mnt,/usr,B,正確答案是 B：/etc。
+quiz-886,Linux 的 inode 是用來紀錄與檔案相關資訊，以下哪個不是 inode 會記錄的東西？,檔案權限,類型,owner,檔名,D,正確答案是 D：檔名。
+quiz-887,Vim 是一個強大的編輯器，但許多人不小心開啟了 Vim 卻不知道如何離開，請問下列哪個指令可以輕鬆關閉 Vim？,qeqweqwrqwer,Ctrl-Alt-Delete,Ctrl-C,以上皆非,D,正確答案是 D：以上皆非。
+quiz-888,Vim 可以快速地將小寫改成大寫，請問是哪一個指令可以？,gu,gU,gg,gl,B,正確答案是 B：gU。
+quiz-889,二元樹中，in-order Traversal 為下列何種方法？,VLR,LVR,LRV,以上皆非,B,正確答案是 B：LVR。
+quiz-890,在二元樹走訪的方法中，我們常聽到 LVR、LRV、VLR 三種方法，請問 R 代表？,Register the program,Register the number,移動到 Right child,移動到 Right side,C,正確答案是 C：移動到 Right child。
+quiz-891,RNN 又稱為循環神經網路，LSTM 為其衍伸，最主要的差異為 LSTM 中加入三個控制用開關，請問開關為下列何者？,輸入(input),輸出(output),遺忘(forget),以上皆是,D,正確答案是 D：以上皆是。
+quiz-892,RNN 又稱為循環神經網路，LSTM 為其衍伸，最主要的差異為 LSTM 中加入三個控制用開關，請問開關組合為下列何者？,inside / forget / outside,input / forget / output,input / remove / output,inside / remove / outside,B,正確答案是 B：input / forget / output。
+quiz-893,在 Linux 中，執行指令 chmod 664 後該檔案權限會變成下列何者？,-rw-rw-rw-,-rw-rw----,-rw-rw-r-x,-rw-rw--r-,C,正確答案是 C：-rw-rw-r-x。
+quiz-894,下列何者並非 SHA-2 家族中的標準？,SHA-256,SHA-512,SHA-384,SHA-1024,D,正確答案是 D：SHA-1024。
+quiz-895,下列關於 K means 敘述，何者錯誤？,為 Cluster 一種,每次執行群中心都是固定的,多用來處理 Discrete data,屬於 Unsupervised Learning,B,正確答案是 B：每次執行群中心都是固定的。
+quiz-896,CSS 中 padding 這個屬性在下時，如下兩個值（ex: padding: 20px 0px），他兩個值分別依序代表了和那些方位與內部元件的距離呢？,上左與下右,上下與左右,右下與左上,左右與上下,B,正確答案是 B：上下與左右。
+quiz-897,許多政府機關的網站的角落都會有 ::: 請問這是什麼？,方便非視覺閱讀的「導盲磚」（亦稱做定位點）,政府網站的秘密溝通代碼，那些冒號都不是冒號,告訴你這是網站最重要的內容在哪,是政府網站的代碼,A,正確答案是 A：方便非視覺閱讀的「導盲磚」（亦稱做定位點）。
+quiz-898,請問 SITCON 從哪一屆開始有除了有 SITCON 娘也有 SITCON 郎？,SITCON 2014,SITCON 2015,SITCON 2016,SITCON 2017,B,正確答案是 B：SITCON 2015。
+quiz-899,PT Sans 為俄國非襯線字體，開發於 1998 年紀念彼得大帝對於俄國知識傳播的貢獻，該字體該國資訊公眾基礎工程之一，目前可透過 Google Fonts 線上字體中使用該字體。請問哪一年的 SITCON 主視覺採用該字體為標準字？,SITCON 2013,SITCON 2014,SITCON 2015,SITCON 2016,C,正確答案是 C：SITCON 2015。
+quiz-900,ITSA 從第一年 SITCON 2013 即開始支持我們的活動，請問其現階段的全銜為何？,教育部資通訊軟體創新人才推升計畫推動中心,教育部資訊軟體人才培育計畫,中研院自由軟體鑄造場,教育部軟體工程聯盟,A,正確答案是 A：教育部資通訊軟體創新人才推升計畫推動中心。
+quiz-901,二進位表示法的 0101 在十進位表示法中寫成？,4,5,6,7,B,正確答案是 B：5。
+quiz-902,二進位表示法的 0110 在十進位表示法中寫成？,4,5,6,7,C,正確答案是 C：6。
+quiz-903,二進位表示法的 0111 在十進位表示法中寫成？,4,5,6,7,D,正確答案是 D：7。
+quiz-904,二進位表示法的 1000 在十進位表示法中寫成？,7,8,9,10,B,正確答案是 B：8。
+quiz-905,二進位表示法的 1001 在十進位表示法中寫成？,7,8,9,10,C,正確答案是 C：9。
+quiz-906,下列何者不是音樂檔的檔案格式？,.pdf,.wav,.mid,.mp3,A,正確答案是 A：.pdf。
+quiz-907,下列何者不是「資訊安全」所要確保的資訊特性？,機密性(Confidentiality),完整性(Integrity),可用性(Avail ability),可延伸性(Scalability)。,D,正確答案是 D：可延伸性(Scalability)。。
+quiz-908,下列何者為歐盟通用資料保護規則（GDPR）所保護的個資內容？,Cookie,個人電子信箱,社群網站活動紀錄,以上皆是,D,正確答案是 D：以上皆是。
+quiz-909,資訊安全中的「社交工程（Social Engineering）」主要是透過什麼樣弱點，來達成對資訊安全的攻擊方式？,技術缺憾,人性弱點,設備故障,後門程式的掩護。,B,正確答案是 B：人性弱點。
+quiz-910,已知一規則定義如下： F0 = 0、F1 = 1、Fn = Fn-1 + Fn-2，請問此規則名為？,畢氏定理,費氏數列,二項氏定理,測不準定律,B,正確答案是 B：費氏數列。
+quiz-911,若有一演算法，其執行時間固定不變，請問該演算法時間複雜度為？,O(1),O(n),O(logn),O(0),A,正確答案是 A：O(1)。
+quiz-912,下列關於演算法與資料結構的說明，何者錯誤？,資料結構討論電腦中資料儲存的方式,演算法討論解決問題的方法,資料結構的好壞只會影響程式判讀層面,透過資料結構與的演算法，可提升程式效能,C,正確答案是 C：資料結構的好壞只會影響程式判讀層面。
+quiz-913,機器學習是一門設計如何讓演算法能夠學習的電腦科學，請問機器學習的典型應用領域包含下列何者？,概念學習,預設模型,分群,以上皆是,D,正確答案是 D：以上皆是。
+quiz-914,在 Bash 中，下列選項何者可以用來表示註解？,#,//,rem,/* */,A,正確答案是 A：#。
+quiz-915,在 cmd.exe 中，下列哪一個指令可以用來刪除檔案？,del,rmdir,rem,rm,D,正確答案是 D：rm。
+quiz-916,下列文書編輯套裝軟體，何者為開放原始碼？,Microsoft Office,WPS Office,iWork,LibreOffice,D,正確答案是 D：LibreOffice。
+quiz-917,誰是今年 SITCON 2018 總召？,小蘭,工藤,毛利,柯南,B,正確答案是 B：工藤。
+quiz-918,SITCON 2018 年會地點在哪？,中央研究院人工智慧科學館,中央研究院社會科學館,中央研究院人文社會科學館,我是誰我在哪,C,正確答案是 C：中央研究院人文社會科學館。
+quiz-919,以下何者不符合正規表達式「aa+b+」？,aab,abb,aaab,aabb,B,正確答案是 B：abb。
+quiz-920,以下何者不符合正規表達式「ab+a+b」？,aab,abaab,abbab,abbaab,A,正確答案是 A：aab。
+quiz-921,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 add $t0, $t1, $t2，問 $t0=？",0,1,2,3,D,正確答案是 D：3。
+quiz-922,使用 CSS 為網頁排版時，「單位」是很重要的，請問 CSS 不支援下列哪一種單位？,em,vh,%,小石,D,正確答案是 D：小石。
+quiz-923,請問下列何者為 SITCON 2018 之贊助單位？,曉數碼,趨勢科技,微軟,以上皆是,D,正確答案是 D：以上皆是。
+quiz-924,請問下列何者為 SITCON 2018 之合作夥伴？,鴻寬科技,張國周製藥,TWNIC,以上皆是,D,正確答案是 D：以上皆是。
+quiz-925,請問下列何者為 SITCON 2018 之贊助夥伴？,祐生基金會,KKBOX,Dcard,以上皆是,D,正確答案是 D：以上皆是。
+quiz-926,請問下列何者為 SITCON 2018 之合作單位？,ITSA,COSCUP,經濟部資策會,以上皆是,D,正確答案是 D：以上皆是。
+quiz-927,請問最基本的邏輯運算子符號不包含下列何者？,AND,OR,NOR,NOT,C,正確答案是 C：NOR。
+quiz-928,請問 AR 的全稱為？,虛擬實境,擴增實境,混合實境,以上皆非,B,正確答案是 B：擴增實境。
+quiz-929,請問 VR 的全稱為？,虛擬實境,擴增實境,混合實境,以上皆非,A,正確答案是 A：虛擬實境。
+quiz-930,請問 MR 的全稱為？,虛擬實境,擴增實境,混合實境,以上皆非,C,正確答案是 C：混合實境。
+quiz-931,"CSS 得以用直接輸入 RBG 的數值來表達描述物件的顏色，請問 rgba(0, 0, 0, 0.5); 意味著這是什麼顏色？",百分之 50 半透明的黑色,百分之 0.5 半透明的黑色,百分之 50 半透明的白色,百分之 0.5 半透明的白色,A,正確答案是 A：百分之 50 半透明的黑色。
+quiz-932,"CSS 得以用直接輸入 RBG 的數值來表達描述物件的顏色，請問 rgba(255, 255, 255, 0.5); 意味著這是什麼顏色？",百分之 50 半透明的黑色,百分之 0.5 半透明的黑色,百分之 50 半透明的白色,百分之 0.5 半透明的白色,C,正確答案是 C：百分之 50 半透明的白色。
+quiz-933,"假設現在 $t0=0、$t1=1、$t2=2，則若有一 MIPS 指令 add $t0, $t1, $t2，問 $t1=？",0,1,2,3,B,正確答案是 B：1。
+quiz-934,何者不是文字編碼方式？,ASCII,Unicode,TTF,Big5,C,正確答案是 C：TTF。
+quiz-935,TCP 協定的主要功能不包含以下哪一項？,加密,建立連線,重送,控制流量,A,正確答案是 A：加密。
+quiz-936,N 層二元樹，其節點數最多有幾個？,2N,N^2,2N-1,2^N-1,D,正確答案是 D：2^N-1。
+quiz-937,下列何者不是 Uber 現有服務？,Express Pool,Uber Eats,Uber Bike,以上皆非,D,正確答案是 D：以上皆非。
+quiz-938,常聽到的 4G、5G 的「G」是什麼意思？,Generation,Gigabtyes,Gap,Genus,A,正確答案是 A：Generation。
+quiz-939,在 IPv4 中，使用 32 位元共 4 組，每組位元最大值為多少？,255,256,257,258,A,正確答案是 A：255。
+quiz-940,下列何者非 Linux Kernel 的功能？,Process control,Memory management,File System management,System call controller,D,正確答案是 D：System call controller。
+quiz-941,下列何者為 GNU General Public License （GPL）的精神？,開發 GPL 的團體不可以經由該軟體的服務來取得服務的費用,GPL 的授權之軟體，乃為自由軟體，任何人皆可擁有他,GPL 授權下，為保護智慧財產權，不需要公布其原始碼,經過修改過後 open source 均為修改者或是修改團體所擁有，不需要回饋,B,正確答案是 B：GPL 的授權之軟體，乃為自由軟體，任何人皆可擁有他。
+quiz-942,過去傳統的 IDE 為用來傳輸硬碟資料的一個介面，一般而言，過去的傳統普通 PC，允許幾個 IDE 介面與裝置？,3 個,4 個,5 個,6 個,B,正確答案是 B：4 個。
+quiz-943,一般而言安裝 Linux 至少要有哪兩個 partition？,root / swap,root / cache,root / home,root / media,A,正確答案是 A：root / swap。
+quiz-944,過去的 Linux 系統中，利用執行級別（Runlevel）作為不同的執行模式，根據執行級別通常分為 7 等，分別是從 0 到 6，請問下列級別中，何者正確？,0 : 重新開機,3：純文字介面登入，多人單工環境,5：X-Window 登入模式，多人多工模式,6 : 停機、關機,C,正確答案是 C：5：X-Window 登入模式，多人多工模式。
+quiz-945,在 ASCII 中，48 用來代表什麼？,0,1,2,3,A,正確答案是 A：0。
+quiz-946,下列何者是今日議程之一？,格鬥遊戲 AI 開發經驗談,「我寫故我在」社群媒體裡的憂鬱蹤跡,泡沫列車：一趟加密貨幣的經濟之旅,雷系魔法師也能煎牛排！,C,正確答案是 C：泡沫列車：一趟加密貨幣的經濟之旅。
+quiz-947,下列何者是今日議程之一？,BGP Hijacking: new ways to mass surveillance,The evolving role of mobile communication in everyday logistics,"Mobile connection: Permanently online, permanently connected.",Analysis and Improvement of IOTA PoW Implementation,D,正確答案是 D：Analysis and Improvement of IOTA PoW Implementation。
+quiz-948,下列何者是今日議程之一？,雷系魔法師也能煎牛排！,「我寫故我在」社群媒體裡的憂鬱蹤跡,直播邊看邊好玩：探討遊戲挑戰及持續意圖,"想學 OS, 從 MINIX 開始",D,"正確答案是 D：想學 OS, 從 MINIX 開始。"
+quiz-949,下列何者是今日議程之一？,網路身分的真與假：談網路實名制,格鬥遊戲 AI 開發經驗談,從學生到放火實習生的奇幻旅程,「我寫故我在」社群媒體裡的憂鬱蹤跡,C,正確答案是 C：從學生到放火實習生的奇幻旅程。

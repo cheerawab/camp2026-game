@@ -5,9 +5,16 @@ type RecipeListResponse struct {
 }
 
 type FusionRecipeResponse struct {
-	ID          string                    `json:"id" example:"fusion-engineering-route-frame"`
-	Name        string                    `json:"name" example:"工程路線展示框"`
-	Description string                    `json:"description" example:"把工程小石與合成碎片組合成基地展示用的收藏外框。"`
+	ID          string                    `json:"id" example:"recipe_explore_2026_backpack_s1_s2"`
+	BranchID    string                    `json:"branchId,omitempty" example:"branch_2026_camp"`
+	Type        string                    `json:"type,omitempty" example:"exploration"`
+	StageFrom   int                       `json:"stageFrom,omitempty" example:"1"`
+	StageTo     int                       `json:"stageTo,omitempty" example:"2"`
+	Name        string                    `json:"name" example:"營地背包小石"`
+	Description string                    `json:"description" example:"牠把貼紙、名牌、備用線材都塞進包包，準備在 2026 營隊裡探索下一個任務。"`
+	Story       string                    `json:"story,omitempty" example:"牠把貼紙、名牌、備用線材都塞進包包。"`
+	ReviewTitle string                    `json:"reviewTitle,omitempty" example:"SITCON 2026 議程表"`
+	ReviewURL   string                    `json:"reviewUrl,omitempty" example:"https://sitcon.org/2026/agenda/"`
 	Enabled     bool                      `json:"enabled" example:"true"`
 	Available   bool                      `json:"available" example:"true"`
 	Inputs      []FusionComponentResponse `json:"inputs"`
@@ -16,15 +23,15 @@ type FusionRecipeResponse struct {
 
 type FusionComponentResponse struct {
 	Kind     string `json:"kind" example:"item"`
-	ID       string `json:"id" example:"item-crafting-fragment"`
-	Name     string `json:"name" example:"合成碎片"`
+	ID       string `json:"id" example:"item_adventure_backpack"`
+	Name     string `json:"name" example:"冒險背包"`
 	Type     string `json:"type,omitempty" example:"material"`
 	Rarity   string `json:"rarity,omitempty" example:"common"`
-	Quantity int    `json:"quantity" example:"3"`
+	Quantity int    `json:"quantity" example:"1"`
 }
 
 type CreateRequest struct {
-	RecipeID string `json:"recipeId" validate:"required" example:"fusion-engineering-route-frame"`
+	RecipeID string `json:"recipeId" validate:"required" example:"recipe_explore_2026_backpack_s1_s2"`
 }
 
 type CreateResponse struct {

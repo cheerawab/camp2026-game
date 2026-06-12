@@ -10,7 +10,7 @@ import (
 func TestLoadSitones(t *testing.T) {
 	dir := writeContent(t, `
 [[sitones]]
-id = "sitone-engineering"
+id = "stone_engineering_base"
 name = "工程型小石"
 type = "engineering"
 rarity = "base"
@@ -18,7 +18,7 @@ style = "default"
 description = "完成技術任務、分享解法或協助除錯。"
 
 [[sitones]]
-id = "sitone-exploration"
+id = "stone_explorer_base"
 name = "探索型小石"
 type = "exploration"
 rarity = "base"
@@ -35,13 +35,13 @@ description = "逛攤位、問問題、參與社群事件。"
 	if len(sitones) != 2 {
 		t.Fatalf("expected 2 sitones, got %d", len(sitones))
 	}
-	if sitones[0].ID != "sitone-engineering" || sitones[1].ID != "sitone-exploration" {
+	if sitones[0].ID != "stone_engineering_base" || sitones[1].ID != "stone_explorer_base" {
 		t.Fatalf("expected sitones sorted by id, got %#v", sitones)
 	}
 
-	sitone, ok := store.GetSitone("sitone-engineering")
+	sitone, ok := store.GetSitone("stone_engineering_base")
 	if !ok {
-		t.Fatal("expected sitone-engineering to exist")
+		t.Fatal("expected stone_engineering_base to exist")
 	}
 	if sitone.Name != "工程型小石" {
 		t.Fatalf("expected engineering sitone name, got %q", sitone.Name)
@@ -52,7 +52,7 @@ description = "逛攤位、問問題、參與社群事件。"
 
 	sitones[0].ID = "mutated"
 	sitones = store.ListSitones()
-	if sitones[0].ID != "sitone-engineering" {
+	if sitones[0].ID != "stone_engineering_base" {
 		t.Fatalf("expected ListSitones to return a copy, got %q", sitones[0].ID)
 	}
 }
@@ -60,21 +60,21 @@ description = "逛攤位、問問題、參與社群事件。"
 func TestLoadItems(t *testing.T) {
 	dir := writeContent(t, validSitonesTOML(), `
 [[items]]
-id = "item-theme-ticket"
-name = "基地佈景券"
-type = "cosmetic"
-rarity = "rare"
-description = "可以兌換小隊基地展示佈景。"
-purchasable = true
-enabled = true
-price_open_power = 200
-
-[[items]]
-id = "item-crafting-fragment"
-name = "合成碎片"
+id = "item_maze_map"
+name = "迷宮地圖"
 type = "material"
 rarity = "common"
-description = "小石造型合成使用的基礎素材。"
+description = "迷宮地圖，可用於小石合成。"
+purchasable = true
+enabled = true
+price_open_power = 50
+
+[[items]]
+id = "item_adventure_backpack"
+name = "冒險背包"
+type = "material"
+rarity = "common"
+description = "冒險背包，可用於小石合成。"
 `)
 
 	store, err := Load(dir)
@@ -86,22 +86,22 @@ description = "小石造型合成使用的基礎素材。"
 	if len(items) != 2 {
 		t.Fatalf("expected 2 items, got %d", len(items))
 	}
-	if items[0].ID != "item-crafting-fragment" || items[1].ID != "item-theme-ticket" {
+	if items[0].ID != "item_adventure_backpack" || items[1].ID != "item_maze_map" {
 		t.Fatalf("expected items sorted by id, got %#v", items)
 	}
 
-	item, ok := store.GetItem("item-theme-ticket")
+	item, ok := store.GetItem("item_maze_map")
 	if !ok {
-		t.Fatal("expected item-theme-ticket to exist")
+		t.Fatal("expected item_maze_map to exist")
 	}
-	if item.Name != "基地佈景券" {
-		t.Fatalf("expected theme ticket name, got %q", item.Name)
+	if item.Name != "迷宮地圖" {
+		t.Fatalf("expected maze map name, got %q", item.Name)
 	}
-	if !item.Purchasable || !item.Enabled || item.PriceOpenPower != 200 {
-		t.Fatalf("expected theme ticket shop metadata, got %#v", item)
+	if !item.Purchasable || !item.Enabled || item.PriceOpenPower != 50 {
+		t.Fatalf("expected maze map shop metadata, got %#v", item)
 	}
-	if item, ok := store.GetItem("item-crafting-fragment"); !ok || item.Purchasable || item.Enabled || item.PriceOpenPower != 0 {
-		t.Fatalf("expected crafting fragment to use default shop metadata, got %#v", item)
+	if item, ok := store.GetItem("item_adventure_backpack"); !ok || item.Purchasable || item.Enabled || item.PriceOpenPower != 0 {
+		t.Fatalf("expected adventure backpack to use default shop metadata, got %#v", item)
 	}
 	if _, ok := store.GetItem("missing"); ok {
 		t.Fatal("expected missing item not to exist")
@@ -109,7 +109,7 @@ description = "小石造型合成使用的基礎素材。"
 
 	items[0].ID = "mutated"
 	items = store.ListItems()
-	if items[0].ID != "item-crafting-fragment" {
+	if items[0].ID != "item_adventure_backpack" {
 		t.Fatalf("expected ListItems to return a copy, got %q", items[0].ID)
 	}
 }
@@ -151,24 +151,31 @@ func TestLoadQuizQuestions(t *testing.T) {
 func TestLoadFusionRecipes(t *testing.T) {
 	dir := writeContent(t, validSitonesTOML(), validItemsTOML(), validQuizQuestionsCSV(), `
 [[fusion_recipes]]
-id = "fusion-engineering-route-frame"
+id = "recipe_engineering_terminal_s1_s2"
+branch_id = "branch-engineering-route"
+type = "engineering"
+stage_from = 1
+stage_to = 2
 name = "Engineering Route Frame"
 description = "Build a base display frame."
+story = "Build the first route frame."
+review_title = "Engineering Notes"
+review_url = "https://example.test/engineering"
 enabled = true
 
 [[fusion_recipes.inputs]]
 kind = "sitone"
-id = "sitone-engineering"
+id = "stone_engineering_base"
 quantity = 1
 
 [[fusion_recipes.inputs]]
 kind = "item"
-id = "item-crafting-fragment"
+id = "item_adventure_backpack"
 quantity = 3
 
 [[fusion_recipes.outputs]]
 kind = "item"
-id = "item-crafting-fragment"
+id = "item_adventure_backpack"
 quantity = 1
 `)
 
@@ -181,24 +188,30 @@ quantity = 1
 	if len(recipes) != 1 {
 		t.Fatalf("expected 1 recipe, got %d", len(recipes))
 	}
-	if recipes[0].ID != "fusion-engineering-route-frame" || !recipes[0].Enabled {
+	if recipes[0].ID != "recipe_engineering_terminal_s1_s2" || !recipes[0].Enabled {
 		t.Fatalf("unexpected fusion recipe: %#v", recipes[0])
 	}
 
-	recipe, ok := store.GetFusionRecipe("fusion-engineering-route-frame")
+	recipe, ok := store.GetFusionRecipe("recipe_engineering_terminal_s1_s2")
 	if !ok {
 		t.Fatal("expected fusion recipe to exist")
+	}
+	if recipe.BranchID != "branch-engineering-route" || recipe.Type != "engineering" || recipe.StageFrom != 1 || recipe.StageTo != 2 {
+		t.Fatalf("unexpected fusion recipe metadata: %#v", recipe)
+	}
+	if recipe.Story != "Build the first route frame." || recipe.ReviewTitle != "Engineering Notes" || recipe.ReviewURL != "https://example.test/engineering" {
+		t.Fatalf("unexpected fusion recipe story metadata: %#v", recipe)
 	}
 	if len(recipe.Inputs) != 2 || len(recipe.Outputs) != 1 {
 		t.Fatalf("unexpected recipe components: %#v", recipe)
 	}
 
 	recipes[0].Inputs[0].ID = "mutated"
-	recipe, ok = store.GetFusionRecipe("fusion-engineering-route-frame")
+	recipe, ok = store.GetFusionRecipe("recipe_engineering_terminal_s1_s2")
 	if !ok {
 		t.Fatal("expected fusion recipe to exist")
 	}
-	if recipe.Inputs[0].ID != "sitone-engineering" {
+	if recipe.Inputs[0].ID != "stone_engineering_base" {
 		t.Fatalf("expected fusion recipe components to be copied, got %#v", recipe.Inputs[0])
 	}
 }
@@ -206,13 +219,13 @@ quantity = 1
 func TestLoadRejectsDuplicateSitoneID(t *testing.T) {
 	dir := writeContent(t, `
 [[sitones]]
-id = "sitone-engineering"
+id = "stone_engineering_base"
 name = "Engineering"
 type = "engineering"
 rarity = "base"
 
 [[sitones]]
-id = "sitone-engineering"
+id = "stone_engineering_base"
 name = "Engineering Again"
 type = "engineering"
 rarity = "base"
@@ -222,7 +235,7 @@ rarity = "base"
 	if err == nil {
 		t.Fatal("expected duplicate id error")
 	}
-	if !strings.Contains(err.Error(), `duplicate sitone id "sitone-engineering"`) {
+	if !strings.Contains(err.Error(), `duplicate sitone id "stone_engineering_base"`) {
 		t.Fatalf("expected duplicate id error, got %v", err)
 	}
 }
@@ -230,13 +243,13 @@ rarity = "base"
 func TestLoadRejectsDuplicateItemID(t *testing.T) {
 	dir := writeContent(t, validSitonesTOML(), `
 [[items]]
-id = "item-crafting-fragment"
+id = "item_adventure_backpack"
 name = "Crafting Fragment"
 type = "material"
 rarity = "common"
 
 [[items]]
-id = "item-crafting-fragment"
+id = "item_adventure_backpack"
 name = "Crafting Fragment Again"
 type = "material"
 rarity = "common"
@@ -246,7 +259,7 @@ rarity = "common"
 	if err == nil {
 		t.Fatal("expected duplicate id error")
 	}
-	if !strings.Contains(err.Error(), `duplicate item id "item-crafting-fragment"`) {
+	if !strings.Contains(err.Error(), `duplicate item id "item_adventure_backpack"`) {
 		t.Fatalf("expected duplicate id error, got %v", err)
 	}
 }
@@ -350,7 +363,7 @@ rarity = "mythic"
 func TestLoadRejectsPurchasableItemWithoutPrice(t *testing.T) {
 	dir := writeContent(t, validSitonesTOML(), `
 [[items]]
-id = "item-crafting-fragment"
+id = "item_adventure_backpack"
 name = "Crafting Fragment"
 type = "material"
 rarity = "common"
@@ -480,7 +493,7 @@ func writeContent(t *testing.T, sitones string, values ...string) string {
 func validSitonesTOML() string {
 	return strings.TrimSpace(`
 [[sitones]]
-id = "sitone-engineering"
+id = "stone_engineering_base"
 name = "Engineering"
 type = "engineering"
 rarity = "base"
@@ -490,7 +503,7 @@ rarity = "base"
 func validItemsTOML() string {
 	return strings.TrimSpace(`
 [[items]]
-id = "item-crafting-fragment"
+id = "item_adventure_backpack"
 name = "Crafting Fragment"
 type = "material"
 rarity = "common"
@@ -500,24 +513,24 @@ rarity = "common"
 func validFusionRecipesTOML() string {
 	return strings.TrimSpace(`
 [[fusion_recipes]]
-id = "fusion-engineering-route-frame"
+id = "recipe_engineering_terminal_s1_s2"
 name = "Engineering Route Frame"
 description = "Build a base display frame."
 enabled = true
 
 [[fusion_recipes.inputs]]
 kind = "sitone"
-id = "sitone-engineering"
+id = "stone_engineering_base"
 quantity = 1
 
 [[fusion_recipes.inputs]]
 kind = "item"
-id = "item-crafting-fragment"
+id = "item_adventure_backpack"
 quantity = 3
 
 [[fusion_recipes.outputs]]
 kind = "item"
-id = "item-crafting-fragment"
+id = "item_adventure_backpack"
 quantity = 1
 `)
 }

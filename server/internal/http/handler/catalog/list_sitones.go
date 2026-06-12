@@ -12,7 +12,7 @@ type SitoneListResponse struct {
 }
 
 type SitoneResponse struct {
-	ID          string `json:"id" example:"sitone-engineering"`
+	ID          string `json:"id" example:"stone_engineering_base"`
 	Name        string `json:"name" example:"工程型小石"`
 	Type        string `json:"type" example:"engineering"`
 	Rarity      string `json:"rarity" example:"base"`
