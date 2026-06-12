@@ -17,7 +17,10 @@ export function GamePageShell({
 }: GamePageShellProps) {
   return (
     <main
-      className={cn("bg-paper text-ink flex min-h-svh justify-center", className)}
+      className={cn(
+        "bg-paper text-ink flex min-h-svh justify-center",
+        className,
+      )}
       aria-label={ariaLabel}
     >
       <div
