@@ -1,6 +1,7 @@
-import { BattleIngamePage } from "@/pages/battle/ingame/ui/battle-ingame"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, redirect } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/battle/ingame")({
-  component: BattleIngamePage,
+  beforeLoad: () => {
+    throw redirect({ to: "/battle/question" })
+  },
 })

@@ -6,22 +6,33 @@ type BattleWaitingPlayerCardType = {
   name: string
   team: string
   ready: boolean
-  pictureSrc: string
+  loadoutCount?: number
+  pictureSrc?: string
 }
 
 export function BattleWaitingPlayerCard({
   name,
   team,
   ready,
+  loadoutCount = 0,
   pictureSrc,
 }: BattleWaitingPlayerCardType) {
   return (
     <Card>
       <CardContent className="flex items-center justify-between">
-        <img src={pictureSrc} className="h-20" />
+        {pictureSrc ? (
+          <img src={pictureSrc} className="h-20" alt="" />
+        ) : (
+          <div className="bg-pebble-spark border-ink grid size-20 place-items-center rounded-[22px] border-2 text-2xl font-black">
+            {name.trim().slice(0, 1) || "?"}
+          </div>
+        )}
         <div className="flex flex-col items-center justify-center">
           <span className="text-2xl font-bold">{name}</span>
           <span className="text-muted-foreground text-lg">{team}</span>
+          <span className="text-muted-foreground text-sm font-bold">
+            {loadoutCount > 0 ? `${loadoutCount} 顆小石` : "尚未選小石"}
+          </span>
         </div>
         <Badge
           variant={ready ? "default" : "outline"}

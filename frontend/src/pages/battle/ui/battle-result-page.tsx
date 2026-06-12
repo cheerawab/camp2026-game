@@ -1,4 +1,8 @@
+import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
+import { Backpack, ChevronDown, Home } from "lucide-react"
+
+import { gameApi, type MatchQuestionResult } from "@/shared/api/game"
 import { Button } from "@/shared/ui/button"
 import {
   Card,
@@ -7,6 +11,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card"
+import { GamePageShell } from "@/shared/ui/game-page-shell"
+import { PageHeader } from "@/shared/ui/page-header"
 import {
   Collapsible,
   CollapsibleContent,
@@ -14,157 +20,207 @@ import {
 } from "@/shared/ui/collapsible"
 import { Separator } from "@/shared/ui/separator"
 import { cn } from "@/shared/utils"
-import { Backpack, ChevronDown, Home } from "lucide-react"
 
-const answerExplain = [
-  {
-    question: "開源授權允許什麼？",
-    correctAnswer: "檢視、使用與改作",
-    playerAnswer: "只能下載一次",
-    correct: false,
-    explain: "開源的重點是讓原始碼與授權規則可被社群理解、使用與改作。",
-  },
-  {
-    question: "開源授權允許什麼？",
-    correctAnswer: "檢視、使用與改作",
-    playerAnswer: "只能下載一次",
-    correct: true,
-    explain: "開源的重點是讓原始碼與授權規則可被社群理解、使用與改作。",
-  },
-  {
-    question: "開源授權允許什麼？",
-    correctAnswer: "檢視、使用與改作",
-    playerAnswer: "只能下載一次",
-    correct: false,
-    explain: "開源的重點是讓原始碼與授權規則可被社群理解、使用與改作。",
-  },
-  {
-    question: "開源授權允許什麼？",
-    correctAnswer: "檢視、使用與改作",
-    playerAnswer: "只能下載一次",
-    correct: false,
-    explain: "開源的重點是讓原始碼與授權規則可被社群理解、使用與改作。",
-  },
-]
+function getStoredMatchID() {
+  if (typeof window === "undefined") return ""
+  return window.localStorage.getItem("camp2026.currentMatchId") ?? ""
+}
+
+function clearStoredMatchID() {
+  if (typeof window !== "undefined") {
+    window.localStorage.removeItem("camp2026.currentMatchId")
+  }
+}
+
+function choiceText(result: MatchQuestionResult, choice?: string) {
+  switch (choice) {
+    case "A":
+      return result.choiceA
+    case "B":
+      return result.choiceB
+    case "C":
+      return result.choiceC
+    case "D":
+      return result.choiceD
+    default:
+      return "未作答"
+  }
+}
 
 export function BattleResultPage() {
+  const matchID = getStoredMatchID()
+  const { data: match, isPending } = useQuery({
+    queryKey: ["matches", matchID],
+    queryFn: () => gameApi.getMatch(matchID),
+    enabled: matchID.length > 0,
+    refetchInterval: (query) =>
+      query.state.data?.status === "completed" ? false : 1_000,
+  })
+  const players = match?.players ?? []
+  const winner = [...players].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))[0]
+
   return (
-    <main className="mx-auto grid w-full max-w-sm gap-y-2 px-4 py-4">
-      {/* 對戰結果 */}
+    <GamePageShell contentClassName="grid content-start gap-y-2">
+      <PageHeader
+        title="對戰結果"
+        headline="Battle Result"
+        backTo="/"
+        onBack={clearStoredMatchID}
+      />
+
       <Card>
         <CardContent className="grid gap-y-4">
-          <span className="animate-bounce text-center text-4xl font-bold">
-            勝利
+          <span className="text-center text-4xl font-bold">
+            {isPending
+              ? "同步結果"
+              : match?.status === "completed"
+                ? winner
+                  ? `${winner.nickname} 勝利`
+                  : "對戰結束"
+                : "對戰尚未結束"}
           </span>
           <div className="flex items-center gap-x-4">
-            <Card className="bg-accent text-status-success flex-1">
-              <CardContent className="grid gap-y-2">
-                <span className="text-center">混凝土</span>
-                <span className="text-center text-4xl font-bold">640</span>
-              </CardContent>
-            </Card>
-            <span className="text-2xl font-bold">VS</span>
-            <Card className="bg-accent text-muted-foreground flex-1">
-              <CardContent className="grid gap-y-2">
-                <span className="text-center">義大利麵</span>
-                <span className="text-center text-4xl font-bold">520</span>
-              </CardContent>
-            </Card>
+            {players.slice(0, 2).map((player, index) => (
+              <Card
+                key={player.playerId}
+                className={cn(
+                  "bg-accent flex-1",
+                  index === 0 ? "text-status-success" : "text-muted-foreground",
+                )}
+              >
+                <CardContent className="grid gap-y-2">
+                  <span className="text-center">{player.nickname}</span>
+                  <span className="text-center text-4xl font-bold">
+                    {player.score ?? 0}
+                  </span>
+                  <span className="text-center text-xs font-bold">
+                    {player.sitoneIds.length} 顆小石
+                  </span>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </CardContent>
       </Card>
-      {/* 獲得道具 */}
+
       <Card>
         <CardHeader>
-          <CardTitle>獲得道具</CardTitle>
-          <CardDescription>本場對戰的獎勵已收入背包！</CardDescription>
+          <CardTitle>獲得獎勵</CardTitle>
+          <CardDescription>本場對戰的開源力獎勵會收入帳號。</CardDescription>
         </CardHeader>
         <CardContent className="flex gap-x-4">
           <div className="bg-accent border-secondary-foreground rounded-lg border-2 p-2">
             <Backpack className="size-10 rounded-lg" />
           </div>
-          <div className="grid grid-cols-2 gap-x-4 text-lg">
-            <div className="grid gap-y-2">
-              <span>開源力</span>
-              <span>螢光靈燈</span>
-            </div>
-            <div className="text-foreground grid gap-y-2 text-lg">
-              <span className="flex items-center gap-x-2">+80</span>
-              <span className="flex items-center gap-x-2">+1</span>
-            </div>
+          <div className="grid gap-y-2 text-lg">
+            {players.map((player) => (
+              <div
+                key={player.playerId}
+                className="grid grid-cols-[1fr_auto] gap-x-4"
+              >
+                <span>{player.nickname}</span>
+                <span className="font-bold">
+                  +{player.openPowerReward ?? 0} 開源力
+                </span>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
-      {/* 題目解析 */}
+
       <Separator className="my-2" />
 
       <span className="text-center text-2xl font-bold">逐題解析</span>
-      {answerExplain.map((item, index) => {
-        return (
-          <Card>
-            <CardContent>
-              <Collapsible>
-                <CollapsibleTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="group flex h-fit w-full items-center justify-start gap-x-4"
-                  >
-                    <div
-                      className={cn(
-                        "border-foreground rounded border-2 px-4 py-2 text-lg",
-                        item.correct
-                          ? "bg-status-success text-status-success-foreground"
-                          : "bg-status-warning text-status-warning-foreground",
-                      )}
-                    >
-                      {index + 1}
-                    </div>
-                    <span className="flex-1 text-center text-lg">
-                      {item.question}
+      {(match?.results ?? []).map((result, index) => (
+        <Card key={result.questionId} className="overflow-hidden py-0">
+          <CardContent className="p-0">
+            <Collapsible>
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="group grid h-auto w-full grid-cols-[64px_auto_minmax(0,1fr)_auto] items-center gap-4 rounded-[22px] px-4 py-4 text-left shadow-none"
+                >
+                  <div className="grid justify-items-center gap-1">
+                    <span className="text-muted-foreground text-[11px] leading-none font-black tracking-[0.08em]">
+                      題數
                     </span>
-                    <ChevronDown className="transition group-data-[state=open]:rotate-180" />
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <div className="mt-2 grid gap-y-2">
-                    <Card>
-                      <CardContent className="grid gap-y-2">
-                        <div className="grid gap-y-1">
-                          <span className="text-muted-foreground text-sm font-bold">
-                            正確答案
-                          </span>
-                          <span className="text-lg font-bold">
-                            {item.correctAnswer}
-                          </span>
-                        </div>
-                        {!item.correct && (
-                          <div className="grid gap-y-1">
-                            <span className="text-muted-foreground text-sm font-bold">
-                              錯誤答案
-                            </span>
-                            <span className="decoration-muted-foreground text-lg font-bold line-through decoration-2">
-                              {item.playerAnswer}
-                            </span>
-                          </div>
-                        )}
-                        <Separator />
-                        <span>{item.explain}</span>
-                      </CardContent>
-                    </Card>
+                    <span className="border-ink bg-accent grid size-11 place-items-center rounded-lg border-2 text-lg font-black">
+                      {index + 1}
+                    </span>
                   </div>
-                </CollapsibleContent>
-              </Collapsible>
-            </CardContent>
-          </Card>
-        )
-      })}
-      {/* 動作區 */}
+                  <Separator orientation="vertical" className="h-12" />
+                  <div className="min-w-0">
+                    <span className="text-muted-foreground text-[11px] leading-none font-black tracking-[0.08em]">
+                      名稱
+                    </span>
+                    <span className="mt-1 block text-base leading-tight font-black whitespace-normal">
+                      {result.prompt}
+                    </span>
+                  </div>
+                  <ChevronDown className="justify-self-end transition group-data-[state=open]:rotate-180" />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="px-4 pb-4">
+                <div className="border-ink bg-card grid gap-y-3 rounded-[20px] border-2 px-4 py-4">
+                  <div className="grid gap-y-1">
+                    <span className="text-muted-foreground text-sm font-bold">
+                      正確答案
+                    </span>
+                    <span className="text-lg font-bold">
+                      {result.correctChoice}.{" "}
+                      {choiceText(result, result.correctChoice)}
+                    </span>
+                  </div>
+                  {result.answers.map((answer) => (
+                    <div
+                      key={answer.playerId}
+                      className="grid gap-y-1 border-t pt-2"
+                    >
+                      <span className="text-muted-foreground text-sm font-bold">
+                        {answer.playerId}
+                      </span>
+                      <span
+                        className={cn(
+                          "text-lg font-bold",
+                          answer.correct
+                            ? "text-status-success"
+                            : "text-status-warning",
+                        )}
+                      >
+                        {answer.choice
+                          ? `${answer.choice}. ${choiceText(
+                              result,
+                              answer.choice,
+                            )}`
+                          : "未作答"}
+                      </span>
+                    </div>
+                  ))}
+                  <Separator />
+                  <span>{result.explanation}</span>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          </CardContent>
+        </Card>
+      ))}
+
+      {match?.results.length === 0 ? (
+        <Card>
+          <CardContent>
+            <span className="text-muted-foreground font-bold">
+              結果會在對戰完成後顯示。
+            </span>
+          </CardContent>
+        </Card>
+      ) : null}
+
       <Separator className="my-2" />
-      <Button asChild>
+      <Button asChild onClick={clearStoredMatchID}>
         <Link to="/">
           <Home /> 返回首頁
         </Link>
       </Button>
-    </main>
+    </GamePageShell>
   )
 }

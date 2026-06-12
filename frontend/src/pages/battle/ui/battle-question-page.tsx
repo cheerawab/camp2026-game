@@ -1,115 +1,364 @@
-import { BattleIngameTeam } from "@/features/battle-ingame/ui/battle-ingame-team"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { Link, useNavigate } from "@tanstack/react-router"
+import { useEffect, useMemo, useState } from "react"
+import { toast } from "sonner"
+
+import {
+  gameApi,
+  type MatchChoice,
+  type MatchPlayer,
+  type Sitone,
+} from "@/shared/api/game"
+import { sitoneMeta } from "@/shared/lib/game-labels"
 import { Button } from "@/shared/ui/button"
 import { Card, CardContent } from "@/shared/ui/card"
+import { GamePageShell } from "@/shared/ui/game-page-shell"
 import { Separator } from "@/shared/ui/separator"
+import { cn } from "@/shared/utils"
 
-const quizData = {
-  progress: {
-    current: 3,
-    max: 5,
-  },
-  time: {
-    current: 19,
-    max: 30,
-  },
-  question: "下列哪一項最能描述開源授權在專案中的作用？",
-  type: "Open Source",
-  answers: [
-    "開源專案的條款",
-    "營隊隊呼的節奏",
-    "午餐菜單的排序",
-    "場地網路的密碼",
-  ],
-  state: [true, false],
+function getStoredMatchID() {
+  if (typeof window === "undefined") return ""
+  return window.localStorage.getItem("camp2026.currentMatchId") ?? ""
 }
 
-const teamDataA = [
-  {
-    name: "A 小石",
-    type: "靈光",
-    pictureSrc: "https://placehold.co/100x100/svg?text=A",
-  },
-  {
-    name: "B 小石",
-    type: "靈光",
-    pictureSrc: "https://placehold.co/100x100/svg?text=B",
-  },
-  {
-    name: "C 小石",
-    type: "靈光",
-    pictureSrc: "https://placehold.co/100x100/svg?text=C",
-  },
-  {
-    name: "D 小石",
-    type: "靈光",
-    pictureSrc: "https://placehold.co/100x100/svg?text=D",
-  },
-  {
-    name: "E 小石",
-    type: "靈光",
-    pictureSrc: "https://placehold.co/100x100/svg?text=E",
-  },
-]
+function secondsUntil(value: string | undefined, now: number | null) {
+  if (!value || now == null) return 0
+  return Math.max(0, Math.ceil((new Date(value).getTime() - now) / 1000))
+}
 
-export function BattleQuestionPage() {
+function scoreRatio(score: number, maxScore: number) {
+  if (maxScore <= 0) return 0
+  return Math.max(0, Math.min(100, (score / maxScore) * 100))
+}
+
+function answerStatus(player: MatchPlayer | undefined) {
+  if (!player) return "等待中"
+  return player.answeredCurrentQuestion ? "已答" : "作答中"
+}
+
+function ScoreMeter({
+  score,
+  maxScore,
+  side,
+}: {
+  score: number
+  maxScore: number
+  side: "opponent" | "self"
+}) {
+  const ratio = scoreRatio(score, maxScore)
   return (
-    <>
-      <main className="mx-auto grid w-full max-w-sm gap-y-2 px-2 py-4">
-        {/* 分數 - 時間 - 分數 */}
-        <div className="grid grid-cols-3 pb-2 text-center">
-          <div>
-            <div className="text-lg font-bold">125</div>
-            <div className="text-muted-foreground text-xs">混凝土</div>
+    <div
+      className={cn(
+        "h-3 overflow-hidden rounded-full border-2",
+        side === "opponent"
+          ? "bg-pebble-resonate-muted border-pebble-resonate-foreground"
+          : "bg-pebble-engineer-muted border-pebble-engineer-foreground",
+      )}
+      aria-label={`${score} / ${maxScore} 分`}
+      role="meter"
+      aria-valuemin={0}
+      aria-valuemax={maxScore}
+      aria-valuenow={score}
+    >
+      <div
+        className={cn(
+          "h-full rounded-full transition-all",
+          side === "opponent" ? "bg-pebble-resonate" : "bg-pebble-engineer",
+        )}
+        style={{ width: `${ratio}%` }}
+      />
+    </div>
+  )
+}
+
+function SitoneChip({ sitone }: { sitone: Sitone }) {
+  const meta = sitoneMeta(sitone.type)
+  return (
+    <div className="grid min-w-16 justify-items-center gap-1 text-center">
+      <span
+        className={cn(
+          "border-ink grid size-9 place-items-center rounded-[12px] border-2 text-[10px] font-black",
+          meta.bgClassName,
+        )}
+      >
+        {meta.short}
+      </span>
+      <span className="max-w-16 truncate text-[11px] leading-tight font-black">
+        {sitone.name}
+      </span>
+    </div>
+  )
+}
+
+function SitoneLoadout({
+  sitones,
+  emptyLabel,
+}: {
+  sitones: Sitone[]
+  emptyLabel: string
+}) {
+  if (sitones.length === 0) {
+    return (
+      <div className="border-border text-muted-foreground grid h-[58px] place-items-center rounded-[18px] border-2 border-dashed px-3 text-xs font-bold">
+        {emptyLabel}
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex min-w-0 gap-2 overflow-x-auto pb-1">
+      {sitones.map((sitone, index) => (
+        <SitoneChip key={`${sitone.id}-${index}`} sitone={sitone} />
+      ))}
+    </div>
+  )
+}
+
+function PlayerRail({
+  label,
+  player,
+  sitones,
+  side,
+}: {
+  label: string
+  player: MatchPlayer | undefined
+  sitones: Sitone[]
+  side: "opponent" | "self"
+}) {
+  const score = player?.score ?? 0
+  const maxScore = player?.maxScore ?? 0
+  const meter = (
+    <div className="grid gap-1">
+      <div className="flex items-end justify-between gap-2">
+        <span className="text-muted-foreground text-xs font-black">
+          {label}
+        </span>
+        <span className="text-sm leading-none font-black">
+          {score}
+          <span className="text-muted-foreground"> / {maxScore}</span>
+        </span>
+      </div>
+      <ScoreMeter score={score} maxScore={maxScore} side={side} />
+    </div>
+  )
+
+  return (
+    <section
+      className={cn(
+        "border-ink bg-card grid gap-2 rounded-[22px] border-2 p-3 shadow-[4px_4px_0_var(--border)]",
+        side === "self" && "sticky bottom-2 z-10",
+      )}
+      aria-label={`${label}資訊`}
+    >
+      {side === "opponent" ? meter : null}
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <div className="truncate text-lg font-black">
+            {player?.nickname ?? "等待對手"}
           </div>
-          <div className="flex items-end justify-center">
-            <div className="text-4xl font-bold">18</div>
-            <div className="text-lg">s</div>
-          </div>
-          <div>
-            <div className="text-lg font-bold">256</div>
-            <div className="text-muted-foreground text-xs">義大利麵</div>
+          <div className="text-muted-foreground text-xs font-bold">
+            {answerStatus(player)}
           </div>
         </div>
-        {/*<BattleIngameScoreBar a={125} b={256} />*/}
+        <div className="text-muted-foreground text-xs font-black whitespace-nowrap">
+          {sitones.length} 顆小石
+        </div>
+      </div>
+      <SitoneLoadout
+        sitones={sitones}
+        emptyLabel={side === "opponent" ? "等待對手小石" : "正在同步小石"}
+      />
+      {side === "self" ? meter : null}
+    </section>
+  )
+}
+
+export function BattleQuestionPage() {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const [matchID] = useState(getStoredMatchID)
+  const [now, setNow] = useState<number | null>(null)
+  const matchQuery = useQuery({
+    queryKey: ["matches", matchID],
+    queryFn: () => gameApi.getMatch(matchID),
+    enabled: matchID.length > 0,
+    refetchInterval: 1_000,
+  })
+  const statusQuery = useQuery({
+    queryKey: ["me", "status"],
+    queryFn: gameApi.status,
+  })
+  const catalogSitonesQuery = useQuery({
+    queryKey: ["catalog", "sitones"],
+    queryFn: gameApi.catalogSitones,
+  })
+  const answerMutation = useMutation({
+    mutationFn: ({
+      questionID,
+      choice,
+    }: {
+      questionID: string
+      choice: MatchChoice
+    }) => gameApi.answerMatch(matchID, questionID, choice),
+    onSuccess: () => {
+      toast.success("答案已送出")
+      queryClient.invalidateQueries({ queryKey: ["matches", matchID] })
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "送出答案失敗")
+    },
+  })
+
+  useEffect(() => {
+    const interval = window.setInterval(() => setNow(Date.now()), 500)
+    return () => window.clearInterval(interval)
+  }, [])
+
+  const match = matchQuery.data
+  const question = match?.currentQuestion
+  const players = match?.players ?? []
+  const currentPlayer = match?.players.find(
+    (player) => player.playerId === statusQuery.data?.playerId,
+  )
+  const opponentPlayer = players.find(
+    (player) => player.playerId !== statusQuery.data?.playerId,
+  )
+  const sitonesByID = useMemo(
+    () =>
+      new Map(
+        (catalogSitonesQuery.data ?? []).map((sitone) => [sitone.id, sitone]),
+      ),
+    [catalogSitonesQuery.data],
+  )
+  const currentPlayerSitones = useMemo(
+    () =>
+      (currentPlayer?.sitoneIds ?? [])
+        .map((sitoneID) => sitonesByID.get(sitoneID))
+        .filter((sitone) => sitone != null),
+    [currentPlayer?.sitoneIds, sitonesByID],
+  )
+  const opponentSitones = useMemo(
+    () =>
+      (opponentPlayer?.sitoneIds ?? [])
+        .map((sitoneID) => sitonesByID.get(sitoneID))
+        .filter((sitone) => sitone != null),
+    [opponentPlayer?.sitoneIds, sitonesByID],
+  )
+  const choices = useMemo(
+    () =>
+      question
+        ? ([
+            ["A", question.choiceA],
+            ["B", question.choiceB],
+            ["C", question.choiceC],
+            ["D", question.choiceD],
+          ] as const)
+        : [],
+    [question],
+  )
+  const remainingSeconds = secondsUntil(match?.roundEndsAt, now)
+  const answered = currentPlayer?.answeredCurrentQuestion === true
+
+  useEffect(() => {
+    if (match?.status === "waiting") {
+      navigate({ to: "/battle/room" })
+    }
+    if (match?.status === "completed") {
+      navigate({ to: "/battle/result" })
+    }
+  }, [match?.status, navigate])
+
+  if (!matchID) {
+    return (
+      <GamePageShell contentClassName="grid content-start gap-y-2">
         <Card>
-          <CardContent className="grid">
-            {/* 題目 */}
-            <div className="grid gap-y-0 pb-2">
-              <span className="text-muted-foreground text-sm font-bold uppercase">
-                {quizData.type}
-              </span>
-              <span className="text-2xl font-bold">{quizData.question}</span>
+          <CardContent className="grid gap-3">
+            <h1 className="text-2xl font-bold">找不到目前對戰</h1>
+            <Button asChild>
+              <Link to="/battle">回到知識王大廳</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </GamePageShell>
+    )
+  }
+
+  return (
+    <GamePageShell contentClassName="grid min-h-svh grid-rows-[auto_minmax(0,1fr)_auto] gap-y-2 px-2">
+      <PlayerRail
+        label="對手"
+        player={opponentPlayer}
+        sitones={opponentSitones}
+        side="opponent"
+      />
+
+      <div className="grid min-h-0 content-start gap-y-2">
+        <Card>
+          <CardContent className="grid gap-3">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+              <div className="grid gap-y-1">
+                <span className="text-muted-foreground text-sm font-black">
+                  第 {(match?.currentQuestionIndex ?? 0) + 1} /{" "}
+                  {match?.questionCount ?? 0} 題
+                </span>
+                <span className="text-2xl leading-tight font-black">
+                  {question?.prompt ?? "正在同步題目"}
+                </span>
+              </div>
+              <div className="grid justify-items-end leading-none">
+                <span key={now} className="text-4xl font-black">
+                  {remainingSeconds}
+                </span>
+                <span className="text-sm font-bold">秒</span>
+              </div>
             </div>
-            {/**/}
             <Separator />
-            {/* 選項 */}
-            {quizData.answers.map((item, index) => {
-              return (
-                <>
+            <div className="grid">
+              {choices.map(([choice, label], index) => (
+                <div key={choice}>
                   <Button
                     variant="ghost"
-                    className="h-fit justify-start rounded-none py-2 pl-0"
+                    className="grid h-fit w-full grid-cols-[58px_minmax(0,1fr)] justify-start gap-3 rounded-none py-2 pl-0"
+                    disabled={answered || answerMutation.isPending}
+                    onClick={() =>
+                      question &&
+                      answerMutation.mutate({
+                        questionID: question.questionId,
+                        choice,
+                      })
+                    }
                   >
-                    <span className="border-accent-foreground bg-accent text-muted-foreground rounded-lg border-2 px-4 py-2">
-                      {["A", "B", "C", "D"][index]}
+                    <span className="border-accent-foreground bg-accent text-muted-foreground grid size-12 place-items-center rounded-lg border-2 text-lg font-black">
+                      {choice}
                     </span>
-                    <span className="text-lg">{item}</span>
+                    <span className="min-w-0 text-left text-lg leading-tight whitespace-normal">
+                      {label}
+                    </span>
                   </Button>
-                  {index < 3 && <Separator />}
-                </>
-              )
-            })}
+                  {index < choices.length - 1 && <Separator />}
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
-        {/* 小石資訊 */}
+
         <Card>
-          <CardContent className="flex">
-            <BattleIngameTeam team={teamDataA} highlight={2} />
-            <Separator orientation="vertical" />
-            <BattleIngameTeam team={teamDataA} highlight={2} reverse />
+          <CardContent>
+            <p className="text-muted-foreground text-sm font-bold">
+              {answered
+                ? "答案已送出，等待下一題。"
+                : "選擇答案後會立即送出，結果會在對戰結束後揭曉。"}
+            </p>
           </CardContent>
         </Card>
-      </main>
-    </>
+      </div>
+
+      <PlayerRail
+        label="自己"
+        player={currentPlayer}
+        sitones={currentPlayerSitones}
+        side="self"
+      />
+    </GamePageShell>
   )
 }
