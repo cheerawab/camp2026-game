@@ -39,7 +39,7 @@ var errInsufficientOpenPower = errors.New("insufficient open power")
 // @Router /shop/purchases [post]
 func (h *Handler) Purchase(w http.ResponseWriter, r *http.Request) {
 	player, ok := currentPlayer(w, r)
-	if !ok || !h.requireDatabase(w, r) || !h.requireMongoClient(w, r) || !h.requireContent(w, r) {
+	if !ok || !h.requireDatabase(w, r) || !h.requireContent(w, r) {
 		return
 	}
 
@@ -80,20 +80,24 @@ func (h *Handler) Purchase(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (h *Handler) requireMongoClient(w http.ResponseWriter, r *http.Request) bool {
-	if h.client == nil {
-		httpx.WriteProblem(w, r, httpx.ServiceUnavailable("database is unavailable"))
-		return false
-	}
-	return true
-}
-
 type purchaseResult struct {
 	purchaseID string
 	openPower  int
 }
 
 func (h *Handler) purchaseItem(ctx context.Context, playerID string, item content.Item) (purchaseResult, error) {
+	if h.client == nil {
+		return h.purchaseItemWithoutTransaction(ctx, playerID, item)
+	}
+
+	result, err := h.purchaseItemWithTransaction(ctx, playerID, item)
+	if err != nil && transactionUnsupported(err) {
+		return h.purchaseItemWithoutTransaction(ctx, playerID, item)
+	}
+	return result, err
+}
+
+func (h *Handler) purchaseItemWithTransaction(ctx context.Context, playerID string, item content.Item) (purchaseResult, error) {
 	session, err := h.client.StartSession()
 	if err != nil {
 		return purchaseResult{}, err
@@ -112,23 +116,9 @@ func (h *Handler) purchaseItem(ctx context.Context, playerID string, item conten
 			}
 		}()
 
-		openPower, err := h.sumOpenPower(ctx, playerID)
+		var err error
+		result, err = h.purchaseItemWithoutTransaction(ctx, playerID, item)
 		if err != nil {
-			return err
-		}
-		if openPower < item.PriceOpenPower {
-			return errInsufficientOpenPower
-		}
-
-		now := time.Now()
-		purchaseID := newID("purchase")
-		if err := h.insertPurchase(ctx, purchaseID, playerID, item, now); err != nil {
-			return err
-		}
-		if err := h.insertOpenPowerDeduction(ctx, purchaseID, playerID, item.PriceOpenPower, now); err != nil {
-			return err
-		}
-		if err := h.incrementPlayerItem(ctx, playerID, item.ID); err != nil {
 			return err
 		}
 
@@ -136,16 +126,45 @@ func (h *Handler) purchaseItem(ctx context.Context, playerID string, item conten
 			return err
 		}
 		committed = true
-		result = purchaseResult{
-			purchaseID: purchaseID,
-			openPower:  openPower - item.PriceOpenPower,
-		}
 		return nil
 	})
 	if err != nil {
 		return purchaseResult{}, err
 	}
 	return result, nil
+}
+
+func (h *Handler) purchaseItemWithoutTransaction(ctx context.Context, playerID string, item content.Item) (purchaseResult, error) {
+	openPower, err := h.sumOpenPower(ctx, playerID)
+	if err != nil {
+		return purchaseResult{}, err
+	}
+	if openPower < item.PriceOpenPower {
+		return purchaseResult{}, errInsufficientOpenPower
+	}
+
+	now := time.Now()
+	purchaseID := newID("purchase")
+	if err := h.insertPurchase(ctx, purchaseID, playerID, item, now); err != nil {
+		return purchaseResult{}, err
+	}
+	if err := h.insertOpenPowerDeduction(ctx, purchaseID, playerID, item.PriceOpenPower, now); err != nil {
+		return purchaseResult{}, err
+	}
+	if err := h.incrementPlayerItem(ctx, playerID, item.ID); err != nil {
+		return purchaseResult{}, err
+	}
+
+	return purchaseResult{
+		purchaseID: purchaseID,
+		openPower:  openPower - item.PriceOpenPower,
+	}, nil
+}
+
+func transactionUnsupported(err error) bool {
+	var commandError mongo.CommandError
+	return errors.As(err, &commandError) &&
+		commandError.HasErrorCodeWithMessage(20, "Transaction numbers")
 }
 
 func (h *Handler) insertPurchase(ctx context.Context, purchaseID string, playerID string, item content.Item, createdAt time.Time) error {

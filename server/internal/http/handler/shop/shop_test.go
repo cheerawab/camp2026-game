@@ -1,10 +1,12 @@
 package shop
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/sitcon-tw/camp2026-game/internal/content"
 	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 func TestShopItemsIncludesAllEnabledPurchasableContentItems(t *testing.T) {
@@ -73,6 +75,26 @@ func TestOpenPowerTotalPipeline(t *testing.T) {
 	}
 	if got != "player-a" {
 		t.Fatalf("expected player id match, got %#v", got)
+	}
+}
+
+func TestTransactionUnsupported(t *testing.T) {
+	err := fmt.Errorf("wrapped: %w", mongo.CommandError{
+		Code:    20,
+		Message: "Transaction numbers are only allowed on a replica set member or mongos",
+	})
+	if !transactionUnsupported(err) {
+		t.Fatal("expected standalone transaction error to be unsupported")
+	}
+
+	for _, err := range []error{
+		mongo.CommandError{Code: 19, Message: "Transaction numbers are only allowed"},
+		mongo.CommandError{Code: 20, Message: "not a transaction error"},
+		fmt.Errorf("plain error"),
+	} {
+		if transactionUnsupported(err) {
+			t.Fatalf("expected %v not to be unsupported", err)
+		}
 	}
 }
 
