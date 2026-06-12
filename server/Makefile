@@ -1,10 +1,13 @@
-.PHONY: dev run generate swagger fmt test test-e2e tidy
+.PHONY: dev run seed generate swagger fmt test test-e2e tidy
 
 dev:
 	air
 
 run:
 	go run ./cmd/api
+
+seed:
+	go run ./cmd/seed
 
 generate: swagger
 

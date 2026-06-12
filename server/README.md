@@ -7,6 +7,7 @@ Minimal Go backend template for fast iteration.
 ```sh
 make generate
 make test
+make seed
 make dev
 ```
 
@@ -14,6 +15,30 @@ make dev
 without file watching.
 
 MongoDB is configured through `MONGODB_URI` and `MONGODB_DATABASE`.
+
+## Local Seed Data
+
+There is no separate frontend mock server. For local testing, seed MongoDB with
+demo players:
+
+```sh
+docker compose -f ../docker/compose.dev.yaml up -d mongodb
+make seed
+```
+
+The command writes teams, players, open power records, owned sitones, and owned
+items. It is idempotent and upserts by document `_id`, so it can be run again
+after restarting the local database.
+
+Demo login tokens:
+
+```text
+auth_token_123456
+auth_token_abcdef
+staff_token_2026
+```
+
+Use one of these tokens on the frontend login page or call `POST /api/auth/login`.
 
 ## Design Docs
 
