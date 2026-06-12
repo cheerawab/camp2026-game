@@ -99,10 +99,19 @@ func TestStaffRoutesRequireAuthentication(t *testing.T) {
 		MongoDB: fakeDatabase(t),
 	})
 
-	res := performRequest(router, http.MethodPost, "/api/staff/rewards", strings.NewReader(`{"qrcodeToken":"qr-token-player-a","kind":"sitone","refId":"stone_engineering_base","quantity":1}`))
-	problem := assertProblem(t, res, http.StatusUnauthorized, "")
-	if problem.Status != http.StatusUnauthorized {
-		t.Fatalf("expected problem status %d, got %d", http.StatusUnauthorized, problem.Status)
+	for _, route := range []struct {
+		method string
+		path   string
+		body   *strings.Reader
+	}{
+		{method: http.MethodGet, path: "/api/staff/players?query=Alice"},
+		{method: http.MethodPost, path: "/api/staff/rewards", body: strings.NewReader(`{"qrcodeToken":"qr-token-player-a","kind":"sitone","refId":"stone_engineering_base","quantity":1}`)},
+	} {
+		res := performRequest(router, route.method, route.path, route.body)
+		problem := assertProblem(t, res, http.StatusUnauthorized, "")
+		if problem.Status != http.StatusUnauthorized {
+			t.Fatalf("%s %s: expected problem status %d, got %d", route.method, route.path, http.StatusUnauthorized, problem.Status)
+		}
 	}
 }
 
@@ -111,10 +120,19 @@ func TestStaffRoutesRequireDatabase(t *testing.T) {
 		Content: loadTestContent(t),
 	})
 
-	res := performRequestWithCookie(router, http.MethodPost, "/api/staff/rewards", strings.NewReader(`{"qrcodeToken":"qr-token-player-a","kind":"sitone","refId":"stone_engineering_base","quantity":1}`), "staff_token_2026")
-	problem := assertProblem(t, res, http.StatusServiceUnavailable, "")
-	if problem.Status != http.StatusServiceUnavailable {
-		t.Fatalf("expected problem status %d, got %d", http.StatusServiceUnavailable, problem.Status)
+	for _, route := range []struct {
+		method string
+		path   string
+		body   *strings.Reader
+	}{
+		{method: http.MethodGet, path: "/api/staff/players?query=Alice"},
+		{method: http.MethodPost, path: "/api/staff/rewards", body: strings.NewReader(`{"qrcodeToken":"qr-token-player-a","kind":"sitone","refId":"stone_engineering_base","quantity":1}`)},
+	} {
+		res := performRequestWithCookie(router, route.method, route.path, route.body, "staff_token_2026")
+		problem := assertProblem(t, res, http.StatusServiceUnavailable, "")
+		if problem.Status != http.StatusServiceUnavailable {
+			t.Fatalf("%s %s: expected problem status %d, got %d", route.method, route.path, http.StatusServiceUnavailable, problem.Status)
+		}
 	}
 }
 
@@ -412,6 +430,7 @@ func TestSwaggerJSON(t *testing.T) {
 		"/shop/items",
 		"/shop/items/{itemID}",
 		"/shop/purchases",
+		"/staff/players",
 		"/staff/rewards",
 		"/qr/resolve",
 		"AuthCookieAuth",
@@ -489,6 +508,7 @@ func TestSwaggerJSON(t *testing.T) {
 	assertSwaggerSecurity(t, spec.Paths, "/shop/items", http.MethodGet, true)
 	assertSwaggerSecurity(t, spec.Paths, "/shop/items/{itemID}", http.MethodGet, true)
 	assertSwaggerSecurity(t, spec.Paths, "/shop/purchases", http.MethodPost, true)
+	assertSwaggerSecurity(t, spec.Paths, "/staff/players", http.MethodGet, true)
 	assertSwaggerSecurity(t, spec.Paths, "/staff/rewards", http.MethodPost, true)
 }
 

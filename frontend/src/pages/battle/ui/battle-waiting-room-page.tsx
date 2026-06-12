@@ -373,7 +373,7 @@ export function BattleWaitingRoomPage() {
                       <span
                         className={[
                           "border-ink grid size-8 place-items-center rounded-[12px] border-2 text-[10px]",
-                          selected ? meta.bgClassName : "bg-card",
+                          meta.bgClassName,
                         ].join(" ")}
                       >
                         {meta.short}

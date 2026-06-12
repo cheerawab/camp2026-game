@@ -1,10 +1,22 @@
 package staff
 
 type CreateRewardRequest struct {
-	QRCodeToken string `json:"qrcodeToken" validate:"required,min=4,max=512" example:"qr_6H_x7lM20CK8BBnPfwEG1Ei97-PM9ZGr8Dy9yW-BYok"`
+	QRCodeToken string `json:"qrcodeToken,omitempty" validate:"omitempty,min=4,max=512" example:"qr_6H_x7lM20CK8BBnPfwEG1Ei97-PM9ZGr8Dy9yW-BYok"`
+	PlayerID    string `json:"playerId,omitempty" validate:"omitempty,min=1,max=128" example:"7H9K2Q"`
 	Kind        string `json:"kind" validate:"required,oneof=item sitone" example:"sitone"`
 	RefID       string `json:"refId" validate:"required,min=1,max=128" example:"stone_engineering_base"`
 	Quantity    int    `json:"quantity" validate:"required,min=1,max=99" example:"1"`
+}
+
+type ListPlayersResponse struct {
+	Players []StaffPlayerResponse `json:"players"`
+}
+
+type StaffPlayerResponse struct {
+	PlayerID  string              `json:"playerId" example:"7H9K2Q"`
+	Nickname  string              `json:"nickname" example:"Alice"`
+	Team      *RewardTeamResponse `json:"team,omitempty"`
+	AvatarURL string              `json:"avatarUrl,omitempty" example:"https://example.test/avatar/alice.png"`
 }
 
 type CreateRewardResponse struct {

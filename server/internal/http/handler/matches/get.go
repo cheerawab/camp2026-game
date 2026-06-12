@@ -11,7 +11,7 @@ import (
 
 // Get godoc
 // @Summary Get match state
-// @Description Returns the current match state for a participant. Active matches hide correct answers until completed.
+// @Description Returns the current match state for a participant. Active matches reveal current-round answers only during the reveal phase.
 // @Tags matches
 // @Produce json
 // @Security AuthCookieAuth

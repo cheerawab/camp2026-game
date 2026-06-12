@@ -10,7 +10,6 @@ import { PageHeader } from "@/shared/ui/page-header"
 const TABS: { key: LeaderboardType; label: string }[] = [
   { key: "open_power", label: "開源力" },
   { key: "sitones", label: "小石" },
-  { key: "matches", label: "知識王戰" },
 ]
 
 const rowColors = [
@@ -60,7 +59,7 @@ export function LeaderBoardPage() {
       </Card>
 
       <div
-        className="grid grid-cols-3 gap-2"
+        className="grid grid-cols-2 gap-2"
         role="tablist"
         aria-label="排行榜分類"
       >

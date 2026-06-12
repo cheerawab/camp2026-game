@@ -69,6 +69,16 @@ func allPlayersReady(match mongomodel.Match) bool {
 	return true
 }
 
+func activeMatchPhase(match mongomodel.Match) string {
+	if match.Status != mongomodel.MatchStatusActive {
+		return ""
+	}
+	if match.Phase == mongomodel.MatchPhaseRevealing {
+		return mongomodel.MatchPhaseRevealing
+	}
+	return mongomodel.MatchPhaseAnswering
+}
+
 func questionResponse(question content.QuizQuestion) MatchQuestionResponse {
 	return MatchQuestionResponse{
 		QuestionID: question.ID,

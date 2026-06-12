@@ -8,6 +8,7 @@ const matchEventNames = [
   "player_ready",
   "player_answered",
   "round_started",
+  "round_revealed",
   "match_completed",
 ] as const
 
@@ -49,16 +50,27 @@ export function useMatchDeadlineRefresh(
   const queryClient = useQueryClient()
 
   useEffect(() => {
-    if (!matchID || match?.status !== "active" || !match.roundEndsAt) return
+    if (!matchID || match?.status !== "active") return
 
-    const roundEndsAt = new Date(match.roundEndsAt).getTime()
-    if (!Number.isFinite(roundEndsAt)) return
+    const deadline =
+      match.phase === "revealing" ? match.revealEndsAt : match.roundEndsAt
+    if (!deadline) return
 
-    const delay = Math.max(0, roundEndsAt - Date.now() + 300)
+    const deadlineAt = new Date(deadline).getTime()
+    if (!Number.isFinite(deadlineAt)) return
+
+    const delay = Math.max(0, deadlineAt - Date.now() + 300)
     const timeout = window.setTimeout(() => {
       void queryClient.invalidateQueries({ queryKey: ["matches", matchID] })
     }, delay)
 
     return () => window.clearTimeout(timeout)
-  }, [matchID, match?.roundEndsAt, match?.status, queryClient])
+  }, [
+    matchID,
+    match?.phase,
+    match?.revealEndsAt,
+    match?.roundEndsAt,
+    match?.status,
+    queryClient,
+  ])
 }

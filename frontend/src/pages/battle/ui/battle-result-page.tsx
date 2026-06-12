@@ -59,9 +59,6 @@ export function BattleResultPage() {
     enabled: matchID.length > 0 && match?.status !== "completed",
   })
   const players = match?.players ?? []
-  const playerNamesByID = new Map(
-    players.map((player) => [player.playerId, player.nickname]),
-  )
   const sortedPlayers = [...players].sort(
     (a, b) => (b.score ?? 0) - (a.score ?? 0),
   )
@@ -187,7 +184,7 @@ export function BattleResultPage() {
                     <span className="text-muted-foreground text-sm font-bold">
                       正確答案
                     </span>
-                    <span className="text-lg font-bold">
+                    <span className="border-ink bg-pebble-engineer text-ink block rounded-lg border-2 px-3 py-2 text-base font-black">
                       {result.correctChoice}.{" "}
                       {choiceText(result, result.correctChoice)}
                     </span>
@@ -198,14 +195,14 @@ export function BattleResultPage() {
                       className="grid gap-y-1 border-t pt-2"
                     >
                       <span className="text-muted-foreground text-sm font-bold">
-                        {playerNamesByID.get(answer.playerId) ?? "未知玩家"}
+                        {answer.nickname}
                       </span>
                       <span
                         className={cn(
-                          "text-lg font-bold",
+                          "border-ink text-ink block rounded-lg border-2 px-3 py-2 text-base font-black",
                           answer.correct
-                            ? "text-status-success"
-                            : "text-status-warning",
+                            ? "bg-pebble-engineer"
+                            : "bg-status-warning",
                         )}
                       >
                         {answer.choice

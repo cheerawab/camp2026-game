@@ -7,6 +7,7 @@ import {
   gameApi,
   type MatchChoice,
   type MatchPlayer,
+  type MatchQuestionResult,
   type Sitone,
 } from "@/shared/api/game"
 import {
@@ -35,8 +36,14 @@ function scoreRatio(score: number, maxScore: number) {
   return Math.max(0, Math.min(100, (score / maxScore) * 100))
 }
 
-function answerStatus(player: MatchPlayer | undefined) {
+function answerStatus(
+  player: MatchPlayer | undefined,
+  phase: "answering" | "revealing" | undefined,
+) {
   if (!player) return "等待中"
+  if (phase === "revealing") {
+    return player.answeredCurrentQuestion ? "已答" : "未作答"
+  }
   return player.answeredCurrentQuestion ? "已答" : "作答中"
 }
 
@@ -123,11 +130,13 @@ function PlayerRail({
   player,
   sitones,
   side,
+  phase,
 }: {
   label: string
   player: MatchPlayer | undefined
   sitones: Sitone[]
   side: "opponent" | "self"
+  phase: "answering" | "revealing" | undefined
 }) {
   const score = player?.score ?? 0
   const maxScore = player?.maxScore ?? 0
@@ -161,7 +170,7 @@ function PlayerRail({
             {player?.nickname ?? "等待對手"}
           </div>
           <div className="text-muted-foreground text-xs font-bold">
-            {answerStatus(player)}
+            {answerStatus(player, phase)}
           </div>
         </div>
         <div className="text-muted-foreground text-xs font-black whitespace-nowrap">
@@ -177,11 +186,41 @@ function PlayerRail({
   )
 }
 
+function ChoiceAnswerBadges({
+  result,
+  choice,
+}: {
+  result: MatchQuestionResult | undefined
+  choice: MatchChoice
+}) {
+  const answers =
+    result?.answers.filter((answer) => answer.choice === choice) ?? []
+
+  if (answers.length === 0) return null
+
+  return (
+    <div className="flex max-w-[108px] flex-wrap justify-end gap-1">
+      {answers.map((answer) => (
+        <span
+          key={answer.playerId}
+          className={cn(
+            "border-ink grid max-w-[108px] grid-cols-[minmax(0,1fr)_auto] items-center gap-1 rounded-full border-2 px-2 py-1 text-[11px] leading-none font-black",
+            answer.correct ? "bg-card text-ink" : "bg-status-warning text-ink",
+          )}
+        >
+          <span className="truncate">{answer.nickname}</span>
+          <span>+{answer.score}</span>
+        </span>
+      ))}
+    </div>
+  )
+}
+
 export function BattleQuestionPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [matchID] = useState(getStoredMatchID)
-  const [now, setNow] = useState<number | null>(null)
+  const [now, setNow] = useState(() => Date.now())
   const matchQuery = useQuery({
     queryKey: ["matches", matchID],
     queryFn: () => gameApi.getMatch(matchID),
@@ -261,7 +300,14 @@ export function BattleQuestionPage() {
         : [],
     [question],
   )
-  const remainingSeconds = secondsUntil(match?.roundEndsAt, now)
+  const phase =
+    match?.status === "active" ? (match.phase ?? "answering") : undefined
+  const isRevealing = phase === "revealing"
+  const currentResult = match?.currentQuestionResult
+  const displaySeconds = secondsUntil(
+    isRevealing ? match?.revealEndsAt : match?.roundEndsAt,
+    now,
+  )
   const answered = currentPlayer?.answeredCurrentQuestion === true
 
   useEffect(() => {
@@ -295,6 +341,7 @@ export function BattleQuestionPage() {
         player={opponentPlayer}
         sitones={opponentSitones}
         side="opponent"
+        phase={phase}
       />
 
       <div className="grid min-h-0 content-start gap-y-2">
@@ -312,48 +359,62 @@ export function BattleQuestionPage() {
               </div>
               <div className="grid justify-items-end leading-none">
                 <span key={now} className="text-4xl font-black">
-                  {remainingSeconds}
+                  {displaySeconds}
                 </span>
-                <span className="text-sm font-bold">秒</span>
+                <span className="text-sm font-bold">
+                  {isRevealing ? "揭曉" : "秒"}
+                </span>
               </div>
             </div>
             <Separator />
             <div className="grid">
-              {choices.map(([choice, label], index) => (
-                <div key={choice}>
-                  <Button
-                    variant="ghost"
-                    className="grid h-fit w-full grid-cols-[58px_minmax(0,1fr)] justify-start gap-3 rounded-none py-2 pl-0"
-                    disabled={answered || answerMutation.isPending}
-                    onClick={() =>
-                      question &&
-                      answerMutation.mutate({
-                        questionID: question.questionId,
-                        choice,
-                      })
-                    }
-                  >
-                    <span className="border-accent-foreground bg-accent text-muted-foreground grid size-12 place-items-center rounded-lg border-2 text-lg font-black">
-                      {choice}
-                    </span>
-                    <span className="min-w-0 text-left text-lg leading-tight whitespace-normal">
-                      {label}
-                    </span>
-                  </Button>
-                  {index < choices.length - 1 && <Separator />}
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+              {choices.map(([choice, label], index) => {
+                const isCorrectChoice =
+                  isRevealing && currentResult?.correctChoice === choice
 
-        <Card>
-          <CardContent>
-            <p className="text-muted-foreground text-sm font-bold">
-              {answered
-                ? "答案已送出，等待下一題。"
-                : "選擇答案後會立即送出，結果會在對戰結束後揭曉。"}
-            </p>
+                return (
+                  <div key={choice}>
+                    <Button
+                      variant="ghost"
+                      className={cn(
+                        "grid h-fit w-full grid-cols-[58px_minmax(0,1fr)_auto] items-center justify-start gap-3 rounded-none py-2 pl-0 disabled:opacity-100",
+                        isCorrectChoice && "bg-pebble-engineer",
+                      )}
+                      disabled={
+                        isRevealing || answered || answerMutation.isPending
+                      }
+                      onClick={() =>
+                        question &&
+                        answerMutation.mutate({
+                          questionID: question.questionId,
+                          choice,
+                        })
+                      }
+                    >
+                      <span
+                        className={cn(
+                          "border-accent-foreground bg-accent text-muted-foreground grid size-12 place-items-center rounded-lg border-2 text-lg font-black",
+                          isCorrectChoice &&
+                            "border-ink bg-pebble-engineer text-ink",
+                        )}
+                      >
+                        {choice}
+                      </span>
+                      <span className="min-w-0 text-left text-lg leading-tight whitespace-normal">
+                        {label}
+                      </span>
+                      {isRevealing ? (
+                        <ChoiceAnswerBadges
+                          result={currentResult}
+                          choice={choice}
+                        />
+                      ) : null}
+                    </Button>
+                    {index < choices.length - 1 && <Separator />}
+                  </div>
+                )
+              })}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -363,6 +424,7 @@ export function BattleQuestionPage() {
         player={currentPlayer}
         sitones={currentPlayerSitones}
         side="self"
+        phase={phase}
       />
     </GamePageShell>
   )

@@ -219,6 +219,7 @@ const MatchQuestionSchema = z.object({
 
 const MatchAnswerResultSchema = z.object({
   playerId: z.string(),
+  nickname: z.string(),
   choice: z.string().optional(),
   correct: z.boolean(),
   score: z.number(),
@@ -236,13 +237,16 @@ export const MatchStateSchema = z.object({
   matchId: z.string(),
   code: z.string().optional(),
   status: z.enum(["waiting", "active", "completed"]),
+  phase: z.enum(["answering", "revealing"]).optional(),
   hostPlayerId: z.string(),
   players: nullableArray(MatchPlayerSchema),
   currentQuestionIndex: z.number().optional(),
   questionCount: z.number().optional(),
   currentQuestion: MatchQuestionSchema.optional(),
+  currentQuestionResult: MatchQuestionResultSchema.optional(),
   roundStartedAt: z.string().optional(),
   roundEndsAt: z.string().optional(),
+  revealEndsAt: z.string().optional(),
   createdAt: z.string(),
   startedAt: z.string().optional(),
   completedAt: z.string().optional(),
@@ -276,6 +280,17 @@ const AnswerAcceptedSchema = z.object({
 })
 
 const StaffRewardKindSchema = z.enum(["item", "sitone"])
+
+const StaffPlayerSchema = z.object({
+  playerId: z.string(),
+  nickname: z.string(),
+  team: TeamSchema.optional(),
+  avatarUrl: z.string().optional(),
+})
+
+const StaffPlayersResponseSchema = z.object({
+  players: nullableArray(StaffPlayerSchema),
+})
 
 const StaffRewardResponseSchema = z.object({
   rewardId: z.string(),
@@ -311,6 +326,7 @@ export type MatchQuestionResult = z.infer<typeof MatchQuestionResultSchema>
 export type CompletedMatch = z.infer<typeof CompletedMatchSchema>
 export type MatchChoice = "A" | "B" | "C" | "D"
 export type StaffRewardKind = z.infer<typeof StaffRewardKindSchema>
+export type StaffPlayer = z.infer<typeof StaffPlayerSchema>
 export type StaffRewardResponse = z.infer<typeof StaffRewardResponseSchema>
 
 export const gameApi = {
@@ -457,7 +473,8 @@ export const gameApi = {
   },
 
   async createStaffReward(input: {
-    qrcodeToken: string
+    playerId?: string
+    qrcodeToken?: string
     kind: StaffRewardKind
     refId: string
     quantity: number
@@ -466,5 +483,12 @@ export const gameApi = {
       json: input,
     })
     return StaffRewardResponseSchema.parse(json)
+  },
+
+  async staffPlayers(query: string) {
+    const json = await apiClient.get("/api/staff/players", {
+      searchParams: { query },
+    })
+    return StaffPlayersResponseSchema.parse(json).players
   },
 }
