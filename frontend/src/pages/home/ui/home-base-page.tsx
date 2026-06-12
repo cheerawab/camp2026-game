@@ -127,12 +127,22 @@ export function HomeBasePage() {
           style={{ boxShadow: "4px 4px 0 rgba(23,35,58,.14)" }}
           aria-label="玩家狀態"
         >
-          <div
-            className="bg-pebble-spark border-ink grid size-16 place-items-center rounded-[22px] border-2 text-[26px] font-black"
+          <Avatar
+            size="lg"
+            className="bg-pebble-spark border-ink size-16 rounded-[22px] border-2 text-[26px]"
             aria-hidden
           >
-            {avatarInitial}
-          </div>
+            {player?.avatarUrl ? (
+              <AvatarImage
+                src={player.avatarUrl}
+                alt=""
+                className="object-cover"
+              />
+            ) : null}
+            <AvatarFallback className="bg-pebble-spark text-foreground rounded-[20px] text-[26px] font-black">
+              {avatarInitial}
+            </AvatarFallback>
+          </Avatar>
           <div>
             <p className="text-muted-foreground mb-1 text-xs font-black tracking-[0.08em] uppercase">
               Camp Base

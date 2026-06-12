@@ -4,6 +4,7 @@ import { QRCodeSVG } from "qrcode.react"
 
 import { AppError } from "@/shared/api/error"
 import { gameApi } from "@/shared/api/game"
+import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar"
 import { Button } from "@/shared/ui/button"
 import { Card, CardContent } from "@/shared/ui/card"
 import { Skeleton } from "@/shared/ui/skeleton"
@@ -44,9 +45,22 @@ export function ProfileQrPanel() {
     <div className="flex flex-col gap-3.5">
       <Card className="border-ink rounded-[var(--radius)] border-2 py-0 shadow-[4px_4px_0_rgba(23,35,58,0.14)]">
         <CardContent className="grid grid-cols-[70px_1fr] items-center gap-3.5 p-4">
-          <div className="bg-power border-ink flex h-[70px] w-[70px] items-center justify-center rounded-[24px] border-2 text-3xl font-black">
-            {profile?.nickname.trim().slice(0, 1) || "?"}
-          </div>
+          <Avatar
+            size="lg"
+            className="bg-power border-ink h-[70px] w-[70px] rounded-[24px] border-2 text-3xl"
+            aria-hidden
+          >
+            {profile?.avatarUrl ? (
+              <AvatarImage
+                src={profile.avatarUrl}
+                alt=""
+                className="object-cover"
+              />
+            ) : null}
+            <AvatarFallback className="bg-power text-foreground rounded-[22px] text-3xl font-black">
+              {profile?.nickname.trim().slice(0, 1) || "?"}
+            </AvatarFallback>
+          </Avatar>
           <div>
             <span className="text-muted-foreground block text-xs font-black tracking-widest uppercase">
               玩家身份
