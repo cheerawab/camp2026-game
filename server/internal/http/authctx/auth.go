@@ -14,6 +14,7 @@ import (
 )
 
 const CookieName = "camp2026_auth"
+const PlayerRoleStaff = "staff"
 
 type playerContextKey struct{}
 
@@ -59,5 +60,19 @@ func RequirePlayer(db *mongo.Database) func(http.Handler) http.Handler {
 
 			next.ServeHTTP(w, r.WithContext(WithPlayer(r.Context(), player)))
 		})
+	}
+}
+
+func RequireStaff(db *mongo.Database) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return RequirePlayer(db)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			player, ok := PlayerFromContext(r.Context())
+			if !ok || player.Role != PlayerRoleStaff {
+				httpx.WriteProblem(w, r, httpx.NewError(http.StatusForbidden, "staff access required"))
+				return
+			}
+
+			next.ServeHTTP(w, r)
+		}))
 	}
 }

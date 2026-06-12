@@ -14,6 +14,7 @@ type AuthPlayerSummary struct {
 	Team      AuthTeamSummary `json:"team"`
 	OpenPower int             `json:"openPower" example:"1280"`
 	AvatarURL string          `json:"avatarUrl,omitempty" example:"https://example.test/avatar/alice.png"`
+	Role      string          `json:"role,omitempty" example:"staff"`
 }
 
 type AuthTeamSummary struct {

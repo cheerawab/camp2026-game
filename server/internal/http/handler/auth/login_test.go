@@ -79,6 +79,7 @@ func TestLoginResponseFromPlayer(t *testing.T) {
 			Nickname:    "Alice",
 			TeamID:      "8M4RXP",
 			AvatarURL:   "https://example.test/avatar/alice.png",
+			Role:        "staff",
 		},
 		mongomodel.Team{
 			ID:   "8M4RXP",
@@ -101,6 +102,9 @@ func TestLoginResponseFromPlayer(t *testing.T) {
 	}
 	if response.Player.AvatarURL == "" {
 		t.Fatalf("expected avatar url")
+	}
+	if response.Player.Role != "staff" {
+		t.Fatalf("expected staff role, got %q", response.Player.Role)
 	}
 }
 

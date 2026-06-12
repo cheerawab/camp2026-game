@@ -107,5 +107,6 @@ func statusResponse(player mongomodel.Player, team mongomodel.Team, openPower in
 		},
 		OpenPower: openPower,
 		AvatarURL: player.AvatarURL,
+		Role:      player.Role,
 	}
 }

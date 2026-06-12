@@ -148,6 +148,7 @@ func loginResponse(player mongomodel.Player, team mongomodel.Team, openPower int
 			Nickname:  player.Nickname,
 			OpenPower: openPower,
 			AvatarURL: player.AvatarURL,
+			Role:      player.Role,
 			Team: apimodel.AuthTeamSummary{
 				TeamID: team.ID,
 				Name:   team.Name,
