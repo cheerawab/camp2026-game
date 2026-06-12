@@ -85,6 +85,18 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) createFusion(ctx context.Context, playerID string, recipe content.FusionRecipe) (string, error) {
+	if h.client == nil {
+		return h.createFusionWithoutTransaction(ctx, playerID, recipe)
+	}
+
+	fusionID, err := h.createFusionWithTransaction(ctx, playerID, recipe)
+	if err != nil && transactionUnsupported(err) {
+		return h.createFusionWithoutTransaction(ctx, playerID, recipe)
+	}
+	return fusionID, err
+}
+
+func (h *Handler) createFusionWithTransaction(ctx context.Context, playerID string, recipe content.FusionRecipe) (string, error) {
 	session, err := h.client.StartSession()
 	if err != nil {
 		return "", err
@@ -124,6 +136,24 @@ func (h *Handler) createFusion(ctx context.Context, playerID string, recipe cont
 		return nil
 	})
 	if err != nil {
+		return "", err
+	}
+	return fusionID, nil
+}
+
+func (h *Handler) createFusionWithoutTransaction(ctx context.Context, playerID string, recipe content.FusionRecipe) (string, error) {
+	fusionID := newID("fusion")
+	for _, input := range recipe.Inputs {
+		if err := h.consumeComponent(ctx, playerID, input); err != nil {
+			return "", err
+		}
+	}
+	for _, output := range recipe.Outputs {
+		if err := h.grantComponent(ctx, playerID, output); err != nil {
+			return "", err
+		}
+	}
+	if err := h.insertFusionRecord(ctx, fusionID, playerID, recipe, time.Now()); err != nil {
 		return "", err
 	}
 	return fusionID, nil
@@ -197,6 +227,12 @@ func inventoryCollection(kind string) (collection string, idField string, err er
 	default:
 		return "", "", errors.New("unsupported fusion component kind")
 	}
+}
+
+func transactionUnsupported(err error) bool {
+	var commandError mongo.CommandError
+	return errors.As(err, &commandError) &&
+		commandError.HasErrorCodeWithMessage(20, "Transaction numbers")
 }
 
 func modelComponents(components []content.FusionComponent) []mongomodel.FusionComponent {
