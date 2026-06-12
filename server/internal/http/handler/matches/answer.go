@@ -90,7 +90,7 @@ func (h *Handler) Answer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	idx := playerIndex(match, player.ID)
-	correct, score := scoreAnswerWithLoadout(question, body.Choice, now, match.RoundEndsAt, len(match.Players[idx].SitoneIDs))
+	correct, score := scoreAnswer(question, body.Choice, now, match.RoundEndsAt)
 	elapsedMillis := now.Sub(match.RoundStartedAt).Milliseconds()
 	if elapsedMillis < 0 {
 		elapsedMillis = 0

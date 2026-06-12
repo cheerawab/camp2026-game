@@ -81,10 +81,6 @@ func questionResponse(question content.QuizQuestion) MatchQuestionResponse {
 }
 
 func scoreAnswer(question content.QuizQuestion, choice string, answeredAt time.Time, roundEndsAt time.Time) (bool, int) {
-	return scoreAnswerWithLoadout(question, choice, answeredAt, roundEndsAt, 0)
-}
-
-func scoreAnswerWithLoadout(question content.QuizQuestion, choice string, answeredAt time.Time, roundEndsAt time.Time, sitoneCount int) (bool, int) {
 	correct := strings.EqualFold(choice, question.CorrectChoice)
 	if !correct {
 		return false, 0
@@ -94,14 +90,14 @@ func scoreAnswerWithLoadout(question content.QuizQuestion, choice string, answer
 	if remainingSeconds < 0 {
 		remainingSeconds = 0
 	}
-	return true, 100 + remainingSeconds*5 + sitoneCount*10
+	return true, 100 + remainingSeconds*5
 }
 
-func maxScorePerQuestion(sitoneCount int) int {
-	return 100 + roundDuration*5 + sitoneCount*10
+func maxScorePerQuestion() int {
+	return 100 + roundDuration*5
 }
 
-func maxScoreThroughCurrentQuestion(match mongomodel.Match, player mongomodel.MatchPlayer) int {
+func maxScoreThroughCurrentQuestion(match mongomodel.Match) int {
 	if len(match.QuestionIDs) == 0 || match.Status == mongomodel.MatchStatusWaiting {
 		return 0
 	}
@@ -117,11 +113,37 @@ func maxScoreThroughCurrentQuestion(match mongomodel.Match, player mongomodel.Ma
 		questionCount = len(match.QuestionIDs)
 	}
 
-	return questionCount * maxScorePerQuestion(len(player.SitoneIDs))
+	return questionCount * maxScorePerQuestion()
 }
 
 func openPowerReward(score int) int {
 	return score/10 + 20
+}
+
+func matchHasClearWinner(match mongomodel.Match) bool {
+	if len(match.Players) < 2 {
+		return false
+	}
+
+	topScore := match.Players[0].Score
+	topCount := 1
+	for _, player := range match.Players[1:] {
+		switch {
+		case player.Score > topScore:
+			topScore = player.Score
+			topCount = 1
+		case player.Score == topScore:
+			topCount++
+		}
+	}
+	return topCount == 1
+}
+
+func matchOpenPowerReward(match mongomodel.Match, player mongomodel.MatchPlayer) int {
+	if !matchHasClearWinner(match) {
+		return 0
+	}
+	return openPowerReward(player.Score)
 }
 
 func matchRewardRecordID(matchID, playerID string) string {

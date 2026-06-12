@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
 import { Backpack, ChevronDown, Home } from "lucide-react"
 
+import { useMatchEvents } from "@/features/game/use-match-events"
 import { gameApi, type MatchQuestionResult } from "@/shared/api/game"
 import { Button } from "@/shared/ui/button"
 import {
@@ -53,11 +54,22 @@ export function BattleResultPage() {
     queryKey: ["matches", matchID],
     queryFn: () => gameApi.getMatch(matchID),
     enabled: matchID.length > 0,
-    refetchInterval: (query) =>
-      query.state.data?.status === "completed" ? false : 1_000,
+  })
+  useMatchEvents(matchID, {
+    enabled: matchID.length > 0 && match?.status !== "completed",
   })
   const players = match?.players ?? []
-  const winner = [...players].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))[0]
+  const sortedPlayers = [...players].sort(
+    (a, b) => (b.score ?? 0) - (a.score ?? 0),
+  )
+  const hasClearWinner =
+    match?.status === "completed" &&
+    sortedPlayers.length >= 2 &&
+    (sortedPlayers[0].score ?? 0) > (sortedPlayers[1].score ?? 0)
+  const winner = hasClearWinner ? sortedPlayers[0] : undefined
+  const rewardedPlayers = players.filter(
+    (player) => (player.openPowerReward ?? 0) > 0,
+  )
 
   return (
     <GamePageShell contentClassName="grid content-start gap-y-2">
@@ -76,16 +88,20 @@ export function BattleResultPage() {
               : match?.status === "completed"
                 ? winner
                   ? `${winner.nickname} 勝利`
-                  : "對戰結束"
+                  : players.length >= 2
+                    ? "平手"
+                    : "對戰結束"
                 : "對戰尚未結束"}
           </span>
           <div className="flex items-center gap-x-4">
-            {players.slice(0, 2).map((player, index) => (
+            {players.slice(0, 2).map((player) => (
               <Card
                 key={player.playerId}
                 className={cn(
                   "bg-accent flex-1",
-                  index === 0 ? "text-status-success" : "text-muted-foreground",
+                  winner?.playerId === player.playerId
+                    ? "text-status-success"
+                    : "text-muted-foreground",
                 )}
               >
                 <CardContent className="grid gap-y-2">
@@ -103,30 +119,32 @@ export function BattleResultPage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>獲得獎勵</CardTitle>
-          <CardDescription>本場對戰的開源力獎勵會收入帳號。</CardDescription>
-        </CardHeader>
-        <CardContent className="flex gap-x-4">
-          <div className="bg-accent border-secondary-foreground rounded-lg border-2 p-2">
-            <Backpack className="size-10 rounded-lg" />
-          </div>
-          <div className="grid gap-y-2 text-lg">
-            {players.map((player) => (
-              <div
-                key={player.playerId}
-                className="grid grid-cols-[1fr_auto] gap-x-4"
-              >
-                <span>{player.nickname}</span>
-                <span className="font-bold">
-                  +{player.openPowerReward ?? 0} 開源力
-                </span>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {rewardedPlayers.length > 0 ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>獲得獎勵</CardTitle>
+            <CardDescription>本場對戰的開源力獎勵會收入帳號。</CardDescription>
+          </CardHeader>
+          <CardContent className="flex gap-x-4">
+            <div className="bg-accent border-secondary-foreground rounded-lg border-2 p-2">
+              <Backpack className="size-10 rounded-lg" />
+            </div>
+            <div className="grid gap-y-2 text-lg">
+              {rewardedPlayers.map((player) => (
+                <div
+                  key={player.playerId}
+                  className="grid grid-cols-[1fr_auto] gap-x-4"
+                >
+                  <span>{player.nickname}</span>
+                  <span className="font-bold">
+                    +{player.openPowerReward ?? 0} 開源力
+                  </span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      ) : null}
 
       <Separator className="my-2" />
 

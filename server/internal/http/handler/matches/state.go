@@ -150,10 +150,14 @@ func (h *Handler) writeMatchRewards(ctx context.Context, match mongomodel.Match)
 	}
 
 	for _, player := range match.Players {
+		reward := matchOpenPowerReward(match, player)
+		if reward <= 0 {
+			continue
+		}
 		record := mongomodel.OpenPowerRecord{
 			ID:        matchRewardRecordID(match.ID, player.PlayerID),
 			PlayerID:  player.PlayerID,
-			Amount:    openPowerReward(player.Score),
+			Amount:    reward,
 			Reason:    "quiz_match_completed",
 			Source:    matchRewardSource(match.ID, player.PlayerID),
 			CreatedAt: now,
@@ -218,7 +222,7 @@ func (h *Handler) buildMatchState(ctx context.Context, match mongomodel.Match) (
 	currentAnswers := answerByQuestionPlayer[currentQuestionID]
 	for _, player := range match.Players {
 		score := player.Score
-		maxScore := maxScoreThroughCurrentQuestion(match, player)
+		maxScore := maxScoreThroughCurrentQuestion(match)
 		playerResponse := MatchPlayerResponse{
 			PlayerID:  player.PlayerID,
 			Nickname:  player.Nickname,
@@ -231,7 +235,7 @@ func (h *Handler) buildMatchState(ctx context.Context, match mongomodel.Match) (
 			_, playerResponse.AnsweredCurrentQuestion = currentAnswers[player.PlayerID]
 		}
 		if match.Status == mongomodel.MatchStatusCompleted {
-			reward := openPowerReward(player.Score)
+			reward := matchOpenPowerReward(match, player)
 			playerResponse.OpenPowerReward = &reward
 		}
 		response.Players = append(response.Players, playerResponse)
