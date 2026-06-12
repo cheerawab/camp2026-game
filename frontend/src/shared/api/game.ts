@@ -13,10 +13,18 @@ const TeamSchema = z.object({
   name: z.string(),
 })
 
+const TeamMemberSchema = z.object({
+  playerId: z.string(),
+  nickname: z.string(),
+  avatarUrl: z.string().optional(),
+  role: z.string().optional(),
+})
+
 const PlayerStatusSchema = z.object({
   playerId: z.string(),
   nickname: z.string(),
   team: TeamSchema,
+  teamMembers: nullableArray(TeamMemberSchema),
   openPower: z.number(),
   avatarUrl: z.string().optional(),
   role: z.string().optional(),
@@ -224,7 +232,7 @@ const MatchQuestionResultSchema = MatchQuestionSchema.extend({
   answers: nullableArray(MatchAnswerResultSchema),
 })
 
-const MatchStateSchema = z.object({
+export const MatchStateSchema = z.object({
   matchId: z.string(),
   code: z.string().optional(),
   status: z.enum(["waiting", "active", "completed"]),
@@ -285,6 +293,7 @@ const StaffRewardResponseSchema = z.object({
 })
 
 export type PlayerStatus = z.infer<typeof PlayerStatusSchema>
+export type TeamMember = z.infer<typeof TeamMemberSchema>
 export type HomeResponse = z.infer<typeof HomeResponseSchema>
 export type SitoneLoadoutResponse = z.infer<typeof SitoneLoadoutResponseSchema>
 export type Sitone = z.infer<typeof SitoneSchema>

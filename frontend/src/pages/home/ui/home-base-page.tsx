@@ -4,6 +4,7 @@ import { useEffect } from "react"
 
 import { AppError } from "@/shared/api/error"
 import { gameApi } from "@/shared/api/game"
+import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar"
 import { GamePageShell } from "@/shared/ui/game-page-shell"
 
 const ACTIONS: {
@@ -111,6 +112,7 @@ export function HomeBasePage() {
   const sitoneCount = summary?.sitoneCount ?? 0
   const itemCount = summary?.itemCount ?? 0
   const rank = teamRank?.rank
+  const teamMembers = player?.teamMembers ?? []
   const actions =
     player?.role === "staff" ? [STAFF_ACTION, ...ACTIONS] : ACTIONS
 
@@ -194,6 +196,89 @@ export function HomeBasePage() {
           ))}
         </section>
 
+        {/* 同組成員 */}
+        <section
+          className="bg-card border-ink rounded-[22px] border-2 p-[15px]"
+          aria-label="同組成員"
+        >
+          <div className="mb-3 flex items-start justify-between gap-3">
+            <div>
+              <p className="text-muted-foreground mb-1 text-xs font-black tracking-[0.08em] uppercase">
+                Team
+              </p>
+              <h2 className="text-[22px] font-black tracking-[-0.04em]">
+                同組成員
+              </h2>
+            </div>
+            <span className="bg-surface-raised border-border rounded-full border-2 px-2.5 py-1 text-xs font-black whitespace-nowrap">
+              {isPending ? "-" : `${teamMembers.length} 人`}
+            </span>
+          </div>
+
+          {isPending ? (
+            <div className="grid gap-[8px]">
+              {[0, 1, 2].map((item) => (
+                <div
+                  key={item}
+                  className="bg-surface-raised border-border grid min-h-[56px] grid-cols-[40px_1fr] items-center gap-3 rounded-[17px] border-2 px-3"
+                >
+                  <span className="bg-muted border-border size-10 rounded-full border-2" />
+                  <span className="bg-muted h-4 w-28 rounded-full" />
+                </div>
+              ))}
+            </div>
+          ) : teamMembers.length > 0 ? (
+            <ul className="grid gap-[8px]">
+              {teamMembers.map((member) => {
+                const current = member.playerId === player?.playerId
+                const initial = member.nickname.trim().slice(0, 1) || "?"
+
+                return (
+                  <li
+                    key={member.playerId}
+                    className="bg-surface-raised border-border grid min-h-[56px] grid-cols-[40px_1fr_auto] items-center gap-3 rounded-[17px] border-2 px-3 py-2"
+                  >
+                    <Avatar
+                      size="lg"
+                      className="border-ink bg-pebble-resonate border-2"
+                    >
+                      {member.avatarUrl ? (
+                        <AvatarImage
+                          src={member.avatarUrl}
+                          alt=""
+                          className="object-cover"
+                        />
+                      ) : null}
+                      <AvatarFallback className="bg-pebble-resonate text-primary-foreground font-black">
+                        {initial}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0">
+                      <strong className="block truncate text-[16px] font-black">
+                        {member.nickname}
+                      </strong>
+                      {member.role === "staff" ? (
+                        <small className="text-muted-foreground block text-xs font-bold">
+                          工作人員
+                        </small>
+                      ) : null}
+                    </div>
+                    {current ? (
+                      <span className="bg-secondary text-secondary-foreground border-ink rounded-full border-2 px-2 py-0.5 text-xs font-black whitespace-nowrap">
+                        你
+                      </span>
+                    ) : null}
+                  </li>
+                )
+              })}
+            </ul>
+          ) : (
+            <p className="text-muted-foreground bg-surface-raised border-border rounded-[17px] border-2 px-3 py-3 text-sm font-bold">
+              還沒有同組成員資料
+            </p>
+          )}
+        </section>
+
         {/* 核心入口 */}
         <section className="grid gap-[10px]" aria-label="核心入口">
           {actions.map((action) => (
@@ -259,29 +344,6 @@ export function HomeBasePage() {
                 </small>
               </Link>
             ))}
-          </div>
-        </section>
-
-        {/* 基地展示摘要 */}
-        <section
-          className="bg-surface-raised border-ink grid grid-cols-[82px_1fr] items-center gap-[13px] rounded-[22px] border-2 p-[15px]"
-          aria-label="基地展示摘要"
-        >
-          <div
-            className="bg-card border-ink relative h-[76px] rounded-[20px] border-2"
-            aria-hidden
-          >
-            <span className="bg-pebble-spark border-ink absolute top-[14px] left-[14px] size-[18px] rounded-lg border-2" />
-            <span className="bg-primary border-ink absolute top-[24px] right-[15px] size-[18px] rounded-lg border-2" />
-            <span className="bg-moss border-ink absolute bottom-[12px] left-[31px] size-[18px] rounded-lg border-2" />
-          </div>
-          <div>
-            <h2 className="mb-[5px] text-[18px] font-black">
-              目前基地：營燈前哨
-            </h2>
-            <p className="text-muted-foreground text-[13px] leading-[1.55]">
-              基地展示只做狀態摘要，不搶主要操作位置。
-            </p>
           </div>
         </section>
       </section>

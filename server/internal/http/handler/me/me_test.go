@@ -80,6 +80,21 @@ func TestStatusResponse(t *testing.T) {
 			Name: "Blue Team",
 		},
 		1280,
+		[]mongomodel.Player{
+			{
+				ID:        "7H9K2Q",
+				Nickname:  "Alice",
+				TeamID:    "8M4RXP",
+				AvatarURL: "https://example.test/avatar/alice.png",
+			},
+			{
+				ID:        "2QK9H7",
+				Nickname:  "Bob",
+				TeamID:    "8M4RXP",
+				AvatarURL: "https://example.test/avatar/bob.png",
+				Role:      "staff",
+			},
+		},
 	)
 
 	if response.PlayerID != "7H9K2Q" {
@@ -91,11 +106,35 @@ func TestStatusResponse(t *testing.T) {
 	if response.OpenPower != 1280 {
 		t.Fatalf("expected open power 1280, got %d", response.OpenPower)
 	}
+	if len(response.TeamMembers) != 2 {
+		t.Fatalf("expected 2 team members, got %#v", response.TeamMembers)
+	}
+	if response.TeamMembers[0].PlayerID != "7H9K2Q" || response.TeamMembers[0].Nickname != "Alice" {
+		t.Fatalf("unexpected first team member: %#v", response.TeamMembers[0])
+	}
+	if response.TeamMembers[1].Role != "staff" {
+		t.Fatalf("expected staff team member role, got %#v", response.TeamMembers[1])
+	}
 	if response.AvatarURL == "" {
 		t.Fatalf("expected avatar url")
 	}
 	if response.Role != "staff" {
 		t.Fatalf("expected staff role, got %q", response.Role)
+	}
+}
+
+func TestTeamMemberResponsesSkipsInvalidPlayers(t *testing.T) {
+	members := teamMemberResponses([]mongomodel.Player{
+		{ID: "7H9K2Q", Nickname: "Alice", AuthToken: "secret", QRCodeToken: "qr-secret"},
+		{ID: "", Nickname: "Missing ID"},
+		{ID: "2QK9H7"},
+	})
+
+	if len(members) != 1 {
+		t.Fatalf("expected 1 team member, got %#v", members)
+	}
+	if members[0].PlayerID != "7H9K2Q" || members[0].Nickname != "Alice" {
+		t.Fatalf("unexpected team member: %#v", members[0])
 	}
 }
 

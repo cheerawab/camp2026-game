@@ -6,6 +6,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
 	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
@@ -44,7 +45,13 @@ func (h *Handler) Status(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httpx.WriteJSON(w, http.StatusOK, statusResponse(player, team, openPower))
+	teamMembers, err := h.findTeamMembers(r.Context(), player.TeamID)
+	if err != nil {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "status unavailable"))
+		return
+	}
+
+	httpx.WriteJSON(w, http.StatusOK, statusResponse(player, team, openPower, teamMembers))
 }
 
 func (h *Handler) findTeam(ctx context.Context, teamID string) (mongomodel.Team, error) {
@@ -59,6 +66,38 @@ func (h *Handler) findTeam(ctx context.Context, teamID string) (mongomodel.Team,
 		return mongomodel.Team{}, mongo.ErrNoDocuments
 	}
 	return team, nil
+}
+
+func (h *Handler) findTeamMembers(ctx context.Context, teamID string) ([]mongomodel.Player, error) {
+	cursor, err := h.db.Collection(mongomodel.PlayersCollection).Find(
+		ctx,
+		bson.M{"team_id": teamID},
+		options.Find().
+			SetProjection(bson.D{
+				{Key: "auth_token", Value: 0},
+				{Key: "qrcode_token", Value: 0},
+				{Key: "default_sitone_ids", Value: 0},
+			}).
+			SetSort(bson.D{
+				{Key: "nickname", Value: 1},
+				{Key: "_id", Value: 1},
+			}),
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		_ = cursor.Close(ctx)
+	}()
+
+	var players []mongomodel.Player
+	if err := cursor.All(ctx, &players); err != nil {
+		return nil, err
+	}
+	if players == nil {
+		return []mongomodel.Player{}, nil
+	}
+	return players, nil
 }
 
 func (h *Handler) sumOpenPower(ctx context.Context, playerID string) (int, error) {
@@ -97,7 +136,7 @@ func openPowerTotalPipeline(playerID string) mongo.Pipeline {
 	}
 }
 
-func statusResponse(player mongomodel.Player, team mongomodel.Team, openPower int) StatusResponse {
+func statusResponse(player mongomodel.Player, team mongomodel.Team, openPower int, teamMembers []mongomodel.Player) StatusResponse {
 	return StatusResponse{
 		PlayerID: player.ID,
 		Nickname: player.Nickname,
@@ -105,8 +144,25 @@ func statusResponse(player mongomodel.Player, team mongomodel.Team, openPower in
 			TeamID: team.ID,
 			Name:   team.Name,
 		},
-		OpenPower: openPower,
-		AvatarURL: player.AvatarURL,
-		Role:      player.Role,
+		TeamMembers: teamMemberResponses(teamMembers),
+		OpenPower:   openPower,
+		AvatarURL:   player.AvatarURL,
+		Role:        player.Role,
 	}
+}
+
+func teamMemberResponses(players []mongomodel.Player) []TeamMemberResponse {
+	members := make([]TeamMemberResponse, 0, len(players))
+	for _, player := range players {
+		if player.ID == "" || player.Nickname == "" {
+			continue
+		}
+		members = append(members, TeamMemberResponse{
+			PlayerID:  player.ID,
+			Nickname:  player.Nickname,
+			AvatarURL: player.AvatarURL,
+			Role:      player.Role,
+		})
+	}
+	return members
 }

@@ -61,9 +61,14 @@ func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "home summary unavailable"))
 		return
 	}
+	teamMembers, err := h.findTeamMembers(r.Context(), player.TeamID)
+	if err != nil {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "home summary unavailable"))
+		return
+	}
 
 	httpx.WriteJSON(w, http.StatusOK, HomeResponse{
-		Player: statusResponse(player, team, openPower),
+		Player: statusResponse(player, team, openPower, teamMembers),
 		Summary: HomeSummaryResponse{
 			OpenPower:   openPower,
 			SitoneCount: sitoneCount,

@@ -7,13 +7,21 @@ type TeamResponse struct {
 	Name   string `json:"name" example:"Blue Team"`
 }
 
+type TeamMemberResponse struct {
+	PlayerID  string `json:"playerId" example:"7H9K2Q"`
+	Nickname  string `json:"nickname" example:"Alice"`
+	AvatarURL string `json:"avatarUrl,omitempty" example:"https://example.test/avatar/alice.png"`
+	Role      string `json:"role,omitempty" example:"staff"`
+}
+
 type StatusResponse struct {
-	PlayerID  string       `json:"playerId" example:"7H9K2Q"`
-	Nickname  string       `json:"nickname" example:"Alice"`
-	Team      TeamResponse `json:"team"`
-	OpenPower int          `json:"openPower" example:"1280"`
-	AvatarURL string       `json:"avatarUrl,omitempty" example:"https://example.test/avatar/alice.png"`
-	Role      string       `json:"role,omitempty" example:"staff"`
+	PlayerID    string               `json:"playerId" example:"7H9K2Q"`
+	Nickname    string               `json:"nickname" example:"Alice"`
+	Team        TeamResponse         `json:"team"`
+	TeamMembers []TeamMemberResponse `json:"teamMembers"`
+	OpenPower   int                  `json:"openPower" example:"1280"`
+	AvatarURL   string               `json:"avatarUrl,omitempty" example:"https://example.test/avatar/alice.png"`
+	Role        string               `json:"role,omitempty" example:"staff"`
 }
 
 type HomeResponse struct {
