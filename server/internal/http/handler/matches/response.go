@@ -25,20 +25,23 @@ type AnswerAcceptedResponse struct {
 }
 
 type MatchStateResponse struct {
-	MatchID              string                 `json:"matchId" example:"match_7H9K2Q"`
-	Code                 string                 `json:"code,omitempty" example:"ABC123"`
-	Status               string                 `json:"status" example:"active"`
-	HostPlayerID         string                 `json:"hostPlayerId" example:"7H9K2Q"`
-	Players              []MatchPlayerResponse  `json:"players"`
-	CurrentQuestionIndex int                    `json:"currentQuestionIndex,omitempty" example:"0"`
-	QuestionCount        int                    `json:"questionCount,omitempty" example:"10"`
-	CurrentQuestion      *MatchQuestionResponse `json:"currentQuestion,omitempty"`
-	RoundStartedAt       *time.Time             `json:"roundStartedAt,omitempty"`
-	RoundEndsAt          *time.Time             `json:"roundEndsAt,omitempty"`
-	CreatedAt            time.Time              `json:"createdAt"`
-	StartedAt            *time.Time             `json:"startedAt,omitempty"`
-	CompletedAt          *time.Time             `json:"completedAt,omitempty"`
-	Results              []MatchQuestionResult  `json:"results,omitempty"`
+	MatchID               string                 `json:"matchId" example:"match_7H9K2Q"`
+	Code                  string                 `json:"code,omitempty" example:"ABC123"`
+	Status                string                 `json:"status" example:"active"`
+	Phase                 string                 `json:"phase,omitempty" example:"answering"`
+	HostPlayerID          string                 `json:"hostPlayerId" example:"7H9K2Q"`
+	Players               []MatchPlayerResponse  `json:"players"`
+	CurrentQuestionIndex  int                    `json:"currentQuestionIndex,omitempty" example:"0"`
+	QuestionCount         int                    `json:"questionCount,omitempty" example:"10"`
+	CurrentQuestion       *MatchQuestionResponse `json:"currentQuestion,omitempty"`
+	CurrentQuestionResult *MatchQuestionResult   `json:"currentQuestionResult,omitempty"`
+	RoundStartedAt        *time.Time             `json:"roundStartedAt,omitempty"`
+	RoundEndsAt           *time.Time             `json:"roundEndsAt,omitempty"`
+	RevealEndsAt          *time.Time             `json:"revealEndsAt,omitempty"`
+	CreatedAt             time.Time              `json:"createdAt"`
+	StartedAt             *time.Time             `json:"startedAt,omitempty"`
+	CompletedAt           *time.Time             `json:"completedAt,omitempty"`
+	Results               []MatchQuestionResult  `json:"results,omitempty"`
 }
 
 type MatchPlayerResponse struct {

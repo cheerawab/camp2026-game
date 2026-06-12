@@ -68,6 +68,7 @@ func (h *Handler) Ready(w http.ResponseWriter, r *http.Request) {
 		}
 		now := time.Now()
 		match.Status = mongomodel.MatchStatusActive
+		match.Phase = mongomodel.MatchPhaseAnswering
 		match.QuestionIDs = questionIDs
 		match.CurrentQuestionIndex = 0
 		match.StartedAt = now

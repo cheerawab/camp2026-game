@@ -514,7 +514,7 @@ const docTemplate = `{
                         "AuthCookieAuth": []
                     }
                 ],
-                "description": "Returns the current match state for a participant. Active matches hide correct answers until completed.",
+                "description": "Returns the current match state for a participant. Active matches reveal current-round answers only during the reveal phase.",
                 "produces": [
                     "application/json"
                 ],
@@ -563,7 +563,7 @@ const docTemplate = `{
                         "AuthCookieAuth": []
                     }
                 ],
-                "description": "Accepts the authenticated player's answer for the current question without revealing correctness until match completion.",
+                "description": "Accepts the authenticated player's answer for the current question. Correctness is revealed to both players when the round enters the reveal phase.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1418,6 +1418,69 @@ const docTemplate = `{
                 }
             }
         },
+        "/staff/players": {
+            "get": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Staff-only endpoint. Searches non-staff players by nickname or player ID for reward targeting.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "staff"
+                ],
+                "summary": "Search players as staff",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Nickname or player ID keyword",
+                        "name": "query",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/staff.ListPlayersResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
         "/staff/rewards": {
             "post": {
                 "security": [
@@ -1425,7 +1488,7 @@ const docTemplate = `{
                         "AuthCookieAuth": []
                     }
                 ],
-                "description": "Staff-only endpoint. Resolves a player QR code identifier, grants one sitone or item to that player, and records the staff grant.",
+                "description": "Staff-only endpoint. Grants one sitone or item to a player selected by player ID or QR code identifier, and records the staff grant.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1908,6 +1971,9 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 0
                 },
+                "currentQuestionResult": {
+                    "$ref": "#/definitions/matches.MatchQuestionResult"
+                },
                 "hostPlayerId": {
                     "type": "string",
                     "example": "7H9K2Q"
@@ -1915,6 +1981,10 @@ const docTemplate = `{
                 "matchId": {
                     "type": "string",
                     "example": "match_7H9K2Q"
+                },
+                "phase": {
+                    "type": "string",
+                    "example": "answering"
                 },
                 "players": {
                     "type": "array",
@@ -1931,6 +2001,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/matches.MatchQuestionResult"
                     }
+                },
+                "revealEndsAt": {
+                    "type": "string"
                 },
                 "roundEndsAt": {
                     "type": "string"
@@ -1981,6 +2054,9 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 0
                 },
+                "currentQuestionResult": {
+                    "$ref": "#/definitions/matches.MatchQuestionResult"
+                },
                 "hostPlayerId": {
                     "type": "string",
                     "example": "7H9K2Q"
@@ -1988,6 +2064,10 @@ const docTemplate = `{
                 "matchId": {
                     "type": "string",
                     "example": "match_7H9K2Q"
+                },
+                "phase": {
+                    "type": "string",
+                    "example": "answering"
                 },
                 "players": {
                     "type": "array",
@@ -2004,6 +2084,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/matches.MatchQuestionResult"
                     }
+                },
+                "revealEndsAt": {
+                    "type": "string"
                 },
                 "roundEndsAt": {
                     "type": "string"
@@ -2187,6 +2270,9 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 0
                 },
+                "currentQuestionResult": {
+                    "$ref": "#/definitions/matches.MatchQuestionResult"
+                },
                 "hostPlayerId": {
                     "type": "string",
                     "example": "7H9K2Q"
@@ -2194,6 +2280,10 @@ const docTemplate = `{
                 "matchId": {
                     "type": "string",
                     "example": "match_7H9K2Q"
+                },
+                "phase": {
+                    "type": "string",
+                    "example": "answering"
                 },
                 "players": {
                     "type": "array",
@@ -2210,6 +2300,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/matches.MatchQuestionResult"
                     }
+                },
+                "revealEndsAt": {
+                    "type": "string"
                 },
                 "roundEndsAt": {
                     "type": "string"
@@ -2246,6 +2339,9 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 0
                 },
+                "currentQuestionResult": {
+                    "$ref": "#/definitions/matches.MatchQuestionResult"
+                },
                 "hostPlayerId": {
                     "type": "string",
                     "example": "7H9K2Q"
@@ -2253,6 +2349,10 @@ const docTemplate = `{
                 "matchId": {
                     "type": "string",
                     "example": "match_7H9K2Q"
+                },
+                "phase": {
+                    "type": "string",
+                    "example": "answering"
                 },
                 "players": {
                     "type": "array",
@@ -2269,6 +2369,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/matches.MatchQuestionResult"
                     }
+                },
+                "revealEndsAt": {
+                    "type": "string"
                 },
                 "roundEndsAt": {
                     "type": "string"
@@ -2325,6 +2428,9 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 0
                 },
+                "currentQuestionResult": {
+                    "$ref": "#/definitions/matches.MatchQuestionResult"
+                },
                 "hostPlayerId": {
                     "type": "string",
                     "example": "7H9K2Q"
@@ -2332,6 +2438,10 @@ const docTemplate = `{
                 "matchId": {
                     "type": "string",
                     "example": "match_7H9K2Q"
+                },
+                "phase": {
+                    "type": "string",
+                    "example": "answering"
                 },
                 "players": {
                     "type": "array",
@@ -2348,6 +2458,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/matches.MatchQuestionResult"
                     }
+                },
+                "revealEndsAt": {
+                    "type": "string"
                 },
                 "roundEndsAt": {
                     "type": "string"
@@ -2904,7 +3017,6 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "kind",
-                "qrcodeToken",
                 "quantity",
                 "refId"
             ],
@@ -2916,6 +3028,12 @@ const docTemplate = `{
                         "sitone"
                     ],
                     "example": "sitone"
+                },
+                "playerId": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "example": "7H9K2Q"
                 },
                 "qrcodeToken": {
                     "type": "string",
@@ -2949,6 +3067,17 @@ const docTemplate = `{
                 "rewardId": {
                     "type": "string",
                     "example": "staff_reward_01HXK2P9ATJ5S2YV8C2J4Q0M"
+                }
+            }
+        },
+        "staff.ListPlayersResponse": {
+            "type": "object",
+            "properties": {
+                "players": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/staff.StaffPlayerResponse"
+                    }
                 }
             }
         },
@@ -2999,6 +3128,26 @@ const docTemplate = `{
                 "teamId": {
                     "type": "string",
                     "example": "8M4RXP"
+                }
+            }
+        },
+        "staff.StaffPlayerResponse": {
+            "type": "object",
+            "properties": {
+                "avatarUrl": {
+                    "type": "string",
+                    "example": "https://example.test/avatar/alice.png"
+                },
+                "nickname": {
+                    "type": "string",
+                    "example": "Alice"
+                },
+                "playerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                },
+                "team": {
+                    "$ref": "#/definitions/staff.RewardTeamResponse"
                 }
             }
         },

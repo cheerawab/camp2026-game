@@ -7,6 +7,7 @@ import {
   gameApi,
   type MatchChoice,
   type MatchPlayer,
+  type MatchQuestionResult,
   type Sitone,
 } from "@/shared/api/game"
 import {
@@ -35,9 +36,30 @@ function scoreRatio(score: number, maxScore: number) {
   return Math.max(0, Math.min(100, (score / maxScore) * 100))
 }
 
-function answerStatus(player: MatchPlayer | undefined) {
+function answerStatus(
+  player: MatchPlayer | undefined,
+  phase: "answering" | "revealing" | undefined,
+) {
   if (!player) return "等待中"
+  if (phase === "revealing") {
+    return player.answeredCurrentQuestion ? "已答" : "未作答"
+  }
   return player.answeredCurrentQuestion ? "已答" : "作答中"
+}
+
+function choiceText(result: MatchQuestionResult, choice?: string) {
+  switch (choice) {
+    case "A":
+      return result.choiceA
+    case "B":
+      return result.choiceB
+    case "C":
+      return result.choiceC
+    case "D":
+      return result.choiceD
+    default:
+      return "未作答"
+  }
 }
 
 function ScoreMeter({
@@ -123,11 +145,13 @@ function PlayerRail({
   player,
   sitones,
   side,
+  phase,
 }: {
   label: string
   player: MatchPlayer | undefined
   sitones: Sitone[]
   side: "opponent" | "self"
+  phase: "answering" | "revealing" | undefined
 }) {
   const score = player?.score ?? 0
   const maxScore = player?.maxScore ?? 0
@@ -161,7 +185,7 @@ function PlayerRail({
             {player?.nickname ?? "等待對手"}
           </div>
           <div className="text-muted-foreground text-xs font-bold">
-            {answerStatus(player)}
+            {answerStatus(player, phase)}
           </div>
         </div>
         <div className="text-muted-foreground text-xs font-black whitespace-nowrap">
@@ -177,11 +201,107 @@ function PlayerRail({
   )
 }
 
+function RoundRevealCard({
+  result,
+  players,
+  seconds,
+}: {
+  result: MatchQuestionResult | undefined
+  players: MatchPlayer[]
+  seconds: number
+}) {
+  if (!result) {
+    return (
+      <Card>
+        <CardContent>
+          <p className="text-muted-foreground text-sm font-bold">
+            正在同步本題結果。
+          </p>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  const playerScores = new Map(
+    players.map((player) => [player.playerId, player.score ?? 0]),
+  )
+
+  return (
+    <Card className="border-ink border-2">
+      <CardContent className="grid gap-3">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+          <div>
+            <p className="text-muted-foreground text-xs font-black tracking-[0.08em] uppercase">
+              本題結果
+            </p>
+            <h2 className="text-xl leading-tight font-black">
+              正確答案 {result.correctChoice}.{" "}
+              {choiceText(result, result.correctChoice)}
+            </h2>
+          </div>
+          <div className="grid justify-items-end leading-none">
+            <span className="text-3xl font-black">{seconds}</span>
+            <span className="text-muted-foreground text-xs font-bold">
+              秒後繼續
+            </span>
+          </div>
+        </div>
+
+        <div className="grid gap-2">
+          {result.answers.map((answer) => {
+            const totalScore = playerScores.get(answer.playerId) ?? 0
+            const status = answer.correct
+              ? "答對"
+              : answer.choice
+                ? "答錯"
+                : "未作答"
+
+            return (
+              <div
+                key={answer.playerId}
+                className={cn(
+                  "border-ink grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-[16px] border-2 px-3 py-2",
+                  answer.correct ? "bg-pebble-engineer" : "bg-card",
+                )}
+              >
+                <div className="min-w-0">
+                  <div className="truncate text-base font-black">
+                    {answer.nickname}
+                  </div>
+                  <div className="text-muted-foreground text-xs font-bold">
+                    {status} ·{" "}
+                    {answer.choice
+                      ? `${answer.choice}. ${choiceText(result, answer.choice)}`
+                      : "未作答"}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-lg leading-none font-black">
+                    +{answer.score}
+                  </div>
+                  <div className="text-muted-foreground text-xs font-bold">
+                    目前 {totalScore}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        <Separator />
+        <p className="text-muted-foreground text-sm leading-[1.6] font-bold">
+          {result.explanation}
+        </p>
+      </CardContent>
+    </Card>
+  )
+}
+
 export function BattleQuestionPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [matchID] = useState(getStoredMatchID)
-  const [now, setNow] = useState<number | null>(null)
+  const [now, setNow] = useState(() => Date.now())
   const matchQuery = useQuery({
     queryKey: ["matches", matchID],
     queryFn: () => gameApi.getMatch(matchID),
@@ -261,7 +381,14 @@ export function BattleQuestionPage() {
         : [],
     [question],
   )
-  const remainingSeconds = secondsUntil(match?.roundEndsAt, now)
+  const phase =
+    match?.status === "active" ? (match.phase ?? "answering") : undefined
+  const isRevealing = phase === "revealing"
+  const currentResult = match?.currentQuestionResult
+  const displaySeconds = secondsUntil(
+    isRevealing ? match?.revealEndsAt : match?.roundEndsAt,
+    now,
+  )
   const answered = currentPlayer?.answeredCurrentQuestion === true
 
   useEffect(() => {
@@ -295,6 +422,7 @@ export function BattleQuestionPage() {
         player={opponentPlayer}
         sitones={opponentSitones}
         side="opponent"
+        phase={phase}
       />
 
       <div className="grid min-h-0 content-start gap-y-2">
@@ -312,47 +440,75 @@ export function BattleQuestionPage() {
               </div>
               <div className="grid justify-items-end leading-none">
                 <span key={now} className="text-4xl font-black">
-                  {remainingSeconds}
+                  {displaySeconds}
                 </span>
-                <span className="text-sm font-bold">秒</span>
+                <span className="text-sm font-bold">
+                  {isRevealing ? "揭曉" : "秒"}
+                </span>
               </div>
             </div>
             <Separator />
             <div className="grid">
-              {choices.map(([choice, label], index) => (
-                <div key={choice}>
-                  <Button
-                    variant="ghost"
-                    className="grid h-fit w-full grid-cols-[58px_minmax(0,1fr)] justify-start gap-3 rounded-none py-2 pl-0"
-                    disabled={answered || answerMutation.isPending}
-                    onClick={() =>
-                      question &&
-                      answerMutation.mutate({
-                        questionID: question.questionId,
-                        choice,
-                      })
-                    }
-                  >
-                    <span className="border-accent-foreground bg-accent text-muted-foreground grid size-12 place-items-center rounded-lg border-2 text-lg font-black">
-                      {choice}
-                    </span>
-                    <span className="min-w-0 text-left text-lg leading-tight whitespace-normal">
-                      {label}
-                    </span>
-                  </Button>
-                  {index < choices.length - 1 && <Separator />}
-                </div>
-              ))}
+              {choices.map(([choice, label], index) => {
+                const isCorrectChoice =
+                  isRevealing && currentResult?.correctChoice === choice
+
+                return (
+                  <div key={choice}>
+                    <Button
+                      variant="ghost"
+                      className={cn(
+                        "grid h-fit w-full grid-cols-[58px_minmax(0,1fr)] justify-start gap-3 rounded-none py-2 pl-0 disabled:opacity-100",
+                        isCorrectChoice && "bg-pebble-engineer",
+                      )}
+                      disabled={
+                        isRevealing || answered || answerMutation.isPending
+                      }
+                      onClick={() =>
+                        question &&
+                        answerMutation.mutate({
+                          questionID: question.questionId,
+                          choice,
+                        })
+                      }
+                    >
+                      <span
+                        className={cn(
+                          "border-accent-foreground bg-accent text-muted-foreground grid size-12 place-items-center rounded-lg border-2 text-lg font-black",
+                          isCorrectChoice &&
+                            "border-ink bg-pebble-engineer text-ink",
+                        )}
+                      >
+                        {choice}
+                      </span>
+                      <span className="min-w-0 text-left text-lg leading-tight whitespace-normal">
+                        {label}
+                      </span>
+                    </Button>
+                    {index < choices.length - 1 && <Separator />}
+                  </div>
+                )
+              })}
             </div>
           </CardContent>
         </Card>
 
+        {isRevealing ? (
+          <RoundRevealCard
+            result={currentResult}
+            players={players}
+            seconds={displaySeconds}
+          />
+        ) : null}
+
         <Card>
           <CardContent>
             <p className="text-muted-foreground text-sm font-bold">
-              {answered
-                ? "答案已送出，等待下一題。"
-                : "選擇答案後會立即送出，結果會在對戰結束後揭曉。"}
+              {isRevealing
+                ? "本題已揭曉，準備下一題。"
+                : answered
+                  ? "答案已送出，等待對手或時間到。"
+                  : "選擇答案後會立即送出，雙方完成或時間到後揭曉。"}
             </p>
           </CardContent>
         </Card>
@@ -363,6 +519,7 @@ export function BattleQuestionPage() {
         player={currentPlayer}
         sitones={currentPlayerSitones}
         side="self"
+        phase={phase}
       />
     </GamePageShell>
   )

@@ -97,6 +97,23 @@ func TestAllPlayersReady(t *testing.T) {
 	}
 }
 
+func TestActiveMatchPhaseDefaultsToAnswering(t *testing.T) {
+	match := mongomodel.Match{Status: mongomodel.MatchStatusActive}
+	if got := activeMatchPhase(match); got != mongomodel.MatchPhaseAnswering {
+		t.Fatalf("expected missing active phase to default to answering, got %q", got)
+	}
+
+	match.Phase = mongomodel.MatchPhaseRevealing
+	if got := activeMatchPhase(match); got != mongomodel.MatchPhaseRevealing {
+		t.Fatalf("expected revealing phase, got %q", got)
+	}
+
+	match.Status = mongomodel.MatchStatusCompleted
+	if got := activeMatchPhase(match); got != "" {
+		t.Fatalf("expected completed match to have no active phase, got %q", got)
+	}
+}
+
 func TestNormalizeSitoneLoadoutAllowsDuplicateSlots(t *testing.T) {
 	got, err := normalizeSitoneLoadout([]string{
 		" stone_engineering_base ",
@@ -205,6 +222,51 @@ func TestMatchResultsRevealCompletedAnswers(t *testing.T) {
 	}
 	if results[0].Answers[0].Nickname != "Alice" || results[0].Answers[1].Nickname != "Bob" {
 		t.Fatalf("expected answer rows to include nicknames, got %#v", results[0].Answers)
+	}
+}
+
+func TestMatchQuestionResultRevealsCurrentRoundAnswers(t *testing.T) {
+	handler := New(Dependencies{Content: loadTestContent(t)})
+	match := mongomodel.Match{
+		ID:          "match_123",
+		Status:      mongomodel.MatchStatusActive,
+		Phase:       mongomodel.MatchPhaseRevealing,
+		QuestionIDs: []string{"quiz-001"},
+		Players: []mongomodel.MatchPlayer{
+			{PlayerID: "P1", Nickname: "Alice", Score: 160},
+			{PlayerID: "P2", Nickname: "Bob", Score: 0},
+		},
+	}
+	answeredAt := time.Date(2026, 6, 2, 10, 0, 3, 0, time.UTC)
+	answers := map[string]map[string]mongomodel.MatchAnswer{
+		"quiz-001": {
+			"P1": {
+				PlayerID:      "P1",
+				QuestionID:    "quiz-001",
+				Choice:        "A",
+				Correct:       true,
+				Score:         160,
+				ElapsedMillis: 3000,
+				AnsweredAt:    answeredAt,
+			},
+		},
+	}
+
+	result, err := handler.matchQuestionResult(match, "quiz-001", answers)
+	if err != nil {
+		t.Fatalf("match question result: %v", err)
+	}
+	if result.CorrectChoice == "" || result.Explanation == "" {
+		t.Fatalf("expected reveal result to include correct answer and explanation: %#v", result)
+	}
+	if len(result.Answers) != 2 {
+		t.Fatalf("expected 2 player answer rows, got %d", len(result.Answers))
+	}
+	if result.Answers[0].Choice != "A" || !result.Answers[0].Correct || result.Answers[0].Score != 160 {
+		t.Fatalf("expected first player answer to be revealed, got %#v", result.Answers[0])
+	}
+	if result.Answers[1].Choice != "" || result.Answers[1].Correct || result.Answers[1].Score != 0 {
+		t.Fatalf("expected unanswered player row with zero score, got %#v", result.Answers[1])
 	}
 }
 

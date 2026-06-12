@@ -15,6 +15,7 @@ import (
 const (
 	matchQuestionCount = 10
 	roundDuration      = 15
+	revealDuration     = 4
 )
 
 type Dependencies struct {

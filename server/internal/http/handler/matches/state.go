@@ -78,44 +78,62 @@ func (h *Handler) advanceMatch(ctx context.Context, match mongomodel.Match, now 
 
 	var events []string
 	for match.Status == mongomodel.MatchStatusActive {
-		shouldAdvance, err := h.shouldAdvanceRound(ctx, match, now)
-		if err != nil {
-			return match, events, err
-		}
-		if !shouldAdvance {
-			break
-		}
+		switch activeMatchPhase(match) {
+		case mongomodel.MatchPhaseAnswering:
+			shouldReveal, err := h.shouldRevealRound(ctx, match, now)
+			if err != nil {
+				return match, events, err
+			}
+			if !shouldReveal {
+				return match, events, nil
+			}
 
-		if match.CurrentQuestionIndex >= len(match.QuestionIDs)-1 {
-			match.Status = mongomodel.MatchStatusCompleted
-			match.CompletedAt = now
+			match.Phase = mongomodel.MatchPhaseRevealing
+			match.RevealEndsAt = now.Add(revealDuration * time.Second)
 			if err := h.saveMatch(ctx, match); err != nil {
 				return match, events, err
 			}
-			if err := h.writeMatchRewards(ctx, match); err != nil {
+			events = append(events, "round_revealed")
+
+		case mongomodel.MatchPhaseRevealing:
+			revealEndsAt := match.RevealEndsAt
+			if revealEndsAt.IsZero() {
+				revealEndsAt = now
+			}
+			if now.Before(revealEndsAt) {
+				return match, events, nil
+			}
+
+			if match.CurrentQuestionIndex >= len(match.QuestionIDs)-1 {
+				match.Status = mongomodel.MatchStatusCompleted
+				match.Phase = ""
+				match.CompletedAt = revealEndsAt
+				if err := h.saveMatch(ctx, match); err != nil {
+					return match, events, err
+				}
+				if err := h.writeMatchRewards(ctx, match); err != nil {
+					return match, events, err
+				}
+				events = append(events, "match_completed")
+				return match, events, nil
+			}
+
+			match.CurrentQuestionIndex++
+			match.Phase = mongomodel.MatchPhaseAnswering
+			match.RoundStartedAt = revealEndsAt
+			match.RoundEndsAt = revealEndsAt.Add(roundDuration * time.Second)
+			match.RevealEndsAt = time.Time{}
+			if err := h.saveMatch(ctx, match); err != nil {
 				return match, events, err
 			}
-			events = append(events, "match_completed")
-			break
+			events = append(events, "round_started")
 		}
-
-		nextStart := now
-		if !match.RoundEndsAt.IsZero() && now.After(match.RoundEndsAt) {
-			nextStart = match.RoundEndsAt
-		}
-		match.CurrentQuestionIndex++
-		match.RoundStartedAt = nextStart
-		match.RoundEndsAt = nextStart.Add(roundDuration * time.Second)
-		if err := h.saveMatch(ctx, match); err != nil {
-			return match, events, err
-		}
-		events = append(events, "round_started")
 	}
 
 	return match, events, nil
 }
 
-func (h *Handler) shouldAdvanceRound(ctx context.Context, match mongomodel.Match, now time.Time) (bool, error) {
+func (h *Handler) shouldRevealRound(ctx context.Context, match mongomodel.Match, now time.Time) (bool, error) {
 	if len(match.QuestionIDs) == 0 || match.CurrentQuestionIndex >= len(match.QuestionIDs) {
 		return false, nil
 	}
@@ -203,15 +221,26 @@ func (h *Handler) buildMatchState(ctx context.Context, match mongomodel.Match) (
 	}
 
 	if match.Status == mongomodel.MatchStatusActive {
+		phase := activeMatchPhase(match)
+		response.Phase = phase
 		response.RoundStartedAt = timePtr(match.RoundStartedAt)
 		response.RoundEndsAt = timePtr(match.RoundEndsAt)
+		response.RevealEndsAt = timePtr(match.RevealEndsAt)
 		if match.CurrentQuestionIndex < len(match.QuestionIDs) {
-			question, ok := h.content.GetQuizQuestion(match.QuestionIDs[match.CurrentQuestionIndex])
+			currentQuestionID := match.QuestionIDs[match.CurrentQuestionIndex]
+			question, ok := h.content.GetQuizQuestion(currentQuestionID)
 			if !ok {
 				return MatchStateResponse{}, httpx.NewError(http.StatusInternalServerError, "match question is unavailable")
 			}
 			currentQuestion := questionResponse(question)
 			response.CurrentQuestion = &currentQuestion
+			if phase == mongomodel.MatchPhaseRevealing {
+				result, err := h.matchQuestionResult(match, currentQuestionID, answerByQuestionPlayer)
+				if err != nil {
+					return MatchStateResponse{}, err
+				}
+				response.CurrentQuestionResult = &result
+			}
 		}
 	}
 
@@ -258,41 +287,53 @@ func (h *Handler) matchResults(
 ) ([]MatchQuestionResult, error) {
 	results := make([]MatchQuestionResult, 0, len(match.QuestionIDs))
 	for _, questionID := range match.QuestionIDs {
-		question, ok := h.content.GetQuizQuestion(questionID)
-		if !ok {
-			return nil, httpx.NewError(http.StatusInternalServerError, "match question is unavailable")
-		}
-
-		result := MatchQuestionResult{
-			QuestionID:    question.ID,
-			Prompt:        question.Prompt,
-			ChoiceA:       question.ChoiceA,
-			ChoiceB:       question.ChoiceB,
-			ChoiceC:       question.ChoiceC,
-			ChoiceD:       question.ChoiceD,
-			CorrectChoice: question.CorrectChoice,
-			Explanation:   question.Explanation,
-			Answers:       make([]MatchAnswerResponse, 0, len(match.Players)),
-		}
-		for _, player := range match.Players {
-			answer, ok := answerByQuestionPlayer[questionID][player.PlayerID]
-			answerResponse := MatchAnswerResponse{
-				PlayerID: player.PlayerID,
-				Nickname: player.Nickname,
-			}
-			if ok {
-				answeredAt := answer.AnsweredAt
-				answerResponse.Choice = answer.Choice
-				answerResponse.Correct = answer.Correct
-				answerResponse.Score = answer.Score
-				answerResponse.ElapsedMillis = answer.ElapsedMillis
-				answerResponse.AnsweredAt = &answeredAt
-			}
-			result.Answers = append(result.Answers, answerResponse)
+		result, err := h.matchQuestionResult(match, questionID, answerByQuestionPlayer)
+		if err != nil {
+			return nil, err
 		}
 		results = append(results, result)
 	}
 	return results, nil
+}
+
+func (h *Handler) matchQuestionResult(
+	match mongomodel.Match,
+	questionID string,
+	answerByQuestionPlayer map[string]map[string]mongomodel.MatchAnswer,
+) (MatchQuestionResult, error) {
+	question, ok := h.content.GetQuizQuestion(questionID)
+	if !ok {
+		return MatchQuestionResult{}, httpx.NewError(http.StatusInternalServerError, "match question is unavailable")
+	}
+
+	result := MatchQuestionResult{
+		QuestionID:    question.ID,
+		Prompt:        question.Prompt,
+		ChoiceA:       question.ChoiceA,
+		ChoiceB:       question.ChoiceB,
+		ChoiceC:       question.ChoiceC,
+		ChoiceD:       question.ChoiceD,
+		CorrectChoice: question.CorrectChoice,
+		Explanation:   question.Explanation,
+		Answers:       make([]MatchAnswerResponse, 0, len(match.Players)),
+	}
+	for _, player := range match.Players {
+		answer, ok := answerByQuestionPlayer[questionID][player.PlayerID]
+		answerResponse := MatchAnswerResponse{
+			PlayerID: player.PlayerID,
+			Nickname: player.Nickname,
+		}
+		if ok {
+			answeredAt := answer.AnsweredAt
+			answerResponse.Choice = answer.Choice
+			answerResponse.Correct = answer.Correct
+			answerResponse.Score = answer.Score
+			answerResponse.ElapsedMillis = answer.ElapsedMillis
+			answerResponse.AnsweredAt = &answeredAt
+		}
+		result.Answers = append(result.Answers, answerResponse)
+	}
+	return result, nil
 }
 
 func (h *Handler) publishState(ctx context.Context, match mongomodel.Match, eventName string) {

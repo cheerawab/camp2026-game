@@ -284,11 +284,16 @@ definitions:
       currentQuestionIndex:
         example: 0
         type: integer
+      currentQuestionResult:
+        $ref: '#/definitions/matches.MatchQuestionResult'
       hostPlayerId:
         example: 7H9K2Q
         type: string
       matchId:
         example: match_7H9K2Q
+        type: string
+      phase:
+        example: answering
         type: string
       players:
         items:
@@ -301,6 +306,8 @@ definitions:
         items:
           $ref: '#/definitions/matches.MatchQuestionResult'
         type: array
+      revealEndsAt:
+        type: string
       roundEndsAt:
         type: string
       roundStartedAt:
@@ -335,11 +342,16 @@ definitions:
       currentQuestionIndex:
         example: 0
         type: integer
+      currentQuestionResult:
+        $ref: '#/definitions/matches.MatchQuestionResult'
       hostPlayerId:
         example: 7H9K2Q
         type: string
       matchId:
         example: match_7H9K2Q
+        type: string
+      phase:
+        example: answering
         type: string
       players:
         items:
@@ -352,6 +364,8 @@ definitions:
         items:
           $ref: '#/definitions/matches.MatchQuestionResult'
         type: array
+      revealEndsAt:
+        type: string
       roundEndsAt:
         type: string
       roundStartedAt:
@@ -482,11 +496,16 @@ definitions:
       currentQuestionIndex:
         example: 0
         type: integer
+      currentQuestionResult:
+        $ref: '#/definitions/matches.MatchQuestionResult'
       hostPlayerId:
         example: 7H9K2Q
         type: string
       matchId:
         example: match_7H9K2Q
+        type: string
+      phase:
+        example: answering
         type: string
       players:
         items:
@@ -499,6 +518,8 @@ definitions:
         items:
           $ref: '#/definitions/matches.MatchQuestionResult'
         type: array
+      revealEndsAt:
+        type: string
       roundEndsAt:
         type: string
       roundStartedAt:
@@ -523,11 +544,16 @@ definitions:
       currentQuestionIndex:
         example: 0
         type: integer
+      currentQuestionResult:
+        $ref: '#/definitions/matches.MatchQuestionResult'
       hostPlayerId:
         example: 7H9K2Q
         type: string
       matchId:
         example: match_7H9K2Q
+        type: string
+      phase:
+        example: answering
         type: string
       players:
         items:
@@ -540,6 +566,8 @@ definitions:
         items:
           $ref: '#/definitions/matches.MatchQuestionResult'
         type: array
+      revealEndsAt:
+        type: string
       roundEndsAt:
         type: string
       roundStartedAt:
@@ -578,11 +606,16 @@ definitions:
       currentQuestionIndex:
         example: 0
         type: integer
+      currentQuestionResult:
+        $ref: '#/definitions/matches.MatchQuestionResult'
       hostPlayerId:
         example: 7H9K2Q
         type: string
       matchId:
         example: match_7H9K2Q
+        type: string
+      phase:
+        example: answering
         type: string
       players:
         items:
@@ -595,6 +628,8 @@ definitions:
         items:
           $ref: '#/definitions/matches.MatchQuestionResult'
         type: array
+      revealEndsAt:
+        type: string
       roundEndsAt:
         type: string
       roundStartedAt:
@@ -1367,7 +1402,7 @@ paths:
   /matches/{matchID}:
     get:
       description: Returns the current match state for a participant. Active matches
-        hide correct answers until completed.
+        reveal current-round answers only during the reveal phase.
       produces:
       - application/json
       responses:
@@ -1400,8 +1435,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Accepts the authenticated player's answer for the current question
-        without revealing correctness until match completion.
+      description: Accepts the authenticated player's answer for the current question.
+        Correctness is revealed to both players when the round enters the reveal phase.
       parameters:
       - description: Answer request
         in: body

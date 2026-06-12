@@ -15,7 +15,7 @@ import (
 
 // Answer godoc
 // @Summary Submit match answer
-// @Description Accepts the authenticated player's answer for the current question without revealing correctness until match completion.
+// @Description Accepts the authenticated player's answer for the current question. Correctness is revealed to both players when the round enters the reveal phase.
 // @Tags matches
 // @Accept json
 // @Produce json
@@ -69,6 +69,10 @@ func (h *Handler) Answer(w http.ResponseWriter, r *http.Request) {
 	}
 	if match.Status != mongomodel.MatchStatusActive {
 		httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "match is not active"))
+		return
+	}
+	if activeMatchPhase(match) != mongomodel.MatchPhaseAnswering {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "round is not accepting answers"))
 		return
 	}
 	if match.CurrentQuestionIndex >= len(match.QuestionIDs) || match.QuestionIDs[match.CurrentQuestionIndex] != body.QuestionID {
