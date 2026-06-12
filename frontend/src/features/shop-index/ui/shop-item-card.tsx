@@ -1,98 +1,85 @@
+import { useNavigate } from "@tanstack/react-router"
+import { Check, Info, ShoppingCart } from "lucide-react"
+
+import { type ShopItem } from "@/shared/api/game"
+import {
+  itemTypeClass,
+  itemTypeLabel,
+  rarityLabel,
+} from "@/shared/lib/game-labels"
 import { Badge } from "@/shared/ui/badge"
 import { Button } from "@/shared/ui/button"
 import { Card, CardContent } from "@/shared/ui/card"
-import { useNavigate } from "@tanstack/react-router"
-import { Info, ShoppingCart, Check } from "lucide-react"
-import { toast } from "sonner"
 
-// enum ItemTag {
-//   "外觀",
-//   "裝飾",
-//   "紀念",
-// }
+import { ShopPurchaseConfirmButton } from "./shop-purchase-confirm-button"
 
 type ShopItemCardType = {
-  id: string
-  name: string
-  description: string
-  price: number
-  tags: Array<string>
-  purchased?: boolean
-  pictureSrc: string
+  item: ShopItem
+  currentOpenPower?: number
 }
 
-export function ShopItemCard({
-  id,
-  name,
-  description,
-  price,
-  tags,
-  purchased = false,
-  pictureSrc,
-}: ShopItemCardType) {
+export function ShopItemCard({ item, currentOpenPower }: ShopItemCardType) {
   const navigate = useNavigate()
 
-  const onInspect = () => {
-    navigate({ to: `/shop/${id}` })
-  }
-
-  const onPurchase = () => {
-    // TODO: 串接 API
-    toast.success(
-      <div className="grid">
-        <span className="text-lg font-bold">購買成功！</span>
-        <span>
-          已成功花費 <strong className="font-bold">{price} OP</strong>，購買{" "}
-          <strong className="font-bold">{name}</strong>。
-        </span>
-      </div>,
-      {
-        position: "bottom-center",
-        icon: <Check />,
-      },
-    )
-  }
   return (
-    <Card>
-      <CardContent>
-        <div className="flex gap-4">
-          <div className="basis-1/3">
-            <img
-              src={pictureSrc}
-              alt={name}
-              className="aspect-square h-full rounded-lg"
-            />
-          </div>
-          <div className="grid basis-2/3 gap-2">
-            <div className="flex justify-between">
-              <div className="flex gap-2">
-                {tags.map((item) => {
-                  return (
-                    <Badge variant="outline" key={item}>
-                      {item}
-                    </Badge>
-                  )
-                })}
-              </div>
-              <Badge>{price} OP</Badge>
+    <Card className="py-4">
+      <CardContent className="px-4">
+        <div className="grid grid-cols-[96px_minmax(0,1fr)] gap-3">
+          <div className="self-start">
+            <div
+              className={[
+                "border-ink grid size-24 place-items-center rounded-[1.375rem] border-2",
+                itemTypeClass(item.type),
+              ].join(" ")}
+              aria-hidden
+            >
+              <ShoppingCart className="size-8" />
             </div>
-            <div className="text-2xl font-bold">{name}</div>
-            <div className="text-muted-foreground">{description}</div>
+          </div>
+          <div className="grid min-w-0 gap-2">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
+              <div className="flex min-w-0 flex-wrap gap-1.5">
+                {[itemTypeLabel(item.type), rarityLabel(item.rarity)].map(
+                  (tag) => (
+                    <Badge variant="outline" key={tag}>
+                      {tag}
+                    </Badge>
+                  ),
+                )}
+              </div>
+              <Badge>開源力 {item.priceOpenPower}</Badge>
+            </div>
+            <div className="truncate text-xl leading-tight font-bold">
+              {item.name}
+            </div>
+            <div className="text-muted-foreground line-clamp-2 min-h-[2.75rem] text-sm leading-snug">
+              {item.description}
+            </div>
             <div className="grid grid-cols-2 gap-2">
-              <Button variant="secondary" onClick={onInspect}>
+              <Button
+                variant="secondary"
+                className="px-2"
+                onClick={() =>
+                  navigate({
+                    to: "/shop/$itemId",
+                    params: { itemId: item.id },
+                  })
+                }
+              >
                 <Info />
                 資訊
               </Button>
-              {purchased ? (
-                <Button variant="outline" disabled>
+              {item.redeemed ? (
+                <Button variant="outline" className="px-2" disabled>
                   <Check />
                   已擁有
                 </Button>
               ) : (
-                <Button onClick={onPurchase}>
-                  <ShoppingCart />
-                  購買
-                </Button>
+                <ShopPurchaseConfirmButton
+                  item={item}
+                  currentOpenPower={currentOpenPower}
+                  className="px-2"
+                />
               )}
             </div>
           </div>

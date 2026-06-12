@@ -1,92 +1,77 @@
-import { ShopItemCard } from "@/features/shop-index/ui/shop-item-card"
-import { Badge } from "@/shared/ui/badge"
-import { PageHeader } from "@/shared/ui/page-header"
-import { Toaster } from "@/shared/ui/sonner"
-import { DollarSign } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
+import { Link } from "@tanstack/react-router"
 
-const SHOP_ITEMS = [
-  {
-    id: "lantern-theme",
-    name: "營燈基地佈景",
-    description: "讓基地展示區換成暖黃營燈與旗繩。",
-    tags: ["外觀"],
-    price: 260,
-    state: "可購買",
-    purchased: true,
-    pictureSrc: "https://placehold.co/100x100/svg",
-  },
-  {
-    id: "map-frame",
-    name: "探索地圖邊框",
-    tags: ["收藏"],
-    description: "套用在小石卡上的路線圖外框。",
-    price: 180,
-    pictureSrc: "https://placehold.co/100x100/svg",
-  },
-  {
-    id: "radio-badge",
-    name: "小隊電波徽章",
-    tags: ["紀念"],
-    price: 520,
-    description: "對戰完成後可展示在個人 QR Code 頁。",
-    pictureSrc: "https://placehold.co/100x100/svg",
-  },
-  {
-    id: "workbench-theme",
-    name: "工程工作台佈景",
-    tags: ["外觀"],
-    description: "替基地切換成模組板、焊點與工具貼紙風格。",
-    price: 360,
-    pictureSrc: "https://placehold.co/100x100/svg",
-  },
-  {
-    id: "stage-ribbon",
-    name: "舞台彩帶包",
-    tags: ["收藏"],
-    description: "增加娛樂系小石展示用的彩帶標籤。",
-    price: 120,
-    pictureSrc: "https://placehold.co/100x100/svg",
-  },
-]
+import { ShopItemCard } from "@/features/shop-index/ui/shop-item-card"
+import { AppError } from "@/shared/api/error"
+import { gameApi } from "@/shared/api/game"
+import { Badge } from "@/shared/ui/badge"
+import { Button } from "@/shared/ui/button"
+import { Card, CardContent } from "@/shared/ui/card"
+import { GamePageShell } from "@/shared/ui/game-page-shell"
+import { PageHeader } from "@/shared/ui/page-header"
 
 export function ShopPage() {
+  const statusQuery = useQuery({
+    queryKey: ["me", "status"],
+    queryFn: gameApi.status,
+  })
+  const itemsQuery = useQuery({
+    queryKey: ["shop", "items"],
+    queryFn: gameApi.shopItems,
+  })
+  const isUnauthorized =
+    (statusQuery.error instanceof AppError &&
+      statusQuery.error.status === 401) ||
+    (itemsQuery.error instanceof AppError && itemsQuery.error.status === 401)
+
   return (
-    <>
-      <main className="mx-auto grid w-full max-w-sm gap-y-2 px-4 py-4">
-        {/* 標題 & 返回 */}
-        <PageHeader
-          title="商店"
-          headline="Item Shop"
-          rightSlot={
-            <div className="flex flex-col items-end">
-              <span className="text-muted-foreground text-sm font-bold">
-                你現在持有開源力
-              </span>
-              <Badge className="h-fit">
-                <DollarSign className="h-4 w-4" />
-                1000 OP
-              </Badge>
-            </div>
-          }
-        />
-        {/* 商品列表 */}
+    <GamePageShell contentClassName="grid content-start gap-y-2">
+      <PageHeader
+        title="商店"
+        headline="Item Shop"
+        rightSlot={
+          <div className="flex flex-col items-end">
+            <span className="text-muted-foreground text-sm font-bold">
+              你現在持有開源力
+            </span>
+            <Badge className="h-fit">
+              開源力 {statusQuery.data?.openPower ?? 0}
+            </Badge>
+          </div>
+        }
+      />
+
+      {isUnauthorized ? (
+        <Card>
+          <CardContent className="grid gap-3">
+            <h2 className="text-2xl font-bold">請先登入</h2>
+            <p className="text-muted-foreground">
+              登入後才能查看可兌換商品與目前開源力。
+            </p>
+            <Button asChild>
+              <Link to="/login">前往登入</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      ) : itemsQuery.isPending ? (
+        <Card>
+          <CardContent>
+            <span className="text-muted-foreground font-bold">
+              正在同步商品
+            </span>
+          </CardContent>
+        </Card>
+      ) : (
         <div className="grid gap-y-2">
-          {SHOP_ITEMS.map((item) => {
-            return (
-              <ShopItemCard
-                id={item.id}
-                name={item.name}
-                description={item.description}
-                price={item.price}
-                tags={item.tags}
-                purchased={item?.purchased}
-                pictureSrc={item.pictureSrc}
-              />
-            )
-          })}
+          {(itemsQuery.data ?? []).map((item) => (
+            <ShopItemCard
+              key={item.id}
+              item={item}
+              currentOpenPower={statusQuery.data?.openPower}
+            />
+          ))}
         </div>
-      </main>
-      <Toaster />
-    </>
+      )}
+    </GamePageShell>
   )
 }

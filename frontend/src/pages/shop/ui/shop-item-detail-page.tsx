@@ -1,78 +1,123 @@
+import { useQuery } from "@tanstack/react-query"
+import { Link } from "@tanstack/react-router"
+import { Check, ShoppingCart } from "lucide-react"
+
+import { ShopPurchaseConfirmButton } from "@/features/shop-index/ui/shop-purchase-confirm-button"
+import { gameApi } from "@/shared/api/game"
+import {
+  itemTypeClass,
+  itemTypeLabel,
+  rarityLabel,
+} from "@/shared/lib/game-labels"
 import { Badge } from "@/shared/ui/badge"
 import { Button } from "@/shared/ui/button"
-import { Check } from "lucide-react"
-import { PageHeader } from "@/shared/ui/page-header"
 import { Card, CardContent } from "@/shared/ui/card"
+import { GamePageShell } from "@/shared/ui/game-page-shell"
+import { PageHeader } from "@/shared/ui/page-header"
 
-const itemData = {
-  id: "lantern-theme",
-  name: "營燈基地佈景",
-  description: "讓基地展示區換成暖黃營燈與旗繩。",
-  tags: ["外觀"],
-  price: 260,
-  state: "可購買",
-  purchased: true,
-  effect: "兌換後可在基地展示區選用工程工作台風格。",
-  pictureSrc: "https://placehold.co/100x100/svg",
+type ShopItemDetailPageProps = {
+  itemID: string
 }
 
-export function ShopItemDetailPage() {
-  // TODO: replace with GET /api/shop/:id
+export function ShopItemDetailPage({ itemID }: ShopItemDetailPageProps) {
+  const itemQuery = useQuery({
+    queryKey: ["shop", "item", itemID],
+    queryFn: () => gameApi.shopItem(itemID),
+  })
+  const statusQuery = useQuery({
+    queryKey: ["me", "status"],
+    queryFn: gameApi.status,
+  })
+  const item = itemQuery.data
 
   return (
-    <main className="mx-auto grid w-full max-w-sm gap-y-2 px-4 py-4">
-      {/* 標題 & 返回 */}
+    <GamePageShell contentClassName="grid content-start gap-y-2">
       <PageHeader title="道具資訊" headline="Item Detail" backTo="/shop" />
-      {/* 物品圖片 */}
-      <img
-        src={itemData.pictureSrc}
-        className="border-foreground mx-auto mb-2 size-36 -rotate-3 rounded-lg border-2"
-      />
-      {/* 詳細資訊 */}
-      <Card>
-        <CardContent className="grid gap-y-2">
-          {/* 標籤 */}
-          <div className="flex">
-            {itemData.tags.map((item) => {
-              return <Badge variant="outline">{item}</Badge>
-            })}
-          </div>
-          {/* 名稱 */}
-          <span className="text-2xl font-bold">{itemData.name}</span>
-          {/* 簡介 */}
-          <div className="grid gap-y-1">
-            <span className="text-accent-foreground text-lg font-bold">
-              道具簡介
+
+      {itemQuery.isPending || !item ? (
+        <Card>
+          <CardContent>
+            <span className="text-muted-foreground font-bold">
+              正在同步道具資訊
             </span>
-            <span>{itemData.description}</span>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          <div
+            className={[
+              "border-foreground mx-auto mb-2 grid size-36 -rotate-3 place-items-center rounded-lg border-2",
+              itemTypeClass(item.type),
+            ].join(" ")}
+            aria-hidden
+          >
+            <ShoppingCart className="size-14" />
           </div>
-          {/* 效果 */}
-          <div className="grid gap-1">
-            <span className="text-accent-foreground text-lg font-bold">
-              套用效果
-            </span>
-            <span className="">{itemData.effect}</span>
-          </div>
-        </CardContent>
-      </Card>
-      {/* 動作區 */}
-      <Card>
-        <CardContent className="flex items-center justify-between">
-          <div className="grid">
-            <span className="text-muted-foreground text-sm font-bold">
-              花費開源力
-            </span>
-            <div className="flex items-center">
-              <span className="text-2xl font-bold">{itemData.price}</span>
-              <span className="whitespace-pre"> / 430 OP</span>
-            </div>
-          </div>
-          <Button size="lg">
-            <Check />
-            確認購買
+
+          <Card>
+            <CardContent className="grid gap-y-2">
+              <div className="flex gap-2">
+                {[itemTypeLabel(item.type), rarityLabel(item.rarity)].map(
+                  (tag) => (
+                    <Badge key={tag} variant="outline">
+                      {tag}
+                    </Badge>
+                  ),
+                )}
+              </div>
+              <span className="text-2xl font-bold">{item.name}</span>
+              <div className="grid gap-y-1">
+                <span className="text-accent-foreground text-lg font-bold">
+                  道具簡介
+                </span>
+                <span>{item.description}</span>
+              </div>
+              <div className="grid gap-1">
+                <span className="text-accent-foreground text-lg font-bold">
+                  狀態
+                </span>
+                <span>{item.redeemed ? "已擁有" : "可使用開源力兌換"}</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="flex items-center justify-between">
+              <div className="grid">
+                <span className="text-muted-foreground text-sm font-bold">
+                  花費開源力
+                </span>
+                <div className="flex items-center">
+                  <span className="text-2xl font-bold">
+                    {item.priceOpenPower}
+                  </span>
+                  <span className="whitespace-pre">
+                    {" "}
+                    / {statusQuery.data?.openPower ?? 0} 開源力
+                  </span>
+                </div>
+              </div>
+              {item.redeemed ? (
+                <Button size="lg" disabled variant="outline">
+                  <Check />
+                  已擁有
+                </Button>
+              ) : (
+                <ShopPurchaseConfirmButton
+                  item={item}
+                  currentOpenPower={statusQuery.data?.openPower}
+                  size="lg"
+                  label="確認購買"
+                />
+              )}
+            </CardContent>
+          </Card>
+
+          <Button asChild variant="secondary">
+            <Link to="/shop">返回商店</Link>
           </Button>
-        </CardContent>
-      </Card>
-    </main>
+        </>
+      )}
+    </GamePageShell>
   )
 }
