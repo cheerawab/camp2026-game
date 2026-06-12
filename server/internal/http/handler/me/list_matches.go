@@ -35,7 +35,7 @@ func (h *Handler) ListCompletedMatches(w http.ResponseWriter, r *http.Request) {
 
 	matches, err := h.findCompletedMatches(r.Context(), player.ID)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "matches unavailable"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("matches unavailable", "me_matches_lookup_failed", err))
 		return
 	}
 

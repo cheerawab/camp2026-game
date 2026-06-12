@@ -69,11 +69,11 @@ func (h *Handler) UpdateLoadout(w http.ResponseWriter, r *http.Request) {
 	match.Players[idx].SitoneIDs = sitoneIDs
 
 	if err := h.saveMatch(r.Context(), match); err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "loadout update failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("loadout update failed", "match_loadout_save_match_failed", err))
 		return
 	}
 	if err := h.saveDefaultSitoneLoadout(r.Context(), player.ID, sitoneIDs); err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "loadout update failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("loadout update failed", "match_loadout_save_default_failed", err))
 		return
 	}
 

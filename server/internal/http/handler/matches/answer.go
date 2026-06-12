@@ -61,7 +61,7 @@ func (h *Handler) Answer(w http.ResponseWriter, r *http.Request) {
 	now := time.Now()
 	match, events, err := h.advanceMatch(r.Context(), match, now)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "answer failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("answer failed", "match_answer_advance_before_failed", err))
 		return
 	}
 	for _, event := range events {
@@ -80,13 +80,13 @@ func (h *Handler) Answer(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "question already answered"))
 		return
 	} else if !errors.Is(err, mongo.ErrNoDocuments) {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "answer failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("answer failed", "match_answer_lookup_failed", err))
 		return
 	}
 
 	question, ok := h.content.GetQuizQuestion(body.QuestionID)
 	if !ok {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match question is unavailable"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("match question is unavailable", "match_answer_question_missing", errors.New("quiz question not found in content store")))
 		return
 	}
 	idx := playerIndex(match, player.ID)
@@ -98,7 +98,7 @@ func (h *Handler) Answer(w http.ResponseWriter, r *http.Request) {
 
 	answerID, err := newID("answer")
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "answer failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("answer failed", "match_answer_id_create_failed", err))
 		return
 	}
 	answer := mongomodel.MatchAnswer{
@@ -113,20 +113,20 @@ func (h *Handler) Answer(w http.ResponseWriter, r *http.Request) {
 		AnsweredAt:    now,
 	}
 	if _, err := h.db.Collection(mongomodel.MatchAnswersCollection).InsertOne(r.Context(), answer); err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "answer failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("answer failed", "match_answer_insert_failed", err))
 		return
 	}
 
 	match.Players[idx].Score += score
 	if err := h.saveMatch(r.Context(), match); err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "answer failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("answer failed", "match_answer_save_match_failed", err))
 		return
 	}
 
 	h.publishState(r.Context(), match, "player_answered")
 	match, events, err = h.advanceMatch(r.Context(), match, now)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "answer failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("answer failed", "match_answer_advance_after_failed", err))
 		return
 	}
 	for _, event := range events {

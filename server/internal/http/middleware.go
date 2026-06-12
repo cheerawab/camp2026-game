@@ -6,6 +6,8 @@ import (
 	"runtime/debug"
 	"time"
 
+	chimw "github.com/go-chi/chi/v5/middleware"
+
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
 )
 
@@ -30,14 +32,16 @@ func requestLogger(log *slog.Logger) func(http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			started := time.Now()
 			recorder := &statusRecorder{ResponseWriter: w, status: http.StatusOK}
+			requestID := chimw.GetReqID(r.Context())
 
-			next.ServeHTTP(recorder, r)
+			next.ServeHTTP(recorder, r.WithContext(httpx.WithLogger(r.Context(), log)))
 
 			log.Info("http request",
 				"method", r.Method,
 				"path", r.URL.Path,
 				"status", recorder.status,
 				"duration_ms", time.Since(started).Milliseconds(),
+				"request_id", requestID,
 			)
 		})
 	}
@@ -56,7 +60,7 @@ func recoverer(log *slog.Logger) func(http.Handler) http.Handler {
 				}
 			}()
 
-			next.ServeHTTP(w, r)
+			next.ServeHTTP(w, r.WithContext(httpx.WithLogger(r.Context(), log)))
 		})
 	}
 }

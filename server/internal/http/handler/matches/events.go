@@ -2,6 +2,7 @@ package matches
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -42,7 +43,7 @@ func (h *Handler) Events(w http.ResponseWriter, r *http.Request) {
 
 	flusher, ok := w.(http.Flusher)
 	if !ok {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "event stream is unavailable"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("event stream is unavailable", "match_events_flusher_unavailable", errors.New("response writer does not implement http.Flusher")))
 		return
 	}
 

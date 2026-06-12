@@ -45,7 +45,7 @@ func (h *Handler) SitoneLoadout(w http.ResponseWriter, r *http.Request) {
 
 	sitoneIDs, err := h.defaultSitoneLoadout(r.Context(), player)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "sitone loadout unavailable"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("sitone loadout unavailable", "me_sitone_loadout_lookup_failed", err))
 		return
 	}
 	httpx.WriteJSON(w, http.StatusOK, SitoneLoadoutResponse{SitoneIDs: sitoneIDs})
@@ -96,7 +96,7 @@ func (h *Handler) UpdateSitoneLoadout(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.saveDefaultSitoneLoadout(r.Context(), player.ID, sitoneIDs); err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "sitone loadout update failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("sitone loadout update failed", "me_sitone_loadout_save_failed", err))
 		return
 	}
 	httpx.WriteJSON(w, http.StatusOK, SitoneLoadoutResponse{SitoneIDs: sitoneIDs})
@@ -130,7 +130,7 @@ func (h *Handler) validateOwnedSitoneLoadout(rctx context.Context, playerID stri
 
 	owned, err := h.ownedSitoneCounts(rctx, playerID)
 	if err != nil {
-		return nil, httpx.NewError(http.StatusInternalServerError, "sitone loadout unavailable")
+		return nil, httpx.InternalServerError("sitone loadout unavailable", "me_sitone_loadout_inventory_lookup_failed", err)
 	}
 	used := make(map[string]int, len(normalized))
 	for _, sitoneID := range normalized {

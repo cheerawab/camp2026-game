@@ -36,17 +36,17 @@ func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 
 	openPower, err := h.sumOpenPower(r.Context(), player.ID)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "home summary unavailable"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("home summary unavailable", "me_home_open_power_sum_failed", err))
 		return
 	}
 	sitoneCount, err := h.sumPlayerQuantity(r.Context(), mongomodel.PlayerSitonesCollection, player.ID)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "home summary unavailable"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("home summary unavailable", "me_home_sitone_count_failed", err))
 		return
 	}
 	itemCount, err := h.sumPlayerQuantity(r.Context(), mongomodel.PlayerItemsCollection, player.ID)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "home summary unavailable"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("home summary unavailable", "me_home_item_count_failed", err))
 		return
 	}
 
@@ -57,19 +57,19 @@ func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 	if teamID != "" {
 		foundTeam, err := h.findTeam(r.Context(), teamID)
 		if err != nil {
-			httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "home summary unavailable"))
+			httpx.WriteProblem(w, r, httpx.InternalServerError("home summary unavailable", "me_home_team_lookup_failed", err))
 			return
 		}
 		team = &foundTeam
 
 		rank, err = h.openPowerTeamRank(r.Context(), teamID)
 		if err != nil {
-			httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "home summary unavailable"))
+			httpx.WriteProblem(w, r, httpx.InternalServerError("home summary unavailable", "me_home_team_rank_failed", err))
 			return
 		}
 		teamMembers, err = h.findTeamMembers(r.Context(), teamID)
 		if err != nil {
-			httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "home summary unavailable"))
+			httpx.WriteProblem(w, r, httpx.InternalServerError("home summary unavailable", "me_home_team_members_lookup_failed", err))
 			return
 		}
 	}

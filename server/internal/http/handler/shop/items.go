@@ -34,7 +34,7 @@ func (h *Handler) ListItems(w http.ResponseWriter, r *http.Request) {
 
 	redeemed, err := h.redeemedItemIDs(r.Context(), player.ID)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "shop items unavailable"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("shop items unavailable", "shop_items_redeemed_lookup_failed", err))
 		return
 	}
 
@@ -73,7 +73,7 @@ func (h *Handler) GetItem(w http.ResponseWriter, r *http.Request) {
 
 	redeemed, err := h.itemRedeemed(r.Context(), player.ID, item.ID)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "shop item unavailable"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("shop item unavailable", "shop_item_redeemed_lookup_failed", err))
 		return
 	}
 

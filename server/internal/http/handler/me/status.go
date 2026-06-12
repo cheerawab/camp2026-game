@@ -36,7 +36,7 @@ func (h *Handler) Status(w http.ResponseWriter, r *http.Request) {
 
 	openPower, err := h.sumOpenPower(r.Context(), player.ID)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "status unavailable"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("status unavailable", "me_status_open_power_sum_failed", err))
 		return
 	}
 
@@ -46,14 +46,14 @@ func (h *Handler) Status(w http.ResponseWriter, r *http.Request) {
 	if teamID != "" {
 		foundTeam, err := h.findTeam(r.Context(), teamID)
 		if err != nil {
-			httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "status unavailable"))
+			httpx.WriteProblem(w, r, httpx.InternalServerError("status unavailable", "me_status_team_lookup_failed", err))
 			return
 		}
 		team = &foundTeam
 
 		teamMembers, err = h.findTeamMembers(r.Context(), teamID)
 		if err != nil {
-			httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "status unavailable"))
+			httpx.WriteProblem(w, r, httpx.InternalServerError("status unavailable", "me_status_team_members_lookup_failed", err))
 			return
 		}
 	}

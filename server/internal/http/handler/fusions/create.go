@@ -64,18 +64,18 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "insufficient fusion materials"))
 			return
 		}
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "fusion failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("fusion failed", "fusion_create_failed", err))
 		return
 	}
 
 	inventory, err := h.playerInventory(r.Context(), player.ID)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "fusion inventory unavailable"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("fusion inventory unavailable", "fusion_inventory_lookup_failed", err))
 		return
 	}
 	response, err := h.recipeResponse(recipe, inventory)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "fusion recipe is inconsistent"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("fusion recipe is inconsistent", "fusion_recipe_response_failed", err))
 		return
 	}
 	httpx.WriteJSON(w, http.StatusCreated, CreateResponse{

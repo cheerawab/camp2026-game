@@ -47,7 +47,7 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 
 	response, err := h.leaderboard(r.Context(), leaderboardType, player.TeamID)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "leaderboard unavailable"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("leaderboard unavailable", "leaderboard_lookup_failed", err))
 		return
 	}
 	httpx.WriteJSON(w, http.StatusOK, response)

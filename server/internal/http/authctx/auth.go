@@ -50,11 +50,11 @@ func RequirePlayer(db *mongo.Database) func(http.Handler) http.Handler {
 				return
 			}
 			if err != nil {
-				httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "authentication failed"))
+				httpx.WriteProblem(w, r, httpx.InternalServerError("authentication failed", "authentication_lookup_failed", err))
 				return
 			}
 			if player.ID == "" {
-				httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "authentication failed"))
+				httpx.WriteProblem(w, r, httpx.InternalServerError("authentication failed", "authentication_player_invalid", errors.New("authenticated player has empty id")))
 				return
 			}
 

@@ -46,7 +46,7 @@ func (h *Handler) validateOwnedSitoneLoadout(ctx context.Context, playerID strin
 
 	owned, err := h.ownedSitoneCounts(ctx, playerID)
 	if err != nil {
-		return nil, httpx.NewError(http.StatusInternalServerError, "sitone loadout unavailable")
+		return nil, httpx.InternalServerError("sitone loadout unavailable", "match_sitone_loadout_inventory_lookup_failed", err)
 	}
 
 	used := make(map[string]int, len(normalized))

@@ -51,7 +51,7 @@ func (h *Handler) Join(w http.ResponseWriter, r *http.Request) {
 			httpx.WriteProblem(w, r, httpx.NotFound("match not found"))
 			return
 		}
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match join failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("match join failed", "match_join_lookup_failed", err))
 		return
 	}
 
@@ -73,7 +73,7 @@ func (h *Handler) joinMatch(w http.ResponseWriter, r *http.Request, match mongom
 	}
 	sitoneIDs, err := h.defaultSitoneLoadout(r.Context(), player)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match join failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("match join failed", "match_join_default_loadout_failed", err))
 		return
 	}
 
@@ -85,7 +85,7 @@ func (h *Handler) joinMatch(w http.ResponseWriter, r *http.Request, match mongom
 		SitoneIDs: sitoneIDs,
 	})
 	if err := h.saveMatch(r.Context(), match); err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match join failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("match join failed", "match_join_save_failed", err))
 		return
 	}
 

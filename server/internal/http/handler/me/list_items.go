@@ -39,13 +39,13 @@ func (h *Handler) ListItems(w http.ResponseWriter, r *http.Request) {
 
 	records, err := h.findPlayerItems(r.Context(), player.ID)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "items unavailable"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("items unavailable", "me_items_lookup_failed", err))
 		return
 	}
 
 	items, err := mapPlayerItems(h.content, records)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "item inventory is inconsistent"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("item inventory is inconsistent", "me_items_response_failed", err))
 		return
 	}
 
