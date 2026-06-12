@@ -30,18 +30,6 @@ export function LoginPage({ token }: LoginPageProps) {
         </span>
       ))}
 
-      <div
-        className="relative z-10 mb-6 flex items-center justify-between text-sm font-black"
-        aria-hidden="true"
-      >
-        <span>20:26</span>
-        <span className="flex items-end gap-1">
-          <i className="bg-ink block h-2 w-1.5 rounded-full" />
-          <i className="bg-ink block h-3 w-1.5 rounded-full" />
-          <i className="bg-ink block h-4 w-1.5 rounded-full" />
-        </span>
-      </div>
-
       <div className="relative z-10 my-auto">
         <LoginPanel key={token ?? ""} initialToken={token} />
       </div>
