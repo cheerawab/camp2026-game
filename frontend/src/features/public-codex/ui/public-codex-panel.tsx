@@ -1,84 +1,62 @@
+import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 
+import { gameApi, type Item, type Sitone } from "@/shared/api/game"
+import {
+  itemTypeClass,
+  itemTypeLabel,
+  rarityLabel,
+  sitoneMeta,
+} from "@/shared/lib/game-labels"
 import { Button } from "@/shared/ui/button"
 import { Card, CardContent } from "@/shared/ui/card"
 
-const STONES = [
-  {
-    name: "基地路線石",
-    type: "探索",
-    rarity: "常見",
-    toneClass: "bg-pebble-explore",
-    description: "記錄會場路線與線索。",
-  },
-  {
-    name: "營燈靈光",
-    type: "靈光",
-    rarity: "稀有",
-    toneClass: "bg-pebble-spark",
-    description: "答題連勝時取得的亮色小石。",
-  },
-  {
-    name: "小隊電波石",
-    type: "共鳴",
-    rarity: "常見",
-    toneClass: "bg-pebble-resonate",
-    description: "完成同步挑戰的共鳴標記。",
-  },
-  {
-    name: "焊點種子石",
-    type: "工程",
-    rarity: "稀有",
-    toneClass: "bg-pebble-engineer",
-    description: "工程任務後取得的小型模組。",
-  },
-  {
-    name: "舞台節奏石",
-    type: "娛樂",
-    rarity: "稀有",
-    toneClass: "bg-pebble-play",
-    description: "活動遊戲中取得的徽章感小石。",
-  },
-] as const
-
-const ITEMS = [
-  {
-    name: "營燈佈景券",
-    type: "外觀",
-    rarity: "稀有",
-    toneClass: "bg-pebble-spark",
-    description: "替基地換上營燈主題。",
-  },
-  {
-    name: "地圖棉線",
-    type: "素材",
-    rarity: "常見",
-    toneClass: "bg-pebble-explore",
-    description: "合成探索系展示邊框。",
-  },
-  {
-    name: "工程工作台佈景",
-    type: "外觀",
-    rarity: "稀有",
-    toneClass: "bg-pebble-engineer",
-    description: "替基地切換成工具與模組板風格。",
-  },
-  {
-    name: "小隊電波徽章",
-    type: "紀念",
-    rarity: "稀有",
-    toneClass: "bg-pebble-resonate",
-    description: "可展示在個人頁的小隊徽章。",
-  },
-] as const
-
 type Tab = "stones" | "items"
 
+type CodexEntry =
+  | { kind: "stones"; data: Sitone }
+  | { kind: "items"; data: Item }
+
+function entryMeta(entry: CodexEntry) {
+  if (entry.kind === "stones") {
+    const meta = sitoneMeta(entry.data.type)
+    return {
+      name: entry.data.name,
+      type: meta.label,
+      rarity: rarityLabel(entry.data.rarity),
+      toneClass: meta.bgClassName,
+      description: entry.data.description,
+      symbol: "◆",
+    }
+  }
+
+  return {
+    name: entry.data.name,
+    type: itemTypeLabel(entry.data.type),
+    rarity: rarityLabel(entry.data.rarity),
+    toneClass: itemTypeClass(entry.data.type),
+    description: entry.data.description,
+    symbol: "▣",
+  }
+}
+
 export function PublicCodexPanel() {
-  // TODO(api): replace static STONES/ITEMS with GET /api/catalog/sitones and GET /api/catalog/items.
   const [tab, setTab] = useState<Tab>("stones")
-  const entries = tab === "stones" ? STONES : ITEMS
-  const symbol = tab === "stones" ? "◆" : "▣"
+  const sitonesQuery = useQuery({
+    queryKey: ["catalog", "sitones"],
+    queryFn: gameApi.catalogSitones,
+  })
+  const itemsQuery = useQuery({
+    queryKey: ["catalog", "items"],
+    queryFn: gameApi.catalogItems,
+  })
+
+  const entries: CodexEntry[] =
+    tab === "stones"
+      ? (sitonesQuery.data ?? []).map((data) => ({ kind: "stones", data }))
+      : (itemsQuery.data ?? []).map((data) => ({ kind: "items", data }))
+  const isPending =
+    tab === "stones" ? sitonesQuery.isPending : itemsQuery.isPending
 
   return (
     <div className="flex flex-col">
@@ -123,37 +101,54 @@ export function PublicCodexPanel() {
         className="grid grid-cols-2 gap-2.5"
         aria-label={tab === "stones" ? "小石圖鑑" : "道具圖鑑"}
       >
-        {entries.map((entry) => (
-          <article
-            key={entry.name}
-            className="bg-card border-ink min-w-0 rounded-[var(--radius)] border-2 p-3"
-          >
-            <div
-              className={`${entry.toneClass} border-ink mb-2 flex h-[86px] items-center justify-center rounded-[20px] border-2`}
-            >
-              <span
-                className="text-card/90 text-[34px] drop-shadow-[0_2px_0_rgba(23,35,58,0.3)]"
-                aria-hidden
-              >
-                {symbol}
-              </span>
-            </div>
-            <div className="mt-[9px] mb-1.5 flex flex-wrap gap-1">
-              <span className="border-border bg-surface-raised text-muted-foreground rounded-full border px-[7px] py-[3px] text-[11px] leading-none font-black">
-                {entry.type}
-              </span>
-              <span className="border-border bg-surface-raised text-muted-foreground rounded-full border px-[7px] py-[3px] text-[11px] leading-none font-black">
-                {entry.rarity}
-              </span>
-            </div>
-            <h3 className="mb-1 text-[17px] leading-tight font-black tracking-tight">
-              {entry.name}
+        {isPending ? (
+          <article className="bg-card border-ink col-span-2 min-w-0 rounded-[var(--radius)] border-2 p-4">
+            <h3 className="text-[17px] leading-tight font-black tracking-tight">
+              正在同步圖鑑
             </h3>
-            <p className="text-muted-foreground text-[13px] leading-relaxed">
-              {entry.description}
-            </p>
           </article>
-        ))}
+        ) : entries.length > 0 ? (
+          entries.map((entry) => {
+            const meta = entryMeta(entry)
+            return (
+              <article
+                key={`${entry.kind}-${entry.data.id}`}
+                className="bg-card border-ink min-w-0 rounded-[var(--radius)] border-2 p-3"
+              >
+                <div
+                  className={`${meta.toneClass} border-ink mb-2 flex h-[86px] items-center justify-center rounded-[20px] border-2`}
+                >
+                  <span
+                    className="text-card/90 text-[34px] drop-shadow-[0_2px_0_rgba(23,35,58,0.3)]"
+                    aria-hidden
+                  >
+                    {meta.symbol}
+                  </span>
+                </div>
+                <div className="mt-[9px] mb-1.5 flex flex-wrap gap-1">
+                  <span className="border-border bg-surface-raised text-muted-foreground rounded-full border px-[7px] py-[3px] text-[11px] leading-none font-black">
+                    {meta.type}
+                  </span>
+                  <span className="border-border bg-surface-raised text-muted-foreground rounded-full border px-[7px] py-[3px] text-[11px] leading-none font-black">
+                    {meta.rarity}
+                  </span>
+                </div>
+                <h3 className="mb-1 text-[17px] leading-tight font-black tracking-tight">
+                  {meta.name}
+                </h3>
+                <p className="text-muted-foreground text-[13px] leading-relaxed">
+                  {meta.description}
+                </p>
+              </article>
+            )
+          })
+        ) : (
+          <article className="bg-card border-ink col-span-2 min-w-0 rounded-[var(--radius)] border-2 p-4">
+            <h3 className="text-[17px] leading-tight font-black tracking-tight">
+              目前沒有資料
+            </h3>
+          </article>
+        )}
       </section>
     </div>
   )
