@@ -986,6 +986,11 @@ definitions:
         - sitone
         example: sitone
         type: string
+      playerId:
+        example: 7H9K2Q
+        maxLength: 128
+        minLength: 1
+        type: string
       qrcodeToken:
         example: qr_6H_x7lM20CK8BBnPfwEG1Ei97-PM9ZGr8Dy9yW-BYok
         maxLength: 512
@@ -1003,7 +1008,6 @@ definitions:
         type: string
     required:
     - kind
-    - qrcodeToken
     - quantity
     - refId
     type: object
@@ -1016,6 +1020,13 @@ definitions:
       rewardId:
         example: staff_reward_01HXK2P9ATJ5S2YV8C2J4Q0M
         type: string
+    type: object
+  staff.ListPlayersResponse:
+    properties:
+      players:
+        items:
+          $ref: '#/definitions/staff.StaffPlayerResponse'
+        type: array
     type: object
   staff.RewardPlayerResponse:
     properties:
@@ -1051,6 +1062,20 @@ definitions:
       teamId:
         example: 8M4RXP
         type: string
+    type: object
+  staff.StaffPlayerResponse:
+    properties:
+      avatarUrl:
+        example: https://example.test/avatar/alice.png
+        type: string
+      nickname:
+        example: Alice
+        type: string
+      playerId:
+        example: 7H9K2Q
+        type: string
+      team:
+        $ref: '#/definitions/staff.RewardTeamResponse'
     type: object
   system.StatusResponse:
     properties:
@@ -1981,12 +2006,53 @@ paths:
       summary: Purchase shop item
       tags:
       - shop
+  /staff/players:
+    get:
+      description: Staff-only endpoint. Searches non-staff players by nickname or
+        player ID for reward targeting.
+      parameters:
+      - description: Nickname or player ID keyword
+        in: query
+        name: query
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/staff.ListPlayersResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Search players as staff
+      tags:
+      - staff
   /staff/rewards:
     post:
       consumes:
       - application/json
-      description: Staff-only endpoint. Resolves a player QR code identifier, grants
-        one sitone or item to that player, and records the staff grant.
+      description: Staff-only endpoint. Grants one sitone or item to a player selected
+        by player ID or QR code identifier, and records the staff grant.
       parameters:
       - description: Staff reward request
         in: body

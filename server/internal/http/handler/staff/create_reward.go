@@ -11,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 
+	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
 	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
 )
@@ -28,7 +29,7 @@ type rewardDefinition struct {
 
 // CreateReward godoc
 // @Summary Grant sitone or item as staff
-// @Description Staff-only endpoint. Resolves a player QR code identifier, grants one sitone or item to that player, and records the staff grant.
+// @Description Staff-only endpoint. Grants one sitone or item to a player selected by player ID or QR code identifier, and records the staff grant.
 // @Tags staff
 // @Accept json
 // @Produce json
@@ -55,10 +56,21 @@ func (h *Handler) CreateReward(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	body.QRCodeToken = strings.TrimSpace(body.QRCodeToken)
+	body.PlayerID = strings.TrimSpace(body.PlayerID)
 	body.Kind = strings.TrimSpace(body.Kind)
 	body.RefID = strings.TrimSpace(body.RefID)
 	if err := httpx.ValidateStruct(body); err != nil {
 		httpx.WriteProblem(w, r, err)
+		return
+	}
+	if body.PlayerID == "" && body.QRCodeToken == "" {
+		httpx.WriteProblem(w, r, httpx.UnprocessableEntity(
+			"invalid request body",
+			httpx.ErrorDetail{
+				Location: "body.playerId",
+				Message:  "playerId or qrcodeToken is required",
+			},
+		))
 		return
 	}
 
@@ -68,8 +80,12 @@ func (h *Handler) CreateReward(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	recipient, err := h.findPlayerByQRCodeToken(r.Context(), body.QRCodeToken)
+	recipient, err := h.findRewardRecipient(r.Context(), body)
 	if errors.Is(err, mongo.ErrNoDocuments) {
+		if body.PlayerID != "" {
+			httpx.WriteProblem(w, r, httpx.NotFound("player not found"))
+			return
+		}
 		httpx.WriteProblem(w, r, httpx.NotFound("qr code not found"))
 		return
 	}
@@ -126,6 +142,24 @@ func (h *Handler) rewardDefinition(kind string, refID string) (rewardDefinition,
 	default:
 		return rewardDefinition{}, false
 	}
+}
+
+func (h *Handler) findRewardRecipient(ctx context.Context, body CreateRewardRequest) (mongomodel.Player, error) {
+	if body.PlayerID != "" {
+		return h.findPlayerByID(ctx, body.PlayerID)
+	}
+	return h.findPlayerByQRCodeToken(ctx, body.QRCodeToken)
+}
+
+func (h *Handler) findPlayerByID(ctx context.Context, playerID string) (mongomodel.Player, error) {
+	var player mongomodel.Player
+	err := h.db.Collection(mongomodel.PlayersCollection).
+		FindOne(ctx, bson.M{
+			"_id":  playerID,
+			"role": bson.M{"$ne": authctx.PlayerRoleStaff},
+		}).
+		Decode(&player)
+	return player, err
 }
 
 func (h *Handler) findPlayerByQRCodeToken(ctx context.Context, token string) (mongomodel.Player, error) {

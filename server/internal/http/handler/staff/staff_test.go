@@ -4,8 +4,11 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
 	"strings"
 	"testing"
+
+	"go.mongodb.org/mongo-driver/v2/bson"
 
 	"github.com/sitcon-tw/camp2026-game/internal/content"
 	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
@@ -69,6 +72,56 @@ func TestRewardDefinitionRejectsMissingContent(t *testing.T) {
 	}
 	if _, ok := handler.rewardDefinition(rewardKindItem, "missing"); ok {
 		t.Fatal("expected missing item to be rejected")
+	}
+}
+
+func TestPlayerSearchFilterMatchesNicknameAndIDButExcludesStaff(t *testing.T) {
+	filter := playerSearchFilter("Alice.1")
+
+	if got := filter["role"]; got == nil {
+		t.Fatal("expected role filter")
+	}
+	branches, ok := filter["$or"].(bson.A)
+	if !ok || len(branches) != 2 {
+		t.Fatalf("expected nickname and id search branches, got %#v", filter["$or"])
+	}
+	for _, branch := range branches {
+		condition, ok := branch.(bson.M)
+		if !ok {
+			t.Fatalf("expected branch to be bson.M, got %#v", branch)
+		}
+		for _, value := range condition {
+			regex, ok := value.(bson.Regex)
+			if !ok {
+				t.Fatalf("expected regex condition, got %#v", value)
+			}
+			if regex.Pattern != regexp.QuoteMeta("Alice.1") || regex.Options != "i" {
+				t.Fatalf("unexpected regex: %#v", regex)
+			}
+		}
+	}
+}
+
+func TestStaffPlayerResponsesIncludesTeamAndSkipsStaff(t *testing.T) {
+	responses := staffPlayerResponses(
+		[]mongomodel.Player{
+			{ID: "P1", Nickname: "Alice", TeamID: "T1"},
+			{ID: "S1", Nickname: "Staff", Role: authctx.PlayerRoleStaff},
+			{ID: "", Nickname: "Missing"},
+		},
+		map[string]mongomodel.Team{
+			"T1": {ID: "T1", Name: "Blue Team"},
+		},
+	)
+
+	if len(responses) != 1 {
+		t.Fatalf("expected one player response, got %#v", responses)
+	}
+	if responses[0].PlayerID != "P1" || responses[0].Nickname != "Alice" {
+		t.Fatalf("unexpected player response: %#v", responses[0])
+	}
+	if responses[0].Team == nil || responses[0].Team.TeamID != "T1" || responses[0].Team.Name != "Blue Team" {
+		t.Fatalf("expected team in response, got %#v", responses[0].Team)
 	}
 }
 

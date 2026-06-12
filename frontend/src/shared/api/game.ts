@@ -278,6 +278,17 @@ const AnswerAcceptedSchema = z.object({
 
 const StaffRewardKindSchema = z.enum(["item", "sitone"])
 
+const StaffPlayerSchema = z.object({
+  playerId: z.string(),
+  nickname: z.string(),
+  team: TeamSchema.optional(),
+  avatarUrl: z.string().optional(),
+})
+
+const StaffPlayersResponseSchema = z.object({
+  players: nullableArray(StaffPlayerSchema),
+})
+
 const StaffRewardResponseSchema = z.object({
   rewardId: z.string(),
   player: z.object({
@@ -312,6 +323,7 @@ export type MatchQuestionResult = z.infer<typeof MatchQuestionResultSchema>
 export type CompletedMatch = z.infer<typeof CompletedMatchSchema>
 export type MatchChoice = "A" | "B" | "C" | "D"
 export type StaffRewardKind = z.infer<typeof StaffRewardKindSchema>
+export type StaffPlayer = z.infer<typeof StaffPlayerSchema>
 export type StaffRewardResponse = z.infer<typeof StaffRewardResponseSchema>
 
 export const gameApi = {
@@ -458,7 +470,8 @@ export const gameApi = {
   },
 
   async createStaffReward(input: {
-    qrcodeToken: string
+    playerId?: string
+    qrcodeToken?: string
     kind: StaffRewardKind
     refId: string
     quantity: number
@@ -467,5 +480,12 @@ export const gameApi = {
       json: input,
     })
     return StaffRewardResponseSchema.parse(json)
+  },
+
+  async staffPlayers(query: string) {
+    const json = await apiClient.get("/api/staff/players", {
+      searchParams: { query },
+    })
+    return StaffPlayersResponseSchema.parse(json).players
   },
 }
