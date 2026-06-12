@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router"
-
-import { StoneFusionPage } from "@/pages/stone-fusion/ui/stone-fusion-page"
+import { createFileRoute, redirect } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/stone-fusion")({
-  component: StoneFusionPage,
+  beforeLoad: () => {
+    throw redirect({ to: "/stones/fusion" })
+  },
 })

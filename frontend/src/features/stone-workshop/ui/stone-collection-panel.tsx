@@ -1,5 +1,12 @@
+import { useQuery } from "@tanstack/react-query"
 import { useMemo, useState } from "react"
 
+import { gameApi, type PlayerSitone, type Sitone } from "@/shared/api/game"
+import {
+  rarityLabel,
+  rarityToneClass,
+  sitoneMeta,
+} from "@/shared/lib/game-labels"
 import { Button } from "@/shared/ui/button"
 import { Card } from "@/shared/ui/card"
 
@@ -17,7 +24,7 @@ type Stone = {
   id: string
   name: string
   type: Exclude<StoneTypeKey, "all">
-  rarity: "常見" | "稀有" | "傳說"
+  rarity: string
   count: number
   owned: boolean
   description: string
@@ -57,107 +64,46 @@ const stoneTypes: StoneType[] = [
   },
 ]
 
-// TODO: 串接 API
-const stones: Stone[] = [
-  {
-    id: "trail-map-chip",
-    name: "基地路線石",
-    type: "explore",
-    rarity: "常見",
-    count: 3,
-    owned: true,
-    description: "記錄你在會場找到的第一條線索。",
-  },
-  {
-    id: "blue-telescope",
-    name: "望遠鏡石",
-    type: "explore",
-    rarity: "稀有",
-    count: 1,
-    owned: true,
-    description: "讓小隊更快辨識下一個知識座標。",
-  },
-  {
-    id: "camp-lantern",
-    name: "營燈靈光",
-    type: "spark",
-    rarity: "稀有",
-    count: 2,
-    owned: true,
-    description: "答題連勝時會亮起的黃色小石。",
-  },
-  {
-    id: "idea-flint",
-    name: "點子火絨石",
-    type: "spark",
-    rarity: "常見",
-    count: 5,
-    owned: true,
-    description: "收集越多，越像營火旁的靈感筆記。",
-  },
-  {
-    id: "team-radio",
-    name: "小隊電波石",
-    type: "echo",
-    rarity: "常見",
-    count: 4,
-    owned: true,
-    description: "代表你和隊友完成過一次同步挑戰。",
-  },
-  {
-    id: "memory-shell",
-    name: "回聲貝殼石",
-    type: "echo",
-    rarity: "傳說",
-    count: 0,
-    owned: false,
-    description: "活動後解鎖，會保存一段特別回憶。",
-  },
-  {
-    id: "solder-seed",
-    name: "焊點種子石",
-    type: "build",
-    rarity: "稀有",
-    count: 1,
-    owned: true,
-    description: "工程任務完成後取得，帶著一點電路感。",
-  },
-  {
-    id: "green-module",
-    name: "模組苔石",
-    type: "build",
-    rarity: "常見",
-    count: 2,
-    owned: true,
-    description: "可以和素材搭配，替基地增加零件感。",
-  },
-  {
-    id: "stage-token",
-    name: "舞台節奏石",
-    type: "play",
-    rarity: "稀有",
-    count: 1,
-    owned: true,
-    description: "在遊戲活動中取得，像一枚小型徽章。",
-  },
-  {
-    id: "night-badge",
-    name: "夜間彩蛋石",
-    type: "play",
-    rarity: "傳說",
-    count: 0,
-    owned: false,
-    description: "尚未發現；提示會在營隊現場出現。",
-  },
-]
-
 function typeMeta(key: StoneTypeKey) {
   return stoneTypes.find((type) => type.key === key) ?? stoneTypes[0]
+}
+
+function buildStones(catalog: Sitone[], ownedSitones: PlayerSitone[]): Stone[] {
+  const counts = new Map(
+    ownedSitones.map((record) => [record.sitoneId, record.quantity] as const),
+  )
+
+  return catalog.map((sitone) => {
+    const meta = sitoneMeta(sitone.type)
+    const count = counts.get(sitone.id) ?? 0
+
+    return {
+      id: sitone.id,
+      name: sitone.name,
+      type: meta.key,
+      rarity: rarityLabel(sitone.rarity),
+      count,
+      owned: count > 0,
+      description: sitone.description,
+    }
+  })
 }
 
 export function StoneCollectionPanel() {
   const [activeType, setActiveType] = useState<StoneTypeKey>("all")
   const [mode, setMode] = useState<CollectionMode>("owned")
+  const catalogQuery = useQuery({
+    queryKey: ["catalog", "sitones"],
+    queryFn: gameApi.catalogSitones,
+  })
+  const ownedQuery = useQuery({
+    queryKey: ["me", "sitones"],
+    queryFn: gameApi.playerSitones,
+  })
+  const stones = useMemo(
+    () => buildStones(catalogQuery.data ?? [], ownedQuery.data ?? []),
+    [catalogQuery.data, ownedQuery.data],
+  )
 
   const visibleStones = useMemo(
     () =>
@@ -166,7 +112,7 @@ export function StoneCollectionPanel() {
         const modeMatches = mode === "all" || stone.owned
         return typeMatches && modeMatches
       }),
-    [activeType, mode],
+    [activeType, mode, stones],
   )
 
   const ownedCount = stones.filter((stone) => stone.owned).length
@@ -308,7 +254,10 @@ export function StoneCollectionPanel() {
             ))}
           </div>
         ) : (
-          <EmptyCollection activeType={activeType} />
+          <EmptyCollection
+            activeType={activeType}
+            onViewAll={() => setMode("all")}
+          />
         )}
       </section>
     </div>
@@ -364,11 +313,7 @@ function StoneCard({ stone, mode }: { stone: Stone; mode: CollectionMode }) {
         <span
           className={[
             "border-ink inline-flex min-h-6 items-center rounded-full border-2 px-1.5 text-[11px] font-extrabold",
-            stone.rarity === "稀有"
-              ? "bg-pebble-explore-muted"
-              : stone.rarity === "傳說"
-                ? "bg-pebble-play-muted"
-                : "bg-pebble-engineer-muted",
+            rarityToneClass(stone.rarity),
           ].join(" ")}
         >
           {stone.rarity}
@@ -442,7 +387,13 @@ function StoneShape({
   )
 }
 
-function EmptyCollection({ activeType }: { activeType: StoneTypeKey }) {
+function EmptyCollection({
+  activeType,
+  onViewAll,
+}: {
+  activeType: StoneTypeKey
+  onViewAll: () => void
+}) {
   const meta = typeMeta(activeType)
   return (
     <section className="border-ink bg-card grid justify-items-center gap-2.5 rounded-[22px] border-2 border-dashed px-[18px] py-6 text-center">
@@ -462,6 +413,7 @@ function EmptyCollection({ activeType }: { activeType: StoneTypeKey }) {
         type="button"
         variant="secondary"
         className="mt-1 min-h-11 rounded-2xl px-3.5 text-sm font-extrabold"
+        onClick={onViewAll}
       >
         查看全部圖鑑
       </Button>
