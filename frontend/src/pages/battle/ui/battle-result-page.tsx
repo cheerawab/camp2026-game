@@ -184,7 +184,7 @@ export function BattleResultPage() {
                     <span className="text-muted-foreground text-sm font-bold">
                       正確答案
                     </span>
-                    <span className="text-lg font-bold">
+                    <span className="border-ink bg-pebble-engineer text-ink block rounded-lg border-2 px-3 py-2 text-base font-black">
                       {result.correctChoice}.{" "}
                       {choiceText(result, result.correctChoice)}
                     </span>
@@ -199,10 +199,10 @@ export function BattleResultPage() {
                       </span>
                       <span
                         className={cn(
-                          "text-lg font-bold",
+                          "border-ink text-ink block rounded-lg border-2 px-3 py-2 text-base font-black",
                           answer.correct
-                            ? "text-status-success"
-                            : "text-status-warning",
+                            ? "bg-pebble-engineer"
+                            : "bg-status-warning",
                         )}
                       >
                         {answer.choice
