@@ -81,7 +81,6 @@ func TestRemovedRoutes(t *testing.T) {
 		{method: http.MethodPost, path: "/api/crafting"},
 		{method: http.MethodGet, path: "/api/catalog/crafting-recipes"},
 		{method: http.MethodGet, path: "/api/catalog/recipes"},
-		{method: http.MethodPost, path: "/api/staff/rewards"},
 		{method: http.MethodPost, path: "/api/staff/activity-verifications"},
 		{method: http.MethodGet, path: "/api/readyz"},
 		{method: http.MethodGet, path: "/api/ping"},
@@ -91,6 +90,31 @@ func TestRemovedRoutes(t *testing.T) {
 		if res.Code != http.StatusNotFound {
 			t.Fatalf("%s %s: expected status %d, got %d", route.method, route.path, http.StatusNotFound, res.Code)
 		}
+	}
+}
+
+func TestStaffRoutesRequireAuthentication(t *testing.T) {
+	router := NewRouter(Dependencies{
+		Content: loadTestContent(t),
+		MongoDB: fakeDatabase(t),
+	})
+
+	res := performRequest(router, http.MethodPost, "/api/staff/rewards", strings.NewReader(`{"qrcodeToken":"qr-token-player-a","kind":"sitone","refId":"stone_engineering_base","quantity":1}`))
+	problem := assertProblem(t, res, http.StatusUnauthorized, "")
+	if problem.Status != http.StatusUnauthorized {
+		t.Fatalf("expected problem status %d, got %d", http.StatusUnauthorized, problem.Status)
+	}
+}
+
+func TestStaffRoutesRequireDatabase(t *testing.T) {
+	router := NewRouter(Dependencies{
+		Content: loadTestContent(t),
+	})
+
+	res := performRequestWithCookie(router, http.MethodPost, "/api/staff/rewards", strings.NewReader(`{"qrcodeToken":"qr-token-player-a","kind":"sitone","refId":"stone_engineering_base","quantity":1}`), "staff_token_2026")
+	problem := assertProblem(t, res, http.StatusServiceUnavailable, "")
+	if problem.Status != http.StatusServiceUnavailable {
+		t.Fatalf("expected problem status %d, got %d", http.StatusServiceUnavailable, problem.Status)
 	}
 }
 
@@ -106,8 +130,8 @@ func TestShopRoutesRequireAuthentication(t *testing.T) {
 		body   *strings.Reader
 	}{
 		{method: http.MethodGet, path: "/api/shop/items"},
-		{method: http.MethodGet, path: "/api/shop/items/item-crafting-fragment"},
-		{method: http.MethodPost, path: "/api/shop/purchases", body: strings.NewReader(`{"itemId":"item-crafting-fragment"}`)},
+		{method: http.MethodGet, path: "/api/shop/items/item_adventure_backpack"},
+		{method: http.MethodPost, path: "/api/shop/purchases", body: strings.NewReader(`{"itemId":"item_adventure_backpack"}`)},
 	} {
 		res := performRequest(router, route.method, route.path, route.body)
 		problem := assertProblem(t, res, http.StatusUnauthorized, "")
@@ -128,8 +152,8 @@ func TestShopRoutesRequireDatabase(t *testing.T) {
 		body   *strings.Reader
 	}{
 		{method: http.MethodGet, path: "/api/shop/items"},
-		{method: http.MethodGet, path: "/api/shop/items/item-crafting-fragment"},
-		{method: http.MethodPost, path: "/api/shop/purchases", body: strings.NewReader(`{"itemId":"item-crafting-fragment"}`)},
+		{method: http.MethodGet, path: "/api/shop/items/item_adventure_backpack"},
+		{method: http.MethodPost, path: "/api/shop/purchases", body: strings.NewReader(`{"itemId":"item_adventure_backpack"}`)},
 	} {
 		res := performRequestWithCookie(router, route.method, route.path, route.body, "auth_token_123456")
 		problem := assertProblem(t, res, http.StatusServiceUnavailable, "")
@@ -151,8 +175,8 @@ func TestMatchRoutesRequireAuthentication(t *testing.T) {
 	}{
 		{method: http.MethodPost, path: "/api/matches"},
 		{method: http.MethodPost, path: "/api/matches/join"},
-		{method: http.MethodPost, path: "/api/matches/join-by-qr"},
 		{method: http.MethodGet, path: "/api/matches/M8RXP2"},
+		{method: http.MethodPut, path: "/api/matches/M8RXP2/loadout"},
 		{method: http.MethodPost, path: "/api/matches/M8RXP2/ready"},
 		{method: http.MethodPost, path: "/api/matches/M8RXP2/answers"},
 		{method: http.MethodGet, path: "/api/matches/M8RXP2/events"},
@@ -176,8 +200,8 @@ func TestMatchRoutesRequireDatabase(t *testing.T) {
 	}{
 		{method: http.MethodPost, path: "/api/matches"},
 		{method: http.MethodPost, path: "/api/matches/join"},
-		{method: http.MethodPost, path: "/api/matches/join-by-qr"},
 		{method: http.MethodGet, path: "/api/matches/M8RXP2"},
+		{method: http.MethodPut, path: "/api/matches/M8RXP2/loadout"},
 		{method: http.MethodPost, path: "/api/matches/M8RXP2/ready"},
 		{method: http.MethodPost, path: "/api/matches/M8RXP2/answers"},
 		{method: http.MethodGet, path: "/api/matches/M8RXP2/events"},
@@ -201,7 +225,9 @@ func TestMeRoutesRequireAuthentication(t *testing.T) {
 		"/api/me/status",
 		"/api/me/qrcode",
 		"/api/me/sitones",
+		"/api/me/sitone-loadout",
 		"/api/me/items",
+		"/api/me/matches",
 	} {
 		res := performRequest(router, http.MethodGet, path, nil)
 		problem := assertProblem(t, res, http.StatusUnauthorized, "")
@@ -221,7 +247,9 @@ func TestMeRoutesRequireDatabase(t *testing.T) {
 		"/api/me/status",
 		"/api/me/qrcode",
 		"/api/me/sitones",
+		"/api/me/sitone-loadout",
 		"/api/me/items",
+		"/api/me/matches",
 	} {
 		res := performRequestWithCookie(router, http.MethodGet, path, nil, "auth_token_123456")
 		problem := assertProblem(t, res, http.StatusServiceUnavailable, "")
@@ -257,28 +285,28 @@ func TestListSitoneCatalog(t *testing.T) {
 	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
 		t.Fatalf("decode response: %v", err)
 	}
-	if len(body.Sitones) != 5 {
-		t.Fatalf("expected 5 sitones, got %d", len(body.Sitones))
+	sitonesByID := make(map[string]struct {
+		ID          string `json:"id"`
+		Name        string `json:"name"`
+		Type        string `json:"type"`
+		Rarity      string `json:"rarity"`
+		Style       string `json:"style"`
+		Description string `json:"description"`
+	}, len(body.Sitones))
+	for _, sitone := range body.Sitones {
+		sitonesByID[sitone.ID] = sitone
 	}
 
-	wantIDs := []string{
-		"sitone-engineering",
-		"sitone-entertainment",
-		"sitone-exploration",
-		"sitone-inspiration",
-		"sitone-resonance",
+	if _, ok := sitonesByID["stone_engineering_base"]; !ok {
+		t.Fatalf("expected imported stone_engineering_base in catalog, got %#v", body.Sitones)
 	}
-	for i, wantID := range wantIDs {
-		if body.Sitones[i].ID != wantID {
-			t.Fatalf("expected sitone %d id %q, got %q", i, wantID, body.Sitones[i].ID)
-		}
-	}
-	if got := body.Sitones[0]; got.Name != "工程型小石" ||
-		got.Type != "engineering" ||
-		got.Rarity != "base" ||
-		got.Style != "default" ||
+	got, ok := sitonesByID["stone_2026_camp_explorer"]
+	if !ok ||
+		got.Name != "2026 營地探險小石" ||
+		got.Type != "exploration" ||
+		got.Rarity != "rare" ||
 		got.Description == "" {
-		t.Fatalf("unexpected engineering sitone: %#v", got)
+		t.Fatalf("expected imported 2026 camp explorer sitone, got %#v", got)
 	}
 }
 
@@ -307,25 +335,24 @@ func TestListItemCatalog(t *testing.T) {
 	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
 		t.Fatalf("decode response: %v", err)
 	}
-	if len(body.Items) != 3 {
-		t.Fatalf("expected 3 items, got %d", len(body.Items))
+	itemsByID := make(map[string]struct {
+		ID          string `json:"id"`
+		Name        string `json:"name"`
+		Type        string `json:"type"`
+		Rarity      string `json:"rarity"`
+		Description string `json:"description"`
+	}, len(body.Items))
+	for _, item := range body.Items {
+		itemsByID[item.ID] = item
 	}
 
-	wantIDs := []string{
-		"item-crafting-fragment",
-		"item-memory-tag",
-		"item-theme-ticket",
-	}
-	for i, wantID := range wantIDs {
-		if body.Items[i].ID != wantID {
-			t.Fatalf("expected item %d id %q, got %q", i, wantID, body.Items[i].ID)
-		}
-	}
-	if got := body.Items[0]; got.Name != "合成碎片" ||
+	got, ok := itemsByID["item_adventure_backpack"]
+	if !ok ||
+		got.Name != "冒險背包" ||
 		got.Type != "material" ||
 		got.Rarity != "common" ||
 		got.Description == "" {
-		t.Fatalf("unexpected crafting fragment item: %#v", got)
+		t.Fatalf("expected imported adventure backpack item, got %#v", got)
 	}
 }
 
@@ -371,13 +398,13 @@ func TestSwaggerJSON(t *testing.T) {
 		"/fusions/recipes",
 		"/leaderboards",
 		"/me/items",
+		"/me/matches",
 		"/me/home",
 		"/me/qrcode",
 		"/me/sitones",
 		"/me/status",
 		"/matches",
 		"/matches/join",
-		"/matches/join-by-qr",
 		"/matches/{matchID}",
 		"/matches/{matchID}/answers",
 		"/matches/{matchID}/events",
@@ -385,6 +412,7 @@ func TestSwaggerJSON(t *testing.T) {
 		"/shop/items",
 		"/shop/items/{itemID}",
 		"/shop/purchases",
+		"/staff/rewards",
 		"/qr/resolve",
 		"AuthCookieAuth",
 		"camp2026_auth",
@@ -428,7 +456,6 @@ func TestSwaggerJSON(t *testing.T) {
 		"/storage/recipes",
 		"/catalog/crafting-recipes",
 		"/catalog/recipes",
-		"/staff/rewards",
 		"/staff/activity-verifications",
 		"/quiz/pairings",
 		"/quiz/sessions",
@@ -452,9 +479,9 @@ func TestSwaggerJSON(t *testing.T) {
 	assertSwaggerSecurity(t, spec.Paths, "/me/qrcode", http.MethodGet, true)
 	assertSwaggerSecurity(t, spec.Paths, "/me/sitones", http.MethodGet, true)
 	assertSwaggerSecurity(t, spec.Paths, "/me/items", http.MethodGet, true)
+	assertSwaggerSecurity(t, spec.Paths, "/me/matches", http.MethodGet, true)
 	assertSwaggerSecurity(t, spec.Paths, "/matches", http.MethodPost, true)
 	assertSwaggerSecurity(t, spec.Paths, "/matches/join", http.MethodPost, true)
-	assertSwaggerSecurity(t, spec.Paths, "/matches/join-by-qr", http.MethodPost, true)
 	assertSwaggerSecurity(t, spec.Paths, "/matches/{matchID}", http.MethodGet, true)
 	assertSwaggerSecurity(t, spec.Paths, "/matches/{matchID}/ready", http.MethodPost, true)
 	assertSwaggerSecurity(t, spec.Paths, "/matches/{matchID}/answers", http.MethodPost, true)
@@ -462,6 +489,7 @@ func TestSwaggerJSON(t *testing.T) {
 	assertSwaggerSecurity(t, spec.Paths, "/shop/items", http.MethodGet, true)
 	assertSwaggerSecurity(t, spec.Paths, "/shop/items/{itemID}", http.MethodGet, true)
 	assertSwaggerSecurity(t, spec.Paths, "/shop/purchases", http.MethodPost, true)
+	assertSwaggerSecurity(t, spec.Paths, "/staff/rewards", http.MethodPost, true)
 }
 
 func TestScalarDocs(t *testing.T) {
