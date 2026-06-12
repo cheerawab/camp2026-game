@@ -137,9 +137,6 @@ importers:
       vite:
         specifier: ^8.0.0
         version: 8.0.14(@types/node@22.19.19)(jiti@2.7.0)
-      vite-tsconfig-paths:
-        specifier: ^6.1.1
-        version: 6.1.1(typescript@6.0.3)(vite@8.0.14(@types/node@22.19.19)(jiti@2.7.0))
 
 packages:
   "@babel/code-frame@7.29.7":
@@ -2601,12 +2598,6 @@ packages:
       }
     engines: { node: ">=18" }
 
-  globrex@0.1.2:
-    resolution:
-      {
-        integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==,
-      }
-
   graceful-fs@4.2.11:
     resolution:
       {
@@ -3433,19 +3424,6 @@ packages:
     peerDependencies:
       typescript: ">=4.8.4"
 
-  tsconfck@3.1.6:
-    resolution:
-      {
-        integrity: sha512-ks6Vjr/jEw0P1gmOVwutM3B7fWxoWBL2KRDb1JfqGVawBmO5UsvmWOQFGHBPl5yxYz4eERr19E6L7NMv+Fej4w==,
-      }
-    engines: { node: ^18 || >=20 }
-    hasBin: true
-    peerDependencies:
-      typescript: ^5.0.0
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-
   tslib@2.8.1:
     resolution:
       {
@@ -3553,14 +3531,6 @@ packages:
       {
         integrity: sha512-SbPDPdDBYp+5MJHhBCAyI7wKM3d5ivekigc2Dk2s7pgbZ9wIgIBYGVw4zGHBml/qTFbexrofXW6Gu4noGxrOwQ==,
       }
-
-  vite-tsconfig-paths@6.1.1:
-    resolution:
-      {
-        integrity: sha512-2cihq7zliibCCZ8P9cKJrQBkfgdvcFkOOc3Y02o3GWUDLgqjWsZudaoiuOwO/gzTzy17cS5F7ZPo4bsnS4DGkg==,
-      }
-    peerDependencies:
-      vite: "*"
 
   vite@8.0.14:
     resolution:
@@ -5359,8 +5329,6 @@ snapshots:
 
   globals@16.5.0: {}
 
-  globrex@0.1.2: {}
-
   graceful-fs@4.2.11: {}
 
   has-flag@4.0.0: {}
@@ -5797,10 +5765,6 @@ snapshots:
     dependencies:
       typescript: 6.0.3
 
-  tsconfck@3.1.6(typescript@6.0.3):
-    optionalDependencies:
-      typescript: 6.0.3
-
   tslib@2.8.1: {}
 
   type-check@0.4.0:
@@ -5882,16 +5846,6 @@ snapshots:
       d3-shape: 3.2.0
       d3-time: 3.1.0
       d3-timer: 3.0.1
-
-  vite-tsconfig-paths@6.1.1(typescript@6.0.3)(vite@8.0.14(@types/node@22.19.19)(jiti@2.7.0)):
-    dependencies:
-      debug: 4.4.3
-      globrex: 0.1.2
-      tsconfck: 3.1.6(typescript@6.0.3)
-      vite: 8.0.14(@types/node@22.19.19)(jiti@2.7.0)
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
 
   vite@8.0.14(@types/node@22.19.19)(jiti@2.7.0):
     dependencies:
