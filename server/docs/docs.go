@@ -958,14 +958,14 @@ const docTemplate = `{
                         "AuthCookieAuth": []
                     }
                 ],
-                "description": "Returns the authenticated player's QR code token for client-side QR rendering.",
+                "description": "Returns the authenticated player's QR code identifier for client-side QR rendering. This identifier is not a login credential.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "me"
                 ],
-                "summary": "Get current player QR code token",
+                "summary": "Get current player QR code identifier",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1186,7 +1186,7 @@ const docTemplate = `{
         },
         "/qr/resolve": {
             "post": {
-                "description": "Resolves a player QR token into a public player summary without exposing auth credentials.",
+                "description": "Resolves a player QR code identifier into a public player summary without exposing auth credentials.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1425,7 +1425,7 @@ const docTemplate = `{
                         "AuthCookieAuth": []
                     }
                 ],
-                "description": "Staff-only endpoint. Resolves a player QR token, grants one sitone or item to that player, and records the staff grant.",
+                "description": "Staff-only endpoint. Resolves a player QR code identifier, grants one sitone or item to that player, and records the staff grant.",
                 "consumes": [
                     "application/json"
                 ],
@@ -2569,7 +2569,7 @@ const docTemplate = `{
             "properties": {
                 "qrcodeToken": {
                     "type": "string",
-                    "example": "qr_token_123456"
+                    "example": "qr_6H_x7lM20CK8BBnPfwEG1Ei97-PM9ZGr8Dy9yW-BYok"
                 }
             }
         },
@@ -2779,7 +2779,7 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 512,
                     "minLength": 4,
-                    "example": "qr_token_123456"
+                    "example": "qr_6H_x7lM20CK8BBnPfwEG1Ei97-PM9ZGr8Dy9yW-BYok"
                 }
             }
         },
@@ -2917,7 +2917,7 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 512,
                     "minLength": 4,
-                    "example": "qr_token_123456"
+                    "example": "qr_6H_x7lM20CK8BBnPfwEG1Ei97-PM9ZGr8Dy9yW-BYok"
                 },
                 "quantity": {
                     "type": "integer",

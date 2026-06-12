@@ -746,7 +746,7 @@ definitions:
   me.QRCodeResponse:
     properties:
       qrcodeToken:
-        example: qr_token_123456
+        example: qr_6H_x7lM20CK8BBnPfwEG1Ei97-PM9ZGr8Dy9yW-BYok
         type: string
     type: object
   me.SitoneListResponse:
@@ -890,7 +890,7 @@ definitions:
   qr.ResolveRequest:
     properties:
       qrcodeToken:
-        example: qr_token_123456
+        example: qr_6H_x7lM20CK8BBnPfwEG1Ei97-PM9ZGr8Dy9yW-BYok
         maxLength: 512
         minLength: 4
         type: string
@@ -984,7 +984,7 @@ definitions:
         example: sitone
         type: string
       qrcodeToken:
-        example: qr_token_123456
+        example: qr_6H_x7lM20CK8BBnPfwEG1Ei97-PM9ZGr8Dy9yW-BYok
         maxLength: 512
         minLength: 4
         type: string
@@ -1678,8 +1678,8 @@ paths:
       - me
   /me/qrcode:
     get:
-      description: Returns the authenticated player's QR code token for client-side
-        QR rendering.
+      description: Returns the authenticated player's QR code identifier for client-side
+        QR rendering. This identifier is not a login credential.
       produces:
       - application/json
       responses:
@@ -1697,7 +1697,7 @@ paths:
             $ref: '#/definitions/httpx.ProblemDetails'
       security:
       - AuthCookieAuth: []
-      summary: Get current player QR code token
+      summary: Get current player QR code identifier
       tags:
       - me
   /me/sitone-loadout:
@@ -1830,8 +1830,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Resolves a player QR token into a public player summary without
-        exposing auth credentials.
+      description: Resolves a player QR code identifier into a public player summary
+        without exposing auth credentials.
       parameters:
       - description: QR resolve request
         in: body
@@ -1982,8 +1982,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Staff-only endpoint. Resolves a player QR token, grants one sitone
-        or item to that player, and records the staff grant.
+      description: Staff-only endpoint. Resolves a player QR code identifier, grants
+        one sitone or item to that player, and records the staff grant.
       parameters:
       - description: Staff reward request
         in: body

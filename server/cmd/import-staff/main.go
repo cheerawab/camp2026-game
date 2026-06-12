@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
 	"encoding/csv"
 	"errors"
 	"flag"
@@ -20,8 +22,9 @@ import (
 )
 
 const (
-	defaultTeamSize = 6
-	playerRoleStaff = "staff"
+	defaultTeamSize       = 6
+	playerRoleStaff       = "staff"
+	qrCodeIdentifierBytes = 32
 
 	headerGroup      = "組別"
 	headerNickname   = "暱稱"
@@ -127,6 +130,16 @@ func buildImportPlan(reader io.Reader, teamSize int) (importPlan, error) {
 	teams := make([]mongomodel.Team, 0, (len(rows)+teamSize-1)/teamSize)
 	players := make([]mongomodel.Player, 0, len(rows)*2)
 	seenTokens := make(map[string]int, len(rows)*2)
+	seenQRCodeIdentifiers := make(map[string]struct{}, len(rows))
+
+	for _, row := range rows {
+		for _, token := range []string{row.Token, row.StaffToken} {
+			if previousRow, ok := seenTokens[token]; ok {
+				return importPlan{}, fmt.Errorf("duplicate token %q on CSV rows %d and %d", token, previousRow, row.RowNumber)
+			}
+			seenTokens[token] = row.RowNumber
+		}
+	}
 
 	for index, row := range rows {
 		teamNumber := index/teamSize + 1
@@ -140,10 +153,14 @@ func buildImportPlan(reader io.Reader, teamSize int) (importPlan, error) {
 		}
 
 		avatarURL := gravatarURL(row.EmailHash)
+		qrCodeIdentifier, err := newUniqueQRCodeIdentifier(seenTokens, seenQRCodeIdentifiers)
+		if err != nil {
+			return importPlan{}, fmt.Errorf("csv row %d: %w", row.RowNumber, err)
+		}
 		regular := mongomodel.Player{
 			ID:          row.Token,
 			AuthToken:   row.Token,
-			QRCodeToken: row.Token,
+			QRCodeToken: qrCodeIdentifier,
 			Nickname:    row.Nickname,
 			TeamID:      team.ID,
 			AvatarURL:   avatarURL,
@@ -157,10 +174,6 @@ func buildImportPlan(reader io.Reader, teamSize int) (importPlan, error) {
 		}
 
 		for _, player := range []mongomodel.Player{regular, staff} {
-			if previousRow, ok := seenTokens[player.ID]; ok {
-				return importPlan{}, fmt.Errorf("duplicate token %q on CSV rows %d and %d", player.ID, previousRow, row.RowNumber)
-			}
-			seenTokens[player.ID] = row.RowNumber
 			players = append(players, player)
 		}
 	}
@@ -288,6 +301,32 @@ func teamName(number int) string {
 
 func gravatarURL(hash string) string {
 	return "https://www.gravatar.com/avatar/" + hash
+}
+
+func newUniqueQRCodeIdentifier(authTokens map[string]int, issued map[string]struct{}) (string, error) {
+	for attempt := 0; attempt < 8; attempt++ {
+		identifier, err := newQRCodeIdentifier()
+		if err != nil {
+			return "", err
+		}
+		if _, ok := authTokens[identifier]; ok {
+			continue
+		}
+		if _, ok := issued[identifier]; ok {
+			continue
+		}
+		issued[identifier] = struct{}{}
+		return identifier, nil
+	}
+	return "", errors.New("generate unique qr code identifier")
+}
+
+func newQRCodeIdentifier() (string, error) {
+	randomBytes := make([]byte, qrCodeIdentifierBytes)
+	if _, err := rand.Read(randomBytes); err != nil {
+		return "", fmt.Errorf("generate qr code identifier: %w", err)
+	}
+	return "qr_" + base64.RawURLEncoding.EncodeToString(randomBytes), nil
 }
 
 func upsertTeams(ctx context.Context, collection *mongo.Collection, teams []mongomodel.Team) error {

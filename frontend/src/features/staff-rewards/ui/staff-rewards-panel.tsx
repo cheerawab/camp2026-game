@@ -243,10 +243,10 @@ export function StaffRewardsPanel() {
               <Input
                 value={manualToken}
                 onChange={(event) => setManualToken(event.target.value)}
-                placeholder="QR Token"
+                placeholder="QR 識別碼"
                 autoComplete="off"
                 inputMode="text"
-                aria-label="QR Token"
+                aria-label="QR 識別碼"
               />
               <Button type="submit" disabled={resolveMutation.isPending}>
                 確認

@@ -7,8 +7,8 @@ import (
 )
 
 // QRCode godoc
-// @Summary Get current player QR code token
-// @Description Returns the authenticated player's QR code token for client-side QR rendering.
+// @Summary Get current player QR code identifier
+// @Description Returns the authenticated player's QR code identifier for client-side QR rendering. This identifier is not a login credential.
 // @Tags me
 // @Produce json
 // @Security AuthCookieAuth

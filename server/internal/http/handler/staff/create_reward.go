@@ -28,7 +28,7 @@ type rewardDefinition struct {
 
 // CreateReward godoc
 // @Summary Grant sitone or item as staff
-// @Description Staff-only endpoint. Resolves a player QR token, grants one sitone or item to that player, and records the staff grant.
+// @Description Staff-only endpoint. Resolves a player QR code identifier, grants one sitone or item to that player, and records the staff grant.
 // @Tags staff
 // @Accept json
 // @Produce json
@@ -70,7 +70,7 @@ func (h *Handler) CreateReward(w http.ResponseWriter, r *http.Request) {
 
 	recipient, err := h.findPlayerByQRCodeToken(r.Context(), body.QRCodeToken)
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		httpx.WriteProblem(w, r, httpx.NotFound("qr token not found"))
+		httpx.WriteProblem(w, r, httpx.NotFound("qr code not found"))
 		return
 	}
 	if err != nil {

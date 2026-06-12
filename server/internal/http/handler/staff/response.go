@@ -1,7 +1,7 @@
 package staff
 
 type CreateRewardRequest struct {
-	QRCodeToken string `json:"qrcodeToken" validate:"required,min=4,max=512" example:"qr_token_123456"`
+	QRCodeToken string `json:"qrcodeToken" validate:"required,min=4,max=512" example:"qr_6H_x7lM20CK8BBnPfwEG1Ei97-PM9ZGr8Dy9yW-BYok"`
 	Kind        string `json:"kind" validate:"required,oneof=item sitone" example:"sitone"`
 	RefID       string `json:"refId" validate:"required,min=1,max=128" example:"stone_engineering_base"`
 	Quantity    int    `json:"quantity" validate:"required,min=1,max=99" example:"1"`

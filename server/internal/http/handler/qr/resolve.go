@@ -15,7 +15,7 @@ import (
 
 // Resolve godoc
 // @Summary Resolve player QR code
-// @Description Resolves a player QR token into a public player summary without exposing auth credentials.
+// @Description Resolves a player QR code identifier into a public player summary without exposing auth credentials.
 // @Tags qr
 // @Accept json
 // @Produce json
@@ -46,7 +46,7 @@ func (h *Handler) Resolve(w http.ResponseWriter, r *http.Request) {
 
 	player, err := h.findPlayerByQRCodeToken(r.Context(), body.QRCodeToken)
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		httpx.WriteProblem(w, r, httpx.NotFound("qr token not found"))
+		httpx.WriteProblem(w, r, httpx.NotFound("qr code not found"))
 		return
 	}
 	if err != nil {

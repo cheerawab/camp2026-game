@@ -64,13 +64,13 @@ export function PlayerQrScannerDialog({
         typeof window === "undefined" ||
         !navigator.mediaDevices?.getUserMedia
       ) {
-        setMessage("這個瀏覽器無法開啟相機，請輸入 QR Token。")
+        setMessage("這個瀏覽器無法開啟相機，請輸入 QR 識別碼。")
         return
       }
 
       const BarcodeDetector = getBarcodeDetector()
       if (!BarcodeDetector) {
-        setMessage("這個瀏覽器不支援 QR 掃描，請輸入 QR Token。")
+        setMessage("這個瀏覽器不支援 QR 掃描，請輸入 QR 識別碼。")
         return
       }
 
@@ -123,7 +123,7 @@ export function PlayerQrScannerDialog({
         await scan()
       } catch {
         if (!cancelled) {
-          setMessage("相機權限未開啟，請輸入 QR Token。")
+          setMessage("相機權限未開啟，請輸入 QR 識別碼。")
         }
       }
     }
@@ -144,7 +144,7 @@ export function PlayerQrScannerDialog({
     event.preventDefault()
     const token = normalizeToken(manualToken)
     if (!token) {
-      setMessage("請輸入 QR Token。")
+      setMessage("請輸入 QR 識別碼。")
       return
     }
     onToken(token)
@@ -173,7 +173,7 @@ export function PlayerQrScannerDialog({
           <Input
             value={manualToken}
             onChange={(event) => setManualToken(event.target.value)}
-            placeholder="手動輸入 QR Token"
+            placeholder="手動輸入 QR 識別碼"
             autoComplete="off"
             inputMode="text"
           />

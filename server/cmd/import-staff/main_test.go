@@ -28,8 +28,17 @@ func TestBuildImportPlanCreatesRegularAndStaffPlayers(t *testing.T) {
 	}
 
 	regular := plan.Players[0]
-	if regular.ID != "token-1" || regular.AuthToken != "token-1" || regular.QRCodeToken != "token-1" {
+	if regular.ID != "token-1" || regular.AuthToken != "token-1" {
 		t.Fatalf("unexpected regular token fields: %#v", regular)
+	}
+	if regular.QRCodeToken == "" {
+		t.Fatalf("expected regular qr code identifier")
+	}
+	if regular.QRCodeToken == regular.AuthToken || regular.QRCodeToken == "staff-token-1" {
+		t.Fatalf("expected qr code identifier to differ from auth tokens, got %#v", regular)
+	}
+	if !strings.HasPrefix(regular.QRCodeToken, "qr_") {
+		t.Fatalf("expected qr code identifier prefix, got %q", regular.QRCodeToken)
 	}
 	if regular.Role != "" {
 		t.Fatalf("expected regular player role to be empty, got %q", regular.Role)
@@ -46,7 +55,7 @@ func TestBuildImportPlanCreatesRegularAndStaffPlayers(t *testing.T) {
 		t.Fatalf("unexpected staff token fields: %#v", staff)
 	}
 	if staff.QRCodeToken != "" {
-		t.Fatalf("expected staff qr code token to be empty, got %q", staff.QRCodeToken)
+		t.Fatalf("expected staff qr code identifier to be empty, got %q", staff.QRCodeToken)
 	}
 	if staff.Role != "staff" {
 		t.Fatalf("expected staff role, got %q", staff.Role)

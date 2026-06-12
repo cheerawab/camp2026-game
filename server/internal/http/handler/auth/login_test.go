@@ -79,7 +79,7 @@ func TestLoginResponseFromPlayer(t *testing.T) {
 		mongomodel.Player{
 			ID:          "7H9K2Q",
 			AuthToken:   "auth_token_123456",
-			QRCodeToken: "qr_token_123456",
+			QRCodeToken: "qr_6H_x7lM20CK8BBnPfwEG1Ei97-PM9ZGr8Dy9yW-BYok",
 			Nickname:    "Alice",
 			TeamID:      "8M4RXP",
 			AvatarURL:   "https://example.test/avatar/alice.png",

@@ -53,7 +53,7 @@ type HomeActionResponse struct {
 }
 
 type QRCodeResponse struct {
-	QRCodeToken string `json:"qrcodeToken" example:"qr_token_123456"`
+	QRCodeToken string `json:"qrcodeToken" example:"qr_6H_x7lM20CK8BBnPfwEG1Ei97-PM9ZGr8Dy9yW-BYok"`
 }
 
 type SitoneLoadoutRequest struct {

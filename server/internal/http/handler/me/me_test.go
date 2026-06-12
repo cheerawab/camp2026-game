@@ -24,7 +24,7 @@ func TestQRCodeResponse(t *testing.T) {
 	req := authenticatedRequest(mongomodel.Player{
 		ID:          "7H9K2Q",
 		AuthToken:   "auth_token_123456",
-		QRCodeToken: "qr_token_123456",
+		QRCodeToken: "qr_6H_x7lM20CK8BBnPfwEG1Ei97-PM9ZGr8Dy9yW-BYok",
 	})
 	res := httptest.NewRecorder()
 
@@ -38,8 +38,8 @@ func TestQRCodeResponse(t *testing.T) {
 	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
 		t.Fatalf("decode response: %v", err)
 	}
-	if body["qrcodeToken"] != "qr_token_123456" {
-		t.Fatalf("expected qrcode token, got %#v", body)
+	if body["qrcodeToken"] != "qr_6H_x7lM20CK8BBnPfwEG1Ei97-PM9ZGr8Dy9yW-BYok" {
+		t.Fatalf("expected qr code identifier, got %#v", body)
 	}
 	if _, ok := body["authToken"]; ok {
 		t.Fatalf("expected auth token to be omitted, got %#v", body)
