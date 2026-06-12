@@ -1,0 +1,461 @@
+import { z } from "zod"
+
+import { apiClient } from "./client"
+
+const nullableArray = <T extends z.ZodType>(schema: T) =>
+  z
+    .array(schema)
+    .nullish()
+    .transform((value) => value ?? [])
+
+const TeamSchema = z.object({
+  teamId: z.string(),
+  name: z.string(),
+})
+
+const PlayerStatusSchema = z.object({
+  playerId: z.string(),
+  nickname: z.string(),
+  team: TeamSchema,
+  openPower: z.number(),
+  avatarUrl: z.string().optional(),
+  role: z.string().optional(),
+})
+
+const HomeActionSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  enabled: z.boolean(),
+})
+
+const HomeTeamRankSchema = z.object({
+  type: z.string(),
+  rank: z.number(),
+  teamId: z.string(),
+  name: z.string(),
+  score: z.number(),
+  gapToPrevious: z.number(),
+})
+
+const HomeResponseSchema = z.object({
+  player: PlayerStatusSchema,
+  summary: z.object({
+    openPower: z.number(),
+    sitoneCount: z.number(),
+    itemCount: z.number(),
+  }),
+  teamRank: HomeTeamRankSchema.optional(),
+  actions: nullableArray(HomeActionSchema),
+})
+
+const AuthLoginResponseSchema = z.object({
+  player: PlayerStatusSchema,
+})
+
+const QRCodeResponseSchema = z.object({
+  qrcodeToken: z.string(),
+})
+
+const QRResolveResponseSchema = z.object({
+  player: PlayerStatusSchema,
+})
+
+const SitoneLoadoutResponseSchema = z.object({
+  sitoneIds: nullableArray(z.string()),
+})
+
+const SitoneSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  type: z.string(),
+  rarity: z.string(),
+  style: z.string(),
+  description: z.string(),
+})
+
+const ItemSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  type: z.string(),
+  rarity: z.string(),
+  description: z.string(),
+})
+
+const CatalogSitonesResponseSchema = z.object({
+  sitones: nullableArray(SitoneSchema),
+})
+
+const CatalogItemsResponseSchema = z.object({
+  items: nullableArray(ItemSchema),
+})
+
+const PlayerSitoneSchema = z.object({
+  id: z.string(),
+  sitoneId: z.string(),
+  quantity: z.number(),
+  sitone: SitoneSchema,
+})
+
+const PlayerItemSchema = z.object({
+  id: z.string(),
+  itemId: z.string(),
+  quantity: z.number(),
+  item: ItemSchema,
+})
+
+const PlayerSitonesResponseSchema = z.object({
+  sitones: nullableArray(PlayerSitoneSchema),
+})
+
+const PlayerItemsResponseSchema = z.object({
+  items: nullableArray(PlayerItemSchema),
+})
+
+const ShopItemSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  type: z.string(),
+  rarity: z.string(),
+  description: z.string(),
+  priceOpenPower: z.number(),
+  redeemed: z.boolean(),
+})
+
+const ShopItemsResponseSchema = z.object({
+  items: nullableArray(ShopItemSchema),
+})
+
+const ShopItemDetailResponseSchema = z.object({
+  item: ShopItemSchema,
+})
+
+const PurchaseResponseSchema = z.object({
+  purchaseId: z.string(),
+  itemId: z.string(),
+  quantity: z.number(),
+  priceOpenPower: z.number(),
+  openPower: z.number(),
+  item: ShopItemSchema,
+})
+
+const FusionComponentSchema = z.object({
+  kind: z.enum(["item", "sitone"]),
+  id: z.string(),
+  name: z.string(),
+  type: z.string().optional(),
+  rarity: z.string().optional(),
+  quantity: z.number(),
+})
+
+const FusionRecipeSchema = z.object({
+  id: z.string(),
+  branchId: z.string().optional(),
+  type: z.string().optional(),
+  stageFrom: z.number().optional(),
+  stageTo: z.number().optional(),
+  name: z.string(),
+  description: z.string(),
+  story: z.string().optional(),
+  reviewTitle: z.string().optional(),
+  reviewUrl: z.string().optional(),
+  enabled: z.boolean(),
+  available: z.boolean(),
+  inputs: nullableArray(FusionComponentSchema),
+  outputs: nullableArray(FusionComponentSchema),
+})
+
+const FusionRecipesResponseSchema = z.object({
+  recipes: nullableArray(FusionRecipeSchema),
+})
+
+const FusionCreateResponseSchema = z.object({
+  fusionId: z.string(),
+  recipe: FusionRecipeSchema,
+})
+
+const LeaderboardTeamSchema = z.object({
+  rank: z.number(),
+  teamId: z.string(),
+  name: z.string(),
+  score: z.number(),
+  metric: z.string(),
+  current: z.boolean(),
+})
+
+const LeaderboardResponseSchema = z.object({
+  type: z.enum(["open_power", "sitones", "matches"]),
+  teams: nullableArray(LeaderboardTeamSchema),
+  currentTeam: LeaderboardTeamSchema.optional(),
+  gapToPrevious: z.number(),
+})
+
+const MatchPlayerSchema = z.object({
+  playerId: z.string(),
+  nickname: z.string(),
+  ready: z.boolean(),
+  answeredCurrentQuestion: z.boolean().optional(),
+  sitoneIds: nullableArray(z.string()),
+  score: z.number().optional(),
+  maxScore: z.number().optional(),
+  openPowerReward: z.number().optional(),
+})
+
+const MatchQuestionSchema = z.object({
+  questionId: z.string(),
+  prompt: z.string(),
+  choiceA: z.string(),
+  choiceB: z.string(),
+  choiceC: z.string(),
+  choiceD: z.string(),
+})
+
+const MatchAnswerResultSchema = z.object({
+  playerId: z.string(),
+  choice: z.string().optional(),
+  correct: z.boolean(),
+  score: z.number(),
+  elapsedMillis: z.number(),
+  answeredAt: z.string().optional(),
+})
+
+const MatchQuestionResultSchema = MatchQuestionSchema.extend({
+  correctChoice: z.string(),
+  explanation: z.string(),
+  answers: nullableArray(MatchAnswerResultSchema),
+})
+
+const MatchStateSchema = z.object({
+  matchId: z.string(),
+  code: z.string().optional(),
+  status: z.enum(["waiting", "active", "completed"]),
+  hostPlayerId: z.string(),
+  players: nullableArray(MatchPlayerSchema),
+  currentQuestionIndex: z.number().optional(),
+  questionCount: z.number().optional(),
+  currentQuestion: MatchQuestionSchema.optional(),
+  roundStartedAt: z.string().optional(),
+  roundEndsAt: z.string().optional(),
+  createdAt: z.string(),
+  startedAt: z.string().optional(),
+  completedAt: z.string().optional(),
+  results: nullableArray(MatchQuestionResultSchema),
+})
+
+const CompletedMatchPlayerSchema = z.object({
+  playerId: z.string(),
+  nickname: z.string(),
+  sitoneIds: nullableArray(z.string()),
+  score: z.number(),
+})
+
+const CompletedMatchSchema = z.object({
+  matchId: z.string(),
+  status: z.literal("completed"),
+  hostPlayerId: z.string(),
+  players: nullableArray(CompletedMatchPlayerSchema),
+  questionCount: z.number(),
+  createdAt: z.string(),
+  startedAt: z.string().optional(),
+  completedAt: z.string().optional(),
+})
+
+const CompletedMatchesResponseSchema = z.object({
+  matches: nullableArray(CompletedMatchSchema),
+})
+
+const AnswerAcceptedSchema = z.object({
+  accepted: z.boolean(),
+})
+
+const StaffRewardKindSchema = z.enum(["item", "sitone"])
+
+const StaffRewardResponseSchema = z.object({
+  rewardId: z.string(),
+  player: z.object({
+    playerId: z.string(),
+    nickname: z.string(),
+    team: TeamSchema,
+  }),
+  reward: z.object({
+    kind: StaffRewardKindSchema,
+    id: z.string(),
+    name: z.string(),
+    quantity: z.number(),
+  }),
+})
+
+export type PlayerStatus = z.infer<typeof PlayerStatusSchema>
+export type HomeResponse = z.infer<typeof HomeResponseSchema>
+export type SitoneLoadoutResponse = z.infer<typeof SitoneLoadoutResponseSchema>
+export type Sitone = z.infer<typeof SitoneSchema>
+export type Item = z.infer<typeof ItemSchema>
+export type PlayerSitone = z.infer<typeof PlayerSitoneSchema>
+export type PlayerItem = z.infer<typeof PlayerItemSchema>
+export type ShopItem = z.infer<typeof ShopItemSchema>
+export type FusionRecipe = z.infer<typeof FusionRecipeSchema>
+export type LeaderboardType = z.infer<typeof LeaderboardResponseSchema>["type"]
+export type LeaderboardResponse = z.infer<typeof LeaderboardResponseSchema>
+export type MatchState = z.infer<typeof MatchStateSchema>
+export type MatchPlayer = z.infer<typeof MatchPlayerSchema>
+export type MatchQuestion = z.infer<typeof MatchQuestionSchema>
+export type MatchQuestionResult = z.infer<typeof MatchQuestionResultSchema>
+export type CompletedMatch = z.infer<typeof CompletedMatchSchema>
+export type MatchChoice = "A" | "B" | "C" | "D"
+export type StaffRewardKind = z.infer<typeof StaffRewardKindSchema>
+export type StaffRewardResponse = z.infer<typeof StaffRewardResponseSchema>
+
+export const gameApi = {
+  async login(token: string) {
+    const json = await apiClient.post("/api/auth/login", {
+      json: { token },
+    })
+    return AuthLoginResponseSchema.parse(json)
+  },
+
+  async logout() {
+    await apiClient.post("/api/auth/logout")
+  },
+
+  async home() {
+    const json = await apiClient.get("/api/me/home")
+    return HomeResponseSchema.parse(json)
+  },
+
+  async status() {
+    const json = await apiClient.get("/api/me/status")
+    return PlayerStatusSchema.parse(json)
+  },
+
+  async qrcode() {
+    const json = await apiClient.get("/api/me/qrcode")
+    return QRCodeResponseSchema.parse(json)
+  },
+
+  async resolveQRCode(qrcodeToken: string) {
+    const json = await apiClient.post("/api/qr/resolve", {
+      json: { qrcodeToken },
+    })
+    return QRResolveResponseSchema.parse(json).player
+  },
+
+  async sitoneLoadout() {
+    const json = await apiClient.get("/api/me/sitone-loadout")
+    return SitoneLoadoutResponseSchema.parse(json)
+  },
+
+  async updateSitoneLoadout(sitoneIds: string[]) {
+    const json = await apiClient.put("/api/me/sitone-loadout", {
+      json: { sitoneIds },
+    })
+    return SitoneLoadoutResponseSchema.parse(json)
+  },
+
+  async catalogSitones() {
+    const json = await apiClient.get("/api/catalog/sitones")
+    return CatalogSitonesResponseSchema.parse(json).sitones
+  },
+
+  async catalogItems() {
+    const json = await apiClient.get("/api/catalog/items")
+    return CatalogItemsResponseSchema.parse(json).items
+  },
+
+  async playerSitones() {
+    const json = await apiClient.get("/api/me/sitones")
+    return PlayerSitonesResponseSchema.parse(json).sitones
+  },
+
+  async playerItems() {
+    const json = await apiClient.get("/api/me/items")
+    return PlayerItemsResponseSchema.parse(json).items
+  },
+
+  async completedMatches() {
+    const json = await apiClient.get("/api/me/matches")
+    return CompletedMatchesResponseSchema.parse(json).matches
+  },
+
+  async shopItems() {
+    const json = await apiClient.get("/api/shop/items")
+    return ShopItemsResponseSchema.parse(json).items
+  },
+
+  async shopItem(itemID: string) {
+    const json = await apiClient.get(`/api/shop/items/${itemID}`)
+    return ShopItemDetailResponseSchema.parse(json).item
+  },
+
+  async purchase(itemID: string) {
+    const json = await apiClient.post("/api/shop/purchases", {
+      json: { itemId: itemID },
+    })
+    return PurchaseResponseSchema.parse(json)
+  },
+
+  async fusionRecipes() {
+    const json = await apiClient.get("/api/fusions/recipes")
+    return FusionRecipesResponseSchema.parse(json).recipes
+  },
+
+  async createFusion(recipeID: string) {
+    const json = await apiClient.post("/api/fusions", {
+      json: { recipeId: recipeID },
+    })
+    return FusionCreateResponseSchema.parse(json)
+  },
+
+  async leaderboard(type: LeaderboardType) {
+    const json = await apiClient.get("/api/leaderboards", {
+      searchParams: { type },
+    })
+    return LeaderboardResponseSchema.parse(json)
+  },
+
+  async createMatch() {
+    const json = await apiClient.post("/api/matches")
+    return MatchStateSchema.parse(json)
+  },
+
+  async joinMatch(code: string) {
+    const json = await apiClient.post("/api/matches/join", {
+      json: { code },
+    })
+    return MatchStateSchema.parse(json)
+  },
+
+  async getMatch(matchID: string) {
+    const json = await apiClient.get(`/api/matches/${matchID}`)
+    return MatchStateSchema.parse(json)
+  },
+
+  async readyMatch(matchID: string) {
+    const json = await apiClient.post(`/api/matches/${matchID}/ready`)
+    return MatchStateSchema.parse(json)
+  },
+
+  async updateMatchLoadout(matchID: string, sitoneIds: string[]) {
+    const json = await apiClient.put(`/api/matches/${matchID}/loadout`, {
+      json: { sitoneIds },
+    })
+    return MatchStateSchema.parse(json)
+  },
+
+  async answerMatch(matchID: string, questionID: string, choice: MatchChoice) {
+    const json = await apiClient.post(`/api/matches/${matchID}/answers`, {
+      json: { questionId: questionID, choice },
+    })
+    return AnswerAcceptedSchema.parse(json)
+  },
+
+  async createStaffReward(input: {
+    qrcodeToken: string
+    kind: StaffRewardKind
+    refId: string
+    quantity: number
+  }) {
+    const json = await apiClient.post("/api/staff/rewards", {
+      json: input,
+    })
+    return StaffRewardResponseSchema.parse(json)
+  },
+}

@@ -6,6 +6,7 @@ type PageHeaderType = {
   title: string
   headline: string
   backTo?: string
+  onBack?: () => void
   rightSlot?: ReactNode
 }
 
@@ -13,6 +14,7 @@ export function PageHeader({
   title,
   headline,
   backTo = "/",
+  onBack,
   rightSlot,
 }: PageHeaderType) {
   return (
@@ -20,6 +22,7 @@ export function PageHeader({
       <Link
         to={backTo}
         aria-label="返回"
+        onClick={onBack}
         className="border-ink bg-card text-ink focus-visible:outline-power grid size-11 shrink-0 place-items-center rounded-2xl border-2 transition-transform focus-visible:outline-3 focus-visible:outline-offset-2 active:translate-y-px"
       >
         <ArrowLeft className="size-5" aria-hidden />
