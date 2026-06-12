@@ -1,13 +1,10 @@
-import { Link } from "@tanstack/react-router"
+import { useQuery } from "@tanstack/react-query"
+import { Link, useNavigate } from "@tanstack/react-router"
+import { useEffect } from "react"
 
-const PLAYER = {
-  name: "阿洛",
-  squad: "松鼠小隊",
-  power: 430,
-  stones: 8,
-  items: 29,
-  rank: 12,
-}
+import { AppError } from "@/shared/api/error"
+import { gameApi } from "@/shared/api/game"
+import { GamePageShell } from "@/shared/ui/game-page-shell"
 
 const ACTIONS: {
   label: string
@@ -37,46 +34,89 @@ const ACTIONS: {
   },
 ]
 
+const STAFF_ACTION: (typeof ACTIONS)[number] = {
+  label: "工作人員發放",
+  desc: "掃描 QR Code 發小石或道具",
+  colorClass: "bg-secondary",
+  to: "/staff",
+}
+
 const COLLECTIONS: {
   label: string
-  count: string
+  count: (input: { sitones: number; items: number; rank?: number }) => string
   colorClass: string
   to: string
 }[] = [
   {
     label: "小石收藏",
-    count: "8 種",
+    count: ({ sitones }) => `${sitones} 顆`,
     colorClass: "bg-pebble-explore",
     to: "/stones",
   },
   {
     label: "道具背包",
-    count: "29 件",
+    count: ({ items }) => `${items} 件`,
     colorClass: "bg-pebble-engineer",
     to: "/inventory",
   },
   {
     label: "小石合成",
-    count: "工作台",
+    count: () => "工作台",
     colorClass: "bg-pebble-play",
     to: "/stones/fusion",
   },
   {
     label: "排行榜",
-    count: `#${PLAYER.rank}`,
+    count: ({ rank }) => (rank ? `#${rank}` : "查看"),
     colorClass: "bg-pebble-resonate",
     to: "/leaderboard",
   },
-  { label: "公開圖鑑", count: "查詢", colorClass: "bg-moss/60", to: "/codex" },
+  {
+    label: "對戰紀錄",
+    count: () => "最近一場",
+    colorClass: "bg-primary",
+    to: "/battle/history",
+  },
+  {
+    label: "公開圖鑑",
+    count: () => "查詢",
+    colorClass: "bg-moss/60",
+    to: "/codex",
+  },
 ]
 
 export function HomeBasePage() {
+  const navigate = useNavigate()
+  const { data, isPending, error } = useQuery({
+    queryKey: ["me", "home"],
+    queryFn: gameApi.home,
+  })
+  const unauthorized = error instanceof AppError && error.status === 401
+
+  useEffect(() => {
+    if (unauthorized) {
+      navigate({ to: "/login", replace: true })
+    }
+  }, [navigate, unauthorized])
+
+  if (unauthorized) return null
+
+  const player = data?.player
+  const summary = data?.summary
+  const teamRank = data?.teamRank
+  const displayName = player?.nickname ?? "載入中"
+  const teamName = player?.team.name ?? "讀取玩家資料"
+  const avatarInitial = displayName.trim().slice(0, 1) || "?"
+  const openPower = summary?.openPower ?? player?.openPower ?? 0
+  const sitoneCount = summary?.sitoneCount ?? 0
+  const itemCount = summary?.itemCount ?? 0
+  const rank = teamRank?.rank
+  const actions =
+    player?.role === "staff" ? [STAFF_ACTION, ...ACTIONS] : ACTIONS
+
   return (
-    <main
-      className="bg-paper text-ink flex min-h-svh justify-center"
-      aria-label="營隊基地首頁"
-    >
-      <section className="grid min-h-svh w-full max-w-[430px] content-start gap-3 px-4 py-[18px] pb-[30px]">
+    <GamePageShell ariaLabel="營隊基地首頁" contentClassName="gap-3">
+      <section className="grid content-start gap-3">
         {/* 玩家狀態 */}
         <header
           className="bg-card border-ink grid grid-cols-[64px_1fr_auto] items-center gap-3 rounded-[26px] border-2 p-3.5"
@@ -87,27 +127,27 @@ export function HomeBasePage() {
             className="bg-pebble-spark border-ink grid size-16 place-items-center rounded-[22px] border-2 text-[26px] font-black"
             aria-hidden
           >
-            洛
+            {avatarInitial}
           </div>
           <div>
             <p className="text-muted-foreground mb-1 text-xs font-black tracking-[0.08em] uppercase">
               Camp Base
             </p>
             <h1 className="text-[29px] leading-none font-black tracking-[-0.04em]">
-              {PLAYER.name}
+              {displayName}
             </h1>
             <span className="text-muted-foreground font-bold">
-              {PLAYER.squad}
+              {isPending ? "同步玩家資料中" : teamName}
             </span>
           </div>
           <div
-            className="bg-ink text-primary-foreground min-w-[76px] rounded-[18px] border-2 border-transparent px-[9px] py-2 text-center"
-            aria-label={`開源力 ${PLAYER.power}`}
+            className="bg-ink text-primary-foreground min-w-[86px] rounded-[18px] border-2 border-transparent px-[9px] py-2 text-center"
+            aria-label={`開源力 ${openPower}`}
           >
             <span className="text-primary-foreground/70 block text-[11px] font-black">
-              OP
+              開源力
             </span>
-            <strong className="text-[23px] font-black">{PLAYER.power}</strong>
+            <strong className="text-[23px] font-black">{openPower}</strong>
           </div>
         </header>
 
@@ -138,9 +178,9 @@ export function HomeBasePage() {
         {/* 快速摘要 */}
         <section className="grid grid-cols-3 gap-[9px]" aria-label="快速摘要">
           {[
-            { label: "小石", value: PLAYER.stones },
-            { label: "道具", value: PLAYER.items },
-            { label: "排行", value: `#${PLAYER.rank}` },
+            { label: "小石", value: sitoneCount },
+            { label: "道具", value: itemCount },
+            { label: "排行", value: rank ? `#${rank}` : "-" },
           ].map(({ label, value }) => (
             <div
               key={label}
@@ -156,7 +196,7 @@ export function HomeBasePage() {
 
         {/* 核心入口 */}
         <section className="grid gap-[10px]" aria-label="核心入口">
-          {ACTIONS.map((action) => (
+          {actions.map((action) => (
             <article
               key={action.label}
               className={[
@@ -196,7 +236,7 @@ export function HomeBasePage() {
             Collect &amp; Check
           </p>
           <h2 className="mb-3 text-[22px] font-black tracking-[-0.04em]">
-            收藏、背包、合成、排行
+            收藏、背包、合成、排行、紀錄
           </h2>
           <div className="grid grid-cols-2 gap-[9px]">
             {COLLECTIONS.map((item) => (
@@ -211,7 +251,11 @@ export function HomeBasePage() {
                 />
                 <strong className="block font-black">{item.label}</strong>
                 <small className="text-muted-foreground block text-xs font-bold">
-                  {item.count}
+                  {item.count({
+                    sitones: sitoneCount,
+                    items: itemCount,
+                    rank,
+                  })}
                 </small>
               </Link>
             ))}
@@ -241,6 +285,6 @@ export function HomeBasePage() {
           </div>
         </section>
       </section>
-    </main>
+    </GamePageShell>
   )
 }
