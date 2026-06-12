@@ -10,7 +10,9 @@ import {
 import type { ReactNode } from "react"
 
 import { QueryProvider } from "@/app/providers/query-provider"
+import { AuthGate } from "@/features/auth/ui/auth-gate"
 import appCss from "@/styles/app.css?url"
+import { Toaster } from "@/shared/ui/sonner"
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
@@ -38,7 +40,9 @@ function RootComponent() {
   return (
     <RootDocument>
       <QueryProvider queryClient={queryClient}>
-        <Outlet />
+        <AuthGate>
+          <Outlet />
+        </AuthGate>
       </QueryProvider>
     </RootDocument>
   )
@@ -52,6 +56,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       </head>
       <body>
         {children}
+        <Toaster position="bottom-center" />
         <Scripts />
       </body>
     </html>

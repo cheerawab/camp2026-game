@@ -1,9 +1,13 @@
-import { useState } from "react"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useNavigate } from "@tanstack/react-router"
+import { type FormEvent, useEffect, useRef, useState } from "react"
 
 import sitconLogo from "@/assets/sitcon-logo.svg"
+import { gameApi } from "@/shared/api/game"
 import { Badge } from "@/shared/ui/badge"
 import { Button } from "@/shared/ui/button"
 import { Input } from "@/shared/ui/input"
+import { cn } from "@/shared/utils"
 
 export const stoneTypes = [
   {
@@ -48,14 +52,47 @@ export const stoneTypes = [
   },
 ] as const
 
-export function LoginPanel() {
-  const [code, setCode] = useState("")
-  const [hasTried, setHasTried] = useState(true)
-  const isError = hasTried && code.length < 8
+type LoginPanelProps = {
+  initialToken?: string
+}
 
-  function handleSubmit(e: React.FormEvent) {
+export function LoginPanel({ initialToken }: LoginPanelProps) {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const autoToken = initialToken?.trim() ?? ""
+  const autoSubmittedTokenRef = useRef("")
+  const [code, setCode] = useState(autoToken)
+  const [hasTried, setHasTried] = useState(false)
+  const loginMutation = useMutation({
+    mutationFn: gameApi.login,
+    onSuccess: (result) => {
+      queryClient.setQueryData(["me", "status"], result.player)
+      queryClient.invalidateQueries({ queryKey: ["me", "home"] })
+      navigate({
+        to: result.player.role === "staff" ? "/staff" : "/",
+        replace: true,
+      })
+    },
+  })
+  const hasTokenFromLink = autoToken.length > 0
+  const hasAttempted = hasTried || hasTokenFromLink
+  const isError =
+    hasAttempted && (code.trim().length < 16 || loginMutation.isError)
+
+  useEffect(() => {
+    if (autoToken.length < 16 || autoSubmittedTokenRef.current === autoToken) {
+      return
+    }
+    autoSubmittedTokenRef.current = autoToken
+    loginMutation.mutate(autoToken)
+  }, [autoToken, loginMutation])
+
+  function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setHasTried(true)
+    const token = code.trim()
+    if (token.length < 16) return
+    loginMutation.mutate(token)
   }
 
   return (
@@ -66,10 +103,17 @@ export function LoginPanel() {
     >
       <div className="mb-10 flex items-start justify-between gap-6">
         <CampBadge />
-        <div className="game-mark" aria-hidden="true">
-          <span className="game-mark-base" />
-          <StoneGlyph type={stoneTypes[0]} />
-          <StoneGlyph type={stoneTypes[1]} tiny />
+        <div className="relative h-[76px] w-[76px] shrink-0" aria-hidden="true">
+          <span className="bg-surface-raised border-ink absolute inset-2 rotate-6 rounded-[28px] border-2" />
+          <StoneGlyph
+            type={stoneTypes[0]}
+            className="absolute top-1 left-0 -rotate-12"
+          />
+          <StoneGlyph
+            type={stoneTypes[1]}
+            tiny
+            className="absolute right-0 bottom-0 rotate-12"
+          />
         </div>
       </div>
 
@@ -92,13 +136,13 @@ export function LoginPanel() {
             htmlFor="camp-login-code"
             className="text-[0.95rem] font-black"
           >
-            營隊登入碼
+            營隊登入 Token
           </label>
           <Input
             id="camp-login-code"
             value={code}
-            onChange={(e) => setCode(e.target.value.toUpperCase())}
-            placeholder="例如 CAMP26-A7K2"
+            onChange={(e) => setCode(e.target.value)}
+            placeholder="例如 auth_token_123456"
             autoComplete="one-time-code"
             inputMode="text"
             aria-describedby={isError ? "login-error" : undefined}
@@ -111,15 +155,18 @@ export function LoginPanel() {
               role="alert"
               className="border-ink bg-destructive rounded-[14px] border-2 px-2.5 py-1.5 text-[0.82rem] leading-snug font-bold text-white"
             >
-              找不到這組登入資訊，請確認代碼或詢問隊輔。
+              {loginMutation.isError
+                ? "找不到這組登入資訊，請確認 Token 或詢問隊輔。"
+                : "登入 Token 至少需要 16 個字元。"}
             </p>
           )}
         </div>
         <Button
           type="submit"
+          disabled={loginMutation.isPending}
           className="border-ink h-[56px] w-full border-2 text-[1.05rem] font-black shadow-[0_4px_0_rgba(23,35,58,0.22)] active:translate-y-0.5 active:shadow-[0_2px_0_rgba(23,35,58,0.22)]"
         >
-          進入基地
+          {loginMutation.isPending ? "登入中" : "進入基地"}
         </Button>
       </form>
     </section>
@@ -131,13 +178,21 @@ type StoneType = (typeof stoneTypes)[number]
 export function StoneGlyph({
   type,
   tiny = false,
+  className,
 }: {
   type: StoneType
   tiny?: boolean
+  className?: string
 }) {
   return (
     <span
-      className={`stone-glyph ${tiny ? "stone-glyph-tiny" : ""}`}
+      className={cn(
+        "relative block shrink-0 border-2 border-[var(--stone-ink)] bg-[var(--stone)]",
+        tiny
+          ? "size-9 rounded-[14px_18px_12px_16px]"
+          : "size-14 rounded-[20px_26px_16px_22px]",
+        className,
+      )}
       style={
         {
           "--stone": type.color,
@@ -146,8 +201,8 @@ export function StoneGlyph({
       }
       aria-hidden="true"
     >
-      <span className="stone-cut stone-cut-a" />
-      <span className="stone-cut stone-cut-b" />
+      <span className="absolute top-1/4 left-1/4 h-[3px] w-1/2 -rotate-12 rounded-full bg-[var(--stone-ink)]/35" />
+      <span className="absolute right-1/4 bottom-1/4 h-[3px] w-1/3 rotate-12 rounded-full bg-[var(--stone-ink)]/35" />
     </span>
   )
 }
