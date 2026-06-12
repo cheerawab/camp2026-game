@@ -26,8 +26,9 @@ type Match struct {
 }
 
 type MatchPlayer struct {
-	PlayerID string `bson:"player_id"`
-	Nickname string `bson:"nickname"`
-	Ready    bool   `bson:"ready"`
-	Score    int    `bson:"score"`
+	PlayerID  string   `bson:"player_id"`
+	Nickname  string   `bson:"nickname"`
+	Ready     bool     `bson:"ready"`
+	Score     int      `bson:"score"`
+	SitoneIDs []string `bson:"sitone_ids,omitempty"`
 }

@@ -48,8 +48,8 @@ func TestMatchRewardKeysUseMatchAndPlayer(t *testing.T) {
 func TestAllPlayersReady(t *testing.T) {
 	match := mongomodel.Match{
 		Players: []mongomodel.MatchPlayer{
-			{PlayerID: "P1", Ready: true},
-			{PlayerID: "P2", Ready: true},
+			{PlayerID: "P1", Ready: true, SitoneIDs: []string{"stone_engineering_base"}},
+			{PlayerID: "P2", Ready: true, SitoneIDs: []string{"stone_resonance_base"}},
 		},
 	}
 	if !allPlayersReady(match) {
@@ -59,6 +59,70 @@ func TestAllPlayersReady(t *testing.T) {
 	match.Players[1].Ready = false
 	if allPlayersReady(match) {
 		t.Fatal("expected not all players ready")
+	}
+
+	match.Players[1].Ready = true
+	match.Players[1].SitoneIDs = nil
+	if allPlayersReady(match) {
+		t.Fatal("expected not all players ready without loadout")
+	}
+}
+
+func TestNormalizeSitoneLoadoutAllowsDuplicateSlots(t *testing.T) {
+	got, err := normalizeSitoneLoadout([]string{
+		" stone_engineering_base ",
+		"stone_engineering_base",
+		"",
+	})
+	if err != nil {
+		t.Fatalf("normalize sitone loadout: %v", err)
+	}
+
+	want := []string{"stone_engineering_base", "stone_engineering_base"}
+	if len(got) != len(want) {
+		t.Fatalf("expected %d sitones, got %#v", len(want), got)
+	}
+	for index := range want {
+		if got[index] != want[index] {
+			t.Fatalf("unexpected sitone at index %d: got %q want %q", index, got[index], want[index])
+		}
+	}
+}
+
+func TestScoreAnswerWithLoadoutUsesAllSelectedSitones(t *testing.T) {
+	question := content.QuizQuestion{CorrectChoice: "A"}
+	answeredAt := time.Date(2026, 6, 2, 10, 0, 3, 0, time.UTC)
+	roundEndsAt := time.Date(2026, 6, 2, 10, 0, 15, 0, time.UTC)
+
+	correct, score := scoreAnswerWithLoadout(question, "A", answeredAt, roundEndsAt, 3)
+	if !correct {
+		t.Fatal("expected answer to be correct")
+	}
+	if score != 190 {
+		t.Fatalf("expected score 190, got %d", score)
+	}
+}
+
+func TestMaxScoreThroughCurrentQuestion(t *testing.T) {
+	match := mongomodel.Match{
+		Status:               mongomodel.MatchStatusActive,
+		QuestionIDs:          []string{"quiz-001", "quiz-002", "quiz-003"},
+		CurrentQuestionIndex: 1,
+	}
+	player := mongomodel.MatchPlayer{
+		SitoneIDs: []string{"stone_engineering_base", "stone_explorer_base"},
+	}
+
+	if got := maxScorePerQuestion(len(player.SitoneIDs)); got != 195 {
+		t.Fatalf("expected max score per question 195, got %d", got)
+	}
+	if got := maxScoreThroughCurrentQuestion(match, player); got != 390 {
+		t.Fatalf("expected active max score 390, got %d", got)
+	}
+
+	match.Status = mongomodel.MatchStatusCompleted
+	if got := maxScoreThroughCurrentQuestion(match, player); got != 585 {
+		t.Fatalf("expected completed max score 585, got %d", got)
 	}
 }
 

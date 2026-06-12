@@ -218,9 +218,9 @@ func seedPlayersAndTeams(t *testing.T, ctx context.Context, db *mongo.Database) 
 	}
 
 	_, err = db.Collection(mongomodel.PlayerItemsCollection).InsertOne(ctx, mongomodel.PlayerItem{
-		ID:       "player-a-item-fragment",
+		ID:       "player-a-item-adventure-backpack",
 		PlayerID: playerAID,
-		ItemID:   "item-crafting-fragment",
+		ItemID:   "item_adventure_backpack",
 		Quantity: 3,
 	})
 	if err != nil {
@@ -240,9 +240,9 @@ func seedPlayersAndTeams(t *testing.T, ctx context.Context, db *mongo.Database) 
 	}
 
 	_, err = db.Collection(mongomodel.PlayerSitonesCollection).InsertOne(ctx, mongomodel.PlayerSitone{
-		ID:       "player-a-sitone-engineering",
+		ID:       "player-a-stone_engineering_base",
 		PlayerID: playerAID,
-		SitoneID: "sitone-engineering",
+		SitoneID: "stone_engineering_base",
 		Quantity: 1,
 	})
 	if err != nil {
@@ -408,32 +408,27 @@ func assertShopPurchaseFlow(t *testing.T, ctx context.Context, db *mongo.Databas
 	body := getJSON(t, serverURL+"/api/shop/items", []*http.Cookie{cookie}, http.StatusOK)
 	var list shopItemList
 	decodeJSON(t, body, &list)
-	if len(list.Items) != 2 {
-		t.Fatalf("expected 2 shop items, got %#v", list.Items)
+	if len(list.Items) != 40 {
+		t.Fatalf("expected 40 shop items, got %#v", list.Items)
 	}
-	if list.Items[0].ID != "item-crafting-fragment" || list.Items[0].PriceOpenPower != 50 {
+	if list.Items[0].ID != "item_adventure_backpack" || list.Items[0].PriceOpenPower != 50 {
 		t.Fatalf("unexpected first shop item: %#v", list.Items[0])
 	}
-	for _, item := range list.Items {
-		if item.ID == "item-memory-tag" {
-			t.Fatalf("expected memory tag to be hidden from shop: %#v", list.Items)
-		}
-	}
 
-	body = getJSON(t, serverURL+"/api/shop/items/item-crafting-fragment", []*http.Cookie{cookie}, http.StatusOK)
+	body = getJSON(t, serverURL+"/api/shop/items/item_adventure_backpack", []*http.Cookie{cookie}, http.StatusOK)
 	var detail shopItemDetail
 	decodeJSON(t, body, &detail)
-	if detail.Item.ID != "item-crafting-fragment" || detail.Item.PriceOpenPower != 50 {
+	if detail.Item.ID != "item_adventure_backpack" || detail.Item.PriceOpenPower != 50 {
 		t.Fatalf("unexpected shop item detail: %#v", detail)
 	}
 
 	body = postJSON(t, serverURL+"/api/shop/purchases", map[string]string{
-		"itemId": "item-crafting-fragment",
+		"itemId": "item_adventure_backpack",
 	}, []*http.Cookie{cookie}, http.StatusCreated)
 	var purchase shopPurchase
 	decodeJSON(t, body, &purchase)
 	if purchase.PurchaseID == "" ||
-		purchase.ItemID != "item-crafting-fragment" ||
+		purchase.ItemID != "item_adventure_backpack" ||
 		purchase.Quantity != 1 ||
 		purchase.PriceOpenPower != 50 ||
 		purchase.OpenPower != 450 {
@@ -446,7 +441,7 @@ func assertShopPurchaseFlow(t *testing.T, ctx context.Context, db *mongo.Databas
 		Decode(&storedPurchase); err != nil {
 		t.Fatalf("find shop purchase: %v", err)
 	}
-	if storedPurchase.PlayerID != playerAID || storedPurchase.ItemID != "item-crafting-fragment" || storedPurchase.PriceOpenPower != 50 {
+	if storedPurchase.PlayerID != playerAID || storedPurchase.ItemID != "item_adventure_backpack" || storedPurchase.PriceOpenPower != 50 {
 		t.Fatalf("unexpected stored purchase: %#v", storedPurchase)
 	}
 
@@ -462,7 +457,7 @@ func assertShopPurchaseFlow(t *testing.T, ctx context.Context, db *mongo.Databas
 
 	var item mongomodel.PlayerItem
 	if err := db.Collection(mongomodel.PlayerItemsCollection).
-		FindOne(ctx, bson.M{"player_id": playerAID, "item_id": "item-crafting-fragment"}).
+		FindOne(ctx, bson.M{"player_id": playerAID, "item_id": "item_adventure_backpack"}).
 		Decode(&item); err != nil {
 		t.Fatalf("find player item: %v", err)
 	}
@@ -473,7 +468,7 @@ func assertShopPurchaseFlow(t *testing.T, ctx context.Context, db *mongo.Databas
 	body = getJSON(t, serverURL+"/api/me/items", []*http.Cookie{cookie}, http.StatusOK)
 	var meItems playerItemList
 	decodeJSON(t, body, &meItems)
-	if len(meItems.Items) != 1 || meItems.Items[0].ItemID != "item-crafting-fragment" || meItems.Items[0].Quantity != 4 {
+	if len(meItems.Items) != 1 || meItems.Items[0].ItemID != "item_adventure_backpack" || meItems.Items[0].Quantity != 4 {
 		t.Fatalf("expected me items to include purchased item, got %#v", meItems.Items)
 	}
 }

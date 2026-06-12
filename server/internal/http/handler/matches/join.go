@@ -30,7 +30,7 @@ import (
 // @Router /matches/join [post]
 func (h *Handler) Join(w http.ResponseWriter, r *http.Request) {
 	player, ok := currentPlayer(w, r)
-	if !ok || !h.requireDatabase(w, r) {
+	if !ok || !h.requireDatabase(w, r) || !h.requireContent(w, r) {
 		return
 	}
 
@@ -71,12 +71,18 @@ func (h *Handler) joinMatch(w http.ResponseWriter, r *http.Request, match mongom
 		httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "match is full"))
 		return
 	}
+	sitoneIDs, err := h.defaultSitoneLoadout(r.Context(), player)
+	if err != nil {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match join failed"))
+		return
+	}
 
 	match.Players = append(match.Players, mongomodel.MatchPlayer{
-		PlayerID: player.ID,
-		Nickname: player.Nickname,
-		Ready:    false,
-		Score:    0,
+		PlayerID:  player.ID,
+		Nickname:  player.Nickname,
+		Ready:     false,
+		Score:     0,
+		SitoneIDs: sitoneIDs,
 	})
 	if err := h.saveMatch(r.Context(), match); err != nil {
 		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match join failed"))

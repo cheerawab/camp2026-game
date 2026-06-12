@@ -44,8 +44,8 @@ func New(dep Dependencies) *Handler {
 func (h *Handler) RegisterRoutes(api chi.Router) {
 	api.Post("/matches", h.Create)
 	api.Post("/matches/join", h.Join)
-	api.Post("/matches/join-by-qr", h.JoinByQR)
 	api.Get("/matches/{matchID}", h.Get)
+	api.Put("/matches/{matchID}/loadout", h.UpdateLoadout)
 	api.Post("/matches/{matchID}/ready", h.Ready)
 	api.Post("/matches/{matchID}/answers", h.Answer)
 	api.Get("/matches/{matchID}/events", h.Events)

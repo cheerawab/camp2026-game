@@ -217,18 +217,21 @@ func (h *Handler) buildMatchState(ctx context.Context, match mongomodel.Match) (
 	}
 	currentAnswers := answerByQuestionPlayer[currentQuestionID]
 	for _, player := range match.Players {
+		score := player.Score
+		maxScore := maxScoreThroughCurrentQuestion(match, player)
 		playerResponse := MatchPlayerResponse{
-			PlayerID: player.PlayerID,
-			Nickname: player.Nickname,
-			Ready:    player.Ready,
+			PlayerID:  player.PlayerID,
+			Nickname:  player.Nickname,
+			Ready:     player.Ready,
+			SitoneIDs: cloneStrings(player.SitoneIDs),
+			Score:     &score,
+			MaxScore:  &maxScore,
 		}
 		if match.Status == mongomodel.MatchStatusActive {
 			_, playerResponse.AnsweredCurrentQuestion = currentAnswers[player.PlayerID]
 		}
 		if match.Status == mongomodel.MatchStatusCompleted {
-			score := player.Score
 			reward := openPowerReward(player.Score)
-			playerResponse.Score = &score
 			playerResponse.OpenPowerReward = &reward
 		}
 		response.Players = append(response.Players, playerResponse)

@@ -5,13 +5,14 @@ import "time"
 type CreateMatchResponse = MatchStateResponse
 type JoinMatchResponse = MatchStateResponse
 type ReadyMatchResponse = MatchStateResponse
+type UpdateLoadoutResponse = MatchStateResponse
 
 type JoinMatchRequest struct {
 	Code string `json:"code" validate:"required,min=4,max=16" example:"ABC123"`
 }
 
-type JoinByQRRequest struct {
-	QRCodeToken string `json:"qrcodeToken" validate:"required,min=4,max=512" example:"qr_token_123456"`
+type UpdateLoadoutRequest struct {
+	SitoneIDs []string `json:"sitoneIds" validate:"required,min=1,max=5" example:"stone_engineering_base,stone_explorer_base"`
 }
 
 type AnswerRequest struct {
@@ -41,17 +42,19 @@ type MatchStateResponse struct {
 }
 
 type MatchPlayerResponse struct {
-	PlayerID                string `json:"playerId" example:"7H9K2Q"`
-	Nickname                string `json:"nickname" example:"Alice"`
-	Ready                   bool   `json:"ready" example:"true"`
-	AnsweredCurrentQuestion bool   `json:"answeredCurrentQuestion,omitempty" example:"true"`
-	Score                   *int   `json:"score,omitempty" example:"850"`
-	OpenPowerReward         *int   `json:"openPowerReward,omitempty" example:"105"`
+	PlayerID                string   `json:"playerId" example:"7H9K2Q"`
+	Nickname                string   `json:"nickname" example:"Alice"`
+	Ready                   bool     `json:"ready" example:"true"`
+	AnsweredCurrentQuestion bool     `json:"answeredCurrentQuestion,omitempty" example:"true"`
+	SitoneIDs               []string `json:"sitoneIds,omitempty" example:"stone_engineering_base,stone_explorer_base"`
+	Score                   *int     `json:"score,omitempty" example:"850"`
+	MaxScore                *int     `json:"maxScore,omitempty" example:"2250"`
+	OpenPowerReward         *int     `json:"openPowerReward,omitempty" example:"105"`
 }
 
 type MatchQuestionResponse struct {
 	QuestionID string `json:"questionId" example:"quiz-001"`
-	Prompt     string `json:"prompt" example:"Which command initializes a new Git repository?"`
+	Prompt     string `json:"prompt" example:"哪個指令可以初始化新的 Git 儲存庫？"`
 	ChoiceA    string `json:"choiceA" example:"git init"`
 	ChoiceB    string `json:"choiceB" example:"git clone"`
 	ChoiceC    string `json:"choiceC" example:"git status"`
@@ -60,13 +63,13 @@ type MatchQuestionResponse struct {
 
 type MatchQuestionResult struct {
 	QuestionID    string                `json:"questionId" example:"quiz-001"`
-	Prompt        string                `json:"prompt" example:"Which command initializes a new Git repository?"`
+	Prompt        string                `json:"prompt" example:"哪個指令可以初始化新的 Git 儲存庫？"`
 	ChoiceA       string                `json:"choiceA" example:"git init"`
 	ChoiceB       string                `json:"choiceB" example:"git clone"`
 	ChoiceC       string                `json:"choiceC" example:"git status"`
 	ChoiceD       string                `json:"choiceD" example:"git add"`
 	CorrectChoice string                `json:"correctChoice" example:"A"`
-	Explanation   string                `json:"explanation" example:"git init creates a new repository."`
+	Explanation   string                `json:"explanation" example:"git init 會在目前目錄建立新的 Git 儲存庫。"`
 	Answers       []MatchAnswerResponse `json:"answers"`
 }
 

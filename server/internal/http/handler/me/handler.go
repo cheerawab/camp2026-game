@@ -33,8 +33,11 @@ func (h *Handler) RegisterRoutes(api chi.Router) {
 	api.Get("/me/home", h.Home)
 	api.Get("/me/status", h.Status)
 	api.Get("/me/sitones", h.ListSitones)
+	api.Get("/me/sitone-loadout", h.SitoneLoadout)
+	api.Put("/me/sitone-loadout", h.UpdateSitoneLoadout)
 	api.Get("/me/items", h.ListItems)
 	api.Get("/me/qrcode", h.QRCode)
+	api.Get("/me/matches", h.ListCompletedMatches)
 }
 
 func currentPlayer(w http.ResponseWriter, r *http.Request) (mongomodel.Player, bool) {

@@ -1,0 +1,87 @@
+package matches
+
+import (
+	"net/http"
+
+	"github.com/go-chi/chi/v5"
+
+	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
+	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
+)
+
+// UpdateLoadout godoc
+// @Summary Update match sitone loadout
+// @Description Updates the authenticated player's sitone loadout for a waiting match and saves it as the player's default loadout.
+// @Tags matches
+// @Accept json
+// @Produce json
+// @Security AuthCookieAuth
+// @Param request body UpdateLoadoutRequest true "Update loadout request"
+// @Success 200 {object} UpdateLoadoutResponse
+// @Failure 400 {object} httpx.ProblemDetails
+// @Failure 401 {object} httpx.ProblemDetails
+// @Failure 404 {object} httpx.ProblemDetails
+// @Failure 409 {object} httpx.ProblemDetails
+// @Failure 422 {object} httpx.ProblemDetails
+// @Failure 500 {object} httpx.ProblemDetails
+// @Failure 503 {object} httpx.ProblemDetails
+// @Router /matches/{matchID}/loadout [put]
+func (h *Handler) UpdateLoadout(w http.ResponseWriter, r *http.Request) {
+	player, ok := currentPlayer(w, r)
+	if !ok || !h.requireDatabase(w, r) || !h.requireContent(w, r) {
+		return
+	}
+
+	var body UpdateLoadoutRequest
+	if err := httpx.DecodeJSON(r, &body); err != nil {
+		httpx.WriteProblem(w, r, err)
+		return
+	}
+	if err := httpx.ValidateStruct(body); err != nil {
+		httpx.WriteProblem(w, r, err)
+		return
+	}
+	sitoneIDs, err := h.validateOwnedSitoneLoadout(r.Context(), player.ID, body.SitoneIDs)
+	if err != nil {
+		httpx.WriteProblem(w, r, err)
+		return
+	}
+
+	match, err := h.findMatchByID(r.Context(), chi.URLParam(r, "matchID"))
+	if err != nil {
+		writeMatchProblem(w, r, err)
+		return
+	}
+	if !isParticipant(match, player.ID) {
+		httpx.WriteProblem(w, r, httpx.NotFound("match not found"))
+		return
+	}
+	if match.Status != mongomodel.MatchStatusWaiting {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "match loadout is locked"))
+		return
+	}
+
+	idx := playerIndex(match, player.ID)
+	if match.Players[idx].Ready {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "player is already ready"))
+		return
+	}
+	match.Players[idx].SitoneIDs = sitoneIDs
+
+	if err := h.saveMatch(r.Context(), match); err != nil {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "loadout update failed"))
+		return
+	}
+	if err := h.saveDefaultSitoneLoadout(r.Context(), player.ID, sitoneIDs); err != nil {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "loadout update failed"))
+		return
+	}
+
+	h.publishState(r.Context(), match, "match_updated")
+	state, err := h.buildMatchState(r.Context(), match)
+	if err != nil {
+		httpx.WriteProblem(w, r, err)
+		return
+	}
+	httpx.WriteJSON(w, http.StatusOK, state)
+}

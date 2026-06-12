@@ -89,7 +89,8 @@ func (h *Handler) Answer(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match question is unavailable"))
 		return
 	}
-	correct, score := scoreAnswer(question, body.Choice, now, match.RoundEndsAt)
+	idx := playerIndex(match, player.ID)
+	correct, score := scoreAnswerWithLoadout(question, body.Choice, now, match.RoundEndsAt, len(match.Players[idx].SitoneIDs))
 	elapsedMillis := now.Sub(match.RoundStartedAt).Milliseconds()
 	if elapsedMillis < 0 {
 		elapsedMillis = 0
@@ -116,7 +117,6 @@ func (h *Handler) Answer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	idx := playerIndex(match, player.ID)
 	match.Players[idx].Score += score
 	if err := h.saveMatch(r.Context(), match); err != nil {
 		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "answer failed"))

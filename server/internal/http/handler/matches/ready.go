@@ -45,6 +45,18 @@ func (h *Handler) Ready(w http.ResponseWriter, r *http.Request) {
 	}
 
 	idx := playerIndex(match, player.ID)
+	if len(match.Players[idx].SitoneIDs) == 0 {
+		sitoneIDs, err := h.defaultSitoneLoadout(r.Context(), player)
+		if err != nil {
+			httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "ready failed"))
+			return
+		}
+		match.Players[idx].SitoneIDs = sitoneIDs
+	}
+	if len(match.Players[idx].SitoneIDs) == 0 {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "select at least one sitone before ready"))
+		return
+	}
 	match.Players[idx].Ready = true
 	events := []string{"player_ready"}
 

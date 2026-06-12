@@ -1,5 +1,7 @@
 package me
 
+import "time"
+
 type TeamResponse struct {
 	TeamID string `json:"teamId" example:"8M4RXP"`
 	Name   string `json:"name" example:"Blue Team"`
@@ -11,6 +13,7 @@ type StatusResponse struct {
 	Team      TeamResponse `json:"team"`
 	OpenPower int          `json:"openPower" example:"1280"`
 	AvatarURL string       `json:"avatarUrl,omitempty" example:"https://example.test/avatar/alice.png"`
+	Role      string       `json:"role,omitempty" example:"staff"`
 }
 
 type HomeResponse struct {
@@ -45,19 +48,27 @@ type QRCodeResponse struct {
 	QRCodeToken string `json:"qrcodeToken" example:"qr_token_123456"`
 }
 
+type SitoneLoadoutRequest struct {
+	SitoneIDs []string `json:"sitoneIds" validate:"required,min=1,max=5" example:"stone_engineering_base,stone_explorer_base"`
+}
+
+type SitoneLoadoutResponse struct {
+	SitoneIDs []string `json:"sitoneIds" example:"stone_engineering_base,stone_explorer_base"`
+}
+
 type SitoneListResponse struct {
 	Sitones []PlayerSitoneResponse `json:"sitones"`
 }
 
 type PlayerSitoneResponse struct {
 	ID       string         `json:"id" example:"owned-sitone-001"`
-	SitoneID string         `json:"sitoneId" example:"sitone-engineering"`
+	SitoneID string         `json:"sitoneId" example:"stone_engineering_base"`
 	Quantity int            `json:"quantity" example:"1"`
 	Sitone   SitoneResponse `json:"sitone"`
 }
 
 type SitoneResponse struct {
-	ID          string `json:"id" example:"sitone-engineering"`
+	ID          string `json:"id" example:"stone_engineering_base"`
 	Name        string `json:"name" example:"工程型小石"`
 	Type        string `json:"type" example:"engineering"`
 	Rarity      string `json:"rarity" example:"base"`
@@ -71,15 +82,37 @@ type ItemListResponse struct {
 
 type PlayerItemResponse struct {
 	ID       string       `json:"id" example:"owned-item-001"`
-	ItemID   string       `json:"itemId" example:"item-crafting-fragment"`
+	ItemID   string       `json:"itemId" example:"item_adventure_backpack"`
 	Quantity int          `json:"quantity" example:"3"`
 	Item     ItemResponse `json:"item"`
 }
 
 type ItemResponse struct {
-	ID          string `json:"id" example:"item-crafting-fragment"`
-	Name        string `json:"name" example:"合成碎片"`
+	ID          string `json:"id" example:"item_adventure_backpack"`
+	Name        string `json:"name" example:"冒險背包"`
 	Type        string `json:"type" example:"material"`
 	Rarity      string `json:"rarity" example:"common"`
-	Description string `json:"description" example:"小石造型合成使用的基礎素材。"`
+	Description string `json:"description" example:"冒險背包，可用於小石合成。"`
+}
+
+type CompletedMatchListResponse struct {
+	Matches []CompletedMatchResponse `json:"matches"`
+}
+
+type CompletedMatchResponse struct {
+	MatchID       string                         `json:"matchId" example:"match_7H9K2Q"`
+	Status        string                         `json:"status" example:"completed"`
+	HostPlayerID  string                         `json:"hostPlayerId" example:"7H9K2Q"`
+	Players       []CompletedMatchPlayerResponse `json:"players"`
+	QuestionCount int                            `json:"questionCount" example:"10"`
+	CreatedAt     time.Time                      `json:"createdAt"`
+	StartedAt     *time.Time                     `json:"startedAt,omitempty"`
+	CompletedAt   *time.Time                     `json:"completedAt,omitempty"`
+}
+
+type CompletedMatchPlayerResponse struct {
+	PlayerID  string   `json:"playerId" example:"7H9K2Q"`
+	Nickname  string   `json:"nickname" example:"Alice"`
+	SitoneIDs []string `json:"sitoneIds,omitempty" example:"stone_engineering_base,stone_explorer_base"`
+	Score     int      `json:"score" example:"850"`
 }

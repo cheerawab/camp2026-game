@@ -62,7 +62,7 @@ func allPlayersReady(match mongomodel.Match) bool {
 		return false
 	}
 	for _, player := range match.Players {
-		if !player.Ready {
+		if !player.Ready || len(player.SitoneIDs) == 0 {
 			return false
 		}
 	}
@@ -81,6 +81,10 @@ func questionResponse(question content.QuizQuestion) MatchQuestionResponse {
 }
 
 func scoreAnswer(question content.QuizQuestion, choice string, answeredAt time.Time, roundEndsAt time.Time) (bool, int) {
+	return scoreAnswerWithLoadout(question, choice, answeredAt, roundEndsAt, 0)
+}
+
+func scoreAnswerWithLoadout(question content.QuizQuestion, choice string, answeredAt time.Time, roundEndsAt time.Time, sitoneCount int) (bool, int) {
 	correct := strings.EqualFold(choice, question.CorrectChoice)
 	if !correct {
 		return false, 0
@@ -90,7 +94,30 @@ func scoreAnswer(question content.QuizQuestion, choice string, answeredAt time.T
 	if remainingSeconds < 0 {
 		remainingSeconds = 0
 	}
-	return true, 100 + remainingSeconds*5
+	return true, 100 + remainingSeconds*5 + sitoneCount*10
+}
+
+func maxScorePerQuestion(sitoneCount int) int {
+	return 100 + roundDuration*5 + sitoneCount*10
+}
+
+func maxScoreThroughCurrentQuestion(match mongomodel.Match, player mongomodel.MatchPlayer) int {
+	if len(match.QuestionIDs) == 0 || match.Status == mongomodel.MatchStatusWaiting {
+		return 0
+	}
+
+	questionCount := match.CurrentQuestionIndex + 1
+	if match.Status == mongomodel.MatchStatusCompleted {
+		questionCount = len(match.QuestionIDs)
+	}
+	if questionCount < 0 {
+		questionCount = 0
+	}
+	if questionCount > len(match.QuestionIDs) {
+		questionCount = len(match.QuestionIDs)
+	}
+
+	return questionCount * maxScorePerQuestion(len(player.SitoneIDs))
 }
 
 func openPowerReward(score int) int {

@@ -26,7 +26,7 @@ import (
 // @Router /matches [post]
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	player, ok := currentPlayer(w, r)
-	if !ok || !h.requireDatabase(w, r) {
+	if !ok || !h.requireDatabase(w, r) || !h.requireContent(w, r) {
 		return
 	}
 
@@ -40,6 +40,11 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match creation failed"))
 		return
 	}
+	sitoneIDs, err := h.defaultSitoneLoadout(r.Context(), player)
+	if err != nil {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match creation failed"))
+		return
+	}
 
 	now := time.Now()
 	match := mongomodel.Match{
@@ -49,10 +54,11 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		HostPlayerID: player.ID,
 		Players: []mongomodel.MatchPlayer{
 			{
-				PlayerID: player.ID,
-				Nickname: player.Nickname,
-				Ready:    false,
-				Score:    0,
+				PlayerID:  player.ID,
+				Nickname:  player.Nickname,
+				Ready:     false,
+				Score:     0,
+				SitoneIDs: sitoneIDs,
 			},
 		},
 		CreatedAt: now,

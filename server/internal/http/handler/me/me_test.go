@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -72,6 +73,7 @@ func TestStatusResponse(t *testing.T) {
 			Nickname:  "Alice",
 			TeamID:    "8M4RXP",
 			AvatarURL: "https://example.test/avatar/alice.png",
+			Role:      "staff",
 		},
 		mongomodel.Team{
 			ID:   "8M4RXP",
@@ -91,6 +93,9 @@ func TestStatusResponse(t *testing.T) {
 	}
 	if response.AvatarURL == "" {
 		t.Fatalf("expected avatar url")
+	}
+	if response.Role != "staff" {
+		t.Fatalf("expected staff role, got %q", response.Role)
 	}
 }
 
@@ -150,7 +155,7 @@ func TestMapPlayerSitones(t *testing.T) {
 		{
 			ID:       "owned-sitone-001",
 			PlayerID: "7H9K2Q",
-			SitoneID: "sitone-engineering",
+			SitoneID: "stone_engineering_base",
 			Quantity: 1,
 		},
 	})
@@ -165,12 +170,36 @@ func TestMapPlayerSitones(t *testing.T) {
 	}
 }
 
-func TestMapPlayerSitonesRequiresCatalogDefinition(t *testing.T) {
-	_, err := mapPlayerSitones(loadTestContent(t), []mongomodel.PlayerSitone{
+func TestMapPlayerSitonesSkipsMissingCatalogDefinition(t *testing.T) {
+	sitones, err := mapPlayerSitones(loadTestContent(t), []mongomodel.PlayerSitone{
 		{ID: "owned-sitone-001", SitoneID: "sitone-missing", Quantity: 1},
 	})
-	if err == nil {
-		t.Fatal("expected missing sitone error")
+	if err != nil {
+		t.Fatalf("map sitones: %v", err)
+	}
+	if len(sitones) != 0 {
+		t.Fatalf("expected missing catalog sitone to be skipped, got %#v", sitones)
+	}
+}
+
+func TestNormalizeSitoneLoadoutAllowsDuplicateSlots(t *testing.T) {
+	got, err := normalizeSitoneLoadout([]string{
+		" stone_engineering_base ",
+		"stone_engineering_base",
+		"",
+	})
+	if err != nil {
+		t.Fatalf("normalize sitone loadout: %v", err)
+	}
+
+	want := []string{"stone_engineering_base", "stone_engineering_base"}
+	if len(got) != len(want) {
+		t.Fatalf("expected %d sitones, got %#v", len(want), got)
+	}
+	for index := range want {
+		if got[index] != want[index] {
+			t.Fatalf("unexpected sitone at index %d: got %q want %q", index, got[index], want[index])
+		}
 	}
 }
 
@@ -179,7 +208,7 @@ func TestMapPlayerItems(t *testing.T) {
 		{
 			ID:       "owned-item-001",
 			PlayerID: "7H9K2Q",
-			ItemID:   "item-crafting-fragment",
+			ItemID:   "item_adventure_backpack",
 			Quantity: 3,
 		},
 	})
@@ -189,8 +218,20 @@ func TestMapPlayerItems(t *testing.T) {
 	if len(items) != 1 {
 		t.Fatalf("expected 1 item, got %d", len(items))
 	}
-	if items[0].Item.Name != "合成碎片" {
+	if items[0].Item.Name != "冒險背包" {
 		t.Fatalf("expected catalog item name, got %#v", items[0])
+	}
+}
+
+func TestMapPlayerItemsSkipsMissingCatalogDefinition(t *testing.T) {
+	items, err := mapPlayerItems(loadTestContent(t), []mongomodel.PlayerItem{
+		{ID: "owned-item-001", ItemID: "item-missing", Quantity: 1},
+	})
+	if err != nil {
+		t.Fatalf("map items: %v", err)
+	}
+	if len(items) != 0 {
+		t.Fatalf("expected missing catalog item to be skipped, got %#v", items)
 	}
 }
 
@@ -204,6 +245,58 @@ func TestMapPlayerItemsReturnsEmptySlice(t *testing.T) {
 	}
 	if len(items) != 0 {
 		t.Fatalf("expected 0 items, got %d", len(items))
+	}
+}
+
+func TestCompletedMatchesFilterOnlyReturnsCurrentPlayerCompletedMatches(t *testing.T) {
+	got := completedMatchesFilter("7H9K2Q")
+	want := bson.D{
+		{Key: "status", Value: mongomodel.MatchStatusCompleted},
+		{Key: "players.player_id", Value: "7H9K2Q"},
+	}
+
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("unexpected completed matches filter: %#v", got)
+	}
+}
+
+func TestMapCompletedMatches(t *testing.T) {
+	completedAt := testTime(t, "2026-06-12T06:30:00Z")
+	records := []mongomodel.Match{
+		{
+			ID:           "match_123",
+			Status:       mongomodel.MatchStatusCompleted,
+			HostPlayerID: "P1",
+			Players: []mongomodel.MatchPlayer{
+				{
+					PlayerID:  "P1",
+					Nickname:  "Alice",
+					Score:     850,
+					SitoneIDs: []string{"stone_engineering_base"},
+				},
+				{
+					PlayerID: "P2",
+					Nickname: "Bob",
+					Score:    700,
+				},
+			},
+			QuestionIDs: []string{"quiz-001", "quiz-002"},
+			CompletedAt: completedAt,
+		},
+	}
+
+	matches := mapCompletedMatches(records)
+	if len(matches) != 1 {
+		t.Fatalf("expected 1 match, got %#v", matches)
+	}
+	if matches[0].MatchID != "match_123" ||
+		matches[0].Status != mongomodel.MatchStatusCompleted ||
+		matches[0].QuestionCount != 2 ||
+		matches[0].CompletedAt == nil {
+		t.Fatalf("unexpected completed match response: %#v", matches[0])
+	}
+	if len(matches[0].Players) != 2 || matches[0].Players[0].Score != 850 {
+		t.Fatalf("unexpected completed match players: %#v", matches[0].Players)
 	}
 }
 
@@ -240,4 +333,14 @@ func loadTestContent(t *testing.T) *content.Store {
 		t.Fatalf("load test content: %v", err)
 	}
 	return store
+}
+
+func testTime(t *testing.T, value string) time.Time {
+	t.Helper()
+
+	parsed, err := time.Parse(time.RFC3339, value)
+	if err != nil {
+		t.Fatalf("parse test time: %v", err)
+	}
+	return parsed
 }
