@@ -1,7 +1,7 @@
 package apimodel
 
 type AuthLoginRequest struct {
-	Token string `json:"token" validate:"required,min=16,max=512" example:"eyJjYW1wMjAyNiI6InBsYXllci0wMSJ9"`
+	Token string `json:"token" validate:"required,max=512" example:"token-1"`
 }
 
 type AuthLoginResponse struct {

@@ -1,4 +1,4 @@
-.PHONY: dev run seed generate swagger fmt test test-e2e tidy
+.PHONY: dev run seed import-staff generate swagger fmt test test-e2e tidy
 
 dev:
 	air
@@ -8,6 +8,12 @@ run:
 
 seed:
 	go run ./cmd/seed
+
+import-staff:
+ifndef CSV
+	$(error CSV is required, e.g. make import-staff CSV="/path/to/staff.csv")
+endif
+	go run ./cmd/import-staff -csv "$(CSV)" $(ARGS)
 
 generate: swagger
 

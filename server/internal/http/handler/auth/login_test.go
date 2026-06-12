@@ -32,7 +32,7 @@ func TestLoginRequiresDatabase(t *testing.T) {
 func TestLoginValidatesToken(t *testing.T) {
 	handler := New(Dependencies{})
 
-	req := httptest.NewRequest(http.MethodPost, "/api/auth/login", strings.NewReader(`{"token":"short"}`))
+	req := httptest.NewRequest(http.MethodPost, "/api/auth/login", strings.NewReader(`{"token":"   "}`))
 	res := httptest.NewRecorder()
 	handler.Login(res, req)
 
