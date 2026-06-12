@@ -47,21 +47,6 @@ function answerStatus(
   return player.answeredCurrentQuestion ? "已答" : "作答中"
 }
 
-function choiceText(result: MatchQuestionResult, choice?: string) {
-  switch (choice) {
-    case "A":
-      return result.choiceA
-    case "B":
-      return result.choiceB
-    case "C":
-      return result.choiceC
-    case "D":
-      return result.choiceD
-    default:
-      return "未作答"
-  }
-}
-
 function ScoreMeter({
   score,
   maxScore,
@@ -201,99 +186,33 @@ function PlayerRail({
   )
 }
 
-function RoundRevealCard({
+function ChoiceAnswerBadges({
   result,
-  players,
-  seconds,
+  choice,
 }: {
   result: MatchQuestionResult | undefined
-  players: MatchPlayer[]
-  seconds: number
+  choice: MatchChoice
 }) {
-  if (!result) {
-    return (
-      <Card>
-        <CardContent>
-          <p className="text-muted-foreground text-sm font-bold">
-            正在同步本題結果。
-          </p>
-        </CardContent>
-      </Card>
-    )
-  }
+  const answers =
+    result?.answers.filter((answer) => answer.choice === choice) ?? []
 
-  const playerScores = new Map(
-    players.map((player) => [player.playerId, player.score ?? 0]),
-  )
+  if (answers.length === 0) return null
 
   return (
-    <Card className="border-ink border-2">
-      <CardContent className="grid gap-3">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
-          <div>
-            <p className="text-muted-foreground text-xs font-black tracking-[0.08em] uppercase">
-              本題結果
-            </p>
-            <h2 className="text-xl leading-tight font-black">
-              正確答案 {result.correctChoice}.{" "}
-              {choiceText(result, result.correctChoice)}
-            </h2>
-          </div>
-          <div className="grid justify-items-end leading-none">
-            <span className="text-3xl font-black">{seconds}</span>
-            <span className="text-muted-foreground text-xs font-bold">
-              秒後繼續
-            </span>
-          </div>
-        </div>
-
-        <div className="grid gap-2">
-          {result.answers.map((answer) => {
-            const totalScore = playerScores.get(answer.playerId) ?? 0
-            const status = answer.correct
-              ? "答對"
-              : answer.choice
-                ? "答錯"
-                : "未作答"
-
-            return (
-              <div
-                key={answer.playerId}
-                className={cn(
-                  "border-ink grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-[16px] border-2 px-3 py-2",
-                  answer.correct ? "bg-pebble-engineer" : "bg-card",
-                )}
-              >
-                <div className="min-w-0">
-                  <div className="truncate text-base font-black">
-                    {answer.nickname}
-                  </div>
-                  <div className="text-muted-foreground text-xs font-bold">
-                    {status} ·{" "}
-                    {answer.choice
-                      ? `${answer.choice}. ${choiceText(result, answer.choice)}`
-                      : "未作答"}
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-lg leading-none font-black">
-                    +{answer.score}
-                  </div>
-                  <div className="text-muted-foreground text-xs font-bold">
-                    目前 {totalScore}
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-
-        <Separator />
-        <p className="text-muted-foreground text-sm leading-[1.6] font-bold">
-          {result.explanation}
-        </p>
-      </CardContent>
-    </Card>
+    <div className="flex max-w-[108px] flex-wrap justify-end gap-1">
+      {answers.map((answer) => (
+        <span
+          key={answer.playerId}
+          className={cn(
+            "border-ink grid max-w-[108px] grid-cols-[minmax(0,1fr)_auto] items-center gap-1 rounded-full border-2 px-2 py-1 text-[11px] leading-none font-black",
+            answer.correct ? "bg-card text-ink" : "bg-status-warning text-ink",
+          )}
+        >
+          <span className="truncate">{answer.nickname}</span>
+          <span>+{answer.score}</span>
+        </span>
+      ))}
+    </div>
   )
 }
 
@@ -458,7 +377,7 @@ export function BattleQuestionPage() {
                     <Button
                       variant="ghost"
                       className={cn(
-                        "grid h-fit w-full grid-cols-[58px_minmax(0,1fr)] justify-start gap-3 rounded-none py-2 pl-0 disabled:opacity-100",
+                        "grid h-fit w-full grid-cols-[58px_minmax(0,1fr)_auto] items-center justify-start gap-3 rounded-none py-2 pl-0 disabled:opacity-100",
                         isCorrectChoice && "bg-pebble-engineer",
                       )}
                       disabled={
@@ -484,32 +403,18 @@ export function BattleQuestionPage() {
                       <span className="min-w-0 text-left text-lg leading-tight whitespace-normal">
                         {label}
                       </span>
+                      {isRevealing ? (
+                        <ChoiceAnswerBadges
+                          result={currentResult}
+                          choice={choice}
+                        />
+                      ) : null}
                     </Button>
                     {index < choices.length - 1 && <Separator />}
                   </div>
                 )
               })}
             </div>
-          </CardContent>
-        </Card>
-
-        {isRevealing ? (
-          <RoundRevealCard
-            result={currentResult}
-            players={players}
-            seconds={displaySeconds}
-          />
-        ) : null}
-
-        <Card>
-          <CardContent>
-            <p className="text-muted-foreground text-sm font-bold">
-              {isRevealing
-                ? "本題已揭曉，準備下一題。"
-                : answered
-                  ? "答案已送出，等待對手或時間到。"
-                  : "選擇答案後會立即送出，雙方完成或時間到後揭曉。"}
-            </p>
           </CardContent>
         </Card>
       </div>
