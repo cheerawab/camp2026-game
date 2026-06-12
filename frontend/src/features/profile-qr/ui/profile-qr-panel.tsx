@@ -1,69 +1,63 @@
+import { useQuery } from "@tanstack/react-query"
+import { Link } from "@tanstack/react-router"
+import { QRCodeSVG } from "qrcode.react"
+
+import { AppError } from "@/shared/api/error"
+import { gameApi } from "@/shared/api/game"
+import { Button } from "@/shared/ui/button"
 import { Card, CardContent } from "@/shared/ui/card"
-
-const PROFILE_QR_MOCK = {
-  nickname: "阿洛",
-  teamName: "松鼠小隊",
-  openPower: 430,
-  avatarInitial: "洛",
-  qrcodeToken: "qr_token_123456",
-}
-
-function tokenBit(token: string, index: number) {
-  let hash = 0x811c9dc5
-
-  for (const char of `${token}:${index}`) {
-    hash ^= char.charCodeAt(0)
-    hash = Math.imul(hash, 0x01000193)
-  }
-
-  hash ^= hash >>> 13
-  hash = Math.imul(hash, 0x85ebca6b)
-  hash ^= hash >>> 16
-
-  return (hash & 1) === 1
-}
-
-function createPassCodeCells(token: string) {
-  return Array.from({ length: 169 }, (_, index) => {
-    const x = index % 13
-    const y = Math.floor(index / 13)
-    const finder = (x < 4 && y < 4) || (x > 8 && y < 4) || (x < 4 && y > 8)
-    const timing = (x === 6 && y % 2 === 0) || (y === 6 && x % 2 === 0)
-    const quietCorner = x > 9 && y > 9
-
-    if (finder || timing) {
-      return true
-    }
-
-    if (quietCorner) {
-      return false
-    }
-
-    return tokenBit(token, index)
-  })
-}
+import { Skeleton } from "@/shared/ui/skeleton"
 
 export function ProfileQrPanel() {
-  // TODO(api): replace PROFILE_QR_MOCK with GET /api/me/status and GET /api/me/qrcode.
-  const profile = PROFILE_QR_MOCK
-  const passCodeCells = createPassCodeCells(profile.qrcodeToken)
+  const statusQuery = useQuery({
+    queryKey: ["me", "status"],
+    queryFn: gameApi.status,
+  })
+  const qrQuery = useQuery({
+    queryKey: ["me", "qrcode"],
+    queryFn: gameApi.qrcode,
+  })
+  const isUnauthorized =
+    (statusQuery.error instanceof AppError &&
+      statusQuery.error.status === 401) ||
+    (qrQuery.error instanceof AppError && qrQuery.error.status === 401)
+  const profile = statusQuery.data
+  const qrcodeToken = qrQuery.data?.qrcodeToken
+
+  if (isUnauthorized) {
+    return (
+      <Card className="border-ink rounded-[var(--radius)] border-2 py-0 shadow-[4px_4px_0_rgba(23,35,58,0.14)]">
+        <CardContent className="p-5">
+          <h2 className="mb-2 text-[24px] font-black">請先登入</h2>
+          <p className="text-muted-foreground mb-4 leading-relaxed">
+            登入後才能產生個人 QR Code。
+          </p>
+          <Button asChild className="w-full">
+            <Link to="/login">前往登入</Link>
+          </Button>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <div className="flex flex-col gap-3.5">
       <Card className="border-ink rounded-[var(--radius)] border-2 py-0 shadow-[4px_4px_0_rgba(23,35,58,0.14)]">
         <CardContent className="grid grid-cols-[70px_1fr] items-center gap-3.5 p-4">
           <div className="bg-power border-ink flex h-[70px] w-[70px] items-center justify-center rounded-[24px] border-2 text-3xl font-black">
-            {profile.avatarInitial}
+            {profile?.nickname.trim().slice(0, 1) || "?"}
           </div>
           <div>
             <span className="text-muted-foreground block text-xs font-black tracking-widest uppercase">
               玩家身份
             </span>
             <h2 className="mb-1 text-[28px] leading-none font-black tracking-tight">
-              {profile.nickname}
+              {profile?.nickname ?? "同步中"}
             </h2>
             <p className="text-muted-foreground">
-              {profile.teamName} · {profile.openPower} OP
+              {profile
+                ? `${profile.team.name} · 開源力 ${profile.openPower}`
+                : "讀取玩家資料"}
             </p>
           </div>
         </CardContent>
@@ -71,17 +65,36 @@ export function ProfileQrPanel() {
 
       <Card className="border-ink rounded-[32px] border-2 py-0 shadow-[5px_5px_0_rgba(23,35,58,0.16)]">
         <CardContent className="px-[22px] pt-7 pb-6 text-center">
-          <div
-            role="img"
-            aria-label="玩家身份通行碼圖樣"
-            className="bg-card border-ink mx-auto mb-5 grid aspect-square w-full max-w-[306px] grid-cols-[repeat(13,1fr)] gap-1 rounded-[18px] border-4 p-[18px]"
-          >
-            {passCodeCells.map((filled, index) => (
-              <span
-                key={index}
-                className={`rounded-sm ${filled ? "bg-ink" : "bg-transparent"}`}
+          <div className="bg-paper border-ink mx-auto mb-5 grid aspect-square w-full max-w-[306px] place-items-center rounded-[18px] border-4 p-[18px]">
+            {qrcodeToken ? (
+              <QRCodeSVG
+                aria-label="玩家身份 QR Code"
+                bgColor="var(--paper)"
+                className="h-full w-full"
+                fgColor="var(--ink)"
+                level="M"
+                marginSize={4}
+                role="img"
+                size={256}
+                title="玩家身份 QR Code"
+                value={qrcodeToken}
               />
-            ))}
+            ) : qrQuery.isError ? (
+              <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-center">
+                <p className="text-muted-foreground text-sm font-bold">
+                  QR Code 暫時無法產生
+                </p>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => void qrQuery.refetch()}
+                >
+                  重新整理
+                </Button>
+              </div>
+            ) : (
+              <Skeleton className="h-full w-full rounded-[12px]" />
+            )}
           </div>
           <h2 className="mb-2 text-[26px] font-black tracking-tight">
             請掃描這個 QR Code
