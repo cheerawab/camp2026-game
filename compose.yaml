@@ -1,18 +1,43 @@
 services:
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${NGINX_PORT:-3000}:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      frontend:
+        condition: service_started
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://127.0.0.1/api/healthz",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: ssr
     image: camp2026-game-frontend:production
     restart: unless-stopped
     environment:
-      APP_ORIGIN: ${APP_ORIGIN:-http://localhost:${FRONTEND_PORT:-3000}}
+      APP_ORIGIN: ${APP_ORIGIN:-http://nginx}
       NODE_ENV: production
-    ports:
-      - "${FRONTEND_PORT:-3000}:3000"
-    depends_on:
-      backend:
-        condition: service_healthy
+    expose:
+      - "3000"
 
   backend:
     build:
@@ -32,8 +57,10 @@ services:
       HTTP_WRITE_TIMEOUT: ${HTTP_WRITE_TIMEOUT:-15s}
       HTTP_IDLE_TIMEOUT: ${HTTP_IDLE_TIMEOUT:-60s}
       SHUTDOWN_TIMEOUT: ${SHUTDOWN_TIMEOUT:-10s}
-      MONGODB_URI: mongodb://${MONGO_USERNAME:?set MONGO_USERNAME}:${MONGO_PASSWORD:?set MONGO_PASSWORD}@mongodb:27017/${MONGODB_DATABASE:-camp2026}?authSource=admin
+      MONGODB_URI: mongodb://${MONGO_USERNAME:-camp2026}:${MONGO_PASSWORD:-camp2026}@mongodb:27017/${MONGODB_DATABASE:-camp2026}?authSource=admin
       MONGODB_DATABASE: ${MONGODB_DATABASE:-camp2026}
+    expose:
+      - "8080"
     depends_on:
       mongodb:
         condition: service_healthy
@@ -56,9 +83,11 @@ services:
     image: mongo:7.0
     restart: unless-stopped
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME:?set MONGO_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:?set MONGO_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME:-camp2026}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-camp2026}
       MONGO_INITDB_DATABASE: ${MONGODB_DATABASE:-camp2026}
+    expose:
+      - "27017"
     volumes:
       - mongodb-data:/data/db
     healthcheck:
@@ -67,7 +96,7 @@ services:
           "CMD",
           "mongosh",
           "--quiet",
-          "mongodb://${MONGO_USERNAME:?set MONGO_USERNAME}:${MONGO_PASSWORD:?set MONGO_PASSWORD}@localhost:27017/admin",
+          "mongodb://${MONGO_USERNAME:-camp2026}:${MONGO_PASSWORD:-camp2026}@localhost:27017/admin",
           "--eval",
           "db.adminCommand({ ping: 1 }).ok",
         ]

@@ -20,6 +20,20 @@ COPY package.json pnpm-lock.yaml ./
 COPY . .
 RUN pnpm build
 
+FROM node:22-alpine AS ssr
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+
+EXPOSE 3000
+
+CMD ["node", "/app/node_modules/.pnpm/node_modules/srvx/bin/srvx.mjs", "serve", "--prod", "--entry", "/app/dist/server/server.js", "--static", "/app/dist/client", "--port", "3000", "--host", "0.0.0.0"]
+
 FROM node:22-alpine AS runtime
 
 WORKDIR /app
