@@ -507,87 +507,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/matches/join-by-qr": {
-            "post": {
-                "security": [
-                    {
-                        "AuthCookieAuth": []
-                    }
-                ],
-                "description": "Joins a waiting match by scanning either a match invite code token or the host player's QR token.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "matches"
-                ],
-                "summary": "Join match room by QR code",
-                "parameters": [
-                    {
-                        "description": "Join by QR request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/matches.JoinByQRRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/matches.JoinMatchResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/httpx.ProblemDetails"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/httpx.ProblemDetails"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/httpx.ProblemDetails"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/httpx.ProblemDetails"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "$ref": "#/definitions/httpx.ProblemDetails"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/httpx.ProblemDetails"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/httpx.ProblemDetails"
-                        }
-                    }
-                }
-            }
-        },
         "/matches/{matchID}": {
             "get": {
                 "security": [
@@ -767,6 +686,87 @@ const docTemplate = `{
                 }
             }
         },
+        "/matches/{matchID}/loadout": {
+            "put": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Updates the authenticated player's sitone loadout for a waiting match and saves it as the player's default loadout.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "matches"
+                ],
+                "summary": "Update match sitone loadout",
+                "parameters": [
+                    {
+                        "description": "Update loadout request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/matches.UpdateLoadoutRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/matches.UpdateLoadoutResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
         "/matches/{matchID}/ready": {
             "post": {
                 "security": [
@@ -908,6 +908,49 @@ const docTemplate = `{
                 }
             }
         },
+        "/me/matches": {
+            "get": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Returns completed quiz matches joined by the authenticated player. Waiting and active matches are not returned.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "me"
+                ],
+                "summary": "List current player completed matches",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/me.CompletedMatchListResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
         "/me/qrcode": {
             "get": {
                 "security": [
@@ -938,6 +981,116 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/me/sitone-loadout": {
+            "get": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Returns the authenticated player's default sitone loadout.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "me"
+                ],
+                "summary": "Get current player sitone loadout",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/me.SitoneLoadoutResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Updates the authenticated player's default sitone loadout.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "me"
+                ],
+                "summary": "Update current player sitone loadout",
+                "parameters": [
+                    {
+                        "description": "Sitone loadout request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/me.SitoneLoadoutRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/me.SitoneLoadoutResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
                         "schema": {
                             "$ref": "#/definitions/httpx.ProblemDetails"
                         }
@@ -1264,6 +1417,87 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/staff/rewards": {
+            "post": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Staff-only endpoint. Resolves a player QR token, grants one sitone or item to that player, and records the staff grant.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "staff"
+                ],
+                "summary": "Grant sitone or item as staff",
+                "parameters": [
+                    {
+                        "description": "Staff reward request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/staff.CreateRewardRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/staff.CreateRewardResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1308,6 +1542,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "7H9K2Q"
                 },
+                "role": {
+                    "type": "string",
+                    "example": "staff"
+                },
                 "team": {
                     "$ref": "#/definitions/apimodel.AuthTeamSummary"
                 }
@@ -1342,15 +1580,15 @@ const docTemplate = `{
             "properties": {
                 "description": {
                     "type": "string",
-                    "example": "小石造型合成使用的基礎素材。"
+                    "example": "冒險背包，可用於小石合成。"
                 },
                 "id": {
                     "type": "string",
-                    "example": "item-crafting-fragment"
+                    "example": "item_adventure_backpack"
                 },
                 "name": {
                     "type": "string",
-                    "example": "合成碎片"
+                    "example": "冒險背包"
                 },
                 "rarity": {
                     "type": "string",
@@ -1382,7 +1620,7 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string",
-                    "example": "sitone-engineering"
+                    "example": "stone_engineering_base"
                 },
                 "name": {
                     "type": "string",
@@ -1410,7 +1648,7 @@ const docTemplate = `{
             "properties": {
                 "recipeId": {
                     "type": "string",
-                    "example": "fusion-engineering-route-frame"
+                    "example": "recipe_explore_2026_backpack_s1_s2"
                 }
             }
         },
@@ -1431,7 +1669,7 @@ const docTemplate = `{
             "properties": {
                 "id": {
                     "type": "string",
-                    "example": "item-crafting-fragment"
+                    "example": "item_adventure_backpack"
                 },
                 "kind": {
                     "type": "string",
@@ -1439,11 +1677,11 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string",
-                    "example": "合成碎片"
+                    "example": "冒險背包"
                 },
                 "quantity": {
                     "type": "integer",
-                    "example": 3
+                    "example": 1
                 },
                 "rarity": {
                     "type": "string",
@@ -1462,9 +1700,13 @@ const docTemplate = `{
                     "type": "boolean",
                     "example": true
                 },
+                "branchId": {
+                    "type": "string",
+                    "example": "branch_2026_camp"
+                },
                 "description": {
                     "type": "string",
-                    "example": "把工程小石與合成碎片組合成基地展示用的收藏外框。"
+                    "example": "牠把貼紙、名牌、備用線材都塞進包包，準備在 2026 營隊裡探索下一個任務。"
                 },
                 "enabled": {
                     "type": "boolean",
@@ -1472,7 +1714,7 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string",
-                    "example": "fusion-engineering-route-frame"
+                    "example": "recipe_explore_2026_backpack_s1_s2"
                 },
                 "inputs": {
                     "type": "array",
@@ -1482,13 +1724,37 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string",
-                    "example": "工程路線展示框"
+                    "example": "營地背包小石"
                 },
                 "outputs": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/fusions.FusionComponentResponse"
                     }
+                },
+                "reviewTitle": {
+                    "type": "string",
+                    "example": "SITCON 2026 議程表"
+                },
+                "reviewUrl": {
+                    "type": "string",
+                    "example": "https://sitcon.org/2026/agenda/"
+                },
+                "stageFrom": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "stageTo": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "story": {
+                    "type": "string",
+                    "example": "牠把貼紙、名牌、備用線材都塞進包包。"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "exploration"
                 }
             }
         },
@@ -1682,20 +1948,6 @@ const docTemplate = `{
                 }
             }
         },
-        "matches.JoinByQRRequest": {
-            "type": "object",
-            "required": [
-                "qrcodeToken"
-            ],
-            "properties": {
-                "qrcodeToken": {
-                    "type": "string",
-                    "maxLength": 512,
-                    "minLength": 4,
-                    "example": "qr_token_123456"
-                }
-            }
-        },
         "matches.JoinMatchRequest": {
             "type": "object",
             "required": [
@@ -1804,6 +2056,10 @@ const docTemplate = `{
                     "type": "boolean",
                     "example": true
                 },
+                "maxScore": {
+                    "type": "integer",
+                    "example": 2250
+                },
                 "nickname": {
                     "type": "string",
                     "example": "Alice"
@@ -1823,6 +2079,16 @@ const docTemplate = `{
                 "score": {
                     "type": "integer",
                     "example": 850
+                },
+                "sitoneIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "stone_engineering_base",
+                        "stone_explorer_base"
+                    ]
                 }
             }
         },
@@ -1847,7 +2113,7 @@ const docTemplate = `{
                 },
                 "prompt": {
                     "type": "string",
-                    "example": "Which command initializes a new Git repository?"
+                    "example": "哪個指令可以初始化新的 Git 儲存庫？"
                 },
                 "questionId": {
                     "type": "string",
@@ -1886,11 +2152,11 @@ const docTemplate = `{
                 },
                 "explanation": {
                     "type": "string",
-                    "example": "git init creates a new repository."
+                    "example": "git init 會在目前目錄建立新的 Git 儲存庫。"
                 },
                 "prompt": {
                     "type": "string",
-                    "example": "Which command initializes a new Git repository?"
+                    "example": "哪個指令可以初始化新的 Git 儲存庫？"
                 },
                 "questionId": {
                     "type": "string",
@@ -2016,6 +2282,159 @@ const docTemplate = `{
                 }
             }
         },
+        "matches.UpdateLoadoutRequest": {
+            "type": "object",
+            "required": [
+                "sitoneIds"
+            ],
+            "properties": {
+                "sitoneIds": {
+                    "type": "array",
+                    "maxItems": 5,
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "stone_engineering_base",
+                        "stone_explorer_base"
+                    ]
+                }
+            }
+        },
+        "matches.UpdateLoadoutResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "example": "ABC123"
+                },
+                "completedAt": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "currentQuestion": {
+                    "$ref": "#/definitions/matches.MatchQuestionResponse"
+                },
+                "currentQuestionIndex": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "hostPlayerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                },
+                "matchId": {
+                    "type": "string",
+                    "example": "match_7H9K2Q"
+                },
+                "players": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/matches.MatchPlayerResponse"
+                    }
+                },
+                "questionCount": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/matches.MatchQuestionResult"
+                    }
+                },
+                "roundEndsAt": {
+                    "type": "string"
+                },
+                "roundStartedAt": {
+                    "type": "string"
+                },
+                "startedAt": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "active"
+                }
+            }
+        },
+        "me.CompletedMatchListResponse": {
+            "type": "object",
+            "properties": {
+                "matches": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/me.CompletedMatchResponse"
+                    }
+                }
+            }
+        },
+        "me.CompletedMatchPlayerResponse": {
+            "type": "object",
+            "properties": {
+                "nickname": {
+                    "type": "string",
+                    "example": "Alice"
+                },
+                "playerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                },
+                "score": {
+                    "type": "integer",
+                    "example": 850
+                },
+                "sitoneIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "stone_engineering_base",
+                        "stone_explorer_base"
+                    ]
+                }
+            }
+        },
+        "me.CompletedMatchResponse": {
+            "type": "object",
+            "properties": {
+                "completedAt": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "hostPlayerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                },
+                "matchId": {
+                    "type": "string",
+                    "example": "match_7H9K2Q"
+                },
+                "players": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/me.CompletedMatchPlayerResponse"
+                    }
+                },
+                "questionCount": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "startedAt": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "completed"
+                }
+            }
+        },
         "me.HomeActionResponse": {
             "type": "object",
             "properties": {
@@ -2086,15 +2505,15 @@ const docTemplate = `{
             "properties": {
                 "description": {
                     "type": "string",
-                    "example": "小石造型合成使用的基礎素材。"
+                    "example": "冒險背包，可用於小石合成。"
                 },
                 "id": {
                     "type": "string",
-                    "example": "item-crafting-fragment"
+                    "example": "item_adventure_backpack"
                 },
                 "name": {
                     "type": "string",
-                    "example": "合成碎片"
+                    "example": "冒險背包"
                 },
                 "rarity": {
                     "type": "string",
@@ -2118,7 +2537,7 @@ const docTemplate = `{
                 },
                 "itemId": {
                     "type": "string",
-                    "example": "item-crafting-fragment"
+                    "example": "item_adventure_backpack"
                 },
                 "quantity": {
                     "type": "integer",
@@ -2142,7 +2561,7 @@ const docTemplate = `{
                 },
                 "sitoneId": {
                     "type": "string",
-                    "example": "sitone-engineering"
+                    "example": "stone_engineering_base"
                 }
             }
         },
@@ -2166,6 +2585,41 @@ const docTemplate = `{
                 }
             }
         },
+        "me.SitoneLoadoutRequest": {
+            "type": "object",
+            "required": [
+                "sitoneIds"
+            ],
+            "properties": {
+                "sitoneIds": {
+                    "type": "array",
+                    "maxItems": 5,
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "stone_engineering_base",
+                        "stone_explorer_base"
+                    ]
+                }
+            }
+        },
+        "me.SitoneLoadoutResponse": {
+            "type": "object",
+            "properties": {
+                "sitoneIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "stone_engineering_base",
+                        "stone_explorer_base"
+                    ]
+                }
+            }
+        },
         "me.SitoneResponse": {
             "type": "object",
             "properties": {
@@ -2175,7 +2629,7 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string",
-                    "example": "sitone-engineering"
+                    "example": "stone_engineering_base"
                 },
                 "name": {
                     "type": "string",
@@ -2213,6 +2667,10 @@ const docTemplate = `{
                 "playerId": {
                     "type": "string",
                     "example": "7H9K2Q"
+                },
+                "role": {
+                    "type": "string",
+                    "example": "staff"
                 },
                 "team": {
                     "$ref": "#/definitions/me.TeamResponse"
@@ -2347,7 +2805,7 @@ const docTemplate = `{
             "properties": {
                 "itemId": {
                     "type": "string",
-                    "example": "item-crafting-fragment"
+                    "example": "item_adventure_backpack"
                 }
             }
         },
@@ -2359,7 +2817,7 @@ const docTemplate = `{
                 },
                 "itemId": {
                     "type": "string",
-                    "example": "item-crafting-fragment"
+                    "example": "item_adventure_backpack"
                 },
                 "openPower": {
                     "type": "integer",
@@ -2384,15 +2842,15 @@ const docTemplate = `{
             "properties": {
                 "description": {
                     "type": "string",
-                    "example": "小石造型合成使用的基礎素材。"
+                    "example": "冒險背包，可用於小石合成。"
                 },
                 "id": {
                     "type": "string",
-                    "example": "item-crafting-fragment"
+                    "example": "item_adventure_backpack"
                 },
                 "name": {
                     "type": "string",
-                    "example": "合成碎片"
+                    "example": "冒險背包"
                 },
                 "priceOpenPower": {
                     "type": "integer",
@@ -2409,6 +2867,108 @@ const docTemplate = `{
                 "type": {
                     "type": "string",
                     "example": "material"
+                }
+            }
+        },
+        "staff.CreateRewardRequest": {
+            "type": "object",
+            "required": [
+                "kind",
+                "qrcodeToken",
+                "quantity",
+                "refId"
+            ],
+            "properties": {
+                "kind": {
+                    "type": "string",
+                    "enum": [
+                        "item",
+                        "sitone"
+                    ],
+                    "example": "sitone"
+                },
+                "qrcodeToken": {
+                    "type": "string",
+                    "maxLength": 512,
+                    "minLength": 4,
+                    "example": "qr_token_123456"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "maximum": 99,
+                    "minimum": 1,
+                    "example": 1
+                },
+                "refId": {
+                    "type": "string",
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "example": "stone_engineering_base"
+                }
+            }
+        },
+        "staff.CreateRewardResponse": {
+            "type": "object",
+            "properties": {
+                "player": {
+                    "$ref": "#/definitions/staff.RewardPlayerResponse"
+                },
+                "reward": {
+                    "$ref": "#/definitions/staff.RewardResponse"
+                },
+                "rewardId": {
+                    "type": "string",
+                    "example": "staff_reward_01HXK2P9ATJ5S2YV8C2J4Q0M"
+                }
+            }
+        },
+        "staff.RewardPlayerResponse": {
+            "type": "object",
+            "properties": {
+                "nickname": {
+                    "type": "string",
+                    "example": "Alice"
+                },
+                "playerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                },
+                "team": {
+                    "$ref": "#/definitions/staff.RewardTeamResponse"
+                }
+            }
+        },
+        "staff.RewardResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "stone_engineering_base"
+                },
+                "kind": {
+                    "type": "string",
+                    "example": "sitone"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "工程型小石"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "staff.RewardTeamResponse": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "Blue Team"
+                },
+                "teamId": {
+                    "type": "string",
+                    "example": "8M4RXP"
                 }
             }
         },

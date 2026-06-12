@@ -29,6 +29,9 @@ definitions:
       playerId:
         example: 7H9K2Q
         type: string
+      role:
+        example: staff
+        type: string
       team:
         $ref: '#/definitions/apimodel.AuthTeamSummary'
     type: object
@@ -51,13 +54,13 @@ definitions:
   catalog.ItemResponse:
     properties:
       description:
-        example: 小石造型合成使用的基礎素材。
+        example: 冒險背包，可用於小石合成。
         type: string
       id:
-        example: item-crafting-fragment
+        example: item_adventure_backpack
         type: string
       name:
-        example: 合成碎片
+        example: 冒險背包
         type: string
       rarity:
         example: common
@@ -79,7 +82,7 @@ definitions:
         example: 修 bug、分享解法、完成技術任務。
         type: string
       id:
-        example: sitone-engineering
+        example: stone_engineering_base
         type: string
       name:
         example: 工程型小石
@@ -97,7 +100,7 @@ definitions:
   fusions.CreateRequest:
     properties:
       recipeId:
-        example: fusion-engineering-route-frame
+        example: recipe_explore_2026_backpack_s1_s2
         type: string
     required:
     - recipeId
@@ -113,16 +116,16 @@ definitions:
   fusions.FusionComponentResponse:
     properties:
       id:
-        example: item-crafting-fragment
+        example: item_adventure_backpack
         type: string
       kind:
         example: item
         type: string
       name:
-        example: 合成碎片
+        example: 冒險背包
         type: string
       quantity:
-        example: 3
+        example: 1
         type: integer
       rarity:
         example: common
@@ -136,26 +139,47 @@ definitions:
       available:
         example: true
         type: boolean
+      branchId:
+        example: branch_2026_camp
+        type: string
       description:
-        example: 把工程小石與合成碎片組合成基地展示用的收藏外框。
+        example: 牠把貼紙、名牌、備用線材都塞進包包，準備在 2026 營隊裡探索下一個任務。
         type: string
       enabled:
         example: true
         type: boolean
       id:
-        example: fusion-engineering-route-frame
+        example: recipe_explore_2026_backpack_s1_s2
         type: string
       inputs:
         items:
           $ref: '#/definitions/fusions.FusionComponentResponse'
         type: array
       name:
-        example: 工程路線展示框
+        example: 營地背包小石
         type: string
       outputs:
         items:
           $ref: '#/definitions/fusions.FusionComponentResponse'
         type: array
+      reviewTitle:
+        example: SITCON 2026 議程表
+        type: string
+      reviewUrl:
+        example: https://sitcon.org/2026/agenda/
+        type: string
+      stageFrom:
+        example: 1
+        type: integer
+      stageTo:
+        example: 2
+        type: integer
+      story:
+        example: 牠把貼紙、名牌、備用線材都塞進包包。
+        type: string
+      type:
+        example: exploration
+        type: string
     type: object
   fusions.RecipeListResponse:
     properties:
@@ -288,16 +312,6 @@ definitions:
         example: active
         type: string
     type: object
-  matches.JoinByQRRequest:
-    properties:
-      qrcodeToken:
-        example: qr_token_123456
-        maxLength: 512
-        minLength: 4
-        type: string
-    required:
-    - qrcodeToken
-    type: object
   matches.JoinMatchRequest:
     properties:
       code:
@@ -374,6 +388,9 @@ definitions:
       answeredCurrentQuestion:
         example: true
         type: boolean
+      maxScore:
+        example: 2250
+        type: integer
       nickname:
         example: Alice
         type: string
@@ -389,6 +406,13 @@ definitions:
       score:
         example: 850
         type: integer
+      sitoneIds:
+        example:
+        - stone_engineering_base
+        - stone_explorer_base
+        items:
+          type: string
+        type: array
     type: object
   matches.MatchQuestionResponse:
     properties:
@@ -405,7 +429,7 @@ definitions:
         example: git add
         type: string
       prompt:
-        example: Which command initializes a new Git repository?
+        example: 哪個指令可以初始化新的 Git 儲存庫？
         type: string
       questionId:
         example: quiz-001
@@ -433,10 +457,10 @@ definitions:
         example: A
         type: string
       explanation:
-        example: git init creates a new repository.
+        example: git init 會在目前目錄建立新的 Git 儲存庫。
         type: string
       prompt:
-        example: Which command initializes a new Git repository?
+        example: 哪個指令可以初始化新的 Git 儲存庫？
         type: string
       questionId:
         example: quiz-001
@@ -524,6 +548,112 @@ definitions:
         example: active
         type: string
     type: object
+  matches.UpdateLoadoutRequest:
+    properties:
+      sitoneIds:
+        example:
+        - stone_engineering_base
+        - stone_explorer_base
+        items:
+          type: string
+        maxItems: 5
+        minItems: 1
+        type: array
+    required:
+    - sitoneIds
+    type: object
+  matches.UpdateLoadoutResponse:
+    properties:
+      code:
+        example: ABC123
+        type: string
+      completedAt:
+        type: string
+      createdAt:
+        type: string
+      currentQuestion:
+        $ref: '#/definitions/matches.MatchQuestionResponse'
+      currentQuestionIndex:
+        example: 0
+        type: integer
+      hostPlayerId:
+        example: 7H9K2Q
+        type: string
+      matchId:
+        example: match_7H9K2Q
+        type: string
+      players:
+        items:
+          $ref: '#/definitions/matches.MatchPlayerResponse'
+        type: array
+      questionCount:
+        example: 10
+        type: integer
+      results:
+        items:
+          $ref: '#/definitions/matches.MatchQuestionResult'
+        type: array
+      roundEndsAt:
+        type: string
+      roundStartedAt:
+        type: string
+      startedAt:
+        type: string
+      status:
+        example: active
+        type: string
+    type: object
+  me.CompletedMatchListResponse:
+    properties:
+      matches:
+        items:
+          $ref: '#/definitions/me.CompletedMatchResponse'
+        type: array
+    type: object
+  me.CompletedMatchPlayerResponse:
+    properties:
+      nickname:
+        example: Alice
+        type: string
+      playerId:
+        example: 7H9K2Q
+        type: string
+      score:
+        example: 850
+        type: integer
+      sitoneIds:
+        example:
+        - stone_engineering_base
+        - stone_explorer_base
+        items:
+          type: string
+        type: array
+    type: object
+  me.CompletedMatchResponse:
+    properties:
+      completedAt:
+        type: string
+      createdAt:
+        type: string
+      hostPlayerId:
+        example: 7H9K2Q
+        type: string
+      matchId:
+        example: match_7H9K2Q
+        type: string
+      players:
+        items:
+          $ref: '#/definitions/me.CompletedMatchPlayerResponse'
+        type: array
+      questionCount:
+        example: 10
+        type: integer
+      startedAt:
+        type: string
+      status:
+        example: completed
+        type: string
+    type: object
   me.HomeActionResponse:
     properties:
       enabled:
@@ -571,13 +701,13 @@ definitions:
   me.ItemResponse:
     properties:
       description:
-        example: 小石造型合成使用的基礎素材。
+        example: 冒險背包，可用於小石合成。
         type: string
       id:
-        example: item-crafting-fragment
+        example: item_adventure_backpack
         type: string
       name:
-        example: 合成碎片
+        example: 冒險背包
         type: string
       rarity:
         example: common
@@ -594,7 +724,7 @@ definitions:
       item:
         $ref: '#/definitions/me.ItemResponse'
       itemId:
-        example: item-crafting-fragment
+        example: item_adventure_backpack
         type: string
       quantity:
         example: 3
@@ -611,7 +741,7 @@ definitions:
       sitone:
         $ref: '#/definitions/me.SitoneResponse'
       sitoneId:
-        example: sitone-engineering
+        example: stone_engineering_base
         type: string
     type: object
   me.QRCodeResponse:
@@ -627,13 +757,37 @@ definitions:
           $ref: '#/definitions/me.PlayerSitoneResponse'
         type: array
     type: object
+  me.SitoneLoadoutRequest:
+    properties:
+      sitoneIds:
+        example:
+        - stone_engineering_base
+        - stone_explorer_base
+        items:
+          type: string
+        maxItems: 5
+        minItems: 1
+        type: array
+    required:
+    - sitoneIds
+    type: object
+  me.SitoneLoadoutResponse:
+    properties:
+      sitoneIds:
+        example:
+        - stone_engineering_base
+        - stone_explorer_base
+        items:
+          type: string
+        type: array
+    type: object
   me.SitoneResponse:
     properties:
       description:
         example: 修 bug、分享解法、完成技術任務。
         type: string
       id:
-        example: sitone-engineering
+        example: stone_engineering_base
         type: string
       name:
         example: 工程型小石
@@ -661,6 +815,9 @@ definitions:
         type: integer
       playerId:
         example: 7H9K2Q
+        type: string
+      role:
+        example: staff
         type: string
       team:
         $ref: '#/definitions/me.TeamResponse'
@@ -751,7 +908,7 @@ definitions:
   shop.PurchaseRequest:
     properties:
       itemId:
-        example: item-crafting-fragment
+        example: item_adventure_backpack
         type: string
     required:
     - itemId
@@ -761,7 +918,7 @@ definitions:
       item:
         $ref: '#/definitions/shop.ShopItemResponse'
       itemId:
-        example: item-crafting-fragment
+        example: item_adventure_backpack
         type: string
       openPower:
         example: 1230
@@ -779,13 +936,13 @@ definitions:
   shop.ShopItemResponse:
     properties:
       description:
-        example: 小石造型合成使用的基礎素材。
+        example: 冒險背包，可用於小石合成。
         type: string
       id:
-        example: item-crafting-fragment
+        example: item_adventure_backpack
         type: string
       name:
-        example: 合成碎片
+        example: 冒險背包
         type: string
       priceOpenPower:
         example: 50
@@ -798,6 +955,80 @@ definitions:
         type: boolean
       type:
         example: material
+        type: string
+    type: object
+  staff.CreateRewardRequest:
+    properties:
+      kind:
+        enum:
+        - item
+        - sitone
+        example: sitone
+        type: string
+      qrcodeToken:
+        example: qr_token_123456
+        maxLength: 512
+        minLength: 4
+        type: string
+      quantity:
+        example: 1
+        maximum: 99
+        minimum: 1
+        type: integer
+      refId:
+        example: stone_engineering_base
+        maxLength: 128
+        minLength: 1
+        type: string
+    required:
+    - kind
+    - qrcodeToken
+    - quantity
+    - refId
+    type: object
+  staff.CreateRewardResponse:
+    properties:
+      player:
+        $ref: '#/definitions/staff.RewardPlayerResponse'
+      reward:
+        $ref: '#/definitions/staff.RewardResponse'
+      rewardId:
+        example: staff_reward_01HXK2P9ATJ5S2YV8C2J4Q0M
+        type: string
+    type: object
+  staff.RewardPlayerResponse:
+    properties:
+      nickname:
+        example: Alice
+        type: string
+      playerId:
+        example: 7H9K2Q
+        type: string
+      team:
+        $ref: '#/definitions/staff.RewardTeamResponse'
+    type: object
+  staff.RewardResponse:
+    properties:
+      id:
+        example: stone_engineering_base
+        type: string
+      kind:
+        example: sitone
+        type: string
+      name:
+        example: 工程型小石
+        type: string
+      quantity:
+        example: 1
+        type: integer
+    type: object
+  staff.RewardTeamResponse:
+    properties:
+      name:
+        example: Blue Team
+        type: string
+      teamId:
+        example: 8M4RXP
         type: string
     type: object
   system.StatusResponse:
@@ -1203,6 +1434,59 @@ paths:
       summary: Stream match events
       tags:
       - matches
+  /matches/{matchID}/loadout:
+    put:
+      consumes:
+      - application/json
+      description: Updates the authenticated player's sitone loadout for a waiting
+        match and saves it as the player's default loadout.
+      parameters:
+      - description: Update loadout request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/matches.UpdateLoadoutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/matches.UpdateLoadoutResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Update match sitone loadout
+      tags:
+      - matches
   /matches/{matchID}/ready:
     post:
       description: Marks the authenticated player ready. The match starts automatically
@@ -1291,59 +1575,6 @@ paths:
       summary: Join match room
       tags:
       - matches
-  /matches/join-by-qr:
-    post:
-      consumes:
-      - application/json
-      description: Joins a waiting match by scanning either a match invite code token
-        or the host player's QR token.
-      parameters:
-      - description: Join by QR request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/matches.JoinByQRRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/matches.JoinMatchResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/httpx.ProblemDetails'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/httpx.ProblemDetails'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/httpx.ProblemDetails'
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/httpx.ProblemDetails'
-        "422":
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/httpx.ProblemDetails'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/httpx.ProblemDetails'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/httpx.ProblemDetails'
-      security:
-      - AuthCookieAuth: []
-      summary: Join match room by QR code
-      tags:
-      - matches
   /me/home:
     get:
       description: Returns the authenticated player's home page summary, resource
@@ -1399,6 +1630,34 @@ paths:
       summary: List current player items
       tags:
       - me
+  /me/matches:
+    get:
+      description: Returns completed quiz matches joined by the authenticated player.
+        Waiting and active matches are not returned.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/me.CompletedMatchListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: List current player completed matches
+      tags:
+      - me
   /me/qrcode:
     get:
       description: Returns the authenticated player's QR code token for client-side
@@ -1421,6 +1680,76 @@ paths:
       security:
       - AuthCookieAuth: []
       summary: Get current player QR code token
+      tags:
+      - me
+  /me/sitone-loadout:
+    get:
+      description: Returns the authenticated player's default sitone loadout.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/me.SitoneLoadoutResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Get current player sitone loadout
+      tags:
+      - me
+    put:
+      consumes:
+      - application/json
+      description: Updates the authenticated player's default sitone loadout.
+      parameters:
+      - description: Sitone loadout request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/me.SitoneLoadoutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/me.SitoneLoadoutResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Update current player sitone loadout
       tags:
       - me
   /me/sitones:
@@ -1631,6 +1960,59 @@ paths:
       summary: Purchase shop item
       tags:
       - shop
+  /staff/rewards:
+    post:
+      consumes:
+      - application/json
+      description: Staff-only endpoint. Resolves a player QR token, grants one sitone
+        or item to that player, and records the staff grant.
+      parameters:
+      - description: Staff reward request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/staff.CreateRewardRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/staff.CreateRewardResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Grant sitone or item as staff
+      tags:
+      - staff
 schemes:
 - http
 - https
