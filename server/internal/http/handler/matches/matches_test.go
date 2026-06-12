@@ -203,6 +203,9 @@ func TestMatchResultsRevealCompletedAnswers(t *testing.T) {
 	if results[0].Answers[0].Choice != "A" || !results[0].Answers[0].Correct {
 		t.Fatalf("expected first answer to be revealed, got %#v", results[0].Answers[0])
 	}
+	if results[0].Answers[0].Nickname != "Alice" || results[0].Answers[1].Nickname != "Bob" {
+		t.Fatalf("expected answer rows to include nicknames, got %#v", results[0].Answers)
+	}
 }
 
 func TestBrokerPublishesEvents(t *testing.T) {

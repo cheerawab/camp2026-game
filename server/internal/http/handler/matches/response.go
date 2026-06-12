@@ -75,6 +75,7 @@ type MatchQuestionResult struct {
 
 type MatchAnswerResponse struct {
 	PlayerID      string     `json:"playerId" example:"7H9K2Q"`
+	Nickname      string     `json:"nickname" example:"Alice"`
 	Choice        string     `json:"choice,omitempty" example:"A"`
 	Correct       bool       `json:"correct" example:"true"`
 	Score         int        `json:"score" example:"150"`

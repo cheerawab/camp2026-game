@@ -278,6 +278,7 @@ func (h *Handler) matchResults(
 			answer, ok := answerByQuestionPlayer[questionID][player.PlayerID]
 			answerResponse := MatchAnswerResponse{
 				PlayerID: player.PlayerID,
+				Nickname: player.Nickname,
 			}
 			if ok {
 				answeredAt := answer.AnsweredAt

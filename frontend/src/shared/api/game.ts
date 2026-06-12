@@ -219,6 +219,7 @@ const MatchQuestionSchema = z.object({
 
 const MatchAnswerResultSchema = z.object({
   playerId: z.string(),
+  nickname: z.string(),
   choice: z.string().optional(),
   correct: z.boolean(),
   score: z.number(),

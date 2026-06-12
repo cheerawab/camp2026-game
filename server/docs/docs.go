@@ -2038,6 +2038,10 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 3200
                 },
+                "nickname": {
+                    "type": "string",
+                    "example": "Alice"
+                },
                 "playerId": {
                     "type": "string",
                     "example": "7H9K2Q"

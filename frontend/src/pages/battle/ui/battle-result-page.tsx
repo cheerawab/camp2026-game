@@ -59,9 +59,6 @@ export function BattleResultPage() {
     enabled: matchID.length > 0 && match?.status !== "completed",
   })
   const players = match?.players ?? []
-  const playerNamesByID = new Map(
-    players.map((player) => [player.playerId, player.nickname]),
-  )
   const sortedPlayers = [...players].sort(
     (a, b) => (b.score ?? 0) - (a.score ?? 0),
   )
@@ -198,7 +195,7 @@ export function BattleResultPage() {
                       className="grid gap-y-1 border-t pt-2"
                     >
                       <span className="text-muted-foreground text-sm font-bold">
-                        {playerNamesByID.get(answer.playerId) ?? "未知玩家"}
+                        {answer.nickname}
                       </span>
                       <span
                         className={cn(

@@ -375,6 +375,9 @@ definitions:
       elapsedMillis:
         example: 3200
         type: integer
+      nickname:
+        example: Alice
+        type: string
       playerId:
         example: 7H9K2Q
         type: string
