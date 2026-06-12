@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
-import { useMemo, useState } from "react"
 
 import { AppError } from "@/shared/api/error"
 import { gameApi, type PlayerItem } from "@/shared/api/game"
@@ -85,7 +84,6 @@ function EmptyBag({ message }: { message: string }) {
 }
 
 export function InventoryPage() {
-  const [filter, setFilter] = useState("all")
   const {
     data: items = [],
     isPending,
@@ -94,19 +92,6 @@ export function InventoryPage() {
     queryKey: ["me", "items"],
     queryFn: gameApi.playerItems,
   })
-
-  const filters = useMemo(() => {
-    const types = Array.from(new Set(items.map((item) => item.item.type)))
-    return ["all", ...types]
-  }, [items])
-
-  const visibleItems = useMemo(
-    () =>
-      filter === "all"
-        ? items
-        : items.filter((item) => item.item.type === filter),
-    [filter, items],
-  )
 
   const totalCount = items.reduce((sum, item) => sum + item.quantity, 0)
   const typeCounts = items.reduce<Record<string, number>>((counts, item) => {
@@ -190,30 +175,13 @@ export function InventoryPage() {
             ))}
           </section>
 
-          <nav
-            className="flex gap-2 overflow-x-auto pb-1"
-            aria-label="背包分類"
-          >
-            {filters.map((value) => (
-              <Button
-                key={value}
-                variant={filter === value ? "default" : "outline"}
-                size="sm"
-                className="shrink-0 rounded-2xl font-black"
-                onClick={() => setFilter(value)}
-              >
-                {value === "all" ? "全部" : itemTypeLabel(value)}
-              </Button>
-            ))}
-          </nav>
-
           <section className="grid gap-3" aria-label="道具列表">
             {isPending ? (
               <EmptyBag message="正在同步背包" />
-            ) : visibleItems.length > 0 ? (
-              visibleItems.map((item) => <ItemCard key={item.id} item={item} />)
+            ) : items.length > 0 ? (
+              items.map((item) => <ItemCard key={item.id} item={item} />)
             ) : (
-              <EmptyBag message="這個分類目前沒有道具" />
+              <EmptyBag message="背包目前沒有道具" />
             )}
           </section>
         </>
