@@ -6,6 +6,10 @@ import { toast } from "sonner"
 
 import { MatchCodeQr } from "@/features/battle-qr"
 import { BattleWaitingPlayerCard } from "@/features/battle-waiting/ui/battle-waiting-player-card"
+import {
+  useMatchDeadlineRefresh,
+  useMatchEvents,
+} from "@/features/game/use-match-events"
 import { gameApi, type PlayerSitone } from "@/shared/api/game"
 import { sitoneMeta } from "@/shared/lib/game-labels"
 import { Button } from "@/shared/ui/button"
@@ -95,8 +99,8 @@ export function BattleWaitingRoomPage() {
     queryKey: ["matches", matchID],
     queryFn: () => gameApi.getMatch(matchID),
     enabled: matchID.length > 0,
-    refetchInterval: 2_000,
   })
+  useMatchEvents(matchID, { enabled: matchID.length > 0 })
   const statusQuery = useQuery({
     queryKey: ["me", "status"],
     queryFn: gameApi.status,
@@ -145,6 +149,7 @@ export function BattleWaitingRoomPage() {
     },
   })
   const match = matchQuery.data
+  useMatchDeadlineRefresh(matchID, match)
   const ownedSitones = ownedSitonesQuery.data ?? []
   const ownedQuantityByID = getOwnedQuantityByID(ownedSitones)
   const currentPlayer = match?.players.find(

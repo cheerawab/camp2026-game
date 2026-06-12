@@ -9,6 +9,10 @@ import {
   type MatchPlayer,
   type Sitone,
 } from "@/shared/api/game"
+import {
+  useMatchDeadlineRefresh,
+  useMatchEvents,
+} from "@/features/game/use-match-events"
 import { sitoneMeta } from "@/shared/lib/game-labels"
 import { Button } from "@/shared/ui/button"
 import { Card, CardContent } from "@/shared/ui/card"
@@ -182,8 +186,8 @@ export function BattleQuestionPage() {
     queryKey: ["matches", matchID],
     queryFn: () => gameApi.getMatch(matchID),
     enabled: matchID.length > 0,
-    refetchInterval: 1_000,
   })
+  useMatchEvents(matchID, { enabled: matchID.length > 0 })
   const statusQuery = useQuery({
     queryKey: ["me", "status"],
     queryFn: gameApi.status,
@@ -215,6 +219,7 @@ export function BattleQuestionPage() {
   }, [])
 
   const match = matchQuery.data
+  useMatchDeadlineRefresh(matchID, match)
   const question = match?.currentQuestion
   const players = match?.players ?? []
   const currentPlayer = match?.players.find(
