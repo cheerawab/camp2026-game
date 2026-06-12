@@ -71,6 +71,10 @@ func TestSetAuthCookie(t *testing.T) {
 }
 
 func TestLoginResponseFromPlayer(t *testing.T) {
+	team := mongomodel.Team{
+		ID:   "8M4RXP",
+		Name: "Blue Team",
+	}
 	response := loginResponse(
 		mongomodel.Player{
 			ID:          "7H9K2Q",
@@ -79,17 +83,16 @@ func TestLoginResponseFromPlayer(t *testing.T) {
 			Nickname:    "Alice",
 			TeamID:      "8M4RXP",
 			AvatarURL:   "https://example.test/avatar/alice.png",
-			Role:        "staff",
 		},
-		mongomodel.Team{
-			ID:   "8M4RXP",
-			Name: "Blue Team",
-		},
+		&team,
 		1280,
 	)
 
 	if response.Player.PlayerID != "7H9K2Q" {
 		t.Fatalf("expected player id, got %q", response.Player.PlayerID)
+	}
+	if response.Player.Team == nil {
+		t.Fatal("expected team")
 	}
 	if response.Player.Team.TeamID != "8M4RXP" {
 		t.Fatalf("expected team id, got %q", response.Player.Team.TeamID)
@@ -102,6 +105,27 @@ func TestLoginResponseFromPlayer(t *testing.T) {
 	}
 	if response.Player.AvatarURL == "" {
 		t.Fatalf("expected avatar url")
+	}
+	if response.Player.Role != "" {
+		t.Fatalf("expected empty role, got %q", response.Player.Role)
+	}
+}
+
+func TestLoginResponseForStaffOmitsTeam(t *testing.T) {
+	response := loginResponse(
+		mongomodel.Player{
+			ID:        "staff-token-1",
+			AuthToken: "staff-token-1",
+			Nickname:  "Staff",
+			TeamID:    "team-001",
+			Role:      "staff",
+		},
+		nil,
+		0,
+	)
+
+	if response.Player.Team != nil {
+		t.Fatalf("expected staff team to be omitted, got %#v", response.Player.Team)
 	}
 	if response.Player.Role != "staff" {
 		t.Fatalf("expected staff role, got %q", response.Player.Role)

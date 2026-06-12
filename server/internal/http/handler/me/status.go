@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 
+	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
 	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
 )
@@ -33,25 +34,38 @@ func (h *Handler) Status(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	team, err := h.findTeam(r.Context(), player.TeamID)
-	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "status unavailable"))
-		return
-	}
-
 	openPower, err := h.sumOpenPower(r.Context(), player.ID)
 	if err != nil {
 		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "status unavailable"))
 		return
 	}
 
-	teamMembers, err := h.findTeamMembers(r.Context(), player.TeamID)
-	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "status unavailable"))
-		return
+	var team *mongomodel.Team
+	var teamMembers []mongomodel.Player
+	teamID := playerTeamID(player)
+	if teamID != "" {
+		foundTeam, err := h.findTeam(r.Context(), teamID)
+		if err != nil {
+			httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "status unavailable"))
+			return
+		}
+		team = &foundTeam
+
+		teamMembers, err = h.findTeamMembers(r.Context(), teamID)
+		if err != nil {
+			httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "status unavailable"))
+			return
+		}
 	}
 
 	httpx.WriteJSON(w, http.StatusOK, statusResponse(player, team, openPower, teamMembers))
+}
+
+func playerTeamID(player mongomodel.Player) string {
+	if player.Role == authctx.PlayerRoleStaff {
+		return ""
+	}
+	return player.TeamID
 }
 
 func (h *Handler) findTeam(ctx context.Context, teamID string) (mongomodel.Team, error) {
@@ -71,7 +85,10 @@ func (h *Handler) findTeam(ctx context.Context, teamID string) (mongomodel.Team,
 func (h *Handler) findTeamMembers(ctx context.Context, teamID string) ([]mongomodel.Player, error) {
 	cursor, err := h.db.Collection(mongomodel.PlayersCollection).Find(
 		ctx,
-		bson.M{"team_id": teamID},
+		bson.M{
+			"team_id": teamID,
+			"role":    bson.M{"$ne": authctx.PlayerRoleStaff},
+		},
 		options.Find().
 			SetProjection(bson.D{
 				{Key: "auth_token", Value: 0},
@@ -136,25 +153,28 @@ func openPowerTotalPipeline(playerID string) mongo.Pipeline {
 	}
 }
 
-func statusResponse(player mongomodel.Player, team mongomodel.Team, openPower int, teamMembers []mongomodel.Player) StatusResponse {
-	return StatusResponse{
-		PlayerID: player.ID,
-		Nickname: player.Nickname,
-		Team: TeamResponse{
-			TeamID: team.ID,
-			Name:   team.Name,
-		},
+func statusResponse(player mongomodel.Player, team *mongomodel.Team, openPower int, teamMembers []mongomodel.Player) StatusResponse {
+	response := StatusResponse{
+		PlayerID:    player.ID,
+		Nickname:    player.Nickname,
 		TeamMembers: teamMemberResponses(teamMembers),
 		OpenPower:   openPower,
 		AvatarURL:   player.AvatarURL,
 		Role:        player.Role,
 	}
+	if team != nil {
+		response.Team = &TeamResponse{
+			TeamID: team.ID,
+			Name:   team.Name,
+		}
+	}
+	return response
 }
 
 func teamMemberResponses(players []mongomodel.Player) []TeamMemberResponse {
 	members := make([]TeamMemberResponse, 0, len(players))
 	for _, player := range players {
-		if player.ID == "" || player.Nickname == "" {
+		if player.ID == "" || player.Nickname == "" || player.Role == authctx.PlayerRoleStaff {
 			continue
 		}
 		members = append(members, TeamMemberResponse{

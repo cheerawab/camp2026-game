@@ -106,7 +106,9 @@ export function HomeBasePage() {
   const summary = data?.summary
   const teamRank = data?.teamRank
   const displayName = player?.nickname ?? "載入中"
-  const teamName = player?.team.name ?? "讀取玩家資料"
+  const teamName =
+    player?.team?.name ??
+    (player?.role === "staff" ? "工作人員" : "讀取玩家資料")
   const avatarInitial = displayName.trim().slice(0, 1) || "?"
   const openPower = summary?.openPower ?? player?.openPower ?? 0
   const sitoneCount = summary?.sitoneCount ?? 0

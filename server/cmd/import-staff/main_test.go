@@ -51,8 +51,8 @@ func TestBuildImportPlanCreatesRegularAndStaffPlayers(t *testing.T) {
 	if staff.Role != "staff" {
 		t.Fatalf("expected staff role, got %q", staff.Role)
 	}
-	if staff.TeamID != "team-001" {
-		t.Fatalf("expected staff team team-001, got %q", staff.TeamID)
+	if staff.TeamID != "" {
+		t.Fatalf("expected staff team to be empty, got %q", staff.TeamID)
 	}
 }
 

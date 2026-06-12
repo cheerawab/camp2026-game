@@ -262,7 +262,7 @@ export function StaffRewardsPanel() {
                   {resolveMutation.isPending
                     ? "確認 QR Code 中"
                     : targetPlayer
-                      ? targetPlayer.team.name
+                      ? (targetPlayer.team?.name ?? "未分組")
                       : "尚未選擇學員"}
                 </p>
                 <strong className="mt-1 block text-[22px] leading-tight font-black">

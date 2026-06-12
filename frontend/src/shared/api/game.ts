@@ -23,7 +23,7 @@ const TeamMemberSchema = z.object({
 const PlayerStatusSchema = z.object({
   playerId: z.string(),
   nickname: z.string(),
-  team: TeamSchema,
+  team: TeamSchema.optional(),
   teamMembers: nullableArray(TeamMemberSchema),
   openPower: z.number(),
   avatarUrl: z.string().optional(),

@@ -67,18 +67,18 @@ func TestQRCodeRequiresToken(t *testing.T) {
 }
 
 func TestStatusResponse(t *testing.T) {
+	team := mongomodel.Team{
+		ID:   "8M4RXP",
+		Name: "Blue Team",
+	}
 	response := statusResponse(
 		mongomodel.Player{
 			ID:        "7H9K2Q",
 			Nickname:  "Alice",
 			TeamID:    "8M4RXP",
 			AvatarURL: "https://example.test/avatar/alice.png",
-			Role:      "staff",
 		},
-		mongomodel.Team{
-			ID:   "8M4RXP",
-			Name: "Blue Team",
-		},
+		&team,
 		1280,
 		[]mongomodel.Player{
 			{
@@ -92,13 +92,21 @@ func TestStatusResponse(t *testing.T) {
 				Nickname:  "Bob",
 				TeamID:    "8M4RXP",
 				AvatarURL: "https://example.test/avatar/bob.png",
-				Role:      "staff",
+			},
+			{
+				ID:       "staff-token-1",
+				Nickname: "Staff",
+				TeamID:   "8M4RXP",
+				Role:     "staff",
 			},
 		},
 	)
 
 	if response.PlayerID != "7H9K2Q" {
 		t.Fatalf("expected player id, got %q", response.PlayerID)
+	}
+	if response.Team == nil {
+		t.Fatal("expected team")
 	}
 	if response.Team.TeamID != "8M4RXP" {
 		t.Fatalf("expected team id, got %q", response.Team.TeamID)
@@ -112,11 +120,35 @@ func TestStatusResponse(t *testing.T) {
 	if response.TeamMembers[0].PlayerID != "7H9K2Q" || response.TeamMembers[0].Nickname != "Alice" {
 		t.Fatalf("unexpected first team member: %#v", response.TeamMembers[0])
 	}
-	if response.TeamMembers[1].Role != "staff" {
-		t.Fatalf("expected staff team member role, got %#v", response.TeamMembers[1])
+	if response.TeamMembers[1].PlayerID != "2QK9H7" || response.TeamMembers[1].Nickname != "Bob" {
+		t.Fatalf("unexpected second team member: %#v", response.TeamMembers[1])
 	}
 	if response.AvatarURL == "" {
 		t.Fatalf("expected avatar url")
+	}
+	if response.Role != "" {
+		t.Fatalf("expected empty role, got %q", response.Role)
+	}
+}
+
+func TestStaffStatusResponseOmitsTeam(t *testing.T) {
+	response := statusResponse(
+		mongomodel.Player{
+			ID:       "staff-token-1",
+			Nickname: "Staff",
+			TeamID:   "team-001",
+			Role:     "staff",
+		},
+		nil,
+		0,
+		nil,
+	)
+
+	if response.Team != nil {
+		t.Fatalf("expected staff team to be omitted, got %#v", response.Team)
+	}
+	if len(response.TeamMembers) != 0 {
+		t.Fatalf("expected staff team members to be empty, got %#v", response.TeamMembers)
 	}
 	if response.Role != "staff" {
 		t.Fatalf("expected staff role, got %q", response.Role)
@@ -128,6 +160,7 @@ func TestTeamMemberResponsesSkipsInvalidPlayers(t *testing.T) {
 		{ID: "7H9K2Q", Nickname: "Alice", AuthToken: "secret", QRCodeToken: "qr-secret"},
 		{ID: "", Nickname: "Missing ID"},
 		{ID: "2QK9H7"},
+		{ID: "staff-token-1", Nickname: "Staff", Role: "staff"},
 	})
 
 	if len(members) != 1 {

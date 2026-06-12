@@ -7,7 +7,7 @@ type Player struct {
 	AuthToken        string   `bson:"auth_token"`
 	QRCodeToken      string   `bson:"qrcode_token"`
 	Nickname         string   `bson:"nickname"`
-	TeamID           string   `bson:"team_id"`
+	TeamID           string   `bson:"team_id,omitempty"`
 	AvatarURL        string   `bson:"avatar_url,omitempty"`
 	Role             string   `bson:"role,omitempty"`
 	DefaultSitoneIDs []string `bson:"default_sitone_ids,omitempty"`

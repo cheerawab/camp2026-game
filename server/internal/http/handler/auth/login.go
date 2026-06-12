@@ -59,15 +59,20 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "login failed"))
 		return
 	}
-	if player.ID == "" || player.Nickname == "" || player.TeamID == "" {
+	teamID := playerTeamID(player)
+	if player.ID == "" || player.Nickname == "" || (player.Role != authctx.PlayerRoleStaff && teamID == "") {
 		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "login failed"))
 		return
 	}
 
-	team, err := h.findTeam(r.Context(), player.TeamID)
-	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "login failed"))
-		return
+	var team *mongomodel.Team
+	if teamID != "" {
+		foundTeam, err := h.findTeam(r.Context(), teamID)
+		if err != nil {
+			httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "login failed"))
+			return
+		}
+		team = &foundTeam
 	}
 
 	openPower, err := h.sumOpenPower(r.Context(), player.ID)
@@ -78,6 +83,13 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
 	setAuthCookie(w, body.Token)
 	httpx.WriteJSON(w, http.StatusOK, loginResponse(player, team, openPower))
+}
+
+func playerTeamID(player mongomodel.Player) string {
+	if player.Role == authctx.PlayerRoleStaff {
+		return ""
+	}
+	return player.TeamID
 }
 
 func setAuthCookie(w http.ResponseWriter, token string) {
@@ -141,18 +153,21 @@ func openPowerTotalPipeline(playerID string) mongo.Pipeline {
 	}
 }
 
-func loginResponse(player mongomodel.Player, team mongomodel.Team, openPower int) apimodel.AuthLoginResponse {
-	return apimodel.AuthLoginResponse{
+func loginResponse(player mongomodel.Player, team *mongomodel.Team, openPower int) apimodel.AuthLoginResponse {
+	response := apimodel.AuthLoginResponse{
 		Player: apimodel.AuthPlayerSummary{
 			PlayerID:  player.ID,
 			Nickname:  player.Nickname,
 			OpenPower: openPower,
 			AvatarURL: player.AvatarURL,
 			Role:      player.Role,
-			Team: apimodel.AuthTeamSummary{
-				TeamID: team.ID,
-				Name:   team.Name,
-			},
 		},
 	}
+	if team != nil {
+		response.Player.Team = &apimodel.AuthTeamSummary{
+			TeamID: team.ID,
+			Name:   team.Name,
+		}
+	}
+	return response
 }

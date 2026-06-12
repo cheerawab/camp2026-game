@@ -42,12 +42,11 @@ func run(ctx context.Context) error {
 	if err := upsertMany(ctx, db.Collection(mongomodel.TeamsCollection), []any{
 		mongomodel.Team{ID: "team-a", Name: "松鼠小隊"},
 		mongomodel.Team{ID: "team-b", Name: "山羌小隊"},
-		mongomodel.Team{ID: "team-staff", Name: "工作人員"},
 	}); err != nil {
 		return err
 	}
 
-	if err := upsertMany(ctx, db.Collection(mongomodel.PlayersCollection), []any{
+	if err := upsertPlayers(ctx, db.Collection(mongomodel.PlayersCollection), []mongomodel.Player{
 		mongomodel.Player{
 			ID:          "player-a",
 			AuthToken:   "auth_token_123456",
@@ -66,7 +65,6 @@ func run(ctx context.Context) error {
 			ID:        "staff-a",
 			AuthToken: "staff_token_2026",
 			Nickname:  "工作人員",
-			TeamID:    "team-staff",
 			Role:      "staff",
 		},
 	}); err != nil {
@@ -138,6 +136,47 @@ func run(ctx context.Context) error {
 	fmt.Println("player-a token: auth_token_123456")
 	fmt.Println("player-b token: auth_token_abcdef")
 	fmt.Println("staff token: staff_token_2026")
+	return nil
+}
+
+func upsertPlayers(ctx context.Context, collection *mongo.Collection, players []mongomodel.Player) error {
+	for _, player := range players {
+		set := bson.M{
+			"auth_token": player.AuthToken,
+			"nickname":   player.Nickname,
+		}
+		unset := bson.M{}
+		if player.QRCodeToken == "" {
+			unset["qrcode_token"] = ""
+		} else {
+			set["qrcode_token"] = player.QRCodeToken
+		}
+		if player.TeamID == "" {
+			unset["team_id"] = ""
+		} else {
+			set["team_id"] = player.TeamID
+		}
+		if player.Role == "" {
+			unset["role"] = ""
+		} else {
+			set["role"] = player.Role
+		}
+
+		update := bson.M{"$set": set}
+		if len(unset) > 0 {
+			update["$unset"] = unset
+		}
+
+		_, err := collection.UpdateOne(
+			ctx,
+			bson.M{"_id": player.ID},
+			update,
+			options.UpdateOne().SetUpsert(true),
+		)
+		if err != nil {
+			return fmt.Errorf("upsert %s/%s: %w", collection.Name(), player.ID, err)
+		}
+	}
 	return nil
 }
 

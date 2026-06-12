@@ -152,7 +152,6 @@ func buildImportPlan(reader io.Reader, teamSize int) (importPlan, error) {
 			ID:        row.StaffToken,
 			AuthToken: row.StaffToken,
 			Nickname:  row.Nickname,
-			TeamID:    team.ID,
 			AvatarURL: avatarURL,
 			Role:      playerRoleStaff,
 		}
@@ -311,10 +310,14 @@ func upsertPlayers(ctx context.Context, collection *mongo.Collection, players []
 		set := bson.M{
 			"auth_token": player.AuthToken,
 			"nickname":   player.Nickname,
-			"team_id":    player.TeamID,
 			"avatar_url": player.AvatarURL,
 		}
 		unset := bson.M{}
+		if player.TeamID == "" {
+			unset["team_id"] = ""
+		} else {
+			set["team_id"] = player.TeamID
+		}
 		if player.QRCodeToken == "" {
 			unset["qrcode_token"] = ""
 		} else {

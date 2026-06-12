@@ -56,7 +56,7 @@ export function ProfileQrPanel() {
             </h2>
             <p className="text-muted-foreground">
               {profile
-                ? `${profile.team.name} · 開源力 ${profile.openPower}`
+                ? `${profile.team?.name ?? (profile.role === "staff" ? "工作人員" : "未分組")} · 開源力 ${profile.openPower}`
                 : "讀取玩家資料"}
             </p>
           </div>
