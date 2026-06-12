@@ -77,10 +77,10 @@ export function LoginPanel({ initialToken }: LoginPanelProps) {
   const hasTokenFromLink = autoToken.length > 0
   const hasAttempted = hasTried || hasTokenFromLink
   const isError =
-    hasAttempted && (code.trim().length < 16 || loginMutation.isError)
+    hasAttempted && (code.trim().length === 0 || loginMutation.isError)
 
   useEffect(() => {
-    if (autoToken.length < 16 || autoSubmittedTokenRef.current === autoToken) {
+    if (autoToken.length === 0 || autoSubmittedTokenRef.current === autoToken) {
       return
     }
     autoSubmittedTokenRef.current = autoToken
@@ -91,7 +91,7 @@ export function LoginPanel({ initialToken }: LoginPanelProps) {
     e.preventDefault()
     setHasTried(true)
     const token = code.trim()
-    if (token.length < 16) return
+    if (token.length === 0) return
     loginMutation.mutate(token)
   }
 
@@ -142,7 +142,7 @@ export function LoginPanel({ initialToken }: LoginPanelProps) {
             id="camp-login-code"
             value={code}
             onChange={(e) => setCode(e.target.value)}
-            placeholder="例如 auth_token_123456"
+            placeholder="例如 token-1"
             autoComplete="one-time-code"
             inputMode="text"
             aria-describedby={isError ? "login-error" : undefined}
@@ -157,7 +157,7 @@ export function LoginPanel({ initialToken }: LoginPanelProps) {
             >
               {loginMutation.isError
                 ? "找不到這組登入資訊，請確認 Token 或詢問隊輔。"
-                : "登入 Token 至少需要 16 個字元。"}
+                : "請輸入登入 Token。"}
             </p>
           )}
         </div>
