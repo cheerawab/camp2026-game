@@ -170,8 +170,14 @@ export function HomeBasePage() {
               </span>
               <strong className="text-[23px] font-black">{openPower}</strong>
             </div>
-            <Button variant="destructive" onClick={logoutAction}>
-              <LogOut />
+            <Button
+              type="button"
+              size="icon"
+              variant="destructive"
+              aria-label="登出"
+              onClick={() => void logoutAction()}
+            >
+              <LogOut aria-hidden />
             </Button>
           </div>
         </header>
