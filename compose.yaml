@@ -56,10 +56,8 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME:-camp2026}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-camp2026}
       MONGO_INITDB_DATABASE: ${MONGODB_DATABASE:-camp2026}
-    expose:
-      - "27017"
     ports:
-      - "${MONGODB_PORT:-27017}:27017"
+      - "${MONGODB_PORT:-27017}"
     volumes:
       - mongodb-data:/data/db
     healthcheck:
