@@ -1,11 +1,13 @@
 import { useQuery } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { useEffect } from "react"
-
+import { LogOut } from "lucide-react"
 import { AppError } from "@/shared/api/error"
 import { gameApi } from "@/shared/api/game"
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar"
 import { GamePageShell } from "@/shared/ui/game-page-shell"
+import { Button } from "@/shared/ui/button"
+import { apiClient } from "@/shared/api/client"
 
 const ACTIONS: {
   label: string
@@ -117,6 +119,10 @@ export function HomeBasePage() {
   const teamMembers = player?.teamMembers ?? []
   const actions =
     player?.role === "staff" ? [STAFF_ACTION, ...ACTIONS] : ACTIONS
+  const logoutAction = async () => {
+    await apiClient.post("/api/auth/logout")
+    navigate({ to: "/login", replace: true })
+  }
 
   return (
     <GamePageShell ariaLabel="營隊基地首頁" contentClassName="gap-3">
@@ -154,14 +160,25 @@ export function HomeBasePage() {
               {isPending ? "同步玩家資料中" : teamName}
             </span>
           </div>
-          <div
-            className="bg-ink text-primary-foreground min-w-[86px] rounded-[18px] border-2 border-transparent px-[9px] py-2 text-center"
-            aria-label={`開源力 ${openPower}`}
-          >
-            <span className="text-primary-foreground/70 block text-[11px] font-black">
-              開源力
-            </span>
-            <strong className="text-[23px] font-black">{openPower}</strong>
+          <div className="flex gap-x-3">
+            <div
+              className="bg-ink text-primary-foreground min-w-[86px] rounded-[18px] border-2 border-transparent px-[9px] py-2 text-center"
+              aria-label={`開源力 ${openPower}`}
+            >
+              <span className="text-primary-foreground/70 block text-[11px] font-black">
+                開源力
+              </span>
+              <strong className="text-[23px] font-black">{openPower}</strong>
+            </div>
+            <Button
+              type="button"
+              size="icon"
+              variant="destructive"
+              aria-label="登出"
+              onClick={() => void logoutAction()}
+            >
+              <LogOut aria-hidden />
+            </Button>
           </div>
         </header>
 
