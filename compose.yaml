@@ -19,6 +19,8 @@ services:
     restart: unless-stopped
     depends_on:
       - nginx
+    ports:
+      - "9113"
     networks:
       - moniting
 
@@ -98,6 +100,8 @@ services:
     restart: unless-stopped
     environment:
       MONGODB_URI: mongodb://camp2026:camp2026@mongodb:27017
+    ports:
+      - "9216"
     command:
       - --compatible-mode
     networks:
