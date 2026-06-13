@@ -12,6 +12,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -143,7 +144,7 @@ func TestMatchFlowE2E(t *testing.T) {
 		}
 	}
 
-	assertDatabaseState(t, ctx, db, created.MatchID)
+	assertDatabaseState(t, ctx, db, created.MatchID, completed)
 }
 
 func startMongo(t *testing.T, ctx context.Context) (*mongo.Client, *mongo.Database) {
@@ -473,7 +474,7 @@ func assertShopPurchaseFlow(t *testing.T, ctx context.Context, db *mongo.Databas
 	}
 }
 
-func assertDatabaseState(t *testing.T, ctx context.Context, db *mongo.Database, matchID string) {
+func assertDatabaseState(t *testing.T, ctx context.Context, db *mongo.Database, matchID string, completed matchState) {
 	t.Helper()
 
 	var match mongomodel.Match
@@ -492,8 +493,39 @@ func assertDatabaseState(t *testing.T, ctx context.Context, db *mongo.Database, 
 		t.Fatalf("expected 20 match answers, got %d", answerCount)
 	}
 
+	winner := match.Players[0]
+	topCount := 1
+	for _, player := range match.Players[1:] {
+		switch {
+		case player.Score > winner.Score:
+			winner = player
+			topCount = 1
+		case player.Score == winner.Score:
+			topCount++
+		}
+	}
+	if topCount != 1 {
+		t.Fatalf("expected completed match to have a clear winner, got %#v", match.Players)
+	}
+
+	for _, player := range completed.Players {
+		if player.OpenPowerReward == nil {
+			t.Fatalf("expected completed player reward field, got %#v", player)
+		}
+		if player.PlayerID == winner.PlayerID {
+			if *player.OpenPowerReward <= 0 {
+				t.Fatalf("expected winner positive open power reward, got %#v", player)
+			}
+			continue
+		}
+		if *player.OpenPowerReward != 0 {
+			t.Fatalf("expected loser open power reward 0, got %#v", player)
+		}
+	}
+
+	sourcePattern := "^quiz_match:" + regexp.QuoteMeta(matchID) + ":player:"
 	cursor, err := db.Collection(mongomodel.OpenPowerRecordsCollection).Find(ctx, bson.M{
-		"source": matchID,
+		"source": bson.M{"$regex": sourcePattern},
 		"reason": "quiz_match_completed",
 	})
 	if err != nil {
@@ -507,13 +539,18 @@ func assertDatabaseState(t *testing.T, ctx context.Context, db *mongo.Database, 
 	if err := cursor.All(ctx, &records); err != nil {
 		t.Fatalf("decode open power records: %v", err)
 	}
-	if len(records) != 2 {
-		t.Fatalf("expected 2 open power records, got %#v", records)
+	if len(records) != 1 {
+		t.Fatalf("expected 1 open power record, got %#v", records)
 	}
-	for _, record := range records {
-		if record.Amount <= 0 {
-			t.Fatalf("expected positive open power amount, got %#v", record)
-		}
+	record := records[0]
+	if record.PlayerID != winner.PlayerID {
+		t.Fatalf("expected reward record for winner %q, got %#v", winner.PlayerID, record)
+	}
+	if record.Source != "quiz_match:"+matchID+":player:"+winner.PlayerID {
+		t.Fatalf("unexpected reward source: %#v", record)
+	}
+	if record.Amount <= 0 {
+		t.Fatalf("expected positive open power amount, got %#v", record)
 	}
 }
 
@@ -542,6 +579,7 @@ type matchPlayer struct {
 	Ready                   bool   `json:"ready"`
 	AnsweredCurrentQuestion bool   `json:"answeredCurrentQuestion"`
 	Score                   *int   `json:"score"`
+	OpenPowerReward         *int   `json:"openPowerReward"`
 }
 
 type shopItemList struct {

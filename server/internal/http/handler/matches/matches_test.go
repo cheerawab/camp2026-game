@@ -60,8 +60,17 @@ func TestMatchOpenPowerRewardRequiresClearWinner(t *testing.T) {
 	if got := matchOpenPowerReward(match, match.Players[0]); got != 54 {
 		t.Fatalf("expected winner reward 54, got %d", got)
 	}
-	if got := matchOpenPowerReward(match, match.Players[1]); got != 53 {
-		t.Fatalf("expected non-tied opponent reward 53, got %d", got)
+	if got := matchOpenPowerReward(match, match.Players[1]); got != 0 {
+		t.Fatalf("expected loser reward 0, got %d", got)
+	}
+
+	match.Players[0].Score = 320
+	match.Players[1].Score = 340
+	if got := matchOpenPowerReward(match, match.Players[0]); got != 0 {
+		t.Fatalf("expected lower-scoring player reward 0, got %d", got)
+	}
+	if got := matchOpenPowerReward(match, match.Players[1]); got != 54 {
+		t.Fatalf("expected winner reward 54, got %d", got)
 	}
 }
 

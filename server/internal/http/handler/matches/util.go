@@ -131,29 +131,40 @@ func openPowerReward(score int) int {
 }
 
 func matchHasClearWinner(match mongomodel.Match) bool {
+	_, ok := clearMatchWinner(match)
+	return ok
+}
+
+func clearMatchWinner(match mongomodel.Match) (mongomodel.MatchPlayer, bool) {
 	if len(match.Players) < 2 {
-		return false
+		return mongomodel.MatchPlayer{}, false
 	}
 
-	topScore := match.Players[0].Score
+	winner := match.Players[0]
+	topScore := winner.Score
 	topCount := 1
 	for _, player := range match.Players[1:] {
 		switch {
 		case player.Score > topScore:
+			winner = player
 			topScore = player.Score
 			topCount = 1
 		case player.Score == topScore:
 			topCount++
 		}
 	}
-	return topCount == 1
+	if topCount != 1 {
+		return mongomodel.MatchPlayer{}, false
+	}
+	return winner, true
 }
 
 func matchOpenPowerReward(match mongomodel.Match, player mongomodel.MatchPlayer) int {
-	if !matchHasClearWinner(match) {
+	winner, ok := clearMatchWinner(match)
+	if !ok || winner.PlayerID != player.PlayerID {
 		return 0
 	}
-	return openPowerReward(player.Score)
+	return openPowerReward(winner.Score)
 }
 
 func matchRewardRecordID(matchID, playerID string) string {
