@@ -1,41 +1,13 @@
 services:
-  nginx:
-    image: nginx:1.27-alpine
-    restart: unless-stopped
-    volumes:
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-    depends_on:
-      frontend:
-        condition: service_started
-      backend:
-        condition: service_healthy
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "wget",
-          "--quiet",
-          "--tries=1",
-          "--spider",
-          "http://127.0.0.1/api/healthz",
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
-      target: ssr
-    image: camp2026-game-frontend:production
+    image: camp2026-frontend:production
     restart: unless-stopped
-    environment:
-      APP_ORIGIN: ${APP_ORIGIN:-http://nginx}
-      NODE_ENV: production
-    expose:
-      - "3000"
+    ports:
+      - "80"
+    depends_on:
+      - backend
 
   backend:
     build:
