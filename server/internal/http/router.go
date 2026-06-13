@@ -23,6 +23,7 @@ import (
 	staffhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/staff"
 	systemhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/system"
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type Dependencies struct {
@@ -59,6 +60,8 @@ func NewRouter(dep Dependencies) http.Handler {
 	r.MethodNotAllowed(func(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteProblem(w, r, httpx.NewError(http.StatusMethodNotAllowed, "method not allowed"))
 	})
+
+	mux.Handle("/metrics", promhttp.Handler())
 
 	return r
 }
