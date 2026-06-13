@@ -61,7 +61,7 @@ func NewRouter(dep Dependencies) http.Handler {
 		httpx.WriteProblem(w, r, httpx.NewError(http.StatusMethodNotAllowed, "method not allowed"))
 	})
 
-	mux.Handle("/metrics", promhttp.Handler())
+	r.Handle("/metrics", promhttp.Handler())
 
 	return r
 }
