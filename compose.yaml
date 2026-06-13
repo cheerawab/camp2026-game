@@ -1,5 +1,5 @@
 services:
-  frontend:
+  nginx:
     build:
       context: ./frontend
     image: camp2026-frontend:production
