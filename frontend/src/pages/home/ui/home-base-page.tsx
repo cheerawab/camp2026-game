@@ -121,7 +121,7 @@ export function HomeBasePage() {
     player?.role === "staff" ? [STAFF_ACTION, ...ACTIONS] : ACTIONS
   const logoutAction = async () => {
     await apiClient.post("/api/auth/logout")
-    navigate({ to: "/login" })
+    navigate({ to: "/login", replace: true })
   }
 
   return (
