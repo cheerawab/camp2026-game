@@ -92,6 +92,8 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+    networks:
+      - dokploy-network
 
   mongodb-exporter:
     image: percona/mongodb_exporter:0.51.0
