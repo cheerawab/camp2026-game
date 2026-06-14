@@ -10,6 +10,7 @@ import (
 	chimw "github.com/go-chi/chi/v5/middleware"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sitcon-tw/camp2026-game/internal/content"
 	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
 	authhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/auth"
@@ -23,7 +24,6 @@ import (
 	staffhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/staff"
 	systemhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/system"
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type Dependencies struct {
