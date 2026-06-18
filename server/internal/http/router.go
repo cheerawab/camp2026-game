@@ -10,6 +10,7 @@ import (
 	chimw "github.com/go-chi/chi/v5/middleware"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sitcon-tw/camp2026-game/internal/content"
 	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
 	authhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/auth"
@@ -59,6 +60,8 @@ func NewRouter(dep Dependencies) http.Handler {
 	r.MethodNotAllowed(func(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteProblem(w, r, httpx.NewError(http.StatusMethodNotAllowed, "method not allowed"))
 	})
+
+	r.Handle("/metrics", promhttp.Handler())
 
 	return r
 }

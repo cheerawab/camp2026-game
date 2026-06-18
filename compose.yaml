@@ -8,6 +8,21 @@ services:
       - "80"
     depends_on:
       - backend
+    networks:
+      - moniting
+      - dokploy-network
+
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:1.5.1
+    command:
+      - -nginx.scrape-uri=http://nginx:80/nginx_status
+    restart: unless-stopped
+    depends_on:
+      - nginx
+    ports:
+      - "9113"
+    networks:
+      - moniting
 
   backend:
     build:
@@ -48,6 +63,9 @@ services:
       timeout: 5s
       retries: 5
       start_period: 15s
+    networks:
+      - moniting
+      - dokploy-network
 
   mongodb:
     image: mongo:7.0
@@ -56,10 +74,8 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME:-camp2026}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-camp2026}
       MONGO_INITDB_DATABASE: ${MONGODB_DATABASE:-camp2026}
-    expose:
-      - "27017"
     ports:
-      - "${MONGODB_PORT:-27017}:27017"
+      - "${MONGODB_PORT:-27017}"
     volumes:
       - mongodb-data:/data/db
     healthcheck:
@@ -76,6 +92,26 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+    networks:
+      - moniting
+
+  mongodb-exporter:
+    image: percona/mongodb_exporter:0.51.0
+    restart: unless-stopped
+    environment:
+      MONGODB_URI: mongodb://${MONGO_USERNAME:-camp2026}:${MONGO_PASSWORD:-camp2026}@mongodb:27017/admin?authSource=admin
+    ports:
+      - "9216"
+    command:
+      - "--compatible-mode"
+    networks:
+      - moniting
+
+networks:
+  moniting:
+    external: true
+  dokploy-network:
+    external: true
 
 volumes:
-  mongodb-data:
+  mongodb-data: {}
