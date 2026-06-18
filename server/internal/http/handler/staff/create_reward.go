@@ -90,19 +90,19 @@ func (h *Handler) CreateReward(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "reward failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("reward failed", "reward_player_lookup_failed", err))
 		return
 	}
 
 	team, err := h.findTeam(r.Context(), recipient.TeamID)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "reward failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("reward failed", "reward_team_lookup_failed", err))
 		return
 	}
 
 	rewardID, err := h.createReward(r.Context(), staffPlayer.ID, recipient.ID, reward, body.Quantity)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "reward failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("reward failed", "reward_create_failed", err))
 		return
 	}
 

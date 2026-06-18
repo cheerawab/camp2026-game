@@ -39,13 +39,13 @@ func (h *Handler) ListSitones(w http.ResponseWriter, r *http.Request) {
 
 	records, err := h.findPlayerSitones(r.Context(), player.ID)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "sitones unavailable"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("sitones unavailable", "me_sitones_lookup_failed", err))
 		return
 	}
 
 	sitones, err := mapPlayerSitones(h.content, records)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "sitone inventory is inconsistent"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("sitone inventory is inconsistent", "me_sitones_response_failed", err))
 		return
 	}
 

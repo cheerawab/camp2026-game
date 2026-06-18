@@ -32,17 +32,17 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	matchID, err := newID("match")
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match creation failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("match creation failed", "match_id_create_failed", err))
 		return
 	}
 	code, err := h.uniqueMatchCode(r.Context())
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match creation failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("match creation failed", "match_code_create_failed", err))
 		return
 	}
 	sitoneIDs, err := h.defaultSitoneLoadout(r.Context(), player)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match creation failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("match creation failed", "match_default_loadout_failed", err))
 		return
 	}
 
@@ -65,7 +65,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if _, err := h.db.Collection(mongomodel.MatchesCollection).InsertOne(r.Context(), match); err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match creation failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("match creation failed", "match_insert_failed", err))
 		return
 	}
 

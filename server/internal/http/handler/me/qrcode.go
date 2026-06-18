@@ -1,6 +1,7 @@
 package me
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
@@ -22,7 +23,7 @@ func (h *Handler) QRCode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if player.QRCodeToken == "" {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "qrcode is unavailable"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("qrcode is unavailable", "me_qrcode_missing", errors.New("player qrcode token is empty")))
 		return
 	}
 

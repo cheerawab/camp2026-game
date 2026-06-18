@@ -32,13 +32,13 @@ func (h *Handler) ListRecipes(w http.ResponseWriter, r *http.Request) {
 
 	inventory, err := h.playerInventory(r.Context(), player.ID)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "fusion recipes unavailable"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("fusion recipes unavailable", "fusion_recipes_inventory_lookup_failed", err))
 		return
 	}
 
 	recipes, err := h.recipeResponses(h.content.ListFusionRecipes(), inventory)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "fusion recipes are inconsistent"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("fusion recipes are inconsistent", "fusion_recipes_response_failed", err))
 		return
 	}
 	httpx.WriteJSON(w, http.StatusOK, RecipeListResponse{Recipes: recipes})

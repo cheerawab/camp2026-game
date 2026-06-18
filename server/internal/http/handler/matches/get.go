@@ -39,7 +39,7 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 
 	match, events, err := h.advanceMatch(r.Context(), match, time.Now())
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match state unavailable"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("match state unavailable", "match_state_advance_failed", err))
 		return
 	}
 	for _, event := range events {

@@ -50,18 +50,18 @@ func (h *Handler) Resolve(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "qr resolve failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("qr resolve failed", "qr_player_lookup_failed", err))
 		return
 	}
 
 	team, err := h.findTeam(r.Context(), player.TeamID)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "qr resolve failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("qr resolve failed", "qr_team_lookup_failed", err))
 		return
 	}
 	openPower, err := h.sumOpenPower(r.Context(), player.ID)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "qr resolve failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("qr resolve failed", "qr_open_power_sum_failed", err))
 		return
 	}
 

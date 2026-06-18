@@ -1,6 +1,7 @@
 package matches
 
 import (
+	"errors"
 	"math/rand"
 	"net/http"
 	"time"
@@ -48,7 +49,7 @@ func (h *Handler) Ready(w http.ResponseWriter, r *http.Request) {
 	if len(match.Players[idx].SitoneIDs) == 0 {
 		sitoneIDs, err := h.defaultSitoneLoadout(r.Context(), player)
 		if err != nil {
-			httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "ready failed"))
+			httpx.WriteProblem(w, r, httpx.InternalServerError("ready failed", "match_ready_default_loadout_failed", err))
 			return
 		}
 		match.Players[idx].SitoneIDs = sitoneIDs
@@ -63,7 +64,7 @@ func (h *Handler) Ready(w http.ResponseWriter, r *http.Request) {
 	if allPlayersReady(match) {
 		questionIDs, err := h.pickQuestionIDs()
 		if err != nil {
-			httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "match start failed"))
+			httpx.WriteProblem(w, r, httpx.InternalServerError("match start failed", "match_ready_pick_questions_failed", err))
 			return
 		}
 		now := time.Now()
@@ -78,7 +79,7 @@ func (h *Handler) Ready(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.saveMatch(r.Context(), match); err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "ready failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("ready failed", "match_ready_save_failed", err))
 		return
 	}
 
@@ -96,7 +97,7 @@ func (h *Handler) Ready(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) pickQuestionIDs() ([]string, error) {
 	questions := h.content.ListQuizQuestions()
 	if len(questions) < matchQuestionCount {
-		return nil, httpx.NewError(http.StatusInternalServerError, "quiz questions are unavailable")
+		return nil, httpx.InternalServerError("quiz questions are unavailable", "match_questions_insufficient", errors.New("not enough quiz questions"))
 	}
 
 	rand.Shuffle(len(questions), func(i, j int) {

@@ -230,7 +230,7 @@ func (h *Handler) buildMatchState(ctx context.Context, match mongomodel.Match) (
 			currentQuestionID := match.QuestionIDs[match.CurrentQuestionIndex]
 			question, ok := h.content.GetQuizQuestion(currentQuestionID)
 			if !ok {
-				return MatchStateResponse{}, httpx.NewError(http.StatusInternalServerError, "match question is unavailable")
+				return MatchStateResponse{}, httpx.InternalServerError("match question is unavailable", "match_state_current_question_missing", errors.New("current quiz question not found in content store"))
 			}
 			currentQuestion := questionResponse(question)
 			response.CurrentQuestion = &currentQuestion
@@ -303,7 +303,7 @@ func (h *Handler) matchQuestionResult(
 ) (MatchQuestionResult, error) {
 	question, ok := h.content.GetQuizQuestion(questionID)
 	if !ok {
-		return MatchQuestionResult{}, httpx.NewError(http.StatusInternalServerError, "match question is unavailable")
+		return MatchQuestionResult{}, httpx.InternalServerError("match question is unavailable", "match_results_question_missing", errors.New("result quiz question not found in content store"))
 	}
 
 	result := MatchQuestionResult{

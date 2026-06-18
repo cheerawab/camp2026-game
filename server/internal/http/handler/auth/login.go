@@ -56,12 +56,12 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "login failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("login failed", "login_player_lookup_failed", err))
 		return
 	}
 	teamID := playerTeamID(player)
 	if player.ID == "" || player.Nickname == "" || (player.Role != authctx.PlayerRoleStaff && teamID == "") {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "login failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("login failed", "login_player_invalid", errors.New("player record is missing required login fields")))
 		return
 	}
 
@@ -69,7 +69,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	if teamID != "" {
 		foundTeam, err := h.findTeam(r.Context(), teamID)
 		if err != nil {
-			httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "login failed"))
+			httpx.WriteProblem(w, r, httpx.InternalServerError("login failed", "login_team_lookup_failed", err))
 			return
 		}
 		team = &foundTeam
@@ -77,7 +77,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
 	openPower, err := h.sumOpenPower(r.Context(), player.ID)
 	if err != nil {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "login failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("login failed", "login_open_power_sum_failed", err))
 		return
 	}
 

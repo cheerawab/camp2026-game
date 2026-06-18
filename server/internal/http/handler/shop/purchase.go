@@ -66,7 +66,7 @@ func (h *Handler) Purchase(w http.ResponseWriter, r *http.Request) {
 			httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "insufficient open power"))
 			return
 		}
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusInternalServerError, "purchase failed"))
+		httpx.WriteProblem(w, r, httpx.InternalServerError("purchase failed", "shop_purchase_failed", err))
 		return
 	}
 
