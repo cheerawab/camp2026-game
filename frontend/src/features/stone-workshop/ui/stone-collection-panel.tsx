@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { useMemo, useState } from "react"
 
+import basicStoneSkin from "@/assets/stones/basic-stone.png"
 import { gameApi, type PlayerSitone, type Sitone } from "@/shared/api/game"
 import {
   rarityLabel,
@@ -372,14 +373,20 @@ function StoneShape({
       ].join(" ")}
       aria-hidden
     >
-      <span className="border-ink/30 bg-card/45 absolute top-2 left-2 h-3.5 w-6 rotate-[-18deg] rounded-[12px_8px_10px_7px] border" />
-      <span className="border-ink/30 bg-card/45 absolute right-2 bottom-2 h-3 w-[18px] rotate-[14deg] rounded-[7px_10px_8px_12px] border" />
+      <img
+        src={basicStoneSkin}
+        alt=""
+        className={[
+          "relative z-0 h-[46px] w-[46px] [image-rendering:pixelated]",
+          owned ? "" : "opacity-30 brightness-0",
+        ].join(" ")}
+      />
       {owned ? (
-        <strong className="border-ink bg-card relative z-10 grid size-[26px] place-items-center rounded-full border-2 text-sm font-extrabold">
+        <strong className="border-ink bg-card absolute -right-1.5 -bottom-1.5 z-10 grid size-[24px] place-items-center rounded-full border-2 text-xs font-extrabold">
           {count}
         </strong>
       ) : (
-        <span className="border-ink bg-card relative z-10 grid size-[26px] place-items-center rounded-full border-2 text-sm font-extrabold">
+        <span className="border-ink bg-card absolute -right-1.5 -bottom-1.5 z-10 grid size-[24px] place-items-center rounded-full border-2 text-xs font-extrabold">
           ?
         </span>
       )}
