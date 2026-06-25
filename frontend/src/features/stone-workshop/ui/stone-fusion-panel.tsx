@@ -3,6 +3,7 @@ import { useMemo, useState } from "react"
 import { Check, Hammer, X } from "lucide-react"
 import { toast } from "sonner"
 
+import basicStoneSkin from "@/assets/stones/basic-stone.png"
 import { gameApi, type FusionRecipe } from "@/shared/api/game"
 import {
   rarityLabel,
@@ -42,11 +43,19 @@ function ComponentPill({
     <div className="bg-surface-raised border-border grid grid-cols-[36px_1fr_auto] items-center gap-2 rounded-[16px] border-2 p-2">
       <span
         className={[
-          "border-ink size-9 rounded-[12px_16px_10px_14px] border-2",
+          "border-ink grid size-9 place-items-center rounded-[12px_16px_10px_14px] border-2",
           componentTone(component),
         ].join(" ")}
         aria-hidden
-      />
+      >
+        {component.kind === "sitone" ? (
+          <img
+            src={basicStoneSkin}
+            alt=""
+            className="size-7 [image-rendering:pixelated]"
+          />
+        ) : null}
+      </span>
       <span className="min-w-0">
         <strong className="block truncate text-sm font-extrabold">
           {component.name}
@@ -69,11 +78,19 @@ function ComponentPreview({
     <span className="border-border bg-surface-raised inline-flex min-w-0 items-center gap-1.5 rounded-full border px-2 py-1 text-xs font-bold">
       <span
         className={cn(
-          "border-ink size-4 shrink-0 rounded-[6px] border",
+          "border-ink grid size-4 shrink-0 place-items-center rounded-[6px] border",
           componentTone(component),
         )}
         aria-hidden
-      />
+      >
+        {component.kind === "sitone" ? (
+          <img
+            src={basicStoneSkin}
+            alt=""
+            className="size-3.5 [image-rendering:pixelated]"
+          />
+        ) : null}
+      </span>
       <span className="truncate">{component.name}</span>
       <span className="shrink-0">x{component.quantity}</span>
     </span>
@@ -133,7 +150,15 @@ function RecipeListItem({
           ].join(" ")}
           aria-hidden
         >
-          <Hammer className="size-7" />
+          {output?.kind === "sitone" ? (
+            <img
+              src={basicStoneSkin}
+              alt=""
+              className="size-12 [image-rendering:pixelated]"
+            />
+          ) : (
+            <Hammer className="size-7" />
+          )}
         </div>
         <div className="min-w-0">
           <h2 className="truncate text-xl leading-tight font-extrabold tracking-normal">
@@ -221,7 +246,15 @@ function FusionConfirmDialog({
               ].join(" ")}
               aria-hidden
             >
-              <Hammer className="size-8" />
+              {recipe.outputs[0]?.kind === "sitone" ? (
+                <img
+                  src={basicStoneSkin}
+                  alt=""
+                  className="size-14 [image-rendering:pixelated]"
+                />
+              ) : (
+                <Hammer className="size-8" />
+              )}
             </div>
             <div className="min-w-0">
               <h3 className="text-xl leading-tight font-extrabold">

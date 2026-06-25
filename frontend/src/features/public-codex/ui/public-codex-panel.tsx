@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 
+import basicStoneSkin from "@/assets/stones/basic-stone.png"
 import { gameApi, type Item, type Sitone } from "@/shared/api/game"
 import {
   itemTypeClass,
@@ -118,12 +119,21 @@ export function PublicCodexPanel() {
                 <div
                   className={`${meta.toneClass} border-ink mb-2 flex h-[86px] items-center justify-center rounded-[20px] border-2`}
                 >
-                  <span
-                    className="text-card/90 text-[34px] drop-shadow-[0_2px_0_rgba(23,35,58,0.3)]"
-                    aria-hidden
-                  >
-                    {meta.symbol}
-                  </span>
+                  {entry.kind === "stones" ? (
+                    <img
+                      src={basicStoneSkin}
+                      alt=""
+                      className="size-16 [image-rendering:pixelated]"
+                      aria-hidden
+                    />
+                  ) : (
+                    <span
+                      className="text-card/90 text-[34px] drop-shadow-[0_2px_0_rgba(23,35,58,0.3)]"
+                      aria-hidden
+                    >
+                      {meta.symbol}
+                    </span>
+                  )}
                 </div>
                 <div className="mt-[9px] mb-1.5 flex flex-wrap gap-1">
                   <span className="border-border bg-surface-raised text-muted-foreground rounded-full border px-[7px] py-[3px] text-[11px] leading-none font-black">
