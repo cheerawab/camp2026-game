@@ -91,6 +91,8 @@ func mapPlayerItems(store *content.Store, records []mongomodel.PlayerItem) ([]Pl
 				Type:        item.Type,
 				Rarity:      item.Rarity,
 				Description: item.Description,
+				IconPath:    item.IconPath,
+				Source:      item.Source,
 			},
 		})
 	}

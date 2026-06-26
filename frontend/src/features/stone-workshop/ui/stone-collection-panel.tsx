@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { useMemo, useState } from "react"
 
-import basicStoneSkin from "@/assets/stones/basic-stone.png"
 import { gameApi, type PlayerSitone, type Sitone } from "@/shared/api/game"
 import {
   rarityLabel,
@@ -10,6 +9,7 @@ import {
 } from "@/shared/lib/game-labels"
 import { Button } from "@/shared/ui/button"
 import { Card } from "@/shared/ui/card"
+import { cn } from "@/shared/utils"
 
 type StoneTypeKey = "all" | "explore" | "spark" | "echo" | "build" | "play"
 type CollectionMode = "owned" | "all"
@@ -29,6 +29,9 @@ type Stone = {
   count: number
   owned: boolean
   description: string
+  iconPath?: string
+  abilityName: string
+  abilityDescription: string
 }
 
 const stoneTypes: StoneType[] = [
@@ -86,6 +89,9 @@ function buildStones(catalog: Sitone[], ownedSitones: PlayerSitone[]): Stone[] {
       count,
       owned: count > 0,
       description: sitone.description,
+      iconPath: sitone.iconPath,
+      abilityName: sitone.abilityName,
+      abilityDescription: sitone.abilityDescription,
     }
   })
 }
@@ -322,7 +328,12 @@ function StoneCard({ stone, mode }: { stone: Stone; mode: CollectionMode }) {
       </div>
 
       <div className="border-border bg-surface-raised grid min-h-20 place-items-center rounded-[18px] border-2">
-        <StoneShape type={stone.type} owned={stone.owned} count={stone.count} />
+        <StoneShape
+          type={stone.type}
+          owned={stone.owned}
+          count={stone.count}
+          iconPath={stone.iconPath}
+        />
       </div>
 
       <div className="grid gap-1">
@@ -332,6 +343,15 @@ function StoneCard({ stone, mode }: { stone: Stone; mode: CollectionMode }) {
         <p className="text-muted-foreground text-xs leading-5 font-semibold">
           {stone.description}
         </p>
+      </div>
+
+      <div className="border-border bg-surface-raised rounded-[14px] border px-2 py-1.5">
+        <span className="block text-[12px] font-extrabold">
+          {stone.abilityName}
+        </span>
+        <span className="text-muted-foreground block text-[11px] leading-4 font-semibold">
+          {stone.abilityDescription}
+        </span>
       </div>
 
       <div className="border-border mt-auto grid gap-0.5 border-t-2 border-dashed pt-2">
@@ -356,39 +376,51 @@ function StoneShape({
   type,
   owned,
   count,
+  iconPath,
   className = "",
 }: {
   type: Exclude<StoneTypeKey, "all">
   owned: boolean
   count: number
+  iconPath?: string
   className?: string
 }) {
   const meta = typeMeta(type)
+  const badgeClassName = cn(
+    "border-ink bg-card z-20 grid size-[26px] place-items-center rounded-full border-2 text-sm font-extrabold",
+    iconPath ? "absolute right-[-7px] bottom-[-6px]" : "relative",
+  )
+
   return (
     <div
-      className={[
+      className={cn(
         "border-ink relative grid h-[58px] w-[62px] place-items-center rounded-[18px_24px_16px_26px] border-2",
         owned ? meta.bgClassName : "bg-muted",
         className,
-      ].join(" ")}
+      )}
       aria-hidden
     >
-      <img
-        src={basicStoneSkin}
-        alt=""
-        className={[
-          "relative z-0 h-[46px] w-[46px] [image-rendering:pixelated]",
-          owned ? "" : "opacity-30 brightness-0",
-        ].join(" ")}
-      />
-      {owned ? (
-        <strong className="border-ink bg-card absolute -right-1.5 -bottom-1.5 z-10 grid size-[24px] place-items-center rounded-full border-2 text-xs font-extrabold">
-          {count}
-        </strong>
+      {iconPath ? (
+        <img
+          src={iconPath}
+          alt=""
+          className={cn(
+            "relative z-10 size-[54px] object-contain drop-shadow-[0_2px_0_rgba(23,35,58,0.18)]",
+            !owned && "opacity-45 grayscale brightness-0",
+          )}
+          loading="lazy"
+          draggable={false}
+        />
       ) : (
-        <span className="border-ink bg-card absolute -right-1.5 -bottom-1.5 z-10 grid size-[24px] place-items-center rounded-full border-2 text-xs font-extrabold">
-          ?
-        </span>
+        <>
+          <span className="border-ink/30 bg-card/45 absolute top-2 left-2 h-3.5 w-6 rotate-[-18deg] rounded-[12px_8px_10px_7px] border" />
+          <span className="border-ink/30 bg-card/45 absolute right-2 bottom-2 h-3 w-[18px] rotate-[14deg] rounded-[7px_10px_8px_12px] border" />
+        </>
+      )}
+      {owned ? (
+        <strong className={badgeClassName}>{count}</strong>
+      ) : (
+        <span className={badgeClassName}>?</span>
       )}
     </div>
   )

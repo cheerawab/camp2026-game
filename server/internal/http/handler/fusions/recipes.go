@@ -168,6 +168,8 @@ func (h *Handler) componentResponses(components []content.FusionComponent) ([]Fu
 			response.Name = item.Name
 			response.Type = item.Type
 			response.Rarity = item.Rarity
+			response.IconPath = item.IconPath
+			response.Source = item.Source
 		case content.FusionKindSitone:
 			sitone, ok := h.content.GetSitone(component.ID)
 			if !ok {
@@ -176,6 +178,12 @@ func (h *Handler) componentResponses(components []content.FusionComponent) ([]Fu
 			response.Name = sitone.Name
 			response.Type = sitone.Type
 			response.Rarity = sitone.Rarity
+			response.IconPath = sitone.IconPath
+			response.AbilityName = sitone.AbilityName
+			response.AbilityKind = sitone.AbilityKind
+			response.AbilityValue = sitone.AbilityValue
+			response.AbilityCount = sitone.AbilityCount
+			response.AbilityDescription = sitone.AbilityDescription
 		default:
 			return nil, fmt.Errorf("unsupported component kind %q", component.Kind)
 		}

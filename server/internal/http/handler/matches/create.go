@@ -69,7 +69,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	state, err := h.buildMatchState(r.Context(), match)
+	state, err := h.buildMatchState(r.Context(), match, player.ID)
 	if err != nil {
 		httpx.WriteProblem(w, r, err)
 		return

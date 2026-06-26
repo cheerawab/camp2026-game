@@ -11,6 +11,8 @@ type MatchAnswer struct {
 	QuestionID    string    `bson:"question_id"`
 	Choice        string    `bson:"choice"`
 	Correct       bool      `bson:"correct"`
+	BaseScore     int       `bson:"base_score,omitempty"`
+	BonusScore    int       `bson:"bonus_score,omitempty"`
 	Score         int       `bson:"score"`
 	ElapsedMillis int64     `bson:"elapsed_ms"`
 	AnsweredAt    time.Time `bson:"answered_at"`

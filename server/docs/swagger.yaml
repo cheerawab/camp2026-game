@@ -55,6 +55,9 @@ definitions:
       description:
         example: 冒險背包，可用於小石合成。
         type: string
+      iconPath:
+        example: /game-icons/items/item_adventure_backpack.png
+        type: string
       id:
         example: item_adventure_backpack
         type: string
@@ -63,6 +66,9 @@ definitions:
         type: string
       rarity:
         example: common
+        type: string
+      source:
+        example: shop
         type: string
       type:
         example: material
@@ -77,8 +83,26 @@ definitions:
     type: object
   catalog.SitoneResponse:
     properties:
+      abilityCount:
+        example: 0
+        type: integer
+      abilityDescription:
+        example: 答對時分數提高 5%。
+        type: string
+      abilityKind:
+        example: answer_score_bonus
+        type: string
+      abilityName:
+        example: 穩定輸出
+        type: string
+      abilityValue:
+        example: 5
+        type: integer
       description:
         example: 修 bug、分享解法、完成技術任務。
+        type: string
+      iconPath:
+        example: /game-icons/stones/basic_blue.png
         type: string
       id:
         example: stone_engineering_base
@@ -114,6 +138,24 @@ definitions:
     type: object
   fusions.FusionComponentResponse:
     properties:
+      abilityCount:
+        example: 0
+        type: integer
+      abilityDescription:
+        example: 答對時分數提高 5%。
+        type: string
+      abilityKind:
+        example: answer_score_bonus
+        type: string
+      abilityName:
+        example: 穩定輸出
+        type: string
+      abilityValue:
+        example: 5
+        type: integer
+      iconPath:
+        example: /game-icons/stones/basic_blue.png
+        type: string
       id:
         example: item_adventure_backpack
         type: string
@@ -128,6 +170,9 @@ definitions:
         type: integer
       rarity:
         example: common
+        type: string
+      source:
+        example: shop
         type: string
       type:
         example: material
@@ -196,6 +241,8 @@ definitions:
     type: object
   httpx.ProblemDetails:
     properties:
+      code:
+        type: string
       detail:
         type: string
       errors:
@@ -203,6 +250,8 @@ definitions:
           $ref: '#/definitions/httpx.ErrorDetail'
         type: array
       instance:
+        type: string
+      requestId:
         type: string
       status:
         type: integer
@@ -380,6 +429,12 @@ definitions:
     properties:
       answeredAt:
         type: string
+      baseScore:
+        example: 150
+        type: integer
+      bonusScore:
+        example: 15
+        type: integer
       choice:
         example: A
         type: string
@@ -399,19 +454,70 @@ definitions:
         example: 150
         type: integer
     type: object
+  matches.MatchItemDropResponse:
+    properties:
+      dropRate:
+        example: 60
+        type: integer
+      dropped:
+        example: true
+        type: boolean
+      itemId:
+        example: item_clean_spec
+        type: string
+      itemName:
+        example: 整潔規格書
+        type: string
+      quantity:
+        example: 1
+        type: integer
+    type: object
   matches.MatchPlayerResponse:
     properties:
+      answerScoreBonusPercent:
+        example: 10
+        type: integer
       answeredCurrentQuestion:
         example: true
         type: boolean
+      baseOpenPowerReward:
+        example: 105
+        type: integer
+      eliminateChancePercent:
+        example: 25
+        type: integer
+      eliminateCount:
+        example: 1
+        type: integer
+      eliminatedBy:
+        example:
+        - 靈光型小石
+        items:
+          type: string
+        type: array
+      eliminatedChoices:
+        example:
+        - B
+        - C
+        items:
+          type: string
+        type: array
+      materialDrop:
+        $ref: '#/definitions/matches.MatchItemDropResponse'
+      materialDropBonusPercent:
+        example: 15
+        type: integer
       maxScore:
         example: 2250
         type: integer
       nickname:
         example: Alice
         type: string
+      openPowerBonusPercent:
+        example: 20
+        type: integer
       openPowerReward:
-        example: 105
+        example: 126
         type: integer
       playerId:
         example: 7H9K2Q
@@ -740,6 +846,9 @@ definitions:
       description:
         example: 冒險背包，可用於小石合成。
         type: string
+      iconPath:
+        example: /game-icons/items/item_adventure_backpack.png
+        type: string
       id:
         example: item_adventure_backpack
         type: string
@@ -748,6 +857,9 @@ definitions:
         type: string
       rarity:
         example: common
+        type: string
+      source:
+        example: shop
         type: string
       type:
         example: material
@@ -820,8 +932,26 @@ definitions:
     type: object
   me.SitoneResponse:
     properties:
+      abilityCount:
+        example: 0
+        type: integer
+      abilityDescription:
+        example: 答對時分數提高 5%。
+        type: string
+      abilityKind:
+        example: answer_score_bonus
+        type: string
+      abilityName:
+        example: 穩定輸出
+        type: string
+      abilityValue:
+        example: 5
+        type: integer
       description:
         example: 修 bug、分享解法、完成技術任務。
+        type: string
+      iconPath:
+        example: /game-icons/stones/basic_blue.png
         type: string
       id:
         example: stone_engineering_base
@@ -994,6 +1124,9 @@ definitions:
       description:
         example: 冒險背包，可用於小石合成。
         type: string
+      iconPath:
+        example: /game-icons/items/item_adventure_backpack.png
+        type: string
       id:
         example: item_adventure_backpack
         type: string
@@ -1009,6 +1142,9 @@ definitions:
       redeemed:
         example: false
         type: boolean
+      source:
+        example: shop
+        type: string
       type:
         example: material
         type: string

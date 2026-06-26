@@ -76,12 +76,18 @@ type PlayerSitoneResponse struct {
 }
 
 type SitoneResponse struct {
-	ID          string `json:"id" example:"stone_engineering_base"`
-	Name        string `json:"name" example:"工程型小石"`
-	Type        string `json:"type" example:"engineering"`
-	Rarity      string `json:"rarity" example:"base"`
-	Style       string `json:"style" example:"default"`
-	Description string `json:"description" example:"修 bug、分享解法、完成技術任務。"`
+	ID                 string `json:"id" example:"stone_engineering_base"`
+	Name               string `json:"name" example:"工程型小石"`
+	Type               string `json:"type" example:"engineering"`
+	Rarity             string `json:"rarity" example:"base"`
+	Style              string `json:"style" example:"default"`
+	Description        string `json:"description" example:"修 bug、分享解法、完成技術任務。"`
+	IconPath           string `json:"iconPath,omitempty" example:"/game-icons/stones/basic_blue.png"`
+	AbilityName        string `json:"abilityName" example:"穩定輸出"`
+	AbilityKind        string `json:"abilityKind" example:"answer_score_bonus"`
+	AbilityValue       int    `json:"abilityValue" example:"5"`
+	AbilityCount       int    `json:"abilityCount" example:"0"`
+	AbilityDescription string `json:"abilityDescription" example:"答對時分數提高 5%。"`
 }
 
 type ItemListResponse struct {
@@ -101,6 +107,8 @@ type ItemResponse struct {
 	Type        string `json:"type" example:"material"`
 	Rarity      string `json:"rarity" example:"common"`
 	Description string `json:"description" example:"冒險背包，可用於小石合成。"`
+	IconPath    string `json:"iconPath,omitempty" example:"/game-icons/items/item_adventure_backpack.png"`
+	Source      string `json:"source,omitempty" example:"shop"`
 }
 
 type CompletedMatchListResponse struct {

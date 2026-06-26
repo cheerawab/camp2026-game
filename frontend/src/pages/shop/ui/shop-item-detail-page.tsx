@@ -7,12 +7,14 @@ import { gameApi } from "@/shared/api/game"
 import {
   itemTypeClass,
   itemTypeLabel,
+  itemSourceLabel,
   rarityLabel,
 } from "@/shared/lib/game-labels"
 import { Badge } from "@/shared/ui/badge"
 import { Button } from "@/shared/ui/button"
 import { Card, CardContent } from "@/shared/ui/card"
 import { GamePageShell } from "@/shared/ui/game-page-shell"
+import { GameIcon } from "@/shared/ui/game-icon"
 import { PageHeader } from "@/shared/ui/page-header"
 
 type ShopItemDetailPageProps = {
@@ -51,19 +53,27 @@ export function ShopItemDetailPage({ itemID }: ShopItemDetailPageProps) {
             ].join(" ")}
             aria-hidden
           >
-            <ShoppingCart className="size-14" />
+            <GameIcon
+              iconPath={item.iconPath}
+              imageClassName="p-3"
+              fallback={<ShoppingCart className="size-14" />}
+            />
           </div>
 
           <Card>
             <CardContent className="grid gap-y-2">
               <div className="flex gap-2">
-                {[itemTypeLabel(item.type), rarityLabel(item.rarity)].map(
-                  (tag) => (
+                {[
+                  itemTypeLabel(item.type),
+                  rarityLabel(item.rarity),
+                  itemSourceLabel(item.source),
+                ]
+                  .filter(Boolean)
+                  .map((tag) => (
                     <Badge key={tag} variant="outline">
                       {tag}
                     </Badge>
-                  ),
-                )}
+                  ))}
               </div>
               <span className="text-2xl font-bold">{item.name}</span>
               <div className="grid gap-y-1">

@@ -121,6 +121,8 @@ func shopItemResponse(item content.Item, redeemed bool) ShopItemResponse {
 		Type:           item.Type,
 		Rarity:         item.Rarity,
 		Description:    item.Description,
+		IconPath:       item.IconPath,
+		Source:         item.Source,
 		PriceOpenPower: item.PriceOpenPower,
 		Redeemed:       redeemed,
 	}

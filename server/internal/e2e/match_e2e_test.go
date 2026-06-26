@@ -240,11 +240,19 @@ func seedPlayersAndTeams(t *testing.T, ctx context.Context, db *mongo.Database) 
 		t.Fatalf("seed open power: %v", err)
 	}
 
-	_, err = db.Collection(mongomodel.PlayerSitonesCollection).InsertOne(ctx, mongomodel.PlayerSitone{
-		ID:       "player-a-stone_engineering_base",
-		PlayerID: playerAID,
-		SitoneID: "stone_engineering_base",
-		Quantity: 1,
+	_, err = db.Collection(mongomodel.PlayerSitonesCollection).InsertMany(ctx, []any{
+		mongomodel.PlayerSitone{
+			ID:       "player-a-stone_engineering_base",
+			PlayerID: playerAID,
+			SitoneID: "stone_engineering_base",
+			Quantity: 1,
+		},
+		mongomodel.PlayerSitone{
+			ID:       "player-b-stone_resonance_base",
+			PlayerID: playerBID,
+			SitoneID: "stone_resonance_base",
+			Quantity: 1,
+		},
 	})
 	if err != nil {
 		t.Fatalf("seed player sitones: %v", err)
@@ -409,8 +417,8 @@ func assertShopPurchaseFlow(t *testing.T, ctx context.Context, db *mongo.Databas
 	body := getJSON(t, serverURL+"/api/shop/items", []*http.Cookie{cookie}, http.StatusOK)
 	var list shopItemList
 	decodeJSON(t, body, &list)
-	if len(list.Items) != 40 {
-		t.Fatalf("expected 40 shop items, got %#v", list.Items)
+	if len(list.Items) != 33 {
+		t.Fatalf("expected 33 shop items, got %#v", list.Items)
 	}
 	if list.Items[0].ID != "item_adventure_backpack" || list.Items[0].PriceOpenPower != 50 {
 		t.Fatalf("unexpected first shop item: %#v", list.Items[0])

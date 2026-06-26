@@ -19,13 +19,15 @@ const (
 )
 
 type Dependencies struct {
-	Content *content.Store
-	MongoDB *mongo.Database
-	Broker  *Broker
+	Content     *content.Store
+	MongoClient *mongo.Client
+	MongoDB     *mongo.Database
+	Broker      *Broker
 }
 
 type Handler struct {
 	content *content.Store
+	client  *mongo.Client
 	db      *mongo.Database
 	broker  *Broker
 }
@@ -37,6 +39,7 @@ func New(dep Dependencies) *Handler {
 	}
 	return &Handler{
 		content: dep.Content,
+		client:  dep.MongoClient,
 		db:      dep.MongoDB,
 		broker:  broker,
 	}

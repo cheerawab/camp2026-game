@@ -93,8 +93,17 @@ func (h *Handler) Answer(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteProblem(w, r, httpx.InternalServerError("match question is unavailable", "match_answer_question_missing", errors.New("quiz question not found in content store")))
 		return
 	}
+	if choiceEliminated(match, body.QuestionID, player.ID, body.Choice) {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusUnprocessableEntity, "choice has been eliminated"))
+		return
+	}
 	idx := playerIndex(match, player.ID)
-	correct, score := scoreAnswer(question, body.Choice, now, match.RoundEndsAt)
+	effects, err := h.matchPlayerBattleEffects(r.Context(), match.Players[idx])
+	if err != nil {
+		httpx.WriteProblem(w, r, httpx.InternalServerError("answer failed", "match_answer_effects_failed", err))
+		return
+	}
+	correct, baseScore, score := scoreAnswer(question, body.Choice, now, match.RoundEndsAt, effects)
 	elapsedMillis := now.Sub(match.RoundStartedAt).Milliseconds()
 	if elapsedMillis < 0 {
 		elapsedMillis = 0
@@ -112,6 +121,8 @@ func (h *Handler) Answer(w http.ResponseWriter, r *http.Request) {
 		QuestionID:    body.QuestionID,
 		Choice:        body.Choice,
 		Correct:       correct,
+		BaseScore:     baseScore,
+		BonusScore:    score - baseScore,
 		Score:         score,
 		ElapsedMillis: elapsedMillis,
 		AnsweredAt:    now,

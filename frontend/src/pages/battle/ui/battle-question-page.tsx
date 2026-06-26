@@ -304,6 +304,11 @@ export function BattleQuestionPage() {
     match?.status === "active" ? (match.phase ?? "answering") : undefined
   const isRevealing = phase === "revealing"
   const currentResult = match?.currentQuestionResult
+  const eliminatedChoices = useMemo(
+    () => new Set(currentPlayer?.eliminatedChoices ?? []),
+    [currentPlayer?.eliminatedChoices],
+  )
+  const eliminatedBy = currentPlayer?.eliminatedBy ?? []
   const displaySeconds = secondsUntil(
     isRevealing ? match?.revealEndsAt : match?.roundEndsAt,
     now,
@@ -367,10 +372,17 @@ export function BattleQuestionPage() {
               </div>
             </div>
             <Separator />
+            {!isRevealing && eliminatedBy.length > 0 ? (
+              <div className="border-ink bg-pebble-spark-muted rounded-[16px] border-2 px-3 py-2 text-sm font-black">
+                {eliminatedBy.join("、")} 已排除錯誤選項
+              </div>
+            ) : null}
             <div className="grid">
               {choices.map(([choice, label], index) => {
                 const isCorrectChoice =
                   isRevealing && currentResult?.correctChoice === choice
+                const isEliminated =
+                  !isRevealing && eliminatedChoices.has(choice)
 
                 return (
                   <div key={choice}>
@@ -379,9 +391,13 @@ export function BattleQuestionPage() {
                       className={cn(
                         "grid h-fit w-full grid-cols-[58px_minmax(0,1fr)_auto] items-center justify-start gap-3 rounded-none py-2 pl-0 disabled:opacity-100",
                         isCorrectChoice && "bg-pebble-engineer",
+                        isEliminated && "bg-muted text-muted-foreground",
                       )}
                       disabled={
-                        isRevealing || answered || answerMutation.isPending
+                        isRevealing ||
+                        answered ||
+                        isEliminated ||
+                        answerMutation.isPending
                       }
                       onClick={() =>
                         question &&
@@ -396,13 +412,24 @@ export function BattleQuestionPage() {
                           "border-accent-foreground bg-accent text-muted-foreground grid size-12 place-items-center rounded-lg border-2 text-lg font-black",
                           isCorrectChoice &&
                             "border-ink bg-pebble-engineer text-ink",
+                          isEliminated && "border-muted-foreground bg-muted",
                         )}
                       >
                         {choice}
                       </span>
-                      <span className="min-w-0 text-left text-lg leading-tight whitespace-normal">
+                      <span
+                        className={cn(
+                          "min-w-0 text-left text-lg leading-tight whitespace-normal",
+                          isEliminated && "line-through",
+                        )}
+                      >
                         {label}
                       </span>
+                      {isEliminated ? (
+                        <span className="text-muted-foreground text-xs font-black whitespace-nowrap">
+                          已排除
+                        </span>
+                      ) : null}
                       {isRevealing ? (
                         <ChoiceAnswerBadges
                           result={currentResult}

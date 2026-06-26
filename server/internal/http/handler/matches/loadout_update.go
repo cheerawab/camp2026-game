@@ -78,7 +78,7 @@ func (h *Handler) UpdateLoadout(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.publishState(r.Context(), match, "match_updated")
-	state, err := h.buildMatchState(r.Context(), match)
+	state, err := h.buildMatchState(r.Context(), match, player.ID)
 	if err != nil {
 		httpx.WriteProblem(w, r, err)
 		return

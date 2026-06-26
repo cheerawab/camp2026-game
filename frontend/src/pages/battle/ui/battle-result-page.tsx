@@ -70,6 +70,7 @@ export function BattleResultPage() {
   const rewardedPlayers = players.filter(
     (player) => (player.openPowerReward ?? 0) > 0,
   )
+  const dropPlayers = players.filter((player) => player.materialDrop != null)
 
   return (
     <GamePageShell contentClassName="grid content-start gap-y-2">
@@ -112,6 +113,11 @@ export function BattleResultPage() {
                   <span className="text-center text-xs font-bold">
                     {player.sitoneIds.length} 顆小石
                   </span>
+                  {(player.answerScoreBonusPercent ?? 0) > 0 ? (
+                    <span className="text-center text-xs font-bold">
+                      答題加成 +{player.answerScoreBonusPercent}%
+                    </span>
+                  ) : null}
                 </CardContent>
               </Card>
             ))}
@@ -139,9 +145,46 @@ export function BattleResultPage() {
                   <span className="font-bold">
                     +{player.openPowerReward ?? 0} 開源力
                   </span>
+                  {(player.openPowerBonusPercent ?? 0) > 0 ? (
+                    <span className="text-muted-foreground col-span-2 text-sm font-bold">
+                      基礎 {player.baseOpenPowerReward ?? 0}，加成 +
+                      {player.openPowerBonusPercent}%
+                    </span>
+                  ) : null}
                 </div>
               ))}
             </div>
+          </CardContent>
+        </Card>
+      ) : null}
+
+      {dropPlayers.length > 0 ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>素材掉落</CardTitle>
+            <CardDescription>勝敗雙方都會依掉落率結算一次。</CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-2">
+            {dropPlayers.map((player) => {
+              const drop = player.materialDrop
+              if (!drop) return null
+              return (
+                <div
+                  key={player.playerId}
+                  className="border-border grid grid-cols-[1fr_auto] gap-2 border-b pb-2 last:border-b-0 last:pb-0"
+                >
+                  <span className="font-bold">{player.nickname}</span>
+                  <span className="text-muted-foreground text-sm font-bold">
+                    {drop.dropRate}%
+                  </span>
+                  <span className="col-span-2 text-sm font-black">
+                    {drop.dropped
+                      ? `獲得 ${drop.itemName ?? drop.itemId} x${drop.quantity ?? 1}`
+                      : "沒有掉落素材"}
+                  </span>
+                </div>
+              )
+            })}
           </CardContent>
         </Card>
       ) : null}
@@ -197,6 +240,11 @@ export function BattleResultPage() {
                       <span className="text-muted-foreground text-sm font-bold">
                         {answer.nickname}
                       </span>
+                      {answer.correct && answer.bonusScore > 0 ? (
+                        <span className="text-muted-foreground text-xs font-bold">
+                          基礎 {answer.baseScore} + 加成 {answer.bonusScore}
+                        </span>
+                      ) : null}
                       <span
                         className={cn(
                           "border-ink text-ink block rounded-lg border-2 px-3 py-2 text-base font-black",

@@ -1641,6 +1641,10 @@
                     "type": "string",
                     "example": "冒險背包，可用於小石合成。"
                 },
+                "iconPath": {
+                    "type": "string",
+                    "example": "/game-icons/items/item_adventure_backpack.png"
+                },
                 "id": {
                     "type": "string",
                     "example": "item_adventure_backpack"
@@ -1652,6 +1656,10 @@
                 "rarity": {
                     "type": "string",
                     "example": "common"
+                },
+                "source": {
+                    "type": "string",
+                    "example": "shop"
                 },
                 "type": {
                     "type": "string",
@@ -1673,9 +1681,33 @@
         "catalog.SitoneResponse": {
             "type": "object",
             "properties": {
+                "abilityCount": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "abilityDescription": {
+                    "type": "string",
+                    "example": "答對時分數提高 5%。"
+                },
+                "abilityKind": {
+                    "type": "string",
+                    "example": "answer_score_bonus"
+                },
+                "abilityName": {
+                    "type": "string",
+                    "example": "穩定輸出"
+                },
+                "abilityValue": {
+                    "type": "integer",
+                    "example": 5
+                },
                 "description": {
                     "type": "string",
                     "example": "修 bug、分享解法、完成技術任務。"
+                },
+                "iconPath": {
+                    "type": "string",
+                    "example": "/game-icons/stones/basic_blue.png"
                 },
                 "id": {
                     "type": "string",
@@ -1726,6 +1758,30 @@
         "fusions.FusionComponentResponse": {
             "type": "object",
             "properties": {
+                "abilityCount": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "abilityDescription": {
+                    "type": "string",
+                    "example": "答對時分數提高 5%。"
+                },
+                "abilityKind": {
+                    "type": "string",
+                    "example": "answer_score_bonus"
+                },
+                "abilityName": {
+                    "type": "string",
+                    "example": "穩定輸出"
+                },
+                "abilityValue": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "iconPath": {
+                    "type": "string",
+                    "example": "/game-icons/stones/basic_blue.png"
+                },
                 "id": {
                     "type": "string",
                     "example": "item_adventure_backpack"
@@ -1745,6 +1801,10 @@
                 "rarity": {
                     "type": "string",
                     "example": "common"
+                },
+                "source": {
+                    "type": "string",
+                    "example": "shop"
                 },
                 "type": {
                     "type": "string",
@@ -1842,6 +1902,9 @@
         "httpx.ProblemDetails": {
             "type": "object",
             "properties": {
+                "code": {
+                    "type": "string"
+                },
                 "detail": {
                     "type": "string"
                 },
@@ -1852,6 +1915,9 @@
                     }
                 },
                 "instance": {
+                    "type": "string"
+                },
+                "requestId": {
                     "type": "string"
                 },
                 "status": {
@@ -2106,6 +2172,14 @@
                 "answeredAt": {
                     "type": "string"
                 },
+                "baseScore": {
+                    "type": "integer",
+                    "example": 150
+                },
+                "bonusScore": {
+                    "type": "integer",
+                    "example": 15
+                },
                 "choice": {
                     "type": "string",
                     "example": "A"
@@ -2132,12 +2206,79 @@
                 }
             }
         },
+        "matches.MatchItemDropResponse": {
+            "type": "object",
+            "properties": {
+                "dropRate": {
+                    "type": "integer",
+                    "example": 60
+                },
+                "dropped": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "itemId": {
+                    "type": "string",
+                    "example": "item_clean_spec"
+                },
+                "itemName": {
+                    "type": "string",
+                    "example": "整潔規格書"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
         "matches.MatchPlayerResponse": {
             "type": "object",
             "properties": {
+                "answerScoreBonusPercent": {
+                    "type": "integer",
+                    "example": 10
+                },
                 "answeredCurrentQuestion": {
                     "type": "boolean",
                     "example": true
+                },
+                "baseOpenPowerReward": {
+                    "type": "integer",
+                    "example": 105
+                },
+                "eliminateChancePercent": {
+                    "type": "integer",
+                    "example": 25
+                },
+                "eliminateCount": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "eliminatedBy": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "靈光型小石"
+                    ]
+                },
+                "eliminatedChoices": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "B",
+                        "C"
+                    ]
+                },
+                "materialDrop": {
+                    "$ref": "#/definitions/matches.MatchItemDropResponse"
+                },
+                "materialDropBonusPercent": {
+                    "type": "integer",
+                    "example": 15
                 },
                 "maxScore": {
                     "type": "integer",
@@ -2147,9 +2288,13 @@
                     "type": "string",
                     "example": "Alice"
                 },
+                "openPowerBonusPercent": {
+                    "type": "integer",
+                    "example": 20
+                },
                 "openPowerReward": {
                     "type": "integer",
-                    "example": 105
+                    "example": 126
                 },
                 "playerId": {
                     "type": "string",
@@ -2620,6 +2765,10 @@
                     "type": "string",
                     "example": "冒險背包，可用於小石合成。"
                 },
+                "iconPath": {
+                    "type": "string",
+                    "example": "/game-icons/items/item_adventure_backpack.png"
+                },
                 "id": {
                     "type": "string",
                     "example": "item_adventure_backpack"
@@ -2631,6 +2780,10 @@
                 "rarity": {
                     "type": "string",
                     "example": "common"
+                },
+                "source": {
+                    "type": "string",
+                    "example": "shop"
                 },
                 "type": {
                     "type": "string",
@@ -2736,9 +2889,33 @@
         "me.SitoneResponse": {
             "type": "object",
             "properties": {
+                "abilityCount": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "abilityDescription": {
+                    "type": "string",
+                    "example": "答對時分數提高 5%。"
+                },
+                "abilityKind": {
+                    "type": "string",
+                    "example": "answer_score_bonus"
+                },
+                "abilityName": {
+                    "type": "string",
+                    "example": "穩定輸出"
+                },
+                "abilityValue": {
+                    "type": "integer",
+                    "example": 5
+                },
                 "description": {
                     "type": "string",
                     "example": "修 bug、分享解法、完成技術任務。"
+                },
+                "iconPath": {
+                    "type": "string",
+                    "example": "/game-icons/stones/basic_blue.png"
                 },
                 "id": {
                     "type": "string",
@@ -2984,6 +3161,10 @@
                     "type": "string",
                     "example": "冒險背包，可用於小石合成。"
                 },
+                "iconPath": {
+                    "type": "string",
+                    "example": "/game-icons/items/item_adventure_backpack.png"
+                },
                 "id": {
                     "type": "string",
                     "example": "item_adventure_backpack"
@@ -3003,6 +3184,10 @@
                 "redeemed": {
                     "type": "boolean",
                     "example": false
+                },
+                "source": {
+                    "type": "string",
+                    "example": "shop"
                 },
                 "type": {
                     "type": "string",

@@ -87,8 +87,9 @@ func registerRoutes(api chi.Router, dep Dependencies) {
 		MongoDB: dep.MongoDB,
 	}).RegisterRoutes(api.With(authctx.RequirePlayer(dep.MongoDB)))
 	matcheshandler.New(matcheshandler.Dependencies{
-		Content: dep.Content,
-		MongoDB: dep.MongoDB,
+		Content:     dep.Content,
+		MongoClient: dep.MongoClient,
+		MongoDB:     dep.MongoDB,
 	}).RegisterRoutes(api.With(authctx.RequirePlayer(dep.MongoDB)))
 	fusionshandler.New(fusionshandler.Dependencies{
 		Content:     dep.Content,

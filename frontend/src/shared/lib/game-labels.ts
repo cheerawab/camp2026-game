@@ -49,12 +49,14 @@ const fallbackSitoneMeta: SitoneMeta = {
 
 const itemTypeLabels: Record<string, string> = {
   material: "素材",
+  charm: "御守",
   cosmetic: "外觀",
   event: "活動紀念",
 }
 
 const itemTypeClasses: Record<string, string> = {
   material: "bg-pebble-engineer",
+  charm: "bg-pebble-explore",
   cosmetic: "bg-pebble-spark",
   event: "bg-pebble-resonate",
 }
@@ -64,6 +66,13 @@ const rarityLabels: Record<string, string> = {
   common: "常見",
   rare: "稀有",
   limited: "限定",
+}
+
+const itemSourceLabels: Record<string, string> = {
+  shop: "商店",
+  drop: "掉落",
+  both: "商店／掉落",
+  event: "活動",
 }
 
 export function sitoneMeta(type: string): SitoneMeta {
@@ -80,6 +89,11 @@ export function itemTypeClass(type: string) {
 
 export function rarityLabel(rarity: string) {
   return rarityLabels[rarity] ?? rarity
+}
+
+export function itemSourceLabel(source: string | undefined) {
+  if (!source) return ""
+  return itemSourceLabels[source] ?? source
 }
 
 export function rarityToneClass(rarity: string) {

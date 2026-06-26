@@ -72,6 +72,9 @@ func (h *Handler) findAnswer(ctx context.Context, matchID, playerID, questionID 
 }
 
 func (h *Handler) advanceMatch(ctx context.Context, match mongomodel.Match, now time.Time) (mongomodel.Match, []string, error) {
+	if match.Status == mongomodel.MatchStatusCompleted {
+		return match, nil, h.writeMatchRewards(ctx, match)
+	}
 	if match.Status != mongomodel.MatchStatusActive {
 		return match, nil, nil
 	}
@@ -123,6 +126,9 @@ func (h *Handler) advanceMatch(ctx context.Context, match mongomodel.Match, now 
 			match.RoundStartedAt = revealEndsAt
 			match.RoundEndsAt = revealEndsAt.Add(roundDuration * time.Second)
 			match.RevealEndsAt = time.Time{}
+			if err := h.ensureCurrentRoundEliminations(ctx, &match); err != nil {
+				return match, events, err
+			}
 			if err := h.saveMatch(ctx, match); err != nil {
 				return match, events, err
 			}
@@ -161,14 +167,87 @@ func (h *Handler) shouldRevealRound(ctx context.Context, match mongomodel.Match,
 	return len(match.Players) == 2, nil
 }
 
+func (h *Handler) findMatchOpenPowerRewards(ctx context.Context, matchID string) ([]mongomodel.OpenPowerRecord, error) {
+	cursor, err := h.db.Collection(mongomodel.OpenPowerRecordsCollection).Find(
+		ctx,
+		bson.M{
+			"reason": "quiz_match_completed",
+			"source": bson.M{"$regex": "^quiz_match:" + matchID + ":player:"},
+		},
+		options.Find().SetSort(bson.D{{Key: "player_id", Value: 1}}),
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		_ = cursor.Close(ctx)
+	}()
+
+	var records []mongomodel.OpenPowerRecord
+	if err := cursor.All(ctx, &records); err != nil {
+		return nil, err
+	}
+	return records, nil
+}
+
 func (h *Handler) writeMatchRewards(ctx context.Context, match mongomodel.Match) error {
+	if h.client == nil {
+		return h.writeMatchRewardsWithoutTransaction(ctx, match)
+	}
+
+	if err := h.writeMatchRewardsWithTransaction(ctx, match); err != nil {
+		if transactionUnsupported(err) {
+			return h.writeMatchRewardsWithoutTransaction(ctx, match)
+		}
+		return err
+	}
+	return nil
+}
+
+func (h *Handler) writeMatchRewardsWithTransaction(ctx context.Context, match mongomodel.Match) error {
+	session, err := h.client.StartSession()
+	if err != nil {
+		return err
+	}
+	defer session.EndSession(ctx)
+
+	return mongo.WithSession(ctx, session, func(ctx context.Context) error {
+		if err := session.StartTransaction(); err != nil {
+			return err
+		}
+		committed := false
+		defer func() {
+			if !committed {
+				_ = session.AbortTransaction(context.Background())
+			}
+		}()
+
+		if err := h.writeMatchRewardsWithoutTransaction(ctx, match); err != nil {
+			return err
+		}
+		if err := session.CommitTransaction(ctx); err != nil {
+			return err
+		}
+		committed = true
+		return nil
+	})
+}
+
+func (h *Handler) writeMatchRewardsWithoutTransaction(ctx context.Context, match mongomodel.Match) error {
 	now := match.CompletedAt
 	if now.IsZero() {
 		now = time.Now()
 	}
 
 	for _, player := range match.Players {
-		reward := matchOpenPowerReward(match, player)
+		effects, err := h.matchPlayerBattleEffects(ctx, player)
+		if err != nil {
+			return err
+		}
+		if err := h.writeMatchItemDrop(ctx, match, player, effects, now); err != nil {
+			return err
+		}
+		reward := matchOpenPowerReward(match, player, effects)
 		if reward <= 0 {
 			continue
 		}
@@ -180,7 +259,7 @@ func (h *Handler) writeMatchRewards(ctx context.Context, match mongomodel.Match)
 			Source:    matchRewardSource(match.ID, player.PlayerID),
 			CreatedAt: now,
 		}
-		_, err := h.db.Collection(mongomodel.OpenPowerRecordsCollection).UpdateOne(
+		_, err = h.db.Collection(mongomodel.OpenPowerRecordsCollection).UpdateOne(
 			ctx,
 			bson.M{"_id": record.ID},
 			bson.M{"$setOnInsert": record},
@@ -193,7 +272,13 @@ func (h *Handler) writeMatchRewards(ctx context.Context, match mongomodel.Match)
 	return nil
 }
 
-func (h *Handler) buildMatchState(ctx context.Context, match mongomodel.Match) (MatchStateResponse, error) {
+func transactionUnsupported(err error) bool {
+	var commandError mongo.CommandError
+	return errors.As(err, &commandError) &&
+		commandError.HasErrorCodeWithMessage(20, "Transaction numbers")
+}
+
+func (h *Handler) buildMatchState(ctx context.Context, match mongomodel.Match, viewerPlayerID string) (MatchStateResponse, error) {
 	answers, err := h.findAnswers(ctx, match.ID)
 	if err != nil {
 		return MatchStateResponse{}, err
@@ -205,6 +290,25 @@ func (h *Handler) buildMatchState(ctx context.Context, match mongomodel.Match) (
 			answerByQuestionPlayer[answer.QuestionID] = make(map[string]mongomodel.MatchAnswer)
 		}
 		answerByQuestionPlayer[answer.QuestionID][answer.PlayerID] = answer
+	}
+	eliminatedByQuestionPlayer := eliminatedChoicesByQuestionPlayer(match)
+	dropByPlayer := make(map[string]mongomodel.MatchItemDrop)
+	rewardByPlayer := make(map[string]int)
+	if match.Status == mongomodel.MatchStatusCompleted {
+		drops, err := h.findMatchItemDrops(ctx, match.ID)
+		if err != nil {
+			return MatchStateResponse{}, err
+		}
+		for _, drop := range drops {
+			dropByPlayer[drop.PlayerID] = drop
+		}
+		rewards, err := h.findMatchOpenPowerRewards(ctx, match.ID)
+		if err != nil {
+			return MatchStateResponse{}, err
+		}
+		for _, reward := range rewards {
+			rewardByPlayer[reward.PlayerID] = reward.Amount
+		}
 	}
 
 	response := MatchStateResponse{
@@ -249,23 +353,43 @@ func (h *Handler) buildMatchState(ctx context.Context, match mongomodel.Match) (
 		currentQuestionID = match.QuestionIDs[match.CurrentQuestionIndex]
 	}
 	currentAnswers := answerByQuestionPlayer[currentQuestionID]
+	currentEliminations := eliminatedByQuestionPlayer[currentQuestionID]
 	for _, player := range match.Players {
+		effects, err := h.matchPlayerBattleEffects(ctx, player)
+		if err != nil {
+			return MatchStateResponse{}, err
+		}
 		score := player.Score
-		maxScore := maxScoreThroughCurrentQuestion(match)
+		maxScore := maxScoreThroughCurrentQuestion(match, effects)
 		playerResponse := MatchPlayerResponse{
-			PlayerID:  player.PlayerID,
-			Nickname:  player.Nickname,
-			Ready:     player.Ready,
-			SitoneIDs: cloneStrings(player.SitoneIDs),
-			Score:     &score,
-			MaxScore:  &maxScore,
+			PlayerID:                 player.PlayerID,
+			Nickname:                 player.Nickname,
+			Ready:                    player.Ready,
+			SitoneIDs:                cloneStrings(player.SitoneIDs),
+			Score:                    &score,
+			MaxScore:                 &maxScore,
+			AnswerScoreBonusPercent:  effects.AnswerScoreBonusPercent,
+			OpenPowerBonusPercent:    effects.OpenPowerBonusPercent,
+			MaterialDropBonusPercent: effects.MaterialDropBonusPercent,
+			EliminateChancePercent:   effects.EliminateChancePercent,
+			EliminateCount:           effects.EliminateCount,
 		}
 		if match.Status == mongomodel.MatchStatusActive {
 			_, playerResponse.AnsweredCurrentQuestion = currentAnswers[player.PlayerID]
+			playerResponse.EliminatedChoices, playerResponse.EliminatedBy = viewerEliminatedChoices(
+				player.PlayerID,
+				viewerPlayerID,
+				currentEliminations,
+			)
 		}
 		if match.Status == mongomodel.MatchStatusCompleted {
-			reward := matchOpenPowerReward(match, player)
+			baseReward := matchBaseOpenPowerReward(match, player)
+			reward := rewardByPlayer[player.PlayerID]
+			playerResponse.BaseOpenPowerReward = &baseReward
 			playerResponse.OpenPowerReward = &reward
+			if drop, ok := dropByPlayer[player.PlayerID]; ok {
+				playerResponse.MaterialDrop = h.matchItemDropResponse(drop)
+			}
 		}
 		response.Players = append(response.Players, playerResponse)
 	}
@@ -325,8 +449,14 @@ func (h *Handler) matchQuestionResult(
 		}
 		if ok {
 			answeredAt := answer.AnsweredAt
+			baseScore := answer.BaseScore
+			if baseScore == 0 {
+				baseScore = answer.Score - answer.BonusScore
+			}
 			answerResponse.Choice = answer.Choice
 			answerResponse.Correct = answer.Correct
+			answerResponse.BaseScore = baseScore
+			answerResponse.BonusScore = answer.Score - baseScore
 			answerResponse.Score = answer.Score
 			answerResponse.ElapsedMillis = answer.ElapsedMillis
 			answerResponse.AnsweredAt = &answeredAt
@@ -336,17 +466,13 @@ func (h *Handler) matchQuestionResult(
 	return result, nil
 }
 
-func (h *Handler) publishState(ctx context.Context, match mongomodel.Match, eventName string) {
+func (h *Handler) publishState(_ context.Context, match mongomodel.Match, eventName string) {
 	if h.broker == nil {
 		return
 	}
-	state, err := h.buildMatchState(ctx, match)
-	if err != nil {
-		return
-	}
 	h.broker.Publish(match.ID, Event{
-		Name: eventName,
-		Data: state,
+		Name:  eventName,
+		Match: match,
 	})
 }
 

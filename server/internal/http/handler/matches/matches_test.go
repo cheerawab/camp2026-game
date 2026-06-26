@@ -13,20 +13,37 @@ func TestScoreAnswer(t *testing.T) {
 	answeredAt := time.Date(2026, 6, 2, 10, 0, 3, 0, time.UTC)
 	roundEndsAt := time.Date(2026, 6, 2, 10, 0, 15, 0, time.UTC)
 
-	correct, score := scoreAnswer(question, "A", answeredAt, roundEndsAt)
+	correct, baseScore, score := scoreAnswer(question, "A", answeredAt, roundEndsAt, battleEffects{})
 	if !correct {
 		t.Fatal("expected answer to be correct")
+	}
+	if baseScore != 160 {
+		t.Fatalf("expected base score 160, got %d", baseScore)
 	}
 	if score != 160 {
 		t.Fatalf("expected score 160, got %d", score)
 	}
 
-	correct, score = scoreAnswer(question, "B", answeredAt, roundEndsAt)
+	correct, baseScore, score = scoreAnswer(question, "B", answeredAt, roundEndsAt, battleEffects{AnswerScoreBonusPercent: 30})
 	if correct {
 		t.Fatal("expected answer to be incorrect")
 	}
-	if score != 0 {
-		t.Fatalf("expected incorrect score 0, got %d", score)
+	if baseScore != 0 || score != 0 {
+		t.Fatalf("expected incorrect score 0, got base=%d score=%d", baseScore, score)
+	}
+}
+
+func TestScoreAnswerAppliesScoreBonus(t *testing.T) {
+	question := content.QuizQuestion{CorrectChoice: "A"}
+	answeredAt := time.Date(2026, 6, 2, 10, 0, 3, 0, time.UTC)
+	roundEndsAt := time.Date(2026, 6, 2, 10, 0, 15, 0, time.UTC)
+
+	correct, baseScore, score := scoreAnswer(question, "A", answeredAt, roundEndsAt, battleEffects{AnswerScoreBonusPercent: 30})
+	if !correct {
+		t.Fatal("expected answer to be correct")
+	}
+	if baseScore != 160 || score != 208 {
+		t.Fatalf("expected base score 160 and boosted score 208, got base=%d score=%d", baseScore, score)
 	}
 }
 
@@ -48,7 +65,7 @@ func TestMatchOpenPowerRewardRequiresClearWinner(t *testing.T) {
 		t.Fatal("expected tied match to have no clear winner")
 	}
 	for _, player := range match.Players {
-		if got := matchOpenPowerReward(match, player); got != 0 {
+		if got := matchOpenPowerReward(match, player, battleEffects{}); got != 0 {
 			t.Fatalf("expected tied match reward 0 for %s, got %d", player.PlayerID, got)
 		}
 	}
@@ -57,20 +74,156 @@ func TestMatchOpenPowerRewardRequiresClearWinner(t *testing.T) {
 	if !matchHasClearWinner(match) {
 		t.Fatal("expected match with different scores to have a clear winner")
 	}
-	if got := matchOpenPowerReward(match, match.Players[0]); got != 54 {
+	if got := matchOpenPowerReward(match, match.Players[0], battleEffects{}); got != 54 {
 		t.Fatalf("expected winner reward 54, got %d", got)
 	}
-	if got := matchOpenPowerReward(match, match.Players[1]); got != 0 {
+	if got := matchOpenPowerReward(match, match.Players[1], battleEffects{}); got != 0 {
 		t.Fatalf("expected loser reward 0, got %d", got)
 	}
 
 	match.Players[0].Score = 320
 	match.Players[1].Score = 340
-	if got := matchOpenPowerReward(match, match.Players[0]); got != 0 {
+	if got := matchOpenPowerReward(match, match.Players[0], battleEffects{}); got != 0 {
 		t.Fatalf("expected lower-scoring player reward 0, got %d", got)
 	}
-	if got := matchOpenPowerReward(match, match.Players[1]); got != 54 {
+	if got := matchOpenPowerReward(match, match.Players[1], battleEffects{}); got != 54 {
 		t.Fatalf("expected winner reward 54, got %d", got)
+	}
+}
+
+func TestMatchOpenPowerRewardAppliesBonus(t *testing.T) {
+	match := mongomodel.Match{
+		Players: []mongomodel.MatchPlayer{
+			{PlayerID: "P1", Score: 340},
+			{PlayerID: "P2", Score: 330},
+		},
+	}
+
+	if got := matchOpenPowerReward(match, match.Players[0], battleEffects{OpenPowerBonusPercent: 40}); got != 75 {
+		t.Fatalf("expected boosted winner reward 75, got %d", got)
+	}
+	if got := matchBaseOpenPowerReward(match, match.Players[0]); got != 54 {
+		t.Fatalf("expected base winner reward 54, got %d", got)
+	}
+}
+
+func TestBattleEffectsApplyCaps(t *testing.T) {
+	handler := New(Dependencies{Content: loadTestContent(t)})
+
+	effects, err := handler.battleEffects(t.Context(), "P1", []string{
+		"stone_2019_unboxed_algorithm",
+		"stone_2019_unboxed_algorithm",
+		"stone_2019_unboxed_algorithm",
+	})
+	if err != nil {
+		t.Fatalf("battle effects: %v", err)
+	}
+	if effects.MaterialDropBonusPercent != 35 {
+		t.Fatalf("expected material drop cap 35, got %#v", effects)
+	}
+
+	effects, err = handler.battleEffects(t.Context(), "P1", []string{
+		"stone_order_guardian",
+		"stone_command_blind_trip",
+	})
+	if err != nil {
+		t.Fatalf("battle effects: %v", err)
+	}
+	if effects.AnswerScoreBonusPercent != 30 {
+		t.Fatalf("expected answer score cap 30, got %#v", effects)
+	}
+
+	effects, err = handler.battleEffects(t.Context(), "P1", []string{
+		"stone_freedom_rebel",
+		"stone_fireside",
+		"stone_tech_art",
+	})
+	if err != nil {
+		t.Fatalf("battle effects: %v", err)
+	}
+	if effects.OpenPowerBonusPercent != 40 {
+		t.Fatalf("expected open power cap 40, got %#v", effects)
+	}
+
+	effects, err = handler.battleEffects(t.Context(), "P1", []string{
+		"stone_python_turtle",
+		"stone_human_llm",
+	})
+	if err != nil {
+		t.Fatalf("battle effects: %v", err)
+	}
+	if effects.EliminateChancePercent != 50 || effects.EliminateCount != 2 {
+		t.Fatalf("expected eliminate cap 50 and count 2, got %#v", effects)
+	}
+}
+
+func TestMatchPlayerBattleEffectsPrefersSnapshot(t *testing.T) {
+	handler := New(Dependencies{Content: loadTestContent(t)})
+	player := mongomodel.MatchPlayer{
+		PlayerID:  "P1",
+		SitoneIDs: []string{"stone_engineering_base"},
+		BattleEffects: &mongomodel.MatchBattleEffects{
+			MaterialDropBonusPercent: 17,
+			OpenPowerBonusPercent:    29,
+			EliminateSourceNames:     []string{"snapshot"},
+		},
+	}
+
+	effects, err := handler.matchPlayerBattleEffects(t.Context(), player)
+	if err != nil {
+		t.Fatalf("match player battle effects: %v", err)
+	}
+	if effects.MaterialDropBonusPercent != 17 || effects.OpenPowerBonusPercent != 29 {
+		t.Fatalf("expected snapshotted effects, got %#v", effects)
+	}
+	if effects.AnswerScoreBonusPercent != 0 {
+		t.Fatalf("expected snapshot to avoid live sitone lookup, got %#v", effects)
+	}
+	if len(effects.EliminateSourceNames) != 1 || effects.EliminateSourceNames[0] != "snapshot" {
+		t.Fatalf("expected snapshot source names, got %#v", effects)
+	}
+}
+
+func TestEliminatedChoicesNeverIncludesCorrectChoice(t *testing.T) {
+	question := content.QuizQuestion{
+		ID:            "quiz-001",
+		CorrectChoice: "A",
+	}
+	player := mongomodel.MatchPlayer{PlayerID: "P1"}
+	effects := battleEffects{
+		EliminateChancePercent: 100,
+		EliminateCount:         2,
+		EliminateSourceNames:   []string{"靈光型小石"},
+	}
+
+	first := eliminatedChoicesForPlayer("match_123", question, player, effects)
+	second := eliminatedChoicesForPlayer("match_123", question, player, effects)
+	if len(first.Choices) != 2 {
+		t.Fatalf("expected 2 eliminated choices, got %#v", first)
+	}
+	for _, choice := range first.Choices {
+		if choice == "A" {
+			t.Fatalf("eliminated correct choice: %#v", first)
+		}
+	}
+	if len(second.Choices) != len(first.Choices) || second.Choices[0] != first.Choices[0] || second.Choices[1] != first.Choices[1] {
+		t.Fatalf("expected deterministic eliminated choices, got first=%#v second=%#v", first, second)
+	}
+}
+
+func TestMatchMaterialDropRateUsesWinnerAndLoserBaseRates(t *testing.T) {
+	match := mongomodel.Match{
+		Players: []mongomodel.MatchPlayer{
+			{PlayerID: "P1", Score: 200},
+			{PlayerID: "P2", Score: 100},
+		},
+	}
+
+	if got := matchMaterialDropRate(match, match.Players[0], battleEffects{MaterialDropBonusPercent: 35}); got != 80 {
+		t.Fatalf("expected winner drop rate 80, got %d", got)
+	}
+	if got := matchMaterialDropRate(match, match.Players[1], battleEffects{MaterialDropBonusPercent: 12}); got != 37 {
+		t.Fatalf("expected loser drop rate 37, got %d", got)
 	}
 }
 
@@ -154,13 +307,19 @@ func TestMaxScoreThroughCurrentQuestion(t *testing.T) {
 	if got := maxScorePerQuestion(); got != 175 {
 		t.Fatalf("expected max score per question 175, got %d", got)
 	}
-	if got := maxScoreThroughCurrentQuestion(match); got != 350 {
+	if got := maxScoreThroughCurrentQuestion(match, battleEffects{}); got != 350 {
 		t.Fatalf("expected active max score 350, got %d", got)
 	}
 
 	match.Status = mongomodel.MatchStatusCompleted
-	if got := maxScoreThroughCurrentQuestion(match); got != 525 {
+	if got := maxScoreThroughCurrentQuestion(match, battleEffects{}); got != 525 {
 		t.Fatalf("expected completed max score 525, got %d", got)
+	}
+	if got := maxScoreThroughCurrentQuestion(match, battleEffects{AnswerScoreBonusPercent: 30}); got != 681 {
+		t.Fatalf("expected boosted completed max score 681, got %d", got)
+	}
+	if got := maxScoreThroughCurrentQuestion(match, battleEffects{AnswerScoreBonusPercent: 5}); got != 549 {
+		t.Fatalf("expected per-question rounded completed max score 549, got %d", got)
 	}
 }
 
@@ -279,12 +438,49 @@ func TestMatchQuestionResultRevealsCurrentRoundAnswers(t *testing.T) {
 	}
 }
 
+func TestViewerEliminatedChoicesOnlyExposesViewerChoices(t *testing.T) {
+	match := mongomodel.Match{
+		Players: []mongomodel.MatchPlayer{
+			{PlayerID: "P1", Nickname: "Alice", Score: 0},
+			{PlayerID: "P2", Nickname: "Bob", Score: 0},
+		},
+		EliminatedChoices: []mongomodel.MatchEliminatedChoice{
+			{
+				QuestionID:        "quiz-001",
+				PlayerID:          "P1",
+				Choices:           []string{"B"},
+				SourceSitoneNames: []string{"靈光型小石"},
+			},
+			{
+				QuestionID:        "quiz-001",
+				PlayerID:          "P2",
+				Choices:           []string{"C"},
+				SourceSitoneNames: []string{"烏龜小石"},
+			},
+		},
+	}
+	currentEliminations := eliminatedChoicesByQuestionPlayer(match)["quiz-001"]
+
+	choices, sources := viewerEliminatedChoices("P1", "P1", currentEliminations)
+	if len(choices) != 1 || choices[0] != "B" {
+		t.Fatalf("expected viewer eliminated choice B, got %#v", choices)
+	}
+	if len(sources) != 1 || sources[0] != "靈光型小石" {
+		t.Fatalf("expected viewer eliminated source, got %#v", sources)
+	}
+
+	choices, sources = viewerEliminatedChoices("P2", "P1", currentEliminations)
+	if len(choices) != 0 || len(sources) != 0 {
+		t.Fatalf("expected opponent eliminated choices to be hidden, got choices=%#v sources=%#v", choices, sources)
+	}
+}
+
 func TestBrokerPublishesEvents(t *testing.T) {
 	broker := NewBroker()
 	events, unsubscribe := broker.Subscribe("match_123")
 	defer unsubscribe()
 
-	broker.Publish("match_123", Event{Name: "player_answered"})
+	broker.Publish("match_123", Event{Name: "player_answered", Match: mongomodel.Match{ID: "match_123"}})
 
 	select {
 	case event := <-events:

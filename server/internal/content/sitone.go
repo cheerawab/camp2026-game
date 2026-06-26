@@ -17,13 +17,33 @@ var validSitoneTypes = map[string]struct{}{
 	"entertainment": {},
 }
 
+const (
+	SitoneAbilityMaterialDropRate     = "material_drop_rate"
+	SitoneAbilityAnswerScoreBonus     = "answer_score_bonus"
+	SitoneAbilityOpenPowerBonus       = "open_power_bonus"
+	SitoneAbilityEliminateWrongChoice = "eliminate_wrong_choice"
+)
+
+var validSitoneAbilityKinds = map[string]struct{}{
+	SitoneAbilityMaterialDropRate:     {},
+	SitoneAbilityAnswerScoreBonus:     {},
+	SitoneAbilityOpenPowerBonus:       {},
+	SitoneAbilityEliminateWrongChoice: {},
+}
+
 type Sitone struct {
-	ID          string `toml:"id"`
-	Name        string `toml:"name"`
-	Type        string `toml:"type"`
-	Rarity      string `toml:"rarity"`
-	Style       string `toml:"style"`
-	Description string `toml:"description"`
+	ID                 string `toml:"id"`
+	Name               string `toml:"name"`
+	Type               string `toml:"type"`
+	Rarity             string `toml:"rarity"`
+	Style              string `toml:"style"`
+	Description        string `toml:"description"`
+	IconPath           string `toml:"icon_path"`
+	AbilityName        string `toml:"ability_name"`
+	AbilityKind        string `toml:"ability_kind"`
+	AbilityValue       int    `toml:"ability_value"`
+	AbilityCount       int    `toml:"ability_count"`
+	AbilityDescription string `toml:"ability_description"`
 }
 
 type sitonesDocument struct {
@@ -78,6 +98,27 @@ func validateSitones(path string, sitones []Sitone) ([]Sitone, map[string]Sitone
 		} else if _, ok := validRarities[sitone.Rarity]; !ok {
 			errs = append(errs, fmt.Errorf("%s.rarity must be one of %s", location, sortedKeys(validRarities)))
 		}
+		if sitone.AbilityName == "" {
+			errs = append(errs, fmt.Errorf("%s.ability_name is required", location))
+		}
+		if sitone.AbilityKind == "" {
+			errs = append(errs, fmt.Errorf("%s.ability_kind is required", location))
+		} else if _, ok := validSitoneAbilityKinds[sitone.AbilityKind]; !ok {
+			errs = append(errs, fmt.Errorf("%s.ability_kind must be one of %s", location, sortedKeys(validSitoneAbilityKinds)))
+		}
+		if sitone.AbilityValue <= 0 {
+			errs = append(errs, fmt.Errorf("%s.ability_value must be greater than 0", location))
+		}
+		if sitone.AbilityKind == SitoneAbilityEliminateWrongChoice {
+			if sitone.AbilityCount <= 0 {
+				errs = append(errs, fmt.Errorf("%s.ability_count must be greater than 0 for eliminate_wrong_choice", location))
+			}
+		} else if sitone.AbilityCount != 0 {
+			errs = append(errs, fmt.Errorf("%s.ability_count must be 0 unless ability_kind is eliminate_wrong_choice", location))
+		}
+		if sitone.AbilityDescription == "" {
+			errs = append(errs, fmt.Errorf("%s.ability_description is required", location))
+		}
 
 		normalized = append(normalized, sitone)
 	}
@@ -105,5 +146,9 @@ func normalizeSitone(sitone Sitone) Sitone {
 	sitone.Rarity = strings.TrimSpace(sitone.Rarity)
 	sitone.Style = strings.TrimSpace(sitone.Style)
 	sitone.Description = strings.TrimSpace(sitone.Description)
+	sitone.IconPath = strings.TrimSpace(sitone.IconPath)
+	sitone.AbilityName = strings.TrimSpace(sitone.AbilityName)
+	sitone.AbilityKind = strings.TrimSpace(sitone.AbilityKind)
+	sitone.AbilityDescription = strings.TrimSpace(sitone.AbilityDescription)
 	return sitone
 }

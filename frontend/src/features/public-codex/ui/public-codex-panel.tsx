@@ -1,16 +1,17 @@
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 
-import basicStoneSkin from "@/assets/stones/basic-stone.png"
 import { gameApi, type Item, type Sitone } from "@/shared/api/game"
 import {
   itemTypeClass,
   itemTypeLabel,
+  itemSourceLabel,
   rarityLabel,
   sitoneMeta,
 } from "@/shared/lib/game-labels"
 import { Button } from "@/shared/ui/button"
 import { Card, CardContent } from "@/shared/ui/card"
+import { GameIcon } from "@/shared/ui/game-icon"
 
 type Tab = "stones" | "items"
 
@@ -27,6 +28,10 @@ function entryMeta(entry: CodexEntry) {
       rarity: rarityLabel(entry.data.rarity),
       toneClass: meta.bgClassName,
       description: entry.data.description,
+      iconPath: entry.data.iconPath,
+      source: "",
+      abilityName: entry.data.abilityName,
+      abilityDescription: entry.data.abilityDescription,
       symbol: "◆",
     }
   }
@@ -37,6 +42,10 @@ function entryMeta(entry: CodexEntry) {
     rarity: rarityLabel(entry.data.rarity),
     toneClass: itemTypeClass(entry.data.type),
     description: entry.data.description,
+    iconPath: entry.data.iconPath,
+    source: itemSourceLabel(entry.data.source),
+    abilityName: "",
+    abilityDescription: "",
     symbol: "▣",
   }
 }
@@ -118,22 +127,17 @@ export function PublicCodexPanel() {
               >
                 <div
                   className={`${meta.toneClass} border-ink mb-2 flex h-[86px] items-center justify-center rounded-[20px] border-2`}
+                  aria-hidden
                 >
-                  {entry.kind === "stones" ? (
-                    <img
-                      src={basicStoneSkin}
-                      alt=""
-                      className="size-16 [image-rendering:pixelated]"
-                      aria-hidden
-                    />
-                  ) : (
-                    <span
-                      className="text-card/90 text-[34px] drop-shadow-[0_2px_0_rgba(23,35,58,0.3)]"
-                      aria-hidden
-                    >
-                      {meta.symbol}
-                    </span>
-                  )}
+                  <GameIcon
+                    iconPath={meta.iconPath}
+                    imageClassName="p-2"
+                    fallback={
+                      <span className="text-card/90 text-[34px] drop-shadow-[0_2px_0_rgba(23,35,58,0.3)]">
+                        {meta.symbol}
+                      </span>
+                    }
+                  />
                 </div>
                 <div className="mt-[9px] mb-1.5 flex flex-wrap gap-1">
                   <span className="border-border bg-surface-raised text-muted-foreground rounded-full border px-[7px] py-[3px] text-[11px] leading-none font-black">
@@ -142,6 +146,11 @@ export function PublicCodexPanel() {
                   <span className="border-border bg-surface-raised text-muted-foreground rounded-full border px-[7px] py-[3px] text-[11px] leading-none font-black">
                     {meta.rarity}
                   </span>
+                  {meta.source ? (
+                    <span className="border-border bg-surface-raised text-muted-foreground rounded-full border px-[7px] py-[3px] text-[11px] leading-none font-black">
+                      {meta.source}
+                    </span>
+                  ) : null}
                 </div>
                 <h3 className="mb-1 text-[17px] leading-tight font-black tracking-tight">
                   {meta.name}
@@ -149,6 +158,11 @@ export function PublicCodexPanel() {
                 <p className="text-muted-foreground text-[13px] leading-relaxed">
                   {meta.description}
                 </p>
+                {meta.abilityDescription ? (
+                  <p className="text-muted-foreground mt-2 text-[12px] leading-relaxed font-semibold">
+                    {meta.abilityName}：{meta.abilityDescription}
+                  </p>
+                ) : null}
               </article>
             )
           })

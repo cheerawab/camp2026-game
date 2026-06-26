@@ -79,6 +79,17 @@ const SitoneSchema = z.object({
   rarity: z.string(),
   style: z.string(),
   description: z.string(),
+  iconPath: z.string().optional(),
+  abilityName: z.string(),
+  abilityKind: z.enum([
+    "material_drop_rate",
+    "answer_score_bonus",
+    "open_power_bonus",
+    "eliminate_wrong_choice",
+  ]),
+  abilityValue: z.number(),
+  abilityCount: z.number(),
+  abilityDescription: z.string(),
 })
 
 const ItemSchema = z.object({
@@ -87,6 +98,8 @@ const ItemSchema = z.object({
   type: z.string(),
   rarity: z.string(),
   description: z.string(),
+  iconPath: z.string().optional(),
+  source: z.string().optional(),
 })
 
 const CatalogSitonesResponseSchema = z.object({
@@ -125,6 +138,8 @@ const ShopItemSchema = z.object({
   type: z.string(),
   rarity: z.string(),
   description: z.string(),
+  iconPath: z.string().optional(),
+  source: z.string().optional(),
   priceOpenPower: z.number(),
   redeemed: z.boolean(),
 })
@@ -152,6 +167,13 @@ const FusionComponentSchema = z.object({
   name: z.string(),
   type: z.string().optional(),
   rarity: z.string().optional(),
+  iconPath: z.string().optional(),
+  source: z.string().optional(),
+  abilityName: z.string().optional(),
+  abilityKind: z.string().optional(),
+  abilityValue: z.number().optional(),
+  abilityCount: z.number().optional(),
+  abilityDescription: z.string().optional(),
   quantity: z.number(),
 })
 
@@ -205,7 +227,24 @@ const MatchPlayerSchema = z.object({
   sitoneIds: nullableArray(z.string()),
   score: z.number().optional(),
   maxScore: z.number().optional(),
+  answerScoreBonusPercent: z.number().optional(),
+  openPowerBonusPercent: z.number().optional(),
+  materialDropBonusPercent: z.number().optional(),
+  eliminateChancePercent: z.number().optional(),
+  eliminateCount: z.number().optional(),
+  eliminatedChoices: nullableArray(z.string()),
+  eliminatedBy: nullableArray(z.string()),
+  baseOpenPowerReward: z.number().optional(),
   openPowerReward: z.number().optional(),
+  materialDrop: z
+    .object({
+      dropped: z.boolean(),
+      itemId: z.string().optional(),
+      itemName: z.string().optional(),
+      quantity: z.number().optional(),
+      dropRate: z.number(),
+    })
+    .optional(),
 })
 
 const MatchQuestionSchema = z.object({
@@ -222,6 +261,8 @@ const MatchAnswerResultSchema = z.object({
   nickname: z.string(),
   choice: z.string().optional(),
   correct: z.boolean(),
+  baseScore: z.number(),
+  bonusScore: z.number(),
   score: z.number(),
   elapsedMillis: z.number(),
   answeredAt: z.string().optional(),

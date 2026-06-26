@@ -75,6 +75,14 @@ func (h *Handler) Ready(w http.ResponseWriter, r *http.Request) {
 		match.StartedAt = now
 		match.RoundStartedAt = now
 		match.RoundEndsAt = now.Add(roundDuration * time.Second)
+		if err := h.snapshotMatchBattleEffects(r.Context(), &match); err != nil {
+			httpx.WriteProblem(w, r, httpx.InternalServerError("match start failed", "match_ready_effects_failed", err))
+			return
+		}
+		if err := h.ensureCurrentRoundEliminations(r.Context(), &match); err != nil {
+			httpx.WriteProblem(w, r, httpx.InternalServerError("match start failed", "match_ready_eliminations_failed", err))
+			return
+		}
 		events = append(events, "round_started")
 	}
 
@@ -86,7 +94,7 @@ func (h *Handler) Ready(w http.ResponseWriter, r *http.Request) {
 	for _, event := range events {
 		h.publishState(r.Context(), match, event)
 	}
-	state, err := h.buildMatchState(r.Context(), match)
+	state, err := h.buildMatchState(r.Context(), match, player.ID)
 	if err != nil {
 		httpx.WriteProblem(w, r, err)
 		return

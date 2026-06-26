@@ -1119,3 +1119,236 @@ quantity = 1
 kind = "sitone"
 id = "stone_2024_last_night_polaroid"
 quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_basic_gray"
+branch_id = "basic"
+type = "exploration"
+stage_from = 0
+stage_to = 0
+name = "探索型小石"
+description = "牠是最普通、也最有可能性的小石，身上還沒有長出明確的方向。每一次逛攤位、問問題或認識新朋友，都可能讓牠展開一條潛力無窮的路。"
+story = "牠是最普通、也最有可能性的小石，身上還沒有長出明確的方向。每一次逛攤位、問問題或認識新朋友，都可能讓牠展開一條潛力無窮的路。"
+enabled = false
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_explorer_base"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_basic_blue"
+branch_id = "basic"
+type = "engineering"
+stage_from = 0
+stage_to = 0
+name = "工程型小石"
+description = "牠體內藏著潛力無窮的工程能量，還沒有固定成任何工具或系統。只要遇到問題，牠就會安靜觀察，準備把混亂拆成可以一步一步解開的形狀。"
+story = "牠體內藏著潛力無窮的工程能量，還沒有固定成任何工具或系統。只要遇到問題，牠就會安靜觀察，準備把混亂拆成可以一步一步解開的形狀。"
+enabled = false
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_engineering_base"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_basic_purple"
+branch_id = "basic"
+type = "resonance"
+stage_from = 0
+stage_to = 0
+name = "共鳴型小石"
+description = "牠是一顆潛力無窮的共鳴小石，還在等待遇見能一起發聲的夥伴。每一次分享、傾聽和互相幫忙，都可能讓牠長出新的連結方式。"
+story = "牠是一顆潛力無窮的共鳴小石，還在等待遇見能一起發聲的夥伴。每一次分享、傾聽和互相幫忙，都可能讓牠長出新的連結方式。"
+enabled = false
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_resonance_base"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_basic_orange"
+branch_id = "basic"
+type = "entertainment"
+stage_from = 0
+stage_to = 0
+name = "娛樂型小石"
+description = "牠帶著潛力無窮的舞台感，還不知道自己會成為表演者、主持人，還是點亮氣氛的人。只要有人願意參與，牠就會把笑聲、勇氣和回憶收進身上。"
+story = "牠帶著潛力無窮的舞台感，還不知道自己會成為表演者、主持人，還是點亮氣氛的人。只要有人願意參與，牠就會把笑聲、勇氣和回憶收進身上。"
+enabled = false
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_entertainment_base"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_basic_yellow"
+branch_id = "basic"
+type = "inspiration"
+stage_from = 0
+stage_to = 0
+name = "靈光型小石"
+description = "牠閃著一點點還沒成形的靈光，像一顆潛力無窮的想法種子。當問題還沒有答案時，牠會先亮起來，提醒大家下一個入口可能就在附近。"
+story = "牠閃著一點點還沒成形的靈光，像一顆潛力無窮的想法種子。當問題還沒有答案時，牠會先亮起來，提醒大家下一個入口可能就在附近。"
+enabled = false
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_inspiration_base"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_event_heisenbug_order_guardian"
+branch_id = "event_heisenbug"
+type = "engineering"
+stage_from = 0
+stage_to = 0
+name = "秩序守護者小石"
+description = "牠把破碎的帳本重新排齊，讓位元城看起來再次穩定。只是每一次修補完成後，牠都會多看一眼那些被抹去的名字。"
+story = "牠把破碎的帳本重新排齊，讓位元城看起來再次穩定。只是每一次修補完成後，牠都會多看一眼那些被抹去的名字。"
+review_title = "海森堡 bug A 結局"
+enabled = false
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_order_guardian"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_event_heisenbug_freedom_rebel"
+branch_id = "event_heisenbug"
+type = "resonance"
+stage_from = 0
+stage_to = 0
+name = "自由反抗者小石"
+description = "牠把被藏起來的帳本高高舉起，讓所有人看見系統背後的真相。即使城市因此短暫混亂，牠仍相信自由比沉默更接近答案。"
+story = "牠把被藏起來的帳本高高舉起，讓所有人看見系統背後的真相。即使城市因此短暫混亂，牠仍相信自由比沉默更接近答案。"
+review_title = "海森堡 bug B 結局"
+enabled = false
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_freedom_rebel"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_event_python_turtle"
+branch_id = "event_special"
+type = "inspiration"
+stage_from = 0
+stage_to = 0
+name = "烏龜小石"
+description = "牠慢慢走，慢慢畫，把每一次轉彎都留成可以回看的線。答案不一定要最快出現，有時候一步一步畫出來，反而更清楚。"
+story = "牠慢慢走，慢慢畫，把每一次轉彎都留成可以回看的線。答案不一定要最快出現，有時候一步一步畫出來，反而更清楚。"
+review_title = "Python Turtle 特殊活動"
+enabled = false
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_python_turtle"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_event_fireside"
+branch_id = "event_fireside"
+type = "resonance"
+stage_from = 0
+stage_to = 0
+name = "爐邊小石"
+description = "牠總是在夜談時靠近火光，安靜聽完每個人的故事。有人願意開口時，牠身上的光就會亮一點。"
+story = "牠總是在夜談時靠近火光，安靜聽完每個人的故事。有人願意開口時，牠身上的光就會亮一點。"
+review_title = "爐邊夜談活躍獎勵"
+enabled = false
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_fireside"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_event_command_blind_trip"
+branch_id = "event_checkpoint"
+type = "engineering"
+stage_from = 0
+stage_to = 0
+name = "指令盲旅小石"
+description = "牠戴上眼罩後不急著往前衝，而是等待隊友把混亂變成一套清楚的指令。每一次成功抵達，都是大家共同定義出來的路。"
+story = "牠戴上眼罩後不急著往前衝，而是等待隊友把混亂變成一套清楚的指令。每一次成功抵達，都是大家共同定義出來的路。"
+review_title = "闖關活動：指令盲旅"
+enabled = false
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_command_blind_trip"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_event_human_llm"
+branch_id = "event_checkpoint"
+type = "inspiration"
+stage_from = 0
+stage_to = 0
+name = "人類大語言模型小石"
+description = "牠只能一次留下短短幾個字，卻努力把前一個人的意思接住。當句子一路傳到最後，牠才發現理解本身也需要團隊合作。"
+story = "牠只能一次留下短短幾個字，卻努力把前一個人的意思接住。當句子一路傳到最後，牠才發現理解本身也需要團隊合作。"
+review_title = "闖關活動：人類大語言模型"
+enabled = false
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_human_llm"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_event_von_neumann"
+branch_id = "event_checkpoint"
+type = "engineering"
+stage_from = 0
+stage_to = 0
+name = "馮紐曼小石"
+description = "牠把輸入、記憶、計算和輸出分成不同位置，再把散落的偏旁重新組回答案。看似混亂的流程，其實有一套安靜運轉的架構。"
+story = "牠把輸入、記憶、計算和輸出分成不同位置，再把散落的偏旁重新組回答案。看似混亂的流程，其實有一套安靜運轉的架構。"
+review_title = "闖關活動：馮紐曼架構"
+enabled = false
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_von_neumann"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_event_packet_rescue"
+branch_id = "event_checkpoint"
+type = "engineering"
+stage_from = 0
+stage_to = 0
+name = "封包救援小石"
+description = "牠在錯亂與遺失的訊息之間奔跑，把破碎的封包一段一段撿回來。只要隊友還願意重傳，答案就不會真的消失。"
+story = "牠在錯亂與遺失的訊息之間奔跑，把破碎的封包一段一段撿回來。只要隊友還願意重傳，答案就不會真的消失。"
+review_title = "闖關活動：封包掉包"
+enabled = false
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_packet_rescue"
+quantity = 1
+
+[[fusion_recipes]]
+id = "recipe_event_prompt_injection"
+branch_id = "event_checkpoint"
+type = "inspiration"
+stage_from = 0
+stage_to = 0
+name = "Prompt Injection 小石"
+description = "牠最擅長從看似正常的句子裡找到奇怪的入口。面對被偷走方向的提示詞，牠會先停下來問一句：這真的是我們要回答的問題嗎？"
+story = "牠最擅長從看似正常的句子裡找到奇怪的入口。面對被偷走方向的提示詞，牠會先停下來問一句：這真的是我們要回答的問題嗎？"
+review_title = "闖關活動：Prompt Injection"
+enabled = false
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_prompt_injection"
+quantity = 1

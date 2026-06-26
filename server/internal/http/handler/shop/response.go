@@ -14,6 +14,8 @@ type ShopItemResponse struct {
 	Type           string `json:"type" example:"material"`
 	Rarity         string `json:"rarity" example:"common"`
 	Description    string `json:"description" example:"冒險背包，可用於小石合成。"`
+	IconPath       string `json:"iconPath,omitempty" example:"/game-icons/items/item_adventure_backpack.png"`
+	Source         string `json:"source,omitempty" example:"shop"`
 	PriceOpenPower int    `json:"priceOpenPower" example:"50"`
 	Redeemed       bool   `json:"redeemed" example:"false"`
 }

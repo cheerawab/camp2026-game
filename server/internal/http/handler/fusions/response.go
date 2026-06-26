@@ -22,12 +22,19 @@ type FusionRecipeResponse struct {
 }
 
 type FusionComponentResponse struct {
-	Kind     string `json:"kind" example:"item"`
-	ID       string `json:"id" example:"item_adventure_backpack"`
-	Name     string `json:"name" example:"冒險背包"`
-	Type     string `json:"type,omitempty" example:"material"`
-	Rarity   string `json:"rarity,omitempty" example:"common"`
-	Quantity int    `json:"quantity" example:"1"`
+	Kind               string `json:"kind" example:"item"`
+	ID                 string `json:"id" example:"item_adventure_backpack"`
+	Name               string `json:"name" example:"冒險背包"`
+	Type               string `json:"type,omitempty" example:"material"`
+	Rarity             string `json:"rarity,omitempty" example:"common"`
+	IconPath           string `json:"iconPath,omitempty" example:"/game-icons/stones/basic_blue.png"`
+	Source             string `json:"source,omitempty" example:"shop"`
+	AbilityName        string `json:"abilityName,omitempty" example:"穩定輸出"`
+	AbilityKind        string `json:"abilityKind,omitempty" example:"answer_score_bonus"`
+	AbilityValue       int    `json:"abilityValue,omitempty" example:"5"`
+	AbilityCount       int    `json:"abilityCount,omitempty" example:"0"`
+	AbilityDescription string `json:"abilityDescription,omitempty" example:"答對時分數提高 5%。"`
+	Quantity           int    `json:"quantity" example:"1"`
 }
 
 type CreateRequest struct {

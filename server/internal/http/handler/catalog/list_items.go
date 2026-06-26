@@ -17,6 +17,8 @@ type ItemResponse struct {
 	Type        string `json:"type" example:"material"`
 	Rarity      string `json:"rarity" example:"common"`
 	Description string `json:"description" example:"冒險背包，可用於小石合成。"`
+	IconPath    string `json:"iconPath,omitempty" example:"/game-icons/items/item_adventure_backpack.png"`
+	Source      string `json:"source,omitempty" example:"shop"`
 }
 
 // ListItems godoc
@@ -51,6 +53,8 @@ func mapItems(items []content.Item) []ItemResponse {
 			Type:        item.Type,
 			Rarity:      item.Rarity,
 			Description: item.Description,
+			IconPath:    item.IconPath,
+			Source:      item.Source,
 		})
 	}
 	return out

@@ -1644,6 +1644,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "冒險背包，可用於小石合成。"
                 },
+                "iconPath": {
+                    "type": "string",
+                    "example": "/game-icons/items/item_adventure_backpack.png"
+                },
                 "id": {
                     "type": "string",
                     "example": "item_adventure_backpack"
@@ -1655,6 +1659,10 @@ const docTemplate = `{
                 "rarity": {
                     "type": "string",
                     "example": "common"
+                },
+                "source": {
+                    "type": "string",
+                    "example": "shop"
                 },
                 "type": {
                     "type": "string",
@@ -1676,9 +1684,33 @@ const docTemplate = `{
         "catalog.SitoneResponse": {
             "type": "object",
             "properties": {
+                "abilityCount": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "abilityDescription": {
+                    "type": "string",
+                    "example": "答對時分數提高 5%。"
+                },
+                "abilityKind": {
+                    "type": "string",
+                    "example": "answer_score_bonus"
+                },
+                "abilityName": {
+                    "type": "string",
+                    "example": "穩定輸出"
+                },
+                "abilityValue": {
+                    "type": "integer",
+                    "example": 5
+                },
                 "description": {
                     "type": "string",
                     "example": "修 bug、分享解法、完成技術任務。"
+                },
+                "iconPath": {
+                    "type": "string",
+                    "example": "/game-icons/stones/basic_blue.png"
                 },
                 "id": {
                     "type": "string",
@@ -1729,6 +1761,30 @@ const docTemplate = `{
         "fusions.FusionComponentResponse": {
             "type": "object",
             "properties": {
+                "abilityCount": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "abilityDescription": {
+                    "type": "string",
+                    "example": "答對時分數提高 5%。"
+                },
+                "abilityKind": {
+                    "type": "string",
+                    "example": "answer_score_bonus"
+                },
+                "abilityName": {
+                    "type": "string",
+                    "example": "穩定輸出"
+                },
+                "abilityValue": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "iconPath": {
+                    "type": "string",
+                    "example": "/game-icons/stones/basic_blue.png"
+                },
                 "id": {
                     "type": "string",
                     "example": "item_adventure_backpack"
@@ -1748,6 +1804,10 @@ const docTemplate = `{
                 "rarity": {
                     "type": "string",
                     "example": "common"
+                },
+                "source": {
+                    "type": "string",
+                    "example": "shop"
                 },
                 "type": {
                     "type": "string",
@@ -1845,6 +1905,9 @@ const docTemplate = `{
         "httpx.ProblemDetails": {
             "type": "object",
             "properties": {
+                "code": {
+                    "type": "string"
+                },
                 "detail": {
                     "type": "string"
                 },
@@ -1855,6 +1918,9 @@ const docTemplate = `{
                     }
                 },
                 "instance": {
+                    "type": "string"
+                },
+                "requestId": {
                     "type": "string"
                 },
                 "status": {
@@ -2109,6 +2175,14 @@ const docTemplate = `{
                 "answeredAt": {
                     "type": "string"
                 },
+                "baseScore": {
+                    "type": "integer",
+                    "example": 150
+                },
+                "bonusScore": {
+                    "type": "integer",
+                    "example": 15
+                },
                 "choice": {
                     "type": "string",
                     "example": "A"
@@ -2135,12 +2209,79 @@ const docTemplate = `{
                 }
             }
         },
+        "matches.MatchItemDropResponse": {
+            "type": "object",
+            "properties": {
+                "dropRate": {
+                    "type": "integer",
+                    "example": 60
+                },
+                "dropped": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "itemId": {
+                    "type": "string",
+                    "example": "item_clean_spec"
+                },
+                "itemName": {
+                    "type": "string",
+                    "example": "整潔規格書"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
         "matches.MatchPlayerResponse": {
             "type": "object",
             "properties": {
+                "answerScoreBonusPercent": {
+                    "type": "integer",
+                    "example": 10
+                },
                 "answeredCurrentQuestion": {
                     "type": "boolean",
                     "example": true
+                },
+                "baseOpenPowerReward": {
+                    "type": "integer",
+                    "example": 105
+                },
+                "eliminateChancePercent": {
+                    "type": "integer",
+                    "example": 25
+                },
+                "eliminateCount": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "eliminatedBy": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "靈光型小石"
+                    ]
+                },
+                "eliminatedChoices": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "B",
+                        "C"
+                    ]
+                },
+                "materialDrop": {
+                    "$ref": "#/definitions/matches.MatchItemDropResponse"
+                },
+                "materialDropBonusPercent": {
+                    "type": "integer",
+                    "example": 15
                 },
                 "maxScore": {
                     "type": "integer",
@@ -2150,9 +2291,13 @@ const docTemplate = `{
                     "type": "string",
                     "example": "Alice"
                 },
+                "openPowerBonusPercent": {
+                    "type": "integer",
+                    "example": 20
+                },
                 "openPowerReward": {
                     "type": "integer",
-                    "example": 105
+                    "example": 126
                 },
                 "playerId": {
                     "type": "string",
@@ -2623,6 +2768,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "冒險背包，可用於小石合成。"
                 },
+                "iconPath": {
+                    "type": "string",
+                    "example": "/game-icons/items/item_adventure_backpack.png"
+                },
                 "id": {
                     "type": "string",
                     "example": "item_adventure_backpack"
@@ -2634,6 +2783,10 @@ const docTemplate = `{
                 "rarity": {
                     "type": "string",
                     "example": "common"
+                },
+                "source": {
+                    "type": "string",
+                    "example": "shop"
                 },
                 "type": {
                     "type": "string",
@@ -2739,9 +2892,33 @@ const docTemplate = `{
         "me.SitoneResponse": {
             "type": "object",
             "properties": {
+                "abilityCount": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "abilityDescription": {
+                    "type": "string",
+                    "example": "答對時分數提高 5%。"
+                },
+                "abilityKind": {
+                    "type": "string",
+                    "example": "answer_score_bonus"
+                },
+                "abilityName": {
+                    "type": "string",
+                    "example": "穩定輸出"
+                },
+                "abilityValue": {
+                    "type": "integer",
+                    "example": 5
+                },
                 "description": {
                     "type": "string",
                     "example": "修 bug、分享解法、完成技術任務。"
+                },
+                "iconPath": {
+                    "type": "string",
+                    "example": "/game-icons/stones/basic_blue.png"
                 },
                 "id": {
                     "type": "string",
@@ -2987,6 +3164,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "冒險背包，可用於小石合成。"
                 },
+                "iconPath": {
+                    "type": "string",
+                    "example": "/game-icons/items/item_adventure_backpack.png"
+                },
                 "id": {
                     "type": "string",
                     "example": "item_adventure_backpack"
@@ -3006,6 +3187,10 @@ const docTemplate = `{
                 "redeemed": {
                     "type": "boolean",
                     "example": false
+                },
+                "source": {
+                    "type": "string",
+                    "example": "shop"
                 },
                 "type": {
                     "type": "string",

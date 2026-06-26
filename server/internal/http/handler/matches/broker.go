@@ -1,10 +1,14 @@
 package matches
 
-import "sync"
+import (
+	"sync"
+
+	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
+)
 
 type Event struct {
-	Name string
-	Data MatchStateResponse
+	Name  string
+	Match mongomodel.Match
 }
 
 type Broker struct {

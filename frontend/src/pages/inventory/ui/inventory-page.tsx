@@ -11,6 +11,7 @@ import {
 import { Button } from "@/shared/ui/button"
 import { Card } from "@/shared/ui/card"
 import { GamePageShell } from "@/shared/ui/game-page-shell"
+import { GameIcon } from "@/shared/ui/game-icon"
 import { PageHeader } from "@/shared/ui/page-header"
 
 function ItemIcon({ item }: { item: PlayerItem }) {
@@ -22,7 +23,13 @@ function ItemIcon({ item }: { item: PlayerItem }) {
       ].join(" ")}
       aria-hidden
     >
-      <span className="border-card/80 absolute inset-[14px_18px] -rotate-[12deg] border-x-0 border-y-[3px]" />
+      <GameIcon
+        iconPath={item.item.iconPath}
+        imageClassName="p-2"
+        fallback={
+          <span className="border-card/80 absolute inset-[14px_18px] -rotate-[12deg] border-x-0 border-y-[3px]" />
+        }
+      />
       <strong className="bg-card border-ink absolute right-1.5 bottom-[5px] min-w-[28px] rounded-full border-2 px-1.5 py-px text-center text-[13px]">
         {item.quantity}
       </strong>

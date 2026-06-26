@@ -90,24 +90,25 @@ func questionResponse(question content.QuizQuestion) MatchQuestionResponse {
 	}
 }
 
-func scoreAnswer(question content.QuizQuestion, choice string, answeredAt time.Time, roundEndsAt time.Time) (bool, int) {
+func scoreAnswer(question content.QuizQuestion, choice string, answeredAt time.Time, roundEndsAt time.Time, effects battleEffects) (bool, int, int) {
 	correct := strings.EqualFold(choice, question.CorrectChoice)
 	if !correct {
-		return false, 0
+		return false, 0, 0
 	}
 
 	remainingSeconds := int(math.Floor(roundEndsAt.Sub(answeredAt).Seconds()))
 	if remainingSeconds < 0 {
 		remainingSeconds = 0
 	}
-	return true, 100 + remainingSeconds*5
+	baseScore := 100 + remainingSeconds*5
+	return true, baseScore, applyPercentBonus(baseScore, effects.AnswerScoreBonusPercent)
 }
 
 func maxScorePerQuestion() int {
 	return 100 + roundDuration*5
 }
 
-func maxScoreThroughCurrentQuestion(match mongomodel.Match) int {
+func maxScoreThroughCurrentQuestion(match mongomodel.Match, effects battleEffects) int {
 	if len(match.QuestionIDs) == 0 || match.Status == mongomodel.MatchStatusWaiting {
 		return 0
 	}
@@ -123,7 +124,7 @@ func maxScoreThroughCurrentQuestion(match mongomodel.Match) int {
 		questionCount = len(match.QuestionIDs)
 	}
 
-	return questionCount * maxScorePerQuestion()
+	return questionCount * applyPercentBonus(maxScorePerQuestion(), effects.AnswerScoreBonusPercent)
 }
 
 func openPowerReward(score int) int {
@@ -159,7 +160,15 @@ func clearMatchWinner(match mongomodel.Match) (mongomodel.MatchPlayer, bool) {
 	return winner, true
 }
 
-func matchOpenPowerReward(match mongomodel.Match, player mongomodel.MatchPlayer) int {
+func matchOpenPowerReward(match mongomodel.Match, player mongomodel.MatchPlayer, effects battleEffects) int {
+	winner, ok := clearMatchWinner(match)
+	if !ok || winner.PlayerID != player.PlayerID {
+		return 0
+	}
+	return applyPercentBonus(openPowerReward(winner.Score), effects.OpenPowerBonusPercent)
+}
+
+func matchBaseOpenPowerReward(match mongomodel.Match, player mongomodel.MatchPlayer) int {
 	winner, ok := clearMatchWinner(match)
 	if !ok || winner.PlayerID != player.PlayerID {
 		return 0

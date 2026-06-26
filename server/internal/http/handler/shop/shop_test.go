@@ -13,14 +13,20 @@ func TestShopItemsIncludesAllEnabledPurchasableContentItems(t *testing.T) {
 	store := loadTestContent(t)
 
 	items := shopItems(store)
-	if len(items) != 40 {
-		t.Fatalf("expected 40 shop items, got %#v", items)
+	if len(items) != 33 {
+		t.Fatalf("expected 33 shop items, got %#v", items)
 	}
 	if items[0].ID != "item_adventure_backpack" || items[0].PriceOpenPower != 50 {
 		t.Fatalf("unexpected first shop item: %#v", items[0])
 	}
-	if _, ok := shopItemByID(store, "item_polaroid_film"); !ok {
-		t.Fatal("expected imported polaroid film item to be purchasable")
+	if _, ok := shopItemByID(store, "item_polaroid_film"); ok {
+		t.Fatal("expected drop-only polaroid film item not to be purchasable")
+	}
+	if _, ok := shopItemByID(store, "item_shared_notes_link"); !ok {
+		t.Fatal("expected dual-source shared notes item to be purchasable")
+	}
+	if _, ok := shopItemByID(store, "item_charm_debug"); !ok {
+		t.Fatal("expected charm item to be purchasable")
 	}
 }
 
@@ -31,10 +37,11 @@ func TestShopItemResponse(t *testing.T) {
 		Type:           "material",
 		Rarity:         "common",
 		Description:    "冒險背包，可用於小石合成。",
+		Source:         "shop",
 		PriceOpenPower: 50,
 	}, true)
 
-	if response.ID != "item_adventure_backpack" || response.PriceOpenPower != 50 || !response.Redeemed {
+	if response.ID != "item_adventure_backpack" || response.Source != "shop" || response.PriceOpenPower != 50 || !response.Redeemed {
 		t.Fatalf("unexpected shop item response: %#v", response)
 	}
 }

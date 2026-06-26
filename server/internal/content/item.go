@@ -11,8 +11,16 @@ const itemsFile = "items.toml"
 
 var validItemTypes = map[string]struct{}{
 	"material": {},
+	"charm":    {},
 	"cosmetic": {},
 	"event":    {},
+}
+
+var validItemSources = map[string]struct{}{
+	"shop":  {},
+	"drop":  {},
+	"both":  {},
+	"event": {},
 }
 
 type Item struct {
@@ -21,6 +29,8 @@ type Item struct {
 	Type           string `toml:"type"`
 	Rarity         string `toml:"rarity"`
 	Description    string `toml:"description"`
+	IconPath       string `toml:"icon_path"`
+	Source         string `toml:"source"`
 	Purchasable    bool   `toml:"purchasable"`
 	Enabled        bool   `toml:"enabled"`
 	PriceOpenPower int    `toml:"price_open_power"`
@@ -78,6 +88,17 @@ func validateItems(path string, items []Item) ([]Item, map[string]Item, error) {
 		} else if _, ok := validRarities[item.Rarity]; !ok {
 			errs = append(errs, fmt.Errorf("%s.rarity must be one of %s", location, sortedKeys(validRarities)))
 		}
+		if item.Source != "" {
+			if _, ok := validItemSources[item.Source]; !ok {
+				errs = append(errs, fmt.Errorf("%s.source must be one of %s", location, sortedKeys(validItemSources)))
+			}
+			if item.Source == "drop" && item.Purchasable {
+				errs = append(errs, fmt.Errorf("%s.purchasable must be false when source is drop", location))
+			}
+			if (item.Source == "shop" || item.Source == "both") && !item.Purchasable {
+				errs = append(errs, fmt.Errorf("%s.purchasable must be true when source is %s", location, item.Source))
+			}
+		}
 		if item.Purchasable && item.PriceOpenPower <= 0 {
 			errs = append(errs, fmt.Errorf("%s.price_open_power must be greater than 0 when purchasable is true", location))
 		}
@@ -107,5 +128,7 @@ func normalizeItem(item Item) Item {
 	item.Type = strings.TrimSpace(item.Type)
 	item.Rarity = strings.TrimSpace(item.Rarity)
 	item.Description = strings.TrimSpace(item.Description)
+	item.IconPath = strings.TrimSpace(item.IconPath)
+	item.Source = strings.TrimSpace(item.Source)
 	return item
 }

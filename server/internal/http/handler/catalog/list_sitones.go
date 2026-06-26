@@ -12,12 +12,18 @@ type SitoneListResponse struct {
 }
 
 type SitoneResponse struct {
-	ID          string `json:"id" example:"stone_engineering_base"`
-	Name        string `json:"name" example:"工程型小石"`
-	Type        string `json:"type" example:"engineering"`
-	Rarity      string `json:"rarity" example:"base"`
-	Style       string `json:"style" example:"default"`
-	Description string `json:"description" example:"修 bug、分享解法、完成技術任務。"`
+	ID                 string `json:"id" example:"stone_engineering_base"`
+	Name               string `json:"name" example:"工程型小石"`
+	Type               string `json:"type" example:"engineering"`
+	Rarity             string `json:"rarity" example:"base"`
+	Style              string `json:"style" example:"default"`
+	Description        string `json:"description" example:"修 bug、分享解法、完成技術任務。"`
+	IconPath           string `json:"iconPath,omitempty" example:"/game-icons/stones/basic_blue.png"`
+	AbilityName        string `json:"abilityName" example:"穩定輸出"`
+	AbilityKind        string `json:"abilityKind" example:"answer_score_bonus"`
+	AbilityValue       int    `json:"abilityValue" example:"5"`
+	AbilityCount       int    `json:"abilityCount" example:"0"`
+	AbilityDescription string `json:"abilityDescription" example:"答對時分數提高 5%。"`
 }
 
 // ListSitones godoc
@@ -47,12 +53,18 @@ func mapSitones(sitones []content.Sitone) []SitoneResponse {
 	out := make([]SitoneResponse, 0, len(sitones))
 	for _, sitone := range sitones {
 		out = append(out, SitoneResponse{
-			ID:          sitone.ID,
-			Name:        sitone.Name,
-			Type:        sitone.Type,
-			Rarity:      sitone.Rarity,
-			Style:       sitone.Style,
-			Description: sitone.Description,
+			ID:                 sitone.ID,
+			Name:               sitone.Name,
+			Type:               sitone.Type,
+			Rarity:             sitone.Rarity,
+			Style:              sitone.Style,
+			Description:        sitone.Description,
+			IconPath:           sitone.IconPath,
+			AbilityName:        sitone.AbilityName,
+			AbilityKind:        sitone.AbilityKind,
+			AbilityValue:       sitone.AbilityValue,
+			AbilityCount:       sitone.AbilityCount,
+			AbilityDescription: sitone.AbilityDescription,
 		})
 	}
 	return out

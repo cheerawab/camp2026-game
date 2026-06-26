@@ -5,11 +5,13 @@ import { type ShopItem } from "@/shared/api/game"
 import {
   itemTypeClass,
   itemTypeLabel,
+  itemSourceLabel,
   rarityLabel,
 } from "@/shared/lib/game-labels"
 import { Badge } from "@/shared/ui/badge"
 import { Button } from "@/shared/ui/button"
 import { Card, CardContent } from "@/shared/ui/card"
+import { GameIcon } from "@/shared/ui/game-icon"
 
 import { ShopPurchaseConfirmButton } from "./shop-purchase-confirm-button"
 
@@ -33,19 +35,27 @@ export function ShopItemCard({ item, currentOpenPower }: ShopItemCardType) {
               ].join(" ")}
               aria-hidden
             >
-              <ShoppingCart className="size-8" />
+              <GameIcon
+                iconPath={item.iconPath}
+                imageClassName="p-2"
+                fallback={<ShoppingCart className="size-8" />}
+              />
             </div>
           </div>
           <div className="grid min-w-0 gap-2">
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
               <div className="flex min-w-0 flex-wrap gap-1.5">
-                {[itemTypeLabel(item.type), rarityLabel(item.rarity)].map(
-                  (tag) => (
+                {[
+                  itemTypeLabel(item.type),
+                  rarityLabel(item.rarity),
+                  itemSourceLabel(item.source),
+                ]
+                  .filter(Boolean)
+                  .map((tag) => (
                     <Badge variant="outline" key={tag}>
                       {tag}
                     </Badge>
-                  ),
-                )}
+                  ))}
               </div>
               <Badge>開源力 {item.priceOpenPower}</Badge>
             </div>

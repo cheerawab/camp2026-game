@@ -45,14 +45,23 @@ type MatchStateResponse struct {
 }
 
 type MatchPlayerResponse struct {
-	PlayerID                string   `json:"playerId" example:"7H9K2Q"`
-	Nickname                string   `json:"nickname" example:"Alice"`
-	Ready                   bool     `json:"ready" example:"true"`
-	AnsweredCurrentQuestion bool     `json:"answeredCurrentQuestion,omitempty" example:"true"`
-	SitoneIDs               []string `json:"sitoneIds,omitempty" example:"stone_engineering_base,stone_explorer_base"`
-	Score                   *int     `json:"score,omitempty" example:"850"`
-	MaxScore                *int     `json:"maxScore,omitempty" example:"2250"`
-	OpenPowerReward         *int     `json:"openPowerReward,omitempty" example:"105"`
+	PlayerID                 string                 `json:"playerId" example:"7H9K2Q"`
+	Nickname                 string                 `json:"nickname" example:"Alice"`
+	Ready                    bool                   `json:"ready" example:"true"`
+	AnsweredCurrentQuestion  bool                   `json:"answeredCurrentQuestion,omitempty" example:"true"`
+	SitoneIDs                []string               `json:"sitoneIds,omitempty" example:"stone_engineering_base,stone_explorer_base"`
+	Score                    *int                   `json:"score,omitempty" example:"850"`
+	MaxScore                 *int                   `json:"maxScore,omitempty" example:"2250"`
+	AnswerScoreBonusPercent  int                    `json:"answerScoreBonusPercent,omitempty" example:"10"`
+	OpenPowerBonusPercent    int                    `json:"openPowerBonusPercent,omitempty" example:"20"`
+	MaterialDropBonusPercent int                    `json:"materialDropBonusPercent,omitempty" example:"15"`
+	EliminateChancePercent   int                    `json:"eliminateChancePercent,omitempty" example:"25"`
+	EliminateCount           int                    `json:"eliminateCount,omitempty" example:"1"`
+	EliminatedChoices        []string               `json:"eliminatedChoices,omitempty" example:"B,C"`
+	EliminatedBy             []string               `json:"eliminatedBy,omitempty" example:"靈光型小石"`
+	BaseOpenPowerReward      *int                   `json:"baseOpenPowerReward,omitempty" example:"105"`
+	OpenPowerReward          *int                   `json:"openPowerReward,omitempty" example:"126"`
+	MaterialDrop             *MatchItemDropResponse `json:"materialDrop,omitempty"`
 }
 
 type MatchQuestionResponse struct {
@@ -81,7 +90,17 @@ type MatchAnswerResponse struct {
 	Nickname      string     `json:"nickname" example:"Alice"`
 	Choice        string     `json:"choice,omitempty" example:"A"`
 	Correct       bool       `json:"correct" example:"true"`
+	BaseScore     int        `json:"baseScore" example:"150"`
+	BonusScore    int        `json:"bonusScore" example:"15"`
 	Score         int        `json:"score" example:"150"`
 	ElapsedMillis int64      `json:"elapsedMillis" example:"3200"`
 	AnsweredAt    *time.Time `json:"answeredAt,omitempty"`
+}
+
+type MatchItemDropResponse struct {
+	Dropped  bool   `json:"dropped" example:"true"`
+	ItemID   string `json:"itemId,omitempty" example:"item_clean_spec"`
+	ItemName string `json:"itemName,omitempty" example:"整潔規格書"`
+	Quantity int    `json:"quantity,omitempty" example:"1"`
+	DropRate int    `json:"dropRate" example:"60"`
 }

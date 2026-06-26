@@ -16,6 +16,12 @@ type = "engineering"
 rarity = "base"
 style = "default"
 description = "完成技術任務、分享解法或協助除錯。"
+icon_path = " /game-icons/stones/basic_blue.png "
+ability_name = "穩定輸出"
+ability_kind = "answer_score_bonus"
+ability_value = 5
+ability_count = 0
+ability_description = "答對時分數提高 5%。"
 
 [[sitones]]
 id = "stone_explorer_base"
@@ -24,6 +30,11 @@ type = "exploration"
 rarity = "base"
 style = "default"
 description = "逛攤位、問問題、參與社群事件。"
+ability_name = "拾荒直覺"
+ability_kind = "material_drop_rate"
+ability_value = 5
+ability_count = 0
+ability_description = "對戰素材掉落率提高 5%。"
 `)
 
 	store, err := Load(dir)
@@ -46,6 +57,12 @@ description = "逛攤位、問問題、參與社群事件。"
 	if sitone.Name != "工程型小石" {
 		t.Fatalf("expected engineering sitone name, got %q", sitone.Name)
 	}
+	if sitone.IconPath != "/game-icons/stones/basic_blue.png" {
+		t.Fatalf("expected engineering sitone icon path, got %q", sitone.IconPath)
+	}
+	if sitone.AbilityName != "穩定輸出" || sitone.AbilityKind != SitoneAbilityAnswerScoreBonus || sitone.AbilityValue != 5 || sitone.AbilityCount != 0 {
+		t.Fatalf("unexpected engineering sitone ability: %#v", sitone)
+	}
 	if _, ok := store.GetSitone("missing"); ok {
 		t.Fatal("expected missing sitone not to exist")
 	}
@@ -65,6 +82,8 @@ name = "迷宮地圖"
 type = "material"
 rarity = "common"
 description = "迷宮地圖，可用於小石合成。"
+icon_path = " /game-icons/items/item_maze_map.png "
+source = "shop"
 purchasable = true
 enabled = true
 price_open_power = 50
@@ -100,6 +119,12 @@ description = "冒險背包，可用於小石合成。"
 	if !item.Purchasable || !item.Enabled || item.PriceOpenPower != 50 {
 		t.Fatalf("expected maze map shop metadata, got %#v", item)
 	}
+	if item.IconPath != "/game-icons/items/item_maze_map.png" {
+		t.Fatalf("expected maze map icon path, got %q", item.IconPath)
+	}
+	if item.Source != "shop" {
+		t.Fatalf("expected maze map source shop, got %q", item.Source)
+	}
 	if item, ok := store.GetItem("item_adventure_backpack"); !ok || item.Purchasable || item.Enabled || item.PriceOpenPower != 0 {
 		t.Fatalf("expected adventure backpack to use default shop metadata, got %#v", item)
 	}
@@ -111,6 +136,68 @@ description = "冒險背包，可用於小石合成。"
 	items = store.ListItems()
 	if items[0].ID != "item_adventure_backpack" {
 		t.Fatalf("expected ListItems to return a copy, got %q", items[0].ID)
+	}
+}
+
+func TestLoadItemsAllowsCharmTypeAndDropSources(t *testing.T) {
+	dir := writeContent(t, validSitonesTOML(), `
+[[items]]
+id = "item_charm_debug"
+name = "順利除蟲御守"
+type = "charm"
+rarity = "rare"
+description = "永久生效。"
+source = "shop"
+purchasable = true
+enabled = true
+price_open_power = 200
+
+[[items]]
+id = "item_clean_spec"
+name = "整潔規格書"
+type = "material"
+rarity = "common"
+description = "整潔規格書，可用於小石合成。"
+source = "drop"
+purchasable = false
+enabled = true
+price_open_power = 0
+
+[[items]]
+id = "item_shared_notes_link"
+name = "共筆連結"
+type = "material"
+rarity = "common"
+description = "共筆連結，可用於小石合成。"
+source = "both"
+purchasable = true
+enabled = true
+price_open_power = 50
+
+[[items]]
+id = "item_adventure_backpack"
+name = "冒險背包"
+type = "material"
+rarity = "common"
+description = "冒險背包，可用於小石合成。"
+`)
+
+	store, err := Load(dir)
+	if err != nil {
+		t.Fatalf("load content: %v", err)
+	}
+
+	charm, ok := store.GetItem("item_charm_debug")
+	if !ok || charm.Type != "charm" || charm.Source != "shop" || charm.PriceOpenPower != 200 {
+		t.Fatalf("unexpected charm item: %#v", charm)
+	}
+	dropOnly, ok := store.GetItem("item_clean_spec")
+	if !ok || dropOnly.Source != "drop" || dropOnly.Purchasable {
+		t.Fatalf("unexpected drop-only item: %#v", dropOnly)
+	}
+	dualSource, ok := store.GetItem("item_shared_notes_link")
+	if !ok || dualSource.Source != "both" || !dualSource.Purchasable {
+		t.Fatalf("unexpected dual-source item: %#v", dualSource)
 	}
 }
 
@@ -213,6 +300,59 @@ quantity = 1
 	}
 	if recipe.Inputs[0].ID != "stone_engineering_base" {
 		t.Fatalf("expected fusion recipe components to be copied, got %#v", recipe.Inputs[0])
+	}
+}
+
+func TestLoadAllowsDisabledFusionRecipeWithoutInputs(t *testing.T) {
+	dir := writeContent(t, validSitonesTOML(), validItemsTOML(), validQuizQuestionsCSV(), `
+[[fusion_recipes]]
+id = "recipe_basic_blue"
+branch_id = "basic"
+type = "engineering"
+name = "Engineering Base"
+description = "Content-only base recipe."
+enabled = false
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_engineering_base"
+quantity = 1
+`)
+
+	store, err := Load(dir)
+	if err != nil {
+		t.Fatalf("load content: %v", err)
+	}
+
+	recipe, ok := store.GetFusionRecipe("recipe_basic_blue")
+	if !ok {
+		t.Fatal("expected recipe_basic_blue to exist")
+	}
+	if recipe.Enabled || len(recipe.Inputs) != 0 || len(recipe.Outputs) != 1 {
+		t.Fatalf("unexpected disabled recipe: %#v", recipe)
+	}
+}
+
+func TestLoadRejectsEnabledFusionRecipeWithoutInputs(t *testing.T) {
+	dir := writeContent(t, validSitonesTOML(), validItemsTOML(), validQuizQuestionsCSV(), `
+[[fusion_recipes]]
+id = "recipe_free_blue"
+name = "Free Engineering"
+description = "Enabled recipes must consume something."
+enabled = true
+
+[[fusion_recipes.outputs]]
+kind = "sitone"
+id = "stone_engineering_base"
+quantity = 1
+`)
+
+	_, err := Load(dir)
+	if err == nil {
+		t.Fatal("expected missing inputs error")
+	}
+	if !strings.Contains(err.Error(), "fusion_recipes[0].inputs is required") {
+		t.Fatalf("expected missing inputs error, got %v", err)
 	}
 }
 
@@ -337,6 +477,36 @@ rarity = "mythic"
 	}
 }
 
+func TestLoadRejectsInvalidSitoneAbility(t *testing.T) {
+	dir := writeContent(t, `
+[[sitones]]
+id = "stone_engineering_base"
+name = "Engineering"
+type = "engineering"
+rarity = "base"
+ability_name = "Broken"
+ability_kind = "unknown"
+ability_value = 0
+ability_count = 1
+ability_description = ""
+`)
+
+	_, err := Load(dir)
+	if err == nil {
+		t.Fatal("expected invalid ability error")
+	}
+	for _, want := range []string{
+		"sitones[0].ability_kind must be one of",
+		"sitones[0].ability_value must be greater than 0",
+		"sitones[0].ability_count must be 0 unless ability_kind is eliminate_wrong_choice",
+		"sitones[0].ability_description is required",
+	} {
+		if !strings.Contains(err.Error(), want) {
+			t.Fatalf("expected error to contain %q, got %v", want, err)
+		}
+	}
+}
+
 func TestLoadRejectsInvalidItemEnums(t *testing.T) {
 	dir := writeContent(t, validSitonesTOML(), `
 [[items]]
@@ -353,6 +523,43 @@ rarity = "mythic"
 	for _, want := range []string{
 		"items[0].type must be one of",
 		"items[0].rarity must be one of",
+	} {
+		if !strings.Contains(err.Error(), want) {
+			t.Fatalf("expected error to contain %q, got %v", want, err)
+		}
+	}
+}
+
+func TestLoadRejectsInvalidItemSourceRules(t *testing.T) {
+	dir := writeContent(t, validSitonesTOML(), `
+[[items]]
+id = "item_clean_spec"
+name = "Clean Spec"
+type = "material"
+rarity = "common"
+source = "drop"
+purchasable = true
+enabled = true
+price_open_power = 50
+
+[[items]]
+id = "item_shared_notes_link"
+name = "Shared Notes"
+type = "material"
+rarity = "common"
+source = "both"
+purchasable = false
+enabled = true
+price_open_power = 0
+`)
+
+	_, err := Load(dir)
+	if err == nil {
+		t.Fatal("expected invalid source rule error")
+	}
+	for _, want := range []string{
+		"items[0].purchasable must be false when source is drop",
+		"items[1].purchasable must be true when source is both",
 	} {
 		if !strings.Contains(err.Error(), want) {
 			t.Fatalf("expected error to contain %q, got %v", want, err)
@@ -497,6 +704,11 @@ id = "stone_engineering_base"
 name = "Engineering"
 type = "engineering"
 rarity = "base"
+ability_name = "穩定輸出"
+ability_kind = "answer_score_bonus"
+ability_value = 5
+ability_count = 0
+ability_description = "答對時分數提高 5%。"
 `)
 }
 

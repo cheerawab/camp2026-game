@@ -3,7 +3,6 @@ import { useMemo, useState } from "react"
 import { Check, Hammer, X } from "lucide-react"
 import { toast } from "sonner"
 
-import basicStoneSkin from "@/assets/stones/basic-stone.png"
 import { gameApi, type FusionRecipe } from "@/shared/api/game"
 import {
   rarityLabel,
@@ -12,6 +11,7 @@ import {
 } from "@/shared/lib/game-labels"
 import { Button } from "@/shared/ui/button"
 import { Card } from "@/shared/ui/card"
+import { GameIcon } from "@/shared/ui/game-icon"
 import {
   Dialog,
   DialogClose,
@@ -43,18 +43,16 @@ function ComponentPill({
     <div className="bg-surface-raised border-border grid grid-cols-[36px_1fr_auto] items-center gap-2 rounded-[16px] border-2 p-2">
       <span
         className={[
-          "border-ink grid size-9 place-items-center rounded-[12px_16px_10px_14px] border-2",
+          "border-ink grid size-9 place-items-center overflow-hidden rounded-[12px_16px_10px_14px] border-2",
           componentTone(component),
         ].join(" ")}
         aria-hidden
       >
-        {component.kind === "sitone" ? (
-          <img
-            src={basicStoneSkin}
-            alt=""
-            className="size-7 [image-rendering:pixelated]"
-          />
-        ) : null}
+        <GameIcon
+          iconPath={component.iconPath}
+          imageClassName="p-0.5"
+          fallback={null}
+        />
       </span>
       <span className="min-w-0">
         <strong className="block truncate text-sm font-extrabold">
@@ -63,6 +61,11 @@ function ComponentPill({
         <small className="text-muted-foreground block text-xs font-semibold">
           {component.rarity ? rarityLabel(component.rarity) : component.kind}
         </small>
+        {component.kind === "sitone" && component.abilityDescription ? (
+          <small className="text-muted-foreground mt-0.5 block text-[11px] leading-4 font-semibold">
+            {component.abilityName}：{component.abilityDescription}
+          </small>
+        ) : null}
       </span>
       <strong className="text-sm font-extrabold">x{component.quantity}</strong>
     </div>
@@ -78,18 +81,16 @@ function ComponentPreview({
     <span className="border-border bg-surface-raised inline-flex min-w-0 items-center gap-1.5 rounded-full border px-2 py-1 text-xs font-bold">
       <span
         className={cn(
-          "border-ink grid size-4 shrink-0 place-items-center rounded-[6px] border",
+          "border-ink grid size-4 shrink-0 place-items-center overflow-hidden rounded-[6px] border",
           componentTone(component),
         )}
         aria-hidden
       >
-        {component.kind === "sitone" ? (
-          <img
-            src={basicStoneSkin}
-            alt=""
-            className="size-3.5 [image-rendering:pixelated]"
-          />
-        ) : null}
+        <GameIcon
+          iconPath={component.iconPath}
+          imageClassName="p-px"
+          fallback={null}
+        />
       </span>
       <span className="truncate">{component.name}</span>
       <span className="shrink-0">x{component.quantity}</span>
@@ -150,15 +151,11 @@ function RecipeListItem({
           ].join(" ")}
           aria-hidden
         >
-          {output?.kind === "sitone" ? (
-            <img
-              src={basicStoneSkin}
-              alt=""
-              className="size-12 [image-rendering:pixelated]"
-            />
-          ) : (
-            <Hammer className="size-7" />
-          )}
+          <GameIcon
+            iconPath={output?.iconPath}
+            imageClassName="p-1.5"
+            fallback={<Hammer className="size-7" />}
+          />
         </div>
         <div className="min-w-0">
           <h2 className="truncate text-xl leading-tight font-extrabold tracking-normal">
@@ -246,15 +243,11 @@ function FusionConfirmDialog({
               ].join(" ")}
               aria-hidden
             >
-              {recipe.outputs[0]?.kind === "sitone" ? (
-                <img
-                  src={basicStoneSkin}
-                  alt=""
-                  className="size-14 [image-rendering:pixelated]"
-                />
-              ) : (
-                <Hammer className="size-8" />
-              )}
+              <GameIcon
+                iconPath={recipe.outputs[0]?.iconPath}
+                imageClassName="p-1.5"
+                fallback={<Hammer className="size-8" />}
+              />
             </div>
             <div className="min-w-0">
               <h3 className="text-xl leading-tight font-extrabold">

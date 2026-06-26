@@ -113,7 +113,7 @@ func validateFusionRecipes(
 		if recipe.StageFrom > 0 && recipe.StageTo <= recipe.StageFrom {
 			errs = append(errs, fmt.Errorf("%s.stage_to must be greater than stage_from", location))
 		}
-		if len(recipe.Inputs) == 0 {
+		if recipe.Enabled && len(recipe.Inputs) == 0 {
 			errs = append(errs, fmt.Errorf("%s.inputs is required", location))
 		}
 		if len(recipe.Outputs) == 0 {

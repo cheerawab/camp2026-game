@@ -5,6 +5,12 @@ type = "exploration"
 rarity = "common"
 style = "default"
 description = "牠撿到一個神祕箱子，裡面裝著看似會自己決定一切的演算法。牠決定先不要害怕，而是把箱子慢慢打開。"
+icon_path = "/game-icons/stones/stone_2019_blackbox.png"
+ability_name = "拾荒直覺"
+ability_kind = "material_drop_rate"
+ability_value = 8
+ability_count = 0
+ability_description = "對戰素材掉落率提高 8%。"
 
 [[sitones]]
 id = "stone_2019_unboxed_algorithm"
@@ -13,6 +19,12 @@ type = "exploration"
 rarity = "rare"
 style = "default"
 description = "牠把黑箱拆成一格一格的工具，終於看見裡面的選擇與假設。開箱之後，牠不只會用工具，也開始問工具為什麼這樣運作。"
+icon_path = "/game-icons/stones/stone_2019_unboxed_algorithm.png"
+ability_name = "拾荒直覺"
+ability_kind = "material_drop_rate"
+ability_value = 12
+ability_count = 0
+ability_description = "對戰素材掉落率提高 12%。"
 
 [[sitones]]
 id = "stone_2020_sitcon_tour_group"
@@ -21,6 +33,12 @@ type = "resonance"
 rarity = "rare"
 style = "default"
 description = "牠把一群陌生人帶成一小隊，從攤位走到議程，再走到新的朋友身邊。導覽結束後，大家手上多了地圖，心裡也多了方向。"
+icon_path = "/game-icons/stones/stone_2020_sitcon_tour_group.png"
+ability_name = "亮晶晶"
+ability_kind = "open_power_bonus"
+ability_value = 12
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 12%。"
 
 [[sitones]]
 id = "stone_2020_tour_flag"
@@ -29,6 +47,12 @@ type = "resonance"
 rarity = "common"
 style = "default"
 description = "牠舉起小旗子，帶第一次參加 SITCON 的人認識年會攤位和工作人員。總會讓人想開口問問題。"
+icon_path = "/game-icons/stones/stone_2020_tour_flag.png"
+ability_name = "亮晶晶"
+ability_kind = "open_power_bonus"
+ability_value = 8
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 8%。"
 
 [[sitones]]
 id = "stone_2021_abacus"
@@ -37,6 +61,12 @@ type = "inspiration"
 rarity = "common"
 style = "default"
 description = "牠把一顆顆算珠推來推去，像是在摸索計算機最早的影子。每一次撥動，都是現代技術往前疊起來的一小步。"
+icon_path = "/game-icons/stones/stone_2021_abacus.png"
+ability_name = "靈光一閃"
+ability_kind = "eliminate_wrong_choice"
+ability_value = 15
+ability_count = 1
+ability_description = "題目開始時有 15% 機率刪去 1 個錯誤選項。"
 
 [[sitones]]
 id = "stone_2021_abacus_descendant"
@@ -45,6 +75,12 @@ type = "inspiration"
 rarity = "rare"
 style = "default"
 description = "牠站在前人留下的筆記上，看見工具如何一代一代變成今天的電腦。牠知道自己不是從零開始，所以更願意把學到的東西留下來。"
+icon_path = "/game-icons/stones/stone_2021_abacus_descendant.png"
+ability_name = "靈光一閃"
+ability_kind = "eliminate_wrong_choice"
+ability_value = 25
+ability_count = 1
+ability_description = "題目開始時有 25% 機率刪去 1 個錯誤選項。"
 
 [[sitones]]
 id = "stone_2022_break_wall_cat"
@@ -53,6 +89,12 @@ type = "exploration"
 rarity = "rare"
 style = "default"
 description = "牠研究迷宮規則研究到一半，突然決定從牆邊走出自己的路。後來大家發現，原來探索不只是在路上走，也是在規則外思考。"
+icon_path = "/game-icons/stones/stone_2022_break_wall_cat.png"
+ability_name = "拾荒直覺"
+ability_kind = "material_drop_rate"
+ability_value = 12
+ability_count = 0
+ability_description = "對戰素材掉落率提高 12%。"
 
 [[sitones]]
 id = "stone_2022_maze"
@@ -61,6 +103,12 @@ type = "exploration"
 rarity = "common"
 style = "default"
 description = "牠把營地地圖看成一座迷宮，走錯路也會順手標記新的發現。比起找到出口，牠更在意自己是不是換了一種想法。"
+icon_path = "/game-icons/stones/stone_2022_maze.png"
+ability_name = "拾荒直覺"
+ability_kind = "material_drop_rate"
+ability_value = 8
+ability_count = 0
+ability_description = "對戰素材掉落率提高 8%。"
 
 [[sitones]]
 id = "stone_2024_finite"
@@ -69,6 +117,12 @@ type = "inspiration"
 rarity = "common"
 style = "default"
 description = "牠知道時間、體力和注意力都有限，所以開始學會選擇真正重要的問題。限制沒有讓牠停下來，反而讓牠的思考更清楚。"
+icon_path = "/game-icons/stones/stone_2024_finite.png"
+ability_name = "靈光一閃"
+ability_kind = "eliminate_wrong_choice"
+ability_value = 15
+ability_count = 1
+ability_description = "題目開始時有 15% 機率刪去 1 個錯誤選項。"
 
 [[sitones]]
 id = "stone_2024_infinite_inspiration"
@@ -77,6 +131,12 @@ type = "inspiration"
 rarity = "rare"
 style = "default"
 description = "牠在有限的營隊時間裡，收集到超過預期的想法。牠發現無限不是什麼都做，而是讓一個問題延伸到下一個人手上。"
+icon_path = "/game-icons/stones/stone_2024_infinite_inspiration.png"
+ability_name = "靈光一閃"
+ability_kind = "eliminate_wrong_choice"
+ability_value = 25
+ability_count = 1
+ability_description = "題目開始時有 25% 機率刪去 1 個錯誤選項。"
 
 [[sitones]]
 id = "stone_2024_last_night_polaroid"
@@ -85,6 +145,12 @@ type = "entertainment"
 rarity = "rare"
 style = "default"
 description = "把最後一晚的合照收進小小底片，連沒有說出口的感謝也一起留下。"
+icon_path = "/game-icons/stones/stone_2024_last_night_polaroid.png"
+ability_name = "掌聲加成"
+ability_kind = "open_power_bonus"
+ability_value = 12
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 12%。"
 
 [[sitones]]
 id = "stone_2024_ribbon"
@@ -93,6 +159,12 @@ type = "entertainment"
 rarity = "common"
 style = "default"
 description = "牠把活動現場的笑聲、掌聲和混亂都捲進彩帶裡。每次彩帶散開，基地就多一點營隊的聲音。"
+icon_path = "/game-icons/stones/stone_2024_ribbon.png"
+ability_name = "掌聲加成"
+ability_kind = "open_power_bonus"
+ability_value = 8
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 8%。"
 
 [[sitones]]
 id = "stone_2026_camp_explorer"
@@ -101,6 +173,12 @@ type = "exploration"
 rarity = "rare"
 style = "default"
 description = "牠在課程、題目、隊輔任務和交流時間之間穿梭，慢慢把營隊走成一張自己的地圖。牠不只是完成任務，也把遇見的人和問題帶回基地。"
+icon_path = "/game-icons/stones/stone_2026_camp_explorer.png"
+ability_name = "拾荒直覺"
+ability_kind = "material_drop_rate"
+ability_value = 12
+ability_count = 0
+ability_description = "對戰素材掉落率提高 12%。"
 
 [[sitones]]
 id = "stone_booth"
@@ -109,6 +187,12 @@ type = "exploration"
 rarity = "common"
 style = "default"
 description = "牠身上貼滿攤位貼紙，每張都代表一次開口問問題的勇氣。貼紙越多，牠越像一本會走路的社群地圖。"
+icon_path = "/game-icons/stones/stone_booth.png"
+ability_name = "拾荒直覺"
+ability_kind = "material_drop_rate"
+ability_value = 8
+ability_count = 0
+ability_description = "對戰素材掉落率提高 8%。"
 
 [[sitones]]
 id = "stone_camp_backpack"
@@ -117,6 +201,12 @@ type = "exploration"
 rarity = "common"
 style = "default"
 description = "牠把貼紙、名牌、備用線材都塞進包包，準備在 2026 營隊裡探索下一個任務。包包有點重，但每一格都裝著一段交流。"
+icon_path = "/game-icons/stones/stone_camp_backpack.png"
+ability_name = "拾荒直覺"
+ability_kind = "material_drop_rate"
+ability_value = 8
+ability_count = 0
+ability_description = "對戰素材掉落率提高 8%。"
 
 [[sitones]]
 id = "stone_clean_code"
@@ -125,6 +215,12 @@ type = "engineering"
 rarity = "rare"
 style = "default"
 description = "牠把可以動的程式整理成別人也看得懂的樣子。程式碼變乾淨之後，下一個接手的人終於不用先深呼吸。"
+icon_path = "/game-icons/stones/stone_clean_code.png"
+ability_name = "穩定輸出"
+ability_kind = "answer_score_bonus"
+ability_value = 12
+ability_count = 0
+ability_description = "答對時分數提高 12%。"
 
 [[sitones]]
 id = "stone_community_handshake"
@@ -133,6 +229,12 @@ type = "resonance"
 rarity = "common"
 style = "default"
 description = "牠第一次伸手時有點緊張，但對方也剛好想認識新朋友。兩隻手碰在一起，小隊基地就多了一段可以回看的連結。"
+icon_path = "/game-icons/stones/stone_community_handshake.png"
+ability_name = "亮晶晶"
+ability_kind = "open_power_bonus"
+ability_value = 8
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 8%。"
 
 [[sitones]]
 id = "stone_consensus_draft"
@@ -141,6 +243,12 @@ type = "resonance"
 rarity = "common"
 style = "default"
 description = "牠把大家七嘴八舌的意見整理成一份還能修改的草稿。每個人都留下一點痕跡，規則才不只是某個人的決定。"
+icon_path = "/game-icons/stones/stone_consensus_draft.png"
+ability_name = "亮晶晶"
+ability_kind = "open_power_bonus"
+ability_value = 8
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 8%。"
 
 [[sitones]]
 id = "stone_contribution"
@@ -149,6 +257,12 @@ type = "resonance"
 rarity = "common"
 style = "default"
 description = "牠第一次送出貢獻時，只改了一個小地方。可是有人說謝謝之後，牠發現開源不是距離很遠的大事。"
+icon_path = "/game-icons/stones/stone_contribution.png"
+ability_name = "亮晶晶"
+ability_kind = "open_power_bonus"
+ability_value = 8
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 8%。"
 
 [[sitones]]
 id = "stone_course_shared_notes"
@@ -157,6 +271,12 @@ type = "inspiration"
 rarity = "rare"
 style = "default"
 description = "牠把自己的筆記接到大家的共筆裡，讓孤單的理解變成共同的記憶。有人補了一行說明，牠就多亮一點。"
+icon_path = "/game-icons/stones/stone_course_shared_notes.png"
+ability_name = "靈光一閃"
+ability_kind = "eliminate_wrong_choice"
+ability_value = 25
+ability_count = 1
+ability_description = "題目開始時有 25% 機率刪去 1 個錯誤選項。"
 
 [[sitones]]
 id = "stone_crypto_gatekeeper"
@@ -165,6 +285,12 @@ type = "engineering"
 rarity = "rare"
 style = "default"
 description = "牠站在資料門口，一邊檢查簽章，一邊提醒大家不要把信任交給直覺。每一次驗證，都是替社群多守住一點安心。"
+icon_path = "/game-icons/stones/stone_crypto_gatekeeper.png"
+ability_name = "穩定輸出"
+ability_kind = "answer_score_bonus"
+ability_value = 12
+ability_count = 0
+ability_description = "答對時分數提高 12%。"
 
 [[sitones]]
 id = "stone_docker"
@@ -173,6 +299,12 @@ type = "engineering"
 rarity = "common"
 style = "default"
 description = "牠把環境裝進小小的容器裡，終於不用再說「我這邊可以跑」。每次啟動成功，牠都會安心地點一下頭。"
+icon_path = "/game-icons/stones/stone_docker.png"
+ability_name = "穩定輸出"
+ability_kind = "answer_score_bonus"
+ability_value = 8
+ability_count = 0
+ability_description = "答對時分數提高 8%。"
 
 [[sitones]]
 id = "stone_engineering_base"
@@ -180,7 +312,13 @@ name = "工程型小石"
 type = "engineering"
 rarity = "base"
 style = "default"
-description = "修 bug、分享解法、完成技術任務。"
+description = "牠體內藏著潛力無窮的工程能量，還沒有固定成任何工具或系統。只要遇到問題，牠就會安靜觀察，準備把混亂拆成可以一步一步解開的形狀。"
+icon_path = "/game-icons/stones/basic_blue.png"
+ability_name = "穩定輸出"
+ability_kind = "answer_score_bonus"
+ability_value = 5
+ability_count = 0
+ability_description = "答對時分數提高 5%。"
 
 [[sitones]]
 id = "stone_entertainment_base"
@@ -188,7 +326,13 @@ name = "娛樂型小石"
 type = "entertainment"
 rarity = "base"
 style = "default"
-description = "參與晚會、團康、活動事件。"
+description = "牠帶著潛力無窮的舞台感，還不知道自己會成為表演者、主持人，還是點亮氣氛的人。只要有人願意參與，牠就會把笑聲、勇氣和回憶收進身上。"
+icon_path = "/game-icons/stones/basic_orange.png"
+ability_name = "掌聲加成"
+ability_kind = "open_power_bonus"
+ability_value = 5
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 5%。"
 
 [[sitones]]
 id = "stone_espresso"
@@ -197,6 +341,12 @@ type = "entertainment"
 rarity = "common"
 style = "default"
 description = "牠把想講的內容濃縮成一小杯，苦一點但很醒腦。短短十分鐘，也能讓人帶走一個新問題。"
+icon_path = "/game-icons/stones/stone_espresso.png"
+ability_name = "掌聲加成"
+ability_kind = "open_power_bonus"
+ability_value = 8
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 8%。"
 
 [[sitones]]
 id = "stone_explorer_base"
@@ -204,7 +354,13 @@ name = "探索型小石"
 type = "exploration"
 rarity = "base"
 style = "default"
-description = "逛攤位、問問題、參與社群事件。"
+description = "牠是最普通、也最有可能性的小石，身上還沒有長出明確的方向。每一次逛攤位、問問題或認識新朋友，都可能讓牠展開一條潛力無窮的路。"
+icon_path = "/game-icons/stones/basic_gray.png"
+ability_name = "拾荒直覺"
+ability_kind = "material_drop_rate"
+ability_value = 5
+ability_count = 0
+ability_description = "對戰素材掉落率提高 5%。"
 
 [[sitones]]
 id = "stone_gpg"
@@ -213,6 +369,12 @@ type = "engineering"
 rarity = "common"
 style = "default"
 description = "牠把訊息封進信封前，先確認鑰匙是不是交到對的人手上。安全不是神祕咒語，而是一連串可以被驗證的動作。"
+icon_path = "/game-icons/stones/stone_gpg.png"
+ability_name = "穩定輸出"
+ability_kind = "answer_score_bonus"
+ability_value = 8
+ability_count = 0
+ability_description = "答對時分數提高 8%。"
 
 [[sitones]]
 id = "stone_human_after_all"
@@ -221,6 +383,12 @@ type = "inspiration"
 rarity = "rare"
 style = "default"
 description = "牠看著 AI 產生的答案，開始思考人類到底該負責哪一部分。最後牠把答案收起來，先問了一個更好的問題。"
+icon_path = "/game-icons/stones/stone_human_after_all.png"
+ability_name = "靈光一閃"
+ability_kind = "eliminate_wrong_choice"
+ability_value = 25
+ability_count = 1
+ability_description = "題目開始時有 25% 機率刪去 1 個錯誤選項。"
 
 [[sitones]]
 id = "stone_inspiration_base"
@@ -228,7 +396,13 @@ name = "靈光型小石"
 type = "inspiration"
 rarity = "base"
 style = "default"
-description = "提問、回答、做筆記、完成反思。"
+description = "牠閃著一點點還沒成形的靈光，像一顆潛力無窮的想法種子。當問題還沒有答案時，牠會先亮起來，提醒大家下一個入口可能就在附近。"
+icon_path = "/game-icons/stones/basic_yellow.png"
+ability_name = "靈光一閃"
+ability_kind = "eliminate_wrong_choice"
+ability_value = 10
+ability_count = 1
+ability_description = "題目開始時有 10% 機率刪去 1 個錯誤選項。"
 
 [[sitones]]
 id = "stone_kubernetes"
@@ -237,6 +411,12 @@ type = "engineering"
 rarity = "rare"
 style = "default"
 description = "牠不再只照顧一個容器，而是開始管理一整群忙碌的小服務。混亂沒有消失，但牠學會讓混亂有秩序地運轉。"
+icon_path = "/game-icons/stones/stone_kubernetes.png"
+ability_name = "穩定輸出"
+ability_kind = "answer_score_bonus"
+ability_value = 12
+ability_count = 0
+ability_description = "答對時分數提高 12%。"
 
 [[sitones]]
 id = "stone_lightning_talk"
@@ -245,6 +425,12 @@ type = "entertainment"
 rarity = "rare"
 style = "default"
 description = "牠把一個很大的故事壓進短短幾分鐘，留下最亮的那一段。時間一到，掌聲提醒牠勇氣也可以很精簡。"
+icon_path = "/game-icons/stones/stone_lightning_talk.png"
+ability_name = "掌聲加成"
+ability_kind = "open_power_bonus"
+ability_value = 12
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 12%。"
 
 [[sitones]]
 id = "stone_microphone"
@@ -253,6 +439,12 @@ type = "entertainment"
 rarity = "common"
 style = "default"
 description = "牠站上舞台時還有點發抖，但第一句話說出口後，燈光就沒有那麼刺眼了。分享不一定完美，但會讓想法開始流動。"
+icon_path = "/game-icons/stones/stone_microphone.png"
+ability_name = "掌聲加成"
+ability_kind = "open_power_bonus"
+ability_value = 8
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 8%。"
 
 [[sitones]]
 id = "stone_open_source_route"
@@ -261,6 +453,12 @@ type = "resonance"
 rarity = "rare"
 style = "default"
 description = "牠沿著 issue、commit、review 一路往前走，慢慢看懂社群如何協作。路線不一定直，但每一步都有人可以一起走。"
+icon_path = "/game-icons/stones/stone_open_source_route.png"
+ability_name = "亮晶晶"
+ability_kind = "open_power_bonus"
+ability_value = 12
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 12%。"
 
 [[sitones]]
 id = "stone_p5js"
@@ -269,6 +467,12 @@ type = "entertainment"
 rarity = "common"
 style = "default"
 description = "牠把程式寫成會動的圖案，第一次發現錯誤訊息也可能通往作品。螢幕亮起來時，技術忽然變得很像舞台。"
+icon_path = "/game-icons/stones/stone_p5js.png"
+ability_name = "掌聲加成"
+ability_kind = "open_power_bonus"
+ability_value = 8
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 8%。"
 
 [[sitones]]
 id = "stone_prompt"
@@ -277,6 +481,12 @@ type = "inspiration"
 rarity = "common"
 style = "default"
 description = "牠發現同一個問題，換個問法就會長出不同答案。於是牠開始練習把模糊的想法，變成可以被討論的句子。"
+icon_path = "/game-icons/stones/stone_prompt.png"
+ability_name = "靈光一閃"
+ability_kind = "eliminate_wrong_choice"
+ability_value = 15
+ability_count = 1
+ability_description = "題目開始時有 15% 機率刪去 1 個錯誤選項。"
 
 [[sitones]]
 id = "stone_resonance_base"
@@ -284,7 +494,13 @@ name = "共鳴型小石"
 type = "resonance"
 rarity = "base"
 style = "default"
-description = "幫助隊友、跨隊合作、社交互動。"
+description = "牠是一顆潛力無窮的共鳴小石，還在等待遇見能一起發聲的夥伴。每一次分享、傾聽和互相幫忙，都可能讓牠長出新的連結方式。"
+icon_path = "/game-icons/stones/basic_purple.png"
+ability_name = "亮晶晶"
+ability_kind = "open_power_bonus"
+ability_value = 5
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 5%。"
 
 [[sitones]]
 id = "stone_star_village_exchange"
@@ -293,6 +509,12 @@ type = "resonance"
 rarity = "rare"
 style = "default"
 description = "牠把不同學生社群的故事排成一張地圖，最後沒有真正分出誰比較厲害。因為每一場交流結束後，大家都多帶走了一點經驗。"
+icon_path = "/game-icons/stones/stone_star_village_exchange.png"
+ability_name = "亮晶晶"
+ability_kind = "open_power_bonus"
+ability_value = 12
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 12%。"
 
 [[sitones]]
 id = "stone_star_village_guide"
@@ -301,6 +523,12 @@ type = "exploration"
 rarity = "rare"
 style = "default"
 description = "牠學會把第一次參加的人帶到有趣的入口，讓開源不再像遠方的村莊。每次有人問路，牠都會多介紹一個值得認識的人。"
+icon_path = "/game-icons/stones/stone_star_village_guide.png"
+ability_name = "拾荒直覺"
+ability_kind = "material_drop_rate"
+ability_value = 12
+ability_count = 0
+ability_description = "對戰素材掉落率提高 12%。"
 
 [[sitones]]
 id = "stone_sticky_note"
@@ -309,6 +537,12 @@ type = "inspiration"
 rarity = "common"
 style = "default"
 description = "牠把課堂上聽到的關鍵字貼得到處都是，連自己頭上也沒有放過。雖然版面有點亂，但每張便利貼都抓住了一個剛冒出來的念頭。"
+icon_path = "/game-icons/stones/stone_sticky_note.png"
+ability_name = "靈光一閃"
+ability_kind = "eliminate_wrong_choice"
+ability_value = 15
+ability_count = 1
+ability_description = "題目開始時有 15% 機率刪去 1 個錯誤選項。"
 
 [[sitones]]
 id = "stone_student_autonomy"
@@ -317,6 +551,12 @@ type = "resonance"
 rarity = "rare"
 style = "default"
 description = "牠開始想像學生自治也能被公開討論、共同維護。每一次投票或提案，都像把社群往透明的方向推一點。"
+icon_path = "/game-icons/stones/stone_student_autonomy.png"
+ability_name = "亮晶晶"
+ability_kind = "open_power_bonus"
+ability_value = 12
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 12%。"
 
 [[sitones]]
 id = "stone_system_intern"
@@ -325,6 +565,12 @@ type = "engineering"
 rarity = "rare"
 style = "default"
 description = "牠從文件、原始碼和社群對話中學會真正的實習不是只完成任務。它更像走進一個系統，理解它如何被很多人一起維護。"
+icon_path = "/game-icons/stones/stone_system_intern.png"
+ability_name = "穩定輸出"
+ability_kind = "answer_score_bonus"
+ability_value = 12
+ability_count = 0
+ability_description = "答對時分數提高 12%。"
 
 [[sitones]]
 id = "stone_tech_art"
@@ -333,6 +579,12 @@ type = "entertainment"
 rarity = "rare"
 style = "default"
 description = "牠把座標、顏色和互動揉在一起，做出一個會回應人的小世界。原來創作也可以是理解技術的一種方式。"
+icon_path = "/game-icons/stones/stone_tech_art.png"
+ability_name = "掌聲加成"
+ability_kind = "open_power_bonus"
+ability_value = 12
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 12%。"
 
 [[sitones]]
 id = "stone_ten_minute_essence"
@@ -341,6 +593,11 @@ type = "entertainment"
 rarity = "rare"
 style = "default"
 description = "牠學會在時間結束前，把最重要的概念送到聽眾手上。不是講得越多越好，而是讓人願意繼續查下去。"
+ability_name = "掌聲加成"
+ability_kind = "open_power_bonus"
+ability_value = 12
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 12%。"
 
 [[sitones]]
 id = "stone_terminal"
@@ -349,6 +606,12 @@ type = "engineering"
 rarity = "common"
 style = "default"
 description = "牠盯著黑底白字的畫面，慢慢覺得命令列其實沒有那麼可怕。每輸入一行指令，牠就多理解一點工具和系統的關係。"
+icon_path = "/game-icons/stones/stone_terminal.png"
+ability_name = "穩定輸出"
+ability_kind = "answer_score_bonus"
+ability_value = 8
+ability_count = 0
+ability_description = "答對時分數提高 8%。"
 
 [[sitones]]
 id = "stone_test"
@@ -357,3 +620,135 @@ type = "engineering"
 rarity = "common"
 style = "default"
 description = "牠在每次改動前都先放下一個小小測試，像替未來的自己留路標。失敗的紅燈不會讓牠沮喪，只會告訴牠問題在哪裡。"
+icon_path = "/game-icons/stones/stone_test.png"
+ability_name = "穩定輸出"
+ability_kind = "answer_score_bonus"
+ability_value = 8
+ability_count = 0
+ability_description = "答對時分數提高 8%。"
+
+[[sitones]]
+id = "stone_order_guardian"
+name = "秩序守護者小石"
+type = "engineering"
+rarity = "limited"
+style = "default"
+description = "牠把破碎的帳本重新排齊，讓位元城看起來再次穩定。只是每一次修補完成後，牠都會多看一眼那些被抹去的名字。"
+icon_path = "/game-icons/stones/stone_order_guardian.png"
+ability_name = "穩定輸出"
+ability_kind = "answer_score_bonus"
+ability_value = 20
+ability_count = 0
+ability_description = "答對時分數提高 20%。"
+
+[[sitones]]
+id = "stone_freedom_rebel"
+name = "自由反抗者小石"
+type = "resonance"
+rarity = "limited"
+style = "default"
+description = "牠把被藏起來的帳本高高舉起，讓所有人看見系統背後的真相。即使城市因此短暫混亂，牠仍相信自由比沉默更接近答案。"
+icon_path = "/game-icons/stones/stone_freedom_rebel.png"
+ability_name = "亮晶晶"
+ability_kind = "open_power_bonus"
+ability_value = 20
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 20%。"
+
+[[sitones]]
+id = "stone_python_turtle"
+name = "烏龜小石"
+type = "inspiration"
+rarity = "limited"
+style = "default"
+description = "牠慢慢走，慢慢畫，把每一次轉彎都留成可以回看的線。答案不一定要最快出現，有時候一步一步畫出來，反而更清楚。"
+icon_path = "/game-icons/stones/stone_python_turtle.png"
+ability_name = "靈光一閃"
+ability_kind = "eliminate_wrong_choice"
+ability_value = 35
+ability_count = 2
+ability_description = "題目開始時有 35% 機率刪去 2 個錯誤選項。"
+
+[[sitones]]
+id = "stone_fireside"
+name = "爐邊小石"
+type = "resonance"
+rarity = "limited"
+style = "default"
+description = "牠總是在夜談時靠近火光，安靜聽完每個人的故事。有人願意開口時，牠身上的光就會亮一點。"
+icon_path = "/game-icons/stones/stone_fireside.png"
+ability_name = "亮晶晶"
+ability_kind = "open_power_bonus"
+ability_value = 20
+ability_count = 0
+ability_description = "對戰勝利時獲得開源力提高 20%。"
+
+[[sitones]]
+id = "stone_command_blind_trip"
+name = "指令盲旅小石"
+type = "engineering"
+rarity = "limited"
+style = "default"
+description = "牠戴上眼罩後不急著往前衝，而是等待隊友把混亂變成一套清楚的指令。每一次成功抵達，都是大家共同定義出來的路。"
+icon_path = "/game-icons/stones/stone_command_blind_trip.png"
+ability_name = "穩定輸出"
+ability_kind = "answer_score_bonus"
+ability_value = 20
+ability_count = 0
+ability_description = "答對時分數提高 20%。"
+
+[[sitones]]
+id = "stone_human_llm"
+name = "人類大語言模型小石"
+type = "inspiration"
+rarity = "limited"
+style = "default"
+description = "牠只能一次留下短短幾個字，卻努力把前一個人的意思接住。當句子一路傳到最後，牠才發現理解本身也需要團隊合作。"
+icon_path = "/game-icons/stones/stone_human_llm.png"
+ability_name = "靈光一閃"
+ability_kind = "eliminate_wrong_choice"
+ability_value = 35
+ability_count = 1
+ability_description = "題目開始時有 35% 機率刪去 1 個錯誤選項。"
+
+[[sitones]]
+id = "stone_von_neumann"
+name = "馮紐曼小石"
+type = "engineering"
+rarity = "limited"
+style = "default"
+description = "牠把輸入、記憶、計算和輸出分成不同位置，再把散落的偏旁重新組回答案。看似混亂的流程，其實有一套安靜運轉的架構。"
+icon_path = "/game-icons/stones/stone_von_neumann.png"
+ability_name = "穩定輸出"
+ability_kind = "answer_score_bonus"
+ability_value = 20
+ability_count = 0
+ability_description = "答對時分數提高 20%。"
+
+[[sitones]]
+id = "stone_packet_rescue"
+name = "封包救援小石"
+type = "engineering"
+rarity = "limited"
+style = "default"
+description = "牠在錯亂與遺失的訊息之間奔跑，把破碎的封包一段一段撿回來。只要隊友還願意重傳，答案就不會真的消失。"
+icon_path = "/game-icons/stones/stone_packet_rescue.png"
+ability_name = "穩定輸出"
+ability_kind = "answer_score_bonus"
+ability_value = 20
+ability_count = 0
+ability_description = "答對時分數提高 20%。"
+
+[[sitones]]
+id = "stone_prompt_injection"
+name = "Prompt Injection 小石"
+type = "inspiration"
+rarity = "limited"
+style = "default"
+description = "牠最擅長從看似正常的句子裡找到奇怪的入口。面對被偷走方向的提示詞，牠會先停下來問一句：這真的是我們要回答的問題嗎？"
+icon_path = "/game-icons/stones/stone_prompt_injection.png"
+ability_name = "靈光一閃"
+ability_kind = "eliminate_wrong_choice"
+ability_value = 35
+ability_count = 1
+ability_description = "題目開始時有 35% 機率刪去 1 個錯誤選項。"

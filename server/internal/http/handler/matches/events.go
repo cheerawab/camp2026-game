@@ -54,7 +54,7 @@ func (h *Handler) Events(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 
-	state, err := h.buildMatchState(r.Context(), match)
+	state, err := h.buildMatchState(r.Context(), match, player.ID)
 	if err != nil {
 		httpx.WriteProblem(w, r, err)
 		return
@@ -73,7 +73,11 @@ func (h *Handler) Events(w http.ResponseWriter, r *http.Request) {
 			if !ok {
 				return
 			}
-			writeSSE(w, event.Name, event.Data)
+			state, err := h.buildMatchState(r.Context(), event.Match, player.ID)
+			if err != nil {
+				return
+			}
+			writeSSE(w, event.Name, state)
 			flusher.Flush()
 		case <-heartbeat.C:
 			_, _ = fmt.Fprint(w, ": keepalive\n\n")

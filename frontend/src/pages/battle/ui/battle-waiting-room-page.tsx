@@ -385,6 +385,10 @@ export function BattleWaitingRoomPage() {
                         <span className="block text-xs leading-none opacity-80">
                           已放 {selectedCount}/{ownedQuantity}
                         </span>
+                        <span className="mt-1 block text-xs leading-snug opacity-80">
+                          {record.sitone.abilityName}：
+                          {record.sitone.abilityDescription}
+                        </span>
                       </span>
                     </Button>
                   )
@@ -411,11 +415,19 @@ export function BattleWaitingRoomPage() {
                 </Button>
               </div>
               {selectedSitones.length > 0 ? (
-                <div className="text-muted-foreground text-xs font-bold">
-                  本場使用：
-                  {selectedSitones
-                    .map((record) => record.sitone.name)
-                    .join("、")}
+                <div className="text-muted-foreground grid gap-1 text-xs font-bold">
+                  <span>
+                    本場使用：
+                    {selectedSitones
+                      .map((record) => record.sitone.name)
+                      .join("、")}
+                  </span>
+                  <span>
+                    被動：
+                    {selectedSitones
+                      .map((record) => record.sitone.abilityName)
+                      .join("、")}
+                  </span>
                 </div>
               ) : null}
             </>
