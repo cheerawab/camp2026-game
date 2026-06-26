@@ -1,0 +1,540 @@
+digraph LittleStoneEvolution {
+  graph [
+    rankdir=LR,
+    splines=true,
+    nodesep=0.55,
+    ranksep=1.15,
+    pad=0.3,
+    bgcolor="white",
+    pack=true,
+    packmode="array_u6"
+  ];
+
+  node [
+    shape=plain,
+    fontname="Noto Sans CJK TC",
+    fontsize=12
+  ];
+
+  edge [
+    fontname="Noto Sans CJK TC",
+    fontsize=11
+  ];
+  // =========================
+  // 活動限定小石
+  // =========================
+  subgraph cluster_event_limited {
+    label="活動限定小石";
+    color="#cccccc";
+    style="rounded";
+
+    stone_order_guardian [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_order_guardian.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>秩序守護者小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_freedom_rebel [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_freedom_rebel.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>自由反抗者小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_python_turtle [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_python_turtle.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>烏龜小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_fireside [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_fireside.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>爐邊小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_command_blind_trip [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_command_blind_trip.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>指令盲旅小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_human_llm [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_human_llm.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>人類大語言模型小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_von_neumann [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_von_neumann.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>馮紐曼小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_packet_rescue [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_packet_rescue.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>封包救援小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_prompt_injection [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_prompt_injection.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>Prompt Injection 小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_order_guardian -> stone_freedom_rebel [style=invis, weight=10];
+    stone_freedom_rebel -> stone_python_turtle [style=invis, weight=10];
+    stone_python_turtle -> stone_fireside [style=invis, weight=10];
+    stone_fireside -> stone_command_blind_trip [style=invis, weight=10];
+    stone_command_blind_trip -> stone_human_llm [style=invis, weight=10];
+    stone_human_llm -> stone_von_neumann [style=invis, weight=10];
+    stone_von_neumann -> stone_packet_rescue [style=invis, weight=10];
+    stone_packet_rescue -> stone_prompt_injection [style=invis, weight=10];
+  }
+
+  // =========================
+  // 探索型小石
+  // =========================
+  subgraph cluster_explore {
+    label="探索型小石";
+    color="#cccccc";
+    style="rounded";
+
+    basic_gray [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/basic_gray.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>探索型小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_2022_maze [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_2022_maze.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>2022 迷宮小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_2022_break_wall_cat [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_2022_break_wall_cat.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>2022 破牆貓小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_camp_backpack [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_camp_backpack.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>營地背包小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_2026_camp_explorer [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_2026_camp_explorer.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>2026 營地探險小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_booth [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_booth.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>攤位小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_star_village_guide [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_star_village_guide.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>星手村嚮導小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_2019_blackbox [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_2019_blackbox.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>2019 黑箱小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_2019_unboxed_algorithm [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_2019_unboxed_algorithm.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>2019 開箱演算法小石</TD></TR>
+      </TABLE>>
+    ];
+
+    basic_gray -> stone_2022_maze [label="迷宮地圖"];
+    stone_2022_maze -> stone_2022_break_wall_cat [label="貓掌印"];
+
+    basic_gray -> stone_camp_backpack [label="冒險背包"];
+    stone_camp_backpack -> stone_2026_camp_explorer [label="任務地圖"];
+
+    basic_gray -> stone_booth [label="攤位貼紙"];
+    stone_booth -> stone_star_village_guide [label="星手村路標"];
+
+    basic_gray -> stone_2019_blackbox [label="黑箱貼紙"];
+    stone_2019_blackbox -> stone_2019_unboxed_algorithm [label="工具箱鑰匙"];
+
+    {
+      rank=same;
+      stone_2022_maze;
+      stone_camp_backpack;
+      stone_booth;
+      stone_2019_blackbox;
+    }
+    {
+      rank=same;
+      stone_2022_break_wall_cat;
+      stone_2026_camp_explorer;
+      stone_star_village_guide;
+      stone_2019_unboxed_algorithm;
+    }
+  }
+
+  // =========================
+  // 靈光型小石
+  // =========================
+  subgraph cluster_inspiration {
+    label="靈光型小石";
+    color="#cccccc";
+    style="rounded";
+
+    basic_yellow [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/basic_yellow.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>靈光型小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_2021_abacus [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_2021_abacus.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>2021 算盤小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_2021_abacus_descendant [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_2021_abacus_descendant.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>2021 算盤後裔小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_prompt [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_prompt.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>Prompt 小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_human_after_all [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_human_after_all.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>Human After All 小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_sticky_note [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_sticky_note.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>便利貼小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_course_shared_notes [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_course_shared_notes.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>課程共筆小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_2024_finite [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_2024_finite.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>2024 有限小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_2024_infinite_inspiration [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_2024_infinite_inspiration.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>2024 無限靈感小石</TD></TR>
+      </TABLE>>
+    ];
+
+    basic_yellow -> stone_2021_abacus [label="木製算珠"];
+    stone_2021_abacus -> stone_2021_abacus_descendant [label="前人筆記"];
+
+    basic_yellow -> stone_prompt [label="Prompt 卡"];
+    stone_prompt -> stone_human_after_all [label="人類標籤"];
+
+    basic_yellow -> stone_sticky_note [label="便利貼"];
+    stone_sticky_note -> stone_course_shared_notes [label="共筆連結"];
+
+    basic_yellow -> stone_2024_finite [label="有限標籤"];
+    stone_2024_finite -> stone_2024_infinite_inspiration [label="無限星圖"];
+
+    {
+      rank=same;
+      stone_2021_abacus;
+      stone_prompt;
+      stone_sticky_note;
+      stone_2024_finite;
+    }
+    {
+      rank=same;
+      stone_2021_abacus_descendant;
+      stone_human_after_all;
+      stone_course_shared_notes;
+      stone_2024_infinite_inspiration;
+    }
+  }
+
+  // =========================
+  // 共鳴型小石
+  // =========================
+  subgraph cluster_resonance {
+    label="共鳴型小石";
+    color="#cccccc";
+    style="rounded";
+
+    basic_purple [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/basic_purple.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>共鳴型小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_community_handshake [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_community_handshake.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>社群握手小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_star_village_exchange [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_star_village_exchange.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>星手村交流小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_consensus_draft [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_consensus_draft.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>共識草稿小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_student_autonomy [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_student_autonomy.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>學生自治小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_contribution [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_contribution.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>貢獻小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_open_source_route [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_open_source_route.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>Open Source 路線小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_2020_tour_flag [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_2020_tour_flag.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>2020 導遊旗小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_2020_sitcon_tour_group [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_2020_sitcon_tour_group.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>2020 SITCON 導遊團小石</TD></TR>
+      </TABLE>>
+    ];
+
+    basic_purple -> stone_community_handshake [label="學生社群卡"];
+    stone_community_handshake -> stone_star_village_exchange [label="星手村徽章"];
+
+    basic_purple -> stone_consensus_draft [label="章程草稿"];
+    stone_consensus_draft -> stone_student_autonomy [label="透明提案"];
+
+    basic_purple -> stone_contribution [label="貢獻貼紙"];
+    stone_contribution -> stone_open_source_route [label="開源路線圖"];
+
+    basic_purple -> stone_2020_tour_flag [label="導遊旗"];
+    stone_2020_tour_flag -> stone_2020_sitcon_tour_group [label="會場路線"];
+
+    {
+      rank=same;
+      stone_community_handshake;
+      stone_consensus_draft;
+      stone_contribution;
+      stone_2020_tour_flag;
+    }
+    {
+      rank=same;
+      stone_star_village_exchange;
+      stone_student_autonomy;
+      stone_open_source_route;
+      stone_2020_sitcon_tour_group;
+    }
+  }
+
+  // =========================
+  // 工程型小石
+  // =========================
+  subgraph cluster_engineering {
+    label="工程型小石";
+    color="#cccccc";
+    style="rounded";
+
+    basic_blue [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/basic_blue.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>工程型小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_docker [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_docker.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>Docker 小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_kubernetes [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_kubernetes.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>Kubernetes 小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_gpg [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_gpg.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>GPG 小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_crypto_gatekeeper [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_crypto_gatekeeper.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>加密守門員小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_test [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_test.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>測試小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_clean_code [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_clean_code.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>Clean Code 小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_terminal [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_terminal.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>終端機小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_system_intern [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_system_intern.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>系統實習小石</TD></TR>
+      </TABLE>>
+    ];
+
+    basic_blue -> stone_docker [label="容器貼紙"];
+    stone_docker -> stone_kubernetes [label="叢集核心"];
+
+    basic_blue -> stone_gpg [label="公鑰吊牌"];
+    stone_gpg -> stone_crypto_gatekeeper [label="簽章印泥"];
+
+    basic_blue -> stone_test [label="測試貼紙"];
+    stone_test -> stone_clean_code [label="整潔規格書"];
+
+    basic_blue -> stone_terminal [label="終端機游標"];
+    stone_terminal -> stone_system_intern [label="系統文件"];
+
+    { rank=same; stone_docker; stone_gpg; stone_test; stone_terminal; }
+    { rank=same; stone_kubernetes; stone_crypto_gatekeeper; stone_clean_code; stone_system_intern; }
+  }
+
+  // =========================
+  // 娛樂型小石
+  // =========================
+  subgraph cluster_entertainment {
+    label="娛樂型小石";
+    color="#cccccc";
+    style="rounded";
+
+    basic_orange [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/basic_orange.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>娛樂型小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_microphone [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_microphone.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>麥克風小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_lightning_talk [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_lightning_talk.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>Lightning Talk 小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_p5js [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_p5js.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>p5.js 小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_tech_art [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_tech_art.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>科技藝術小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_espresso [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_espresso.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>Espresso 小石</TD></TR>
+      </TABLE>>
+    ];
+
+    stone_2024_ribbon [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_2024_ribbon.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>2024 彩帶小石</TD></TR>
+      </TABLE>>
+    ];
+    stone_2024_last_night_polaroid [
+      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_2024_last_night_polaroid.png" SCALE="TRUE"/></TD></TR>
+        <TR><TD>2024 最後一晚拍立得小石</TD></TR>
+      </TABLE>>
+    ];
+
+    basic_orange -> stone_microphone [label="麥克風"];
+    stone_microphone -> stone_lightning_talk [label="閃電講稿"];
+
+    basic_orange -> stone_p5js [label="畫布程式碼"];
+    stone_p5js -> stone_tech_art [label="像素顏料"];
+
+    basic_orange -> stone_espresso [label="Espresso 杯"];
+
+    basic_orange -> stone_2024_ribbon [label="彩帶"];
+    stone_2024_ribbon -> stone_2024_last_night_polaroid [label="拍立得底片"];
+
+    { rank=same; stone_microphone; stone_p5js; stone_espresso; stone_2024_ribbon; }
+    { rank=same; stone_lightning_talk; stone_tech_art; stone_2024_last_night_polaroid; }
+  }
+}
