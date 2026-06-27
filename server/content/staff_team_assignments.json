@@ -1,0 +1,92 @@
+{
+  "teams": [
+    {
+      "teamId": "team-001",
+      "name": "Team 001",
+      "staff": ["Yuto", "牛排"]
+    },
+    {
+      "teamId": "team-002",
+      "name": "Team 002",
+      "staff": ["64", "芋泥"]
+    },
+    {
+      "teamId": "team-003",
+      "name": "Team 003",
+      "staff": ["家誠", "萊姆"]
+    },
+    {
+      "teamId": "team-004",
+      "name": "Team 004",
+      "staff": ["Frank", "Tang Yu"]
+    },
+    {
+      "teamId": "team-005",
+      "name": "Team 005",
+      "staff": ["Yuki", "Janice 心菱"]
+    },
+    {
+      "teamId": "team-006",
+      "name": "Team 006",
+      "staff": ["XC", "CC"]
+    },
+    {
+      "teamId": "team-007",
+      "name": "Team 007",
+      "staff": ["鯨魚", "金魚"]
+    },
+    {
+      "teamId": "team-008",
+      "name": "Team 008",
+      "staff": ["螢光", "草蝦"]
+    },
+    {
+      "teamId": "team-009",
+      "name": "Team 009",
+      "staff": ["海鷗", "NT"]
+    },
+    {
+      "teamId": "team-010",
+      "name": "Team 010",
+      "staff": [
+        "Windless",
+        "Fearnot",
+        "Ya",
+        "Lindy",
+        "Leaf",
+        "Nathan",
+        "Ak",
+        "艾洛",
+        "Harry",
+        "Arnoldsky",
+        "Each",
+        "倫敦鐵喬",
+        "阿公",
+        "伊藤蒼太",
+        "Tzufu",
+        "橘子",
+        "康喔",
+        "竺原",
+        "OnCloud",
+        "Wolf Yuan",
+        "77",
+        "Mina",
+        "yuan",
+        "阿六",
+        "嵩嵩",
+        "13",
+        "宸",
+        "Katy",
+        "Denny Huang",
+        "Yoru",
+        "noeFly",
+        "Kaiyasi",
+        "tonicatowo",
+        "白龍",
+        "章魚",
+        "花椰",
+        "兆翌"
+      ]
+    }
+  ]
+}

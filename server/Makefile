@@ -1,4 +1,4 @@
-.PHONY: dev run seed import-staff grant-initial-sitones generate swagger fmt test test-e2e tidy
+.PHONY: dev run seed import-staff import-staff-teams grant-initial-sitones generate swagger fmt test test-e2e tidy
 
 dev:
 	air
@@ -14,6 +14,9 @@ ifndef CSV
 	$(error CSV is required, e.g. make import-staff CSV="/path/to/staff.csv")
 endif
 	go run ./cmd/import-staff -csv "$(CSV)" $(ARGS)
+
+import-staff-teams:
+	go run ./cmd/import-staff-teams -json "$(or $(JSON),./content/staff_team_assignments.json)" $(ARGS)
 
 grant-initial-sitones:
 	go run ./cmd/grant-initial-sitones $(ARGS)
