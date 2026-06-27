@@ -1,5 +1,4 @@
 import { Icon } from "@iconify/react"
-import { BookOpenCheck, BrainCircuit, RadioTower } from "lucide-react"
 import { Suspense } from "react"
 
 import { HomeStatusPanel } from "@/features/home-status"
@@ -13,26 +12,36 @@ import {
   CardTitle,
 } from "@/shared/ui/card"
 import { IconBadge } from "@/shared/ui/icon-badge"
+import {
+  GameFeatureIcon,
+  type GameFeatureIconName,
+} from "@/shared/ui/game-feature-icon"
 import { MetricCard } from "@/shared/ui/metric-card"
+
+function metricFeatureIcon(name: GameFeatureIconName) {
+  return function MetricFeatureIcon({ className }: { className?: string }) {
+    return <GameFeatureIcon name={name} className={className} />
+  }
+}
 
 const campMetrics = [
   {
     label: "今日任務",
     value: "12",
     tone: "success",
-    icon: BookOpenCheck,
+    icon: metricFeatureIcon("stones"),
   },
   {
     label: "知識王戰",
     value: "5",
     tone: "info",
-    icon: BrainCircuit,
+    icon: metricFeatureIcon("battle"),
   },
   {
     label: "世界魔王",
     value: "68%",
     tone: "magic",
-    icon: RadioTower,
+    icon: metricFeatureIcon("battle"),
   },
 ] as const
 

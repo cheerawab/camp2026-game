@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query"
-import { Backpack, Users } from "lucide-react"
 import { useState } from "react"
 
 import {
@@ -20,6 +19,7 @@ import {
 } from "@/shared/lib/game-labels"
 import { Button } from "@/shared/ui/button"
 import { Card } from "@/shared/ui/card"
+import { GameFeatureIcon } from "@/shared/ui/game-feature-icon"
 import { GamePageShell } from "@/shared/ui/game-page-shell"
 import { GameIcon } from "@/shared/ui/game-icon"
 import { PageHeader } from "@/shared/ui/page-header"
@@ -284,7 +284,7 @@ function TeamPlayersPanel({
   return (
     <>
       <PanelTitle
-        icon={<Users className="size-4" />}
+        icon={<GameFeatureIcon name="team" className="size-4" />}
         title={data?.team.name ?? "隊伍成員"}
         subtitle={
           isPending
@@ -388,7 +388,7 @@ function PlayerInventoryPanel({ playerID }: { playerID: string }) {
               className="size-7 rounded-[10px]"
             />
           ) : (
-            <Backpack className="size-4" />
+            <GameFeatureIcon name="backpack" className="size-4" />
           )
         }
         title={data?.player.nickname ?? "隊員背包"}
