@@ -47,6 +47,8 @@ func New(dep Dependencies) *Handler {
 
 func (h *Handler) RegisterRoutes(api chi.Router) {
 	api.Post("/matches", h.Create)
+	api.Get("/matches/computer/settings", h.ComputerSettings)
+	api.Post("/matches/computer", h.CreateComputer)
 	api.Post("/matches/join", h.Join)
 	api.Get("/matches/{matchID}", h.Get)
 	api.Put("/matches/{matchID}/loadout", h.UpdateLoadout)

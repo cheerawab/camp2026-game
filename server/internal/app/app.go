@@ -51,6 +51,7 @@ func New(ctx context.Context) (*Application, error) {
 		Content:        contentStore,
 		MongoClient:    mongoClient,
 		MongoDB:        mongoDB,
+		AdminPassword:  cfg.AdminPassword,
 	})
 
 	return &Application{

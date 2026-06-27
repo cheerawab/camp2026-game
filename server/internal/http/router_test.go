@@ -192,6 +192,8 @@ func TestMatchRoutesRequireAuthentication(t *testing.T) {
 		path   string
 	}{
 		{method: http.MethodPost, path: "/api/matches"},
+		{method: http.MethodGet, path: "/api/matches/computer/settings"},
+		{method: http.MethodPost, path: "/api/matches/computer"},
 		{method: http.MethodPost, path: "/api/matches/join"},
 		{method: http.MethodGet, path: "/api/matches/M8RXP2"},
 		{method: http.MethodPut, path: "/api/matches/M8RXP2/loadout"},
@@ -217,6 +219,8 @@ func TestMatchRoutesRequireDatabase(t *testing.T) {
 		path   string
 	}{
 		{method: http.MethodPost, path: "/api/matches"},
+		{method: http.MethodGet, path: "/api/matches/computer/settings"},
+		{method: http.MethodPost, path: "/api/matches/computer"},
 		{method: http.MethodPost, path: "/api/matches/join"},
 		{method: http.MethodGet, path: "/api/matches/M8RXP2"},
 		{method: http.MethodPut, path: "/api/matches/M8RXP2/loadout"},

@@ -9,13 +9,14 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 
+	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
 	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
 )
 
 // Home godoc
 // @Summary Get current player home summary
-// @Description Returns the authenticated player's home page summary, resource counts, and open power team rank.
+// @Description Returns the authenticated player's home page summary, resource counts, and team rank by sitone count and open power.
 // @Tags me
 // @Produce json
 // @Security AuthCookieAuth
@@ -62,7 +63,7 @@ func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 		}
 		team = &foundTeam
 
-		rank, err = h.openPowerTeamRank(r.Context(), teamID)
+		rank, err = h.teamRank(r.Context(), teamID)
 		if err != nil {
 			httpx.WriteProblem(w, r, httpx.InternalServerError("home summary unavailable", "me_home_team_rank_failed", err))
 			return
@@ -107,7 +108,12 @@ func (h *Handler) sumPlayerQuantity(ctx context.Context, collection string, play
 	return intTotalFromCursor(ctx, cursor)
 }
 
-func (h *Handler) openPowerTeamRank(ctx context.Context, currentTeamID string) (*TeamRankResponse, error) {
+type teamRankStats struct {
+	SitoneCount int
+	OpenPower   int
+}
+
+func (h *Handler) teamRank(ctx context.Context, currentTeamID string) (*TeamRankResponse, error) {
 	teams, err := h.findTeams(ctx)
 	if err != nil {
 		return nil, err
@@ -116,36 +122,16 @@ func (h *Handler) openPowerTeamRank(ctx context.Context, currentTeamID string) (
 		return nil, nil
 	}
 
-	scores, err := h.openPowerScoresByTeam(ctx)
+	players, err := h.findLeaderboardPlayers(ctx)
+	if err != nil {
+		return nil, err
+	}
+	stats, err := h.playerRankStats(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	rows := make([]TeamRankResponse, 0, len(teams))
-	for _, team := range teams {
-		rows = append(rows, TeamRankResponse{
-			Type:   "open_power",
-			TeamID: team.ID,
-			Name:   team.Name,
-			Score:  scores[team.ID],
-		})
-	}
-	sort.Slice(rows, func(i, j int) bool {
-		if rows[i].Score == rows[j].Score {
-			return rows[i].Name < rows[j].Name
-		}
-		return rows[i].Score > rows[j].Score
-	})
-	for i := range rows {
-		rows[i].Rank = i + 1
-		if rows[i].TeamID == currentTeamID {
-			if i > 0 {
-				rows[i].GapToPrevious = rows[i-1].Score - rows[i].Score
-			}
-			return &rows[i], nil
-		}
-	}
-	return nil, nil
+	return currentTeamRank(teamRankEntries(teams, players, stats), currentTeamID), nil
 }
 
 func (h *Handler) findTeams(ctx context.Context) ([]mongomodel.Team, error) {
@@ -165,11 +151,73 @@ func (h *Handler) findTeams(ctx context.Context) ([]mongomodel.Team, error) {
 	if err := cursor.All(ctx, &teams); err != nil {
 		return nil, err
 	}
+	if teams == nil {
+		return []mongomodel.Team{}, nil
+	}
 	return teams, nil
 }
 
-func (h *Handler) openPowerScoresByTeam(ctx context.Context) (map[string]int, error) {
-	cursor, err := h.db.Collection(mongomodel.OpenPowerRecordsCollection).Aggregate(ctx, openPowerScoresByTeamPipeline())
+func (h *Handler) findLeaderboardPlayers(ctx context.Context) ([]mongomodel.Player, error) {
+	cursor, err := h.db.Collection(mongomodel.PlayersCollection).Find(
+		ctx,
+		bson.M{
+			"team_id": bson.M{"$exists": true, "$ne": ""},
+			"role":    bson.M{"$ne": authctx.PlayerRoleStaff},
+		},
+		options.Find().
+			SetProjection(bson.D{
+				{Key: "auth_token", Value: 0},
+				{Key: "qrcode_token", Value: 0},
+				{Key: "default_sitone_ids", Value: 0},
+			}).
+			SetSort(bson.D{
+				{Key: "nickname", Value: 1},
+				{Key: "_id", Value: 1},
+			}),
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		_ = cursor.Close(ctx)
+	}()
+
+	var players []mongomodel.Player
+	if err := cursor.All(ctx, &players); err != nil {
+		return nil, err
+	}
+	if players == nil {
+		return []mongomodel.Player{}, nil
+	}
+	return players, nil
+}
+
+func (h *Handler) playerRankStats(ctx context.Context) (map[string]teamRankStats, error) {
+	sitoneCounts, err := h.scoreMap(ctx, mongomodel.PlayerSitonesCollection, playerSitoneCountsPipeline())
+	if err != nil {
+		return nil, err
+	}
+	openPower, err := h.scoreMap(ctx, mongomodel.OpenPowerRecordsCollection, openPowerScoresByPlayerPipeline())
+	if err != nil {
+		return nil, err
+	}
+
+	stats := make(map[string]teamRankStats, len(sitoneCounts)+len(openPower))
+	for playerID, count := range sitoneCounts {
+		current := stats[playerID]
+		current.SitoneCount = count
+		stats[playerID] = current
+	}
+	for playerID, score := range openPower {
+		current := stats[playerID]
+		current.OpenPower = score
+		stats[playerID] = current
+	}
+	return stats, nil
+}
+
+func (h *Handler) scoreMap(ctx context.Context, collection string, pipeline mongo.Pipeline) (map[string]int, error) {
+	cursor, err := h.db.Collection(collection).Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -180,22 +228,21 @@ func (h *Handler) openPowerScoresByTeam(ctx context.Context) (map[string]int, er
 	return scoreMapFromCursor(ctx, cursor)
 }
 
-func openPowerScoresByTeamPipeline() mongo.Pipeline {
+func playerSitoneCountsPipeline() mongo.Pipeline {
+	return mongo.Pipeline{
+		{{Key: "$match", Value: bson.D{{Key: "quantity", Value: bson.D{{Key: "$gt", Value: 0}}}}}},
+		{{Key: "$group", Value: bson.D{
+			{Key: "_id", Value: "$player_id"},
+			{Key: "score", Value: bson.D{{Key: "$sum", Value: "$quantity"}}},
+		}}},
+	}
+}
+
+func openPowerScoresByPlayerPipeline() mongo.Pipeline {
 	return mongo.Pipeline{
 		{{Key: "$group", Value: bson.D{
 			{Key: "_id", Value: "$player_id"},
 			{Key: "score", Value: bson.D{{Key: "$sum", Value: "$amount"}}},
-		}}},
-		{{Key: "$lookup", Value: bson.D{
-			{Key: "from", Value: mongomodel.PlayersCollection},
-			{Key: "localField", Value: "_id"},
-			{Key: "foreignField", Value: "_id"},
-			{Key: "as", Value: "player"},
-		}}},
-		{{Key: "$unwind", Value: "$player"}},
-		{{Key: "$group", Value: bson.D{
-			{Key: "_id", Value: "$player.team_id"},
-			{Key: "score", Value: bson.D{{Key: "$sum", Value: "$score"}}},
 		}}},
 	}
 }
@@ -211,9 +258,69 @@ func scoreMapFromCursor(ctx context.Context, cursor *mongo.Cursor) (map[string]i
 
 	out := make(map[string]int, len(rows))
 	for _, row := range rows {
+		if row.ID == "" {
+			continue
+		}
 		out[row.ID] = row.Score
 	}
 	return out, nil
+}
+
+func teamRankEntries(teams []mongomodel.Team, players []mongomodel.Player, stats map[string]teamRankStats) []TeamRankResponse {
+	statsByTeam := make(map[string]teamRankStats, len(teams))
+	for _, player := range players {
+		if player.ID == "" || player.TeamID == "" || player.Role == authctx.PlayerRoleStaff {
+			continue
+		}
+		current := statsByTeam[player.TeamID]
+		playerStats := stats[player.ID]
+		current.SitoneCount += playerStats.SitoneCount
+		current.OpenPower += playerStats.OpenPower
+		statsByTeam[player.TeamID] = current
+	}
+
+	rows := make([]TeamRankResponse, 0, len(teams))
+	for _, team := range teams {
+		if team.ID == "" {
+			continue
+		}
+		teamStats := statsByTeam[team.ID]
+		rows = append(rows, TeamRankResponse{
+			TeamID:      team.ID,
+			Name:        team.Name,
+			SitoneCount: teamStats.SitoneCount,
+			OpenPower:   teamStats.OpenPower,
+		})
+	}
+	sort.Slice(rows, func(i, j int) bool {
+		if rows[i].SitoneCount != rows[j].SitoneCount {
+			return rows[i].SitoneCount > rows[j].SitoneCount
+		}
+		if rows[i].OpenPower != rows[j].OpenPower {
+			return rows[i].OpenPower > rows[j].OpenPower
+		}
+		if rows[i].Name != rows[j].Name {
+			return rows[i].Name < rows[j].Name
+		}
+		return rows[i].TeamID < rows[j].TeamID
+	})
+	for i := range rows {
+		rows[i].Rank = i + 1
+	}
+	return rows
+}
+
+func currentTeamRank(rows []TeamRankResponse, currentTeamID string) *TeamRankResponse {
+	for i := range rows {
+		if rows[i].TeamID != currentTeamID {
+			continue
+		}
+		if i > 0 {
+			rows[i].GapToPrevious = rows[i-1].SitoneCount - rows[i].SitoneCount
+		}
+		return &rows[i]
+	}
+	return nil
 }
 
 func intTotalFromCursor(ctx context.Context, cursor *mongo.Cursor) (int, error) {

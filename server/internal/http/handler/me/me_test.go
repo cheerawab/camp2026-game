@@ -198,10 +198,59 @@ func TestOpenPowerTotalPipeline(t *testing.T) {
 	}
 }
 
-func TestOpenPowerScoresByTeamPipeline(t *testing.T) {
-	pipeline := openPowerScoresByTeamPipeline()
-	if len(pipeline) != 4 {
-		t.Fatalf("expected 4 pipeline stages, got %#v", pipeline)
+func TestPlayerSitoneCountsPipeline(t *testing.T) {
+	pipeline := playerSitoneCountsPipeline()
+	if len(pipeline) != 2 {
+		t.Fatalf("expected 2 pipeline stages, got %#v", pipeline)
+	}
+}
+
+func TestOpenPowerScoresByPlayerPipeline(t *testing.T) {
+	pipeline := openPowerScoresByPlayerPipeline()
+	if len(pipeline) != 1 {
+		t.Fatalf("expected 1 pipeline stage, got %#v", pipeline)
+	}
+}
+
+func TestTeamRankEntriesRankBySitoneThenOpenPower(t *testing.T) {
+	teams := []mongomodel.Team{
+		{ID: "team-a", Name: "Alpha"},
+		{ID: "team-b", Name: "Beta"},
+		{ID: "team-c", Name: "Gamma"},
+	}
+	players := []mongomodel.Player{
+		{ID: "player-a", Nickname: "Alice", TeamID: "team-a"},
+		{ID: "player-b", Nickname: "Bob", TeamID: "team-b"},
+		{ID: "player-c", Nickname: "Cody", TeamID: "team-c"},
+		{ID: "staff-a", Nickname: "Staff", TeamID: "team-a", Role: authctx.PlayerRoleStaff},
+	}
+	stats := map[string]teamRankStats{
+		"player-a": {SitoneCount: 2, OpenPower: 500},
+		"player-b": {SitoneCount: 3, OpenPower: 10},
+		"player-c": {SitoneCount: 2, OpenPower: 700},
+		"staff-a":  {SitoneCount: 99, OpenPower: 99},
+	}
+
+	rows := teamRankEntries(teams, players, stats)
+	current := currentTeamRank(rows, "team-a")
+
+	wantIDs := []string{"team-b", "team-c", "team-a"}
+	if len(rows) != len(wantIDs) {
+		t.Fatalf("expected %d rows, got %#v", len(wantIDs), rows)
+	}
+	for index, wantID := range wantIDs {
+		if rows[index].TeamID != wantID || rows[index].Rank != index+1 {
+			t.Fatalf("unexpected row at %d: got %#v want id %q rank %d", index, rows[index], wantID, index+1)
+		}
+	}
+	if current == nil || current.TeamID != "team-a" {
+		t.Fatalf("expected current team-a rank, got %#v", current)
+	}
+	if current.SitoneCount != 2 || current.OpenPower != 500 {
+		t.Fatalf("expected staff stats to be excluded, got %#v", current)
+	}
+	if current.GapToPrevious != 0 {
+		t.Fatalf("expected same sitone-count gap 0, got %d", current.GapToPrevious)
 	}
 }
 

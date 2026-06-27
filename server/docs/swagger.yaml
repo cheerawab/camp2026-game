@@ -1,5 +1,51 @@
 basePath: /api
 definitions:
+  admin.LoginRequest:
+    properties:
+      password:
+        type: string
+    required:
+    - password
+    type: object
+  admin.LoginResponse:
+    properties:
+      authenticated:
+        example: true
+        type: boolean
+    type: object
+  admin.SettingsRequest:
+    properties:
+      computerBattlesEnabled:
+        type: boolean
+      computerEasyAccuracy:
+        maximum: 100
+        minimum: 0
+        type: integer
+      computerHardAccuracy:
+        maximum: 100
+        minimum: 0
+        type: integer
+      computerNormalAccuracy:
+        maximum: 100
+        minimum: 0
+        type: integer
+    required:
+    - computerBattlesEnabled
+    - computerEasyAccuracy
+    - computerHardAccuracy
+    - computerNormalAccuracy
+    type: object
+  admin.SettingsResponse:
+    properties:
+      computerBattlesEnabled:
+        type: boolean
+      computerEasyAccuracy:
+        type: integer
+      computerHardAccuracy:
+        type: integer
+      computerNormalAccuracy:
+        type: integer
+    type: object
   apimodel.AuthLoginRequest:
     properties:
       token:
@@ -260,38 +306,216 @@ definitions:
       type:
         type: string
     type: object
-  leaderboards.ListResponse:
+  leaderboards.InventoryItemDetail:
     properties:
-      currentTeam:
-        $ref: '#/definitions/leaderboards.TeamRankResponse'
-      gapToPrevious:
-        example: 72
-        type: integer
-      teams:
-        items:
-          $ref: '#/definitions/leaderboards.TeamRankResponse'
-        type: array
+      description:
+        example: 冒險背包，可用於小石合成。
+        type: string
+      iconPath:
+        example: /game-icons/items/item_adventure_backpack.png
+        type: string
+      id:
+        example: item_adventure_backpack
+        type: string
+      name:
+        example: 冒險背包
+        type: string
+      rarity:
+        example: common
+        type: string
+      source:
+        example: shop
+        type: string
       type:
-        example: open_power
+        example: material
         type: string
     type: object
-  leaderboards.TeamRankResponse:
+  leaderboards.InventoryItemResponse:
+    properties:
+      id:
+        example: owned-item-001
+        type: string
+      item:
+        $ref: '#/definitions/leaderboards.InventoryItemDetail'
+      itemId:
+        example: item_adventure_backpack
+        type: string
+      quantity:
+        example: 3
+        type: integer
+    type: object
+  leaderboards.InventoryPlayerResponse:
+    properties:
+      avatarUrl:
+        example: https://example.test/avatar/alice.png
+        type: string
+      current:
+        example: true
+        type: boolean
+      itemCount:
+        example: 6
+        type: integer
+      nickname:
+        example: Alice
+        type: string
+      openPower:
+        example: 1188
+        type: integer
+      playerId:
+        example: 7H9K2Q
+        type: string
+      sitoneCount:
+        example: 18
+        type: integer
+    type: object
+  leaderboards.InventorySitoneDetail:
+    properties:
+      abilityCount:
+        example: 0
+        type: integer
+      abilityDescription:
+        example: 答對時分數提高 5%。
+        type: string
+      abilityKind:
+        example: answer_score_bonus
+        type: string
+      abilityName:
+        example: 穩定輸出
+        type: string
+      abilityValue:
+        example: 5
+        type: integer
+      description:
+        example: 修 bug、分享解法、完成技術任務。
+        type: string
+      iconPath:
+        example: /game-icons/stones/basic_blue.png
+        type: string
+      id:
+        example: stone_engineering_base
+        type: string
+      name:
+        example: 工程型小石
+        type: string
+      rarity:
+        example: base
+        type: string
+      style:
+        example: default
+        type: string
+      type:
+        example: engineering
+        type: string
+    type: object
+  leaderboards.InventorySitoneResponse:
+    properties:
+      id:
+        example: owned-sitone-001
+        type: string
+      quantity:
+        example: 1
+        type: integer
+      sitone:
+        $ref: '#/definitions/leaderboards.InventorySitoneDetail'
+      sitoneId:
+        example: stone_engineering_base
+        type: string
+    type: object
+  leaderboards.ListResponse:
+    properties:
+      currentEntry:
+        $ref: '#/definitions/leaderboards.RankEntryResponse'
+      entries:
+        items:
+          $ref: '#/definitions/leaderboards.RankEntryResponse'
+        type: array
+      gapToPrevious:
+        example: 3
+        type: integer
+      scope:
+        example: teams
+        type: string
+    type: object
+  leaderboards.PlayerInventoryResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/leaderboards.InventoryItemResponse'
+        type: array
+      player:
+        $ref: '#/definitions/leaderboards.InventoryPlayerResponse'
+      sitones:
+        items:
+          $ref: '#/definitions/leaderboards.InventorySitoneResponse'
+        type: array
+      team:
+        $ref: '#/definitions/leaderboards.TeamSummaryResponse'
+    type: object
+  leaderboards.RankEntryResponse:
     properties:
       current:
         example: true
         type: boolean
-      metric:
-        example: OP
+      id:
+        example: 8M4RXP
         type: string
       name:
         example: Blue Team
         type: string
+      openPower:
+        example: 1188
+        type: integer
       rank:
         example: 2
         type: integer
-      score:
+      sitoneCount:
+        example: 18
+        type: integer
+      teamId:
+        example: 8M4RXP
+        type: string
+      teamName:
+        example: Blue Team
+        type: string
+    type: object
+  leaderboards.TeamPlayerSummaryResponse:
+    properties:
+      avatarUrl:
+        example: https://example.test/avatar/alice.png
+        type: string
+      current:
+        example: true
+        type: boolean
+      itemCount:
+        example: 6
+        type: integer
+      nickname:
+        example: Alice
+        type: string
+      openPower:
         example: 1188
         type: integer
+      playerId:
+        example: 7H9K2Q
+        type: string
+      sitoneCount:
+        example: 18
+        type: integer
+    type: object
+  leaderboards.TeamPlayersResponse:
+    properties:
+      players:
+        items:
+          $ref: '#/definitions/leaderboards.TeamPlayerSummaryResponse'
+        type: array
+      team:
+        $ref: '#/definitions/leaderboards.TeamSummaryResponse'
+    type: object
+  leaderboards.TeamSummaryResponse:
+    properties:
+      name:
+        example: Blue Team
+        type: string
       teamId:
         example: 8M4RXP
         type: string
@@ -319,6 +543,12 @@ definitions:
     - choice
     - questionId
     type: object
+  matches.ComputerBattleSettingsResponse:
+    properties:
+      enabled:
+        example: true
+        type: boolean
+    type: object
   matches.CreateMatchResponse:
     properties:
       code:
@@ -340,6 +570,9 @@ definitions:
         type: string
       matchId:
         example: match_7H9K2Q
+        type: string
+      mode:
+        example: pvp
         type: string
       phase:
         example: answering
@@ -398,6 +631,9 @@ definitions:
         type: string
       matchId:
         example: match_7H9K2Q
+        type: string
+      mode:
+        example: pvp
         type: string
       phase:
         example: answering
@@ -502,6 +738,9 @@ definitions:
         items:
           type: string
         type: array
+      kind:
+        example: human
+        type: string
       materialDrop:
         $ref: '#/definitions/matches.MatchItemDropResponse'
       materialDropBonusPercent:
@@ -610,6 +849,9 @@ definitions:
       matchId:
         example: match_7H9K2Q
         type: string
+      mode:
+        example: pvp
+        type: string
       phase:
         example: answering
         type: string
@@ -657,6 +899,9 @@ definitions:
         type: string
       matchId:
         example: match_7H9K2Q
+        type: string
+      mode:
+        example: pvp
         type: string
       phase:
         example: answering
@@ -719,6 +964,9 @@ definitions:
         type: string
       matchId:
         example: match_7H9K2Q
+        type: string
+      mode:
+        example: pvp
         type: string
       phase:
         example: answering
@@ -1011,22 +1259,22 @@ definitions:
   me.TeamRankResponse:
     properties:
       gapToPrevious:
-        example: 72
+        example: 3
         type: integer
       name:
         example: Blue Team
         type: string
+      openPower:
+        example: 1188
+        type: integer
       rank:
         example: 2
         type: integer
-      score:
-        example: 1188
+      sitoneCount:
+        example: 18
         type: integer
       teamId:
         example: 8M4RXP
-        type: string
-      type:
-        example: open_power
         type: string
     type: object
   me.TeamResponse:
@@ -1266,6 +1514,111 @@ info:
   title: Camp 2026 Game API
   version: 0.1.0
 paths:
+  /admin/login:
+    post:
+      consumes:
+      - application/json
+      description: Uses the ADMIN_PASSWORD environment variable to create an admin
+        session cookie.
+      parameters:
+      - description: Admin login request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/admin.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      summary: Login as admin
+      tags:
+      - admin
+  /admin/logout:
+    post:
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      summary: Logout admin session
+      tags:
+      - admin
+  /admin/settings:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin.SettingsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      summary: Get admin game settings
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Admin settings request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/admin.SettingsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin.SettingsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      summary: Update admin game settings
+      tags:
+      - admin
   /auth/login:
     post:
       consumes:
@@ -1469,16 +1822,14 @@ paths:
       - system
   /leaderboards:
     get:
-      description: Lists team rankings by open power, sitone count, or completed match
-        score.
+      description: Lists team or player rankings by sitone count, then open power.
       parameters:
-      - description: Leaderboard type
+      - description: Leaderboard scope
         enum:
-        - open_power
-        - sitones
-        - matches
+        - teams
+        - players
         in: query
-        name: type
+        name: scope
         type: string
       produces:
       - application/json
@@ -1505,7 +1856,82 @@ paths:
             $ref: '#/definitions/httpx.ProblemDetails'
       security:
       - AuthCookieAuth: []
-      summary: List team leaderboard
+      summary: List leaderboard
+      tags:
+      - leaderboards
+  /leaderboards/players/{playerID}/inventory:
+    get:
+      description: Returns read-only item and sitone inventory for a non-staff leaderboard
+        player.
+      parameters:
+      - description: Player ID
+        in: path
+        name: playerID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/leaderboards.PlayerInventoryResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Get leaderboard player inventory
+      tags:
+      - leaderboards
+  /leaderboards/teams/{teamID}/players:
+    get:
+      description: Lists non-staff players in a ranked team with their inventory totals.
+      parameters:
+      - description: Team ID
+        in: path
+        name: teamID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/leaderboards.TeamPlayersResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: List leaderboard team players
       tags:
       - leaderboards
   /matches:
@@ -1740,6 +2166,65 @@ paths:
       summary: Mark current player ready
       tags:
       - matches
+  /matches/computer:
+    post:
+      description: Creates a two-player quiz match room against the system-controlled
+        computer opponent.
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/matches.CreateMatchResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Create computer match room
+      tags:
+      - matches
+  /matches/computer/settings:
+    get:
+      description: Returns whether computer battles are currently enabled for players.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/matches.ComputerBattleSettingsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
+      summary: Get computer battle availability
+      tags:
+      - matches
   /matches/join:
     post:
       consumes:
@@ -1795,7 +2280,7 @@ paths:
   /me/home:
     get:
       description: Returns the authenticated player's home page summary, resource
-        counts, and open power team rank.
+        counts, and team rank by sitone count and open power.
       produces:
       - application/json
       responses:

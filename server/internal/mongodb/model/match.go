@@ -11,13 +11,24 @@ const (
 )
 
 const (
+	MatchModePVP      = "pvp"
+	MatchModeComputer = "computer"
+)
+
+const (
 	MatchPhaseAnswering = "answering"
 	MatchPhaseRevealing = "revealing"
+)
+
+const (
+	MatchPlayerKindHuman    = "human"
+	MatchPlayerKindComputer = "computer"
 )
 
 type Match struct {
 	ID                   string                  `bson:"_id"`
 	Code                 string                  `bson:"code"`
+	Mode                 string                  `bson:"mode,omitempty"`
 	Status               string                  `bson:"status"`
 	Phase                string                  `bson:"phase,omitempty"`
 	HostPlayerID         string                  `bson:"host_player_id"`
@@ -36,6 +47,7 @@ type Match struct {
 type MatchPlayer struct {
 	PlayerID      string              `bson:"player_id"`
 	Nickname      string              `bson:"nickname"`
+	Kind          string              `bson:"kind,omitempty"`
 	Ready         bool                `bson:"ready"`
 	Score         int                 `bson:"score"`
 	SitoneIDs     []string            `bson:"sitone_ids,omitempty"`

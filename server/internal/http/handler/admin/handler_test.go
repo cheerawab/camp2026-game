@@ -1,0 +1,196 @@
+package admin
+
+import (
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
+	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
+)
+
+func TestLoginDisabledWithoutAdminPassword(t *testing.T) {
+	handler := New(Dependencies{})
+	req := httptest.NewRequest(http.MethodPost, "/api/admin/login", strings.NewReader(`{"password":"secret"}`))
+	res := httptest.NewRecorder()
+
+	handler.Login(res, req)
+
+	if res.Code != http.StatusServiceUnavailable {
+		t.Fatalf("expected status %d, got %d", http.StatusServiceUnavailable, res.Code)
+	}
+}
+
+func TestLoginSetsAdminSessionCookie(t *testing.T) {
+	handler := New(Dependencies{AdminPassword: "secret"})
+	req := httptest.NewRequest(http.MethodPost, "/api/admin/login", strings.NewReader(`{"password":"secret"}`))
+	res := httptest.NewRecorder()
+
+	handler.Login(res, req)
+
+	if res.Code != http.StatusOK {
+		t.Fatalf("expected status %d, got %d: %s", http.StatusOK, res.Code, res.Body.String())
+	}
+	cookies := res.Result().Cookies()
+	if len(cookies) != 1 {
+		t.Fatalf("expected one cookie, got %#v", cookies)
+	}
+	cookie := cookies[0]
+	if cookie.Name != CookieName || cookie.Value != adminSessionValue("secret") {
+		t.Fatalf("unexpected admin cookie: %#v", cookie)
+	}
+	if !cookie.HttpOnly || cookie.Path != "/" || cookie.MaxAge <= 0 {
+		t.Fatalf("expected http-only persistent root cookie, got %#v", cookie)
+	}
+}
+
+func TestLoginRejectsInvalidPassword(t *testing.T) {
+	handler := New(Dependencies{AdminPassword: "secret"})
+	req := httptest.NewRequest(http.MethodPost, "/api/admin/login", strings.NewReader(`{"password":"wrong"}`))
+	res := httptest.NewRecorder()
+
+	handler.Login(res, req)
+
+	if res.Code != http.StatusUnauthorized {
+		t.Fatalf("expected status %d, got %d", http.StatusUnauthorized, res.Code)
+	}
+}
+
+func TestGetSettingsRequiresAdminCookie(t *testing.T) {
+	handler := New(Dependencies{AdminPassword: "secret"})
+	req := httptest.NewRequest(http.MethodGet, "/api/admin/settings", nil)
+	res := httptest.NewRecorder()
+
+	handler.GetSettings(res, req)
+
+	if res.Code != http.StatusUnauthorized {
+		t.Fatalf("expected status %d, got %d", http.StatusUnauthorized, res.Code)
+	}
+}
+
+func TestDashboardRequiresAdminCookie(t *testing.T) {
+	handler := New(Dependencies{AdminPassword: "secret"})
+	req := httptest.NewRequest(http.MethodGet, "/api/admin/dashboard", nil)
+	res := httptest.NewRecorder()
+
+	handler.Dashboard(res, req)
+
+	if res.Code != http.StatusUnauthorized {
+		t.Fatalf("expected status %d, got %d", http.StatusUnauthorized, res.Code)
+	}
+}
+
+func TestDashboardRequiresDatabase(t *testing.T) {
+	handler := New(Dependencies{AdminPassword: "secret"})
+	req := httptest.NewRequest(http.MethodGet, "/api/admin/dashboard", nil)
+	req.AddCookie(&http.Cookie{Name: CookieName, Value: adminSessionValue("secret")})
+	res := httptest.NewRecorder()
+
+	handler.Dashboard(res, req)
+
+	if res.Code != http.StatusServiceUnavailable {
+		t.Fatalf("expected status %d, got %d", http.StatusServiceUnavailable, res.Code)
+	}
+}
+
+func TestBuildDashboardResponseExcludesStaffAndRanksPlayers(t *testing.T) {
+	now := time.Date(2026, 6, 27, 8, 0, 0, 0, time.UTC)
+	raw := dashboardRawData{
+		Players: []mongomodel.Player{
+			{ID: "player-a", Nickname: "Alice", TeamID: "team-a"},
+			{ID: "player-b", Nickname: "Bob", TeamID: "team-a"},
+			{ID: "player-c", Nickname: "Cody"},
+			{ID: "staff-a", Nickname: "Staff", TeamID: "team-a", Role: authctx.PlayerRoleStaff},
+		},
+		Teams: []mongomodel.Team{
+			{ID: "team-a", Name: "Alpha"},
+		},
+		PlayerSitones: []mongomodel.PlayerSitone{
+			{PlayerID: "player-a", SitoneID: "stone-a", Quantity: 2},
+			{PlayerID: "player-b", SitoneID: "stone-a", Quantity: 1},
+			{PlayerID: "staff-a", SitoneID: "stone-a", Quantity: 99},
+		},
+		PlayerItems: []mongomodel.PlayerItem{
+			{PlayerID: "player-b", ItemID: "item-a", Quantity: 3},
+			{PlayerID: "staff-a", ItemID: "item-a", Quantity: 99},
+		},
+		OpenPowerRecords: []mongomodel.OpenPowerRecord{
+			{PlayerID: "player-a", Amount: 50, CreatedAt: now.Add(-3 * time.Hour)},
+			{PlayerID: "player-b", Amount: 10, CreatedAt: now.Add(-2 * time.Hour)},
+			{PlayerID: "staff-a", Amount: 999, CreatedAt: now.Add(-1 * time.Hour)},
+		},
+		Matches: []mongomodel.Match{
+			{
+				ID:          "match-a",
+				Code:        "123456",
+				Mode:        mongomodel.MatchModePVP,
+				Status:      mongomodel.MatchStatusCompleted,
+				CreatedAt:   now.Add(-5 * time.Hour),
+				CompletedAt: now.Add(-4 * time.Hour),
+				Players: []mongomodel.MatchPlayer{
+					{PlayerID: "player-a", Nickname: "Alice", Score: 100},
+					{PlayerID: "player-b", Nickname: "Bob", Score: 80},
+				},
+			},
+			{
+				ID:        "match-b",
+				Mode:      mongomodel.MatchModeComputer,
+				Status:    mongomodel.MatchStatusActive,
+				CreatedAt: now.Add(-30 * time.Minute),
+				Players: []mongomodel.MatchPlayer{
+					{PlayerID: "player-a", Nickname: "Alice"},
+					{PlayerID: "computer", Nickname: "Computer", Kind: mongomodel.MatchPlayerKindComputer},
+				},
+			},
+		},
+		MatchAnswers: []mongomodel.MatchAnswer{
+			{PlayerID: "player-a", Correct: true, Score: 100, ElapsedMillis: 1000, AnsweredAt: now.Add(-4*time.Hour + time.Minute)},
+			{PlayerID: "player-b", Correct: false, Score: 20, ElapsedMillis: 3000, AnsweredAt: now.Add(-4*time.Hour + 2*time.Minute)},
+			{PlayerID: "staff-a", Correct: true, Score: 999, ElapsedMillis: 1, AnsweredAt: now},
+		},
+		MatchItemDrops: []mongomodel.MatchItemDrop{
+			{PlayerID: "player-a", Dropped: true, CreatedAt: now.Add(-4 * time.Hour)},
+			{PlayerID: "player-b", Dropped: false, CreatedAt: now.Add(-4 * time.Hour)},
+		},
+		ShopPurchases: []mongomodel.ShopPurchase{
+			{PlayerID: "player-a", CreatedAt: now.Add(-90 * time.Minute)},
+			{PlayerID: "staff-a", CreatedAt: now},
+		},
+		FusionRecords: []mongomodel.FusionRecord{
+			{PlayerID: "player-b", CreatedAt: now.Add(-80 * time.Minute)},
+		},
+		StaffRewards: []mongomodel.StaffReward{
+			{RecipientPlayerID: "player-b", CreatedAt: now.Add(-70 * time.Minute)},
+			{RecipientPlayerID: "staff-a", CreatedAt: now},
+		},
+	}
+
+	response := buildDashboardResponse(now, nil, raw)
+
+	if response.Summary.PlayerCount != 3 || response.Summary.StaffCount != 1 {
+		t.Fatalf("unexpected player/staff counts: %#v", response.Summary)
+	}
+	if response.Summary.TotalSitones != 3 || response.Summary.TotalItems != 3 || response.Summary.TotalOpenPower != 60 {
+		t.Fatalf("expected staff inventory and power to be excluded, got %#v", response.Summary)
+	}
+	if response.Summary.AnswerCount != 2 || response.Summary.CorrectAnswerCount != 1 || response.Summary.AnswerAccuracy != 50 {
+		t.Fatalf("unexpected answer summary: %#v", response.Summary)
+	}
+	if response.Players[0].PlayerID != "player-a" || response.Players[0].Rank != 1 {
+		t.Fatalf("expected player-a to lead sitone ranking, got %#v", response.Players)
+	}
+	if len(response.Teams) != 1 || response.Teams[0].PlayerCount != 2 || response.Teams[0].SitoneCount != 3 {
+		t.Fatalf("unexpected team summary: %#v", response.Teams)
+	}
+	if len(response.Inventory.Sitones) != 1 || response.Inventory.Sitones[0].Quantity != 3 || response.Inventory.Sitones[0].OwnerCount != 2 {
+		t.Fatalf("unexpected sitone inventory summary: %#v", response.Inventory.Sitones)
+	}
+	if response.Matches.Total != 2 || response.Matches.PVP != 1 || response.Matches.Computer != 1 || response.Matches.DropRate != 50 {
+		t.Fatalf("unexpected match summary: %#v", response.Matches)
+	}
+	if len(response.TopPlayers.ByAccuracy) != 2 || response.TopPlayers.ByAccuracy[0].PlayerID != "player-a" {
+		t.Fatalf("unexpected accuracy ranking: %#v", response.TopPlayers.ByAccuracy)
+	}
+}

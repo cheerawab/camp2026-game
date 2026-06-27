@@ -57,6 +57,28 @@ func isParticipant(match mongomodel.Match, playerID string) bool {
 	return playerIndex(match, playerID) >= 0
 }
 
+func matchMode(match mongomodel.Match) string {
+	if match.Mode == mongomodel.MatchModeComputer {
+		return mongomodel.MatchModeComputer
+	}
+	return mongomodel.MatchModePVP
+}
+
+func matchPlayerKind(player mongomodel.MatchPlayer) string {
+	if player.Kind == mongomodel.MatchPlayerKindComputer {
+		return mongomodel.MatchPlayerKindComputer
+	}
+	return mongomodel.MatchPlayerKindHuman
+}
+
+func isComputerPlayer(player mongomodel.MatchPlayer) bool {
+	return matchPlayerKind(player) == mongomodel.MatchPlayerKindComputer
+}
+
+func isComputerMatch(match mongomodel.Match) bool {
+	return matchMode(match) == mongomodel.MatchModeComputer
+}
+
 func allPlayersReady(match mongomodel.Match) bool {
 	if len(match.Players) != 2 {
 		return false

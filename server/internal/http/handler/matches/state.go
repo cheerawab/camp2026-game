@@ -83,6 +83,14 @@ func (h *Handler) advanceMatch(ctx context.Context, match mongomodel.Match, now 
 	for match.Status == mongomodel.MatchStatusActive {
 		switch activeMatchPhase(match) {
 		case mongomodel.MatchPhaseAnswering:
+			computerAnswered, err := h.ensureComputerAnswer(ctx, &match, now)
+			if err != nil {
+				return match, events, err
+			}
+			if computerAnswered {
+				events = append(events, "player_answered")
+			}
+
 			shouldReveal, err := h.shouldRevealRound(ctx, match, now)
 			if err != nil {
 				return match, events, err
@@ -240,6 +248,9 @@ func (h *Handler) writeMatchRewardsWithoutTransaction(ctx context.Context, match
 	}
 
 	for _, player := range match.Players {
+		if isComputerPlayer(player) {
+			continue
+		}
 		effects, err := h.matchPlayerBattleEffects(ctx, player)
 		if err != nil {
 			return err
@@ -314,6 +325,7 @@ func (h *Handler) buildMatchState(ctx context.Context, match mongomodel.Match, v
 	response := MatchStateResponse{
 		MatchID:              match.ID,
 		Code:                 match.Code,
+		Mode:                 matchMode(match),
 		Status:               match.Status,
 		HostPlayerID:         match.HostPlayerID,
 		Players:              make([]MatchPlayerResponse, 0, len(match.Players)),
@@ -364,6 +376,7 @@ func (h *Handler) buildMatchState(ctx context.Context, match mongomodel.Match, v
 		playerResponse := MatchPlayerResponse{
 			PlayerID:                 player.PlayerID,
 			Nickname:                 player.Nickname,
+			Kind:                     matchPlayerKind(player),
 			Ready:                    player.Ready,
 			SitoneIDs:                cloneStrings(player.SitoneIDs),
 			Score:                    &score,

@@ -31,6 +31,7 @@ type Config struct {
 	LogLevel        slog.Level
 	ShutdownTimeout time.Duration
 	ContentDir      string
+	AdminPassword   string
 	HTTP            HTTPConfig
 	MongoURI        string
 	MongoDatabase   string
@@ -54,6 +55,7 @@ func Load() (Config, error) {
 		Version:         stringValue("APP_VERSION", defaultAppVersion),
 		ShutdownTimeout: durationValue("SHUTDOWN_TIMEOUT", defaultShutdownTimeout),
 		ContentDir:      stringValue("CONTENT_DIR", defaultContentDir),
+		AdminPassword:   stringValue("ADMIN_PASSWORD", ""),
 		HTTP: HTTPConfig{
 			Addr:              stringValue("HTTP_ADDR", defaultHTTPAddr),
 			RequestTimeout:    durationValue("REQUEST_TIMEOUT", defaultRequestTimeout),

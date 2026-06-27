@@ -38,12 +38,12 @@ type HomeSummaryResponse struct {
 }
 
 type TeamRankResponse struct {
-	Type          string `json:"type" example:"open_power"`
 	Rank          int    `json:"rank" example:"2"`
 	TeamID        string `json:"teamId" example:"8M4RXP"`
 	Name          string `json:"name" example:"Blue Team"`
-	Score         int    `json:"score" example:"1188"`
-	GapToPrevious int    `json:"gapToPrevious" example:"72"`
+	SitoneCount   int    `json:"sitoneCount" example:"18"`
+	OpenPower     int    `json:"openPower" example:"1188"`
+	GapToPrevious int    `json:"gapToPrevious" example:"3"`
 }
 
 type HomeActionResponse struct {

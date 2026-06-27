@@ -15,6 +15,166 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/admin/login": {
+            "post": {
+                "description": "Uses the ADMIN_PASSWORD environment variable to create an admin session cookie.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Login as admin",
+                "parameters": [
+                    {
+                        "description": "Admin login request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/logout": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Logout admin session",
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/admin/settings": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Get admin game settings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin.SettingsResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Update admin game settings",
+                "parameters": [
+                    {
+                        "description": "Admin settings request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin.SettingsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin.SettingsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "description": "User-facing endpoint. Validates the stable auth token from the issued game URL and writes it to the camp2026_auth cookie.",
@@ -328,24 +488,23 @@ const docTemplate = `{
                         "AuthCookieAuth": []
                     }
                 ],
-                "description": "Lists team rankings by open power, sitone count, or completed match score.",
+                "description": "Lists team or player rankings by sitone count, then open power.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "leaderboards"
                 ],
-                "summary": "List team leaderboard",
+                "summary": "List leaderboard",
                 "parameters": [
                     {
                         "enum": [
-                            "open_power",
-                            "sitones",
-                            "matches"
+                            "teams",
+                            "players"
                         ],
                         "type": "string",
-                        "description": "Leaderboard type",
-                        "name": "type",
+                        "description": "Leaderboard scope",
+                        "name": "scope",
                         "in": "query"
                     }
                 ],
@@ -364,6 +523,122 @@ const docTemplate = `{
                     },
                     "422": {
                         "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/leaderboards/players/{playerID}/inventory": {
+            "get": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Returns read-only item and sitone inventory for a non-staff leaderboard player.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "leaderboards"
+                ],
+                "summary": "Get leaderboard player inventory",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Player ID",
+                        "name": "playerID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/leaderboards.PlayerInventoryResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/leaderboards/teams/{teamID}/players": {
+            "get": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Lists non-staff players in a ranked team with their inventory totals.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "leaderboards"
+                ],
+                "summary": "List leaderboard team players",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Team ID",
+                        "name": "teamID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/leaderboards.TeamPlayersResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/httpx.ProblemDetails"
                         }
@@ -403,6 +678,98 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/matches.CreateMatchResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/matches/computer": {
+            "post": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Creates a two-player quiz match room against the system-controlled computer opponent.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "matches"
+                ],
+                "summary": "Create computer match room",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/matches.CreateMatchResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/matches/computer/settings": {
+            "get": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Returns whether computer battles are currently enabled for players.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "matches"
+                ],
+                "summary": "Get computer battle availability",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/matches.ComputerBattleSettingsResponse"
                         }
                     },
                     "401": {
@@ -829,7 +1196,7 @@ const docTemplate = `{
                         "AuthCookieAuth": []
                     }
                 ],
-                "description": "Returns the authenticated player's home page summary, resource counts, and open power team rank.",
+                "description": "Returns the authenticated player's home page summary, resource counts, and team rank by sitone count and open power.",
                 "produces": [
                     "application/json"
                 ],
@@ -1564,6 +1931,72 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "admin.LoginRequest": {
+            "type": "object",
+            "required": [
+                "password"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "admin.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "authenticated": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "admin.SettingsRequest": {
+            "type": "object",
+            "required": [
+                "computerBattlesEnabled",
+                "computerEasyAccuracy",
+                "computerHardAccuracy",
+                "computerNormalAccuracy"
+            ],
+            "properties": {
+                "computerBattlesEnabled": {
+                    "type": "boolean"
+                },
+                "computerEasyAccuracy": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 0
+                },
+                "computerHardAccuracy": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 0
+                },
+                "computerNormalAccuracy": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 0
+                }
+            }
+        },
+        "admin.SettingsResponse": {
+            "type": "object",
+            "properties": {
+                "computerBattlesEnabled": {
+                    "type": "boolean"
+                },
+                "computerEasyAccuracy": {
+                    "type": "integer"
+                },
+                "computerHardAccuracy": {
+                    "type": "integer"
+                },
+                "computerNormalAccuracy": {
+                    "type": "integer"
+                }
+            }
+        },
         "apimodel.AuthLoginRequest": {
             "type": "object",
             "required": [
@@ -1934,50 +2367,300 @@ const docTemplate = `{
                 }
             }
         },
-        "leaderboards.ListResponse": {
+        "leaderboards.InventoryItemDetail": {
             "type": "object",
             "properties": {
-                "currentTeam": {
-                    "$ref": "#/definitions/leaderboards.TeamRankResponse"
+                "description": {
+                    "type": "string",
+                    "example": "冒險背包，可用於小石合成。"
                 },
-                "gapToPrevious": {
-                    "type": "integer",
-                    "example": 72
+                "iconPath": {
+                    "type": "string",
+                    "example": "/game-icons/items/item_adventure_backpack.png"
                 },
-                "teams": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/leaderboards.TeamRankResponse"
-                    }
+                "id": {
+                    "type": "string",
+                    "example": "item_adventure_backpack"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "冒險背包"
+                },
+                "rarity": {
+                    "type": "string",
+                    "example": "common"
+                },
+                "source": {
+                    "type": "string",
+                    "example": "shop"
                 },
                 "type": {
                     "type": "string",
-                    "example": "open_power"
+                    "example": "material"
                 }
             }
         },
-        "leaderboards.TeamRankResponse": {
+        "leaderboards.InventoryItemResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "owned-item-001"
+                },
+                "item": {
+                    "$ref": "#/definitions/leaderboards.InventoryItemDetail"
+                },
+                "itemId": {
+                    "type": "string",
+                    "example": "item_adventure_backpack"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "example": 3
+                }
+            }
+        },
+        "leaderboards.InventoryPlayerResponse": {
+            "type": "object",
+            "properties": {
+                "avatarUrl": {
+                    "type": "string",
+                    "example": "https://example.test/avatar/alice.png"
+                },
+                "current": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "itemCount": {
+                    "type": "integer",
+                    "example": 6
+                },
+                "nickname": {
+                    "type": "string",
+                    "example": "Alice"
+                },
+                "openPower": {
+                    "type": "integer",
+                    "example": 1188
+                },
+                "playerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                },
+                "sitoneCount": {
+                    "type": "integer",
+                    "example": 18
+                }
+            }
+        },
+        "leaderboards.InventorySitoneDetail": {
+            "type": "object",
+            "properties": {
+                "abilityCount": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "abilityDescription": {
+                    "type": "string",
+                    "example": "答對時分數提高 5%。"
+                },
+                "abilityKind": {
+                    "type": "string",
+                    "example": "answer_score_bonus"
+                },
+                "abilityName": {
+                    "type": "string",
+                    "example": "穩定輸出"
+                },
+                "abilityValue": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "description": {
+                    "type": "string",
+                    "example": "修 bug、分享解法、完成技術任務。"
+                },
+                "iconPath": {
+                    "type": "string",
+                    "example": "/game-icons/stones/basic_blue.png"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "stone_engineering_base"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "工程型小石"
+                },
+                "rarity": {
+                    "type": "string",
+                    "example": "base"
+                },
+                "style": {
+                    "type": "string",
+                    "example": "default"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "engineering"
+                }
+            }
+        },
+        "leaderboards.InventorySitoneResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "owned-sitone-001"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "sitone": {
+                    "$ref": "#/definitions/leaderboards.InventorySitoneDetail"
+                },
+                "sitoneId": {
+                    "type": "string",
+                    "example": "stone_engineering_base"
+                }
+            }
+        },
+        "leaderboards.ListResponse": {
+            "type": "object",
+            "properties": {
+                "currentEntry": {
+                    "$ref": "#/definitions/leaderboards.RankEntryResponse"
+                },
+                "entries": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/leaderboards.RankEntryResponse"
+                    }
+                },
+                "gapToPrevious": {
+                    "type": "integer",
+                    "example": 3
+                },
+                "scope": {
+                    "type": "string",
+                    "example": "teams"
+                }
+            }
+        },
+        "leaderboards.PlayerInventoryResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/leaderboards.InventoryItemResponse"
+                    }
+                },
+                "player": {
+                    "$ref": "#/definitions/leaderboards.InventoryPlayerResponse"
+                },
+                "sitones": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/leaderboards.InventorySitoneResponse"
+                    }
+                },
+                "team": {
+                    "$ref": "#/definitions/leaderboards.TeamSummaryResponse"
+                }
+            }
+        },
+        "leaderboards.RankEntryResponse": {
             "type": "object",
             "properties": {
                 "current": {
                     "type": "boolean",
                     "example": true
                 },
-                "metric": {
+                "id": {
                     "type": "string",
-                    "example": "OP"
+                    "example": "8M4RXP"
                 },
                 "name": {
                     "type": "string",
                     "example": "Blue Team"
                 },
+                "openPower": {
+                    "type": "integer",
+                    "example": 1188
+                },
                 "rank": {
                     "type": "integer",
                     "example": 2
                 },
-                "score": {
+                "sitoneCount": {
+                    "type": "integer",
+                    "example": 18
+                },
+                "teamId": {
+                    "type": "string",
+                    "example": "8M4RXP"
+                },
+                "teamName": {
+                    "type": "string",
+                    "example": "Blue Team"
+                }
+            }
+        },
+        "leaderboards.TeamPlayerSummaryResponse": {
+            "type": "object",
+            "properties": {
+                "avatarUrl": {
+                    "type": "string",
+                    "example": "https://example.test/avatar/alice.png"
+                },
+                "current": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "itemCount": {
+                    "type": "integer",
+                    "example": 6
+                },
+                "nickname": {
+                    "type": "string",
+                    "example": "Alice"
+                },
+                "openPower": {
                     "type": "integer",
                     "example": 1188
+                },
+                "playerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                },
+                "sitoneCount": {
+                    "type": "integer",
+                    "example": 18
+                }
+            }
+        },
+        "leaderboards.TeamPlayersResponse": {
+            "type": "object",
+            "properties": {
+                "players": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/leaderboards.TeamPlayerSummaryResponse"
+                    }
+                },
+                "team": {
+                    "$ref": "#/definitions/leaderboards.TeamSummaryResponse"
+                }
+            }
+        },
+        "leaderboards.TeamSummaryResponse": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "Blue Team"
                 },
                 "teamId": {
                     "type": "string",
@@ -2017,6 +2700,15 @@ const docTemplate = `{
                 }
             }
         },
+        "matches.ComputerBattleSettingsResponse": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
         "matches.CreateMatchResponse": {
             "type": "object",
             "properties": {
@@ -2047,6 +2739,10 @@ const docTemplate = `{
                 "matchId": {
                     "type": "string",
                     "example": "match_7H9K2Q"
+                },
+                "mode": {
+                    "type": "string",
+                    "example": "pvp"
                 },
                 "phase": {
                     "type": "string",
@@ -2130,6 +2826,10 @@ const docTemplate = `{
                 "matchId": {
                     "type": "string",
                     "example": "match_7H9K2Q"
+                },
+                "mode": {
+                    "type": "string",
+                    "example": "pvp"
                 },
                 "phase": {
                     "type": "string",
@@ -2275,6 +2975,10 @@ const docTemplate = `{
                         "B",
                         "C"
                     ]
+                },
+                "kind": {
+                    "type": "string",
+                    "example": "human"
                 },
                 "materialDrop": {
                     "$ref": "#/definitions/matches.MatchItemDropResponse"
@@ -2426,6 +3130,10 @@ const docTemplate = `{
                     "type": "string",
                     "example": "match_7H9K2Q"
                 },
+                "mode": {
+                    "type": "string",
+                    "example": "pvp"
+                },
                 "phase": {
                     "type": "string",
                     "example": "answering"
@@ -2494,6 +3202,10 @@ const docTemplate = `{
                 "matchId": {
                     "type": "string",
                     "example": "match_7H9K2Q"
+                },
+                "mode": {
+                    "type": "string",
+                    "example": "pvp"
                 },
                 "phase": {
                     "type": "string",
@@ -2583,6 +3295,10 @@ const docTemplate = `{
                 "matchId": {
                     "type": "string",
                     "example": "match_7H9K2Q"
+                },
+                "mode": {
+                    "type": "string",
+                    "example": "pvp"
                 },
                 "phase": {
                     "type": "string",
@@ -3002,27 +3718,27 @@ const docTemplate = `{
             "properties": {
                 "gapToPrevious": {
                     "type": "integer",
-                    "example": 72
+                    "example": 3
                 },
                 "name": {
                     "type": "string",
                     "example": "Blue Team"
                 },
+                "openPower": {
+                    "type": "integer",
+                    "example": 1188
+                },
                 "rank": {
                     "type": "integer",
                     "example": 2
                 },
-                "score": {
+                "sitoneCount": {
                     "type": "integer",
-                    "example": 1188
+                    "example": 18
                 },
                 "teamId": {
                     "type": "string",
                     "example": "8M4RXP"
-                },
-                "type": {
-                    "type": "string",
-                    "example": "open_power"
                 }
             }
         },

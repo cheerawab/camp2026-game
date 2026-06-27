@@ -50,12 +50,14 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	match := mongomodel.Match{
 		ID:           matchID,
 		Code:         code,
+		Mode:         mongomodel.MatchModePVP,
 		Status:       mongomodel.MatchStatusWaiting,
 		HostPlayerID: player.ID,
 		Players: []mongomodel.MatchPlayer{
 			{
 				PlayerID:  player.ID,
 				Nickname:  player.Nickname,
+				Kind:      mongomodel.MatchPlayerKindHuman,
 				Ready:     false,
 				Score:     0,
 				SitoneIDs: sitoneIDs,

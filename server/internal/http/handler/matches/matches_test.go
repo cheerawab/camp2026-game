@@ -276,6 +276,75 @@ func TestActiveMatchPhaseDefaultsToAnswering(t *testing.T) {
 	}
 }
 
+func TestMatchModeAndPlayerKindDefaults(t *testing.T) {
+	match := mongomodel.Match{}
+	if got := matchMode(match); got != mongomodel.MatchModePVP {
+		t.Fatalf("expected default match mode %q, got %q", mongomodel.MatchModePVP, got)
+	}
+	if got := matchPlayerKind(mongomodel.MatchPlayer{}); got != mongomodel.MatchPlayerKindHuman {
+		t.Fatalf("expected default player kind %q, got %q", mongomodel.MatchPlayerKindHuman, got)
+	}
+
+	match.Mode = mongomodel.MatchModeComputer
+	player := mongomodel.MatchPlayer{Kind: mongomodel.MatchPlayerKindComputer}
+	if !isComputerMatch(match) || !isComputerPlayer(player) {
+		t.Fatalf("expected computer match/player helpers to detect computer values")
+	}
+}
+
+func TestComputerDifficultyForPlayerUsesLeaderboardPercentile(t *testing.T) {
+	entries := []computerRankEntry{
+		{PlayerID: "p1"},
+		{PlayerID: "p2"},
+		{PlayerID: "p3"},
+		{PlayerID: "p4"},
+		{PlayerID: "p5"},
+		{PlayerID: "p6"},
+		{PlayerID: "p7"},
+		{PlayerID: "p8"},
+		{PlayerID: "p9"},
+		{PlayerID: "p10"},
+	}
+
+	if got := computerDifficultyForPlayer(entries, "p1"); got != computerDifficultyHard {
+		t.Fatalf("expected top percentile hard, got %q", got)
+	}
+	if got := computerDifficultyForPlayer(entries, "p3"); got != computerDifficultyNormal {
+		t.Fatalf("expected middle percentile normal, got %q", got)
+	}
+	if got := computerDifficultyForPlayer(entries, "p7"); got != computerDifficultyEasy {
+		t.Fatalf("expected lower percentile easy, got %q", got)
+	}
+	if got := computerDifficultyForPlayer(entries, "missing"); got != computerDifficultyEasy {
+		t.Fatalf("expected missing player easy, got %q", got)
+	}
+}
+
+func TestComputerAnswerChoiceRespectsAccuracyAndEliminations(t *testing.T) {
+	question := content.QuizQuestion{
+		ID:            "quiz-001",
+		CorrectChoice: "A",
+	}
+	player := mongomodel.MatchPlayer{
+		PlayerID: computerPlayerID,
+		Kind:     mongomodel.MatchPlayerKindComputer,
+	}
+	match := mongomodel.Match{
+		ID: "match_123",
+		EliminatedChoices: []mongomodel.MatchEliminatedChoice{
+			{QuestionID: "quiz-001", PlayerID: computerPlayerID, Choices: []string{"B"}},
+		},
+	}
+
+	if got := computerAnswerChoice(match, question, player, 100); got != "A" {
+		t.Fatalf("expected perfect accuracy to pick correct choice, got %q", got)
+	}
+	got := computerAnswerChoice(match, question, player, 0)
+	if got == "A" || got == "B" || got == "" {
+		t.Fatalf("expected wrong non-eliminated choice, got %q", got)
+	}
+}
+
 func TestNormalizeSitoneLoadoutAllowsDuplicateSlots(t *testing.T) {
 	got, err := normalizeSitoneLoadout([]string{
 		" stone_engineering_base ",

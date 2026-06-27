@@ -13,6 +13,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sitcon-tw/camp2026-game/internal/content"
 	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
+	adminhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/admin"
 	authhandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/auth"
 	cataloghandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/catalog"
 	fusionshandler "github.com/sitcon-tw/camp2026-game/internal/http/handler/fusions"
@@ -32,6 +33,7 @@ type Dependencies struct {
 	Content        *content.Store
 	MongoClient    *mongo.Client
 	MongoDB        *mongo.Database
+	AdminPassword  string
 }
 
 func NewRouter(dep Dependencies) http.Handler {
@@ -67,6 +69,11 @@ func NewRouter(dep Dependencies) http.Handler {
 }
 
 func registerRoutes(api chi.Router, dep Dependencies) {
+	adminhandler.New(adminhandler.Dependencies{
+		Content:       dep.Content,
+		MongoDB:       dep.MongoDB,
+		AdminPassword: dep.AdminPassword,
+	}).RegisterRoutes(api)
 	systemhandler.New(systemhandler.Dependencies{
 		MongoClient: dep.MongoClient,
 	}).RegisterRoutes(api)
@@ -84,6 +91,7 @@ func registerRoutes(api chi.Router, dep Dependencies) {
 		MongoDB: dep.MongoDB,
 	}).RegisterRoutes(api.With(authctx.RequirePlayer(dep.MongoDB)))
 	leaderboardshandler.New(leaderboardshandler.Dependencies{
+		Content: dep.Content,
 		MongoDB: dep.MongoDB,
 	}).RegisterRoutes(api.With(authctx.RequirePlayer(dep.MongoDB)))
 	matcheshandler.New(matcheshandler.Dependencies{

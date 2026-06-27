@@ -80,6 +80,7 @@ func (h *Handler) joinMatch(w http.ResponseWriter, r *http.Request, match mongom
 	match.Players = append(match.Players, mongomodel.MatchPlayer{
 		PlayerID:  player.ID,
 		Nickname:  player.Nickname,
+		Kind:      mongomodel.MatchPlayerKindHuman,
 		Ready:     false,
 		Score:     0,
 		SitoneIDs: sitoneIDs,

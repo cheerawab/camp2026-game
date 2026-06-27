@@ -24,9 +24,14 @@ type AnswerAcceptedResponse struct {
 	Accepted bool `json:"accepted" example:"true"`
 }
 
+type ComputerBattleSettingsResponse struct {
+	Enabled bool `json:"enabled" example:"true"`
+}
+
 type MatchStateResponse struct {
 	MatchID               string                 `json:"matchId" example:"match_7H9K2Q"`
 	Code                  string                 `json:"code,omitempty" example:"ABC123"`
+	Mode                  string                 `json:"mode" example:"pvp"`
 	Status                string                 `json:"status" example:"active"`
 	Phase                 string                 `json:"phase,omitempty" example:"answering"`
 	HostPlayerID          string                 `json:"hostPlayerId" example:"7H9K2Q"`
@@ -47,6 +52,7 @@ type MatchStateResponse struct {
 type MatchPlayerResponse struct {
 	PlayerID                 string                 `json:"playerId" example:"7H9K2Q"`
 	Nickname                 string                 `json:"nickname" example:"Alice"`
+	Kind                     string                 `json:"kind" example:"human"`
 	Ready                    bool                   `json:"ready" example:"true"`
 	AnsweredCurrentQuestion  bool                   `json:"answeredCurrentQuestion,omitempty" example:"true"`
 	SitoneIDs                []string               `json:"sitoneIds,omitempty" example:"stone_engineering_base,stone_explorer_base"`
