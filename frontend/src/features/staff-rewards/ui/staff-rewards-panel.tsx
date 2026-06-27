@@ -7,7 +7,6 @@ import {
   ScanLineIcon,
   SearchIcon,
   SendIcon,
-  UserRoundIcon,
 } from "lucide-react"
 import { type FormEvent, useMemo, useState } from "react"
 import { toast } from "sonner"
@@ -31,6 +30,7 @@ import {
 import { Button } from "@/shared/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
 import { Input } from "@/shared/ui/input"
+import { PlayerAvatar } from "@/shared/ui/player-avatar"
 import {
   Select,
   SelectContent,
@@ -54,7 +54,6 @@ type TargetPlayer = {
   playerId: string
   nickname: string
   team?: PlayerStatus["team"]
-  avatarUrl?: string
 }
 
 function sitoneOption(sitone: Sitone): RewardOption {
@@ -312,13 +311,20 @@ export function StaffRewardsPanel() {
                           onClick={() => selectTargetPlayer(player)}
                         >
                           <span className="flex w-full min-w-0 items-center justify-between gap-2">
-                            <span className="min-w-0">
-                              <span className="block truncate text-sm leading-tight font-black">
-                                {player.nickname}
-                              </span>
-                              <span className="text-muted-foreground mt-1 block truncate text-xs leading-tight font-bold">
-                                {player.team?.name ?? "未分組"} ·{" "}
-                                {player.playerId}
+                            <span className="flex min-w-0 items-center gap-2.5">
+                              <PlayerAvatar
+                                playerId={player.playerId}
+                                nickname={player.nickname}
+                                className="border-ink size-9 rounded-[13px] border-2"
+                              />
+                              <span className="min-w-0">
+                                <span className="block truncate text-sm leading-tight font-black">
+                                  {player.nickname}
+                                </span>
+                                <span className="text-muted-foreground mt-1 block truncate text-xs leading-tight font-bold">
+                                  {player.team?.name ?? "未分組"} ·{" "}
+                                  {player.playerId}
+                                </span>
                               </span>
                             </span>
                             {selected ? (
@@ -341,9 +347,11 @@ export function StaffRewardsPanel() {
             </div>
 
             <div className="bg-surface-raised border-border grid min-h-[88px] grid-cols-[52px_1fr] items-center gap-3 rounded-[18px] border-2 p-3">
-              <div className="bg-card border-ink grid size-[52px] place-items-center rounded-[18px] border-2">
-                <UserRoundIcon className="size-6" aria-hidden />
-              </div>
+              <PlayerAvatar
+                playerId={targetPlayer?.playerId}
+                nickname={targetPlayer?.nickname}
+                className="border-ink size-[52px] rounded-[18px] border-2"
+              />
               <div>
                 <p className="text-muted-foreground text-xs font-black">
                   {resolveMutation.isPending
@@ -508,8 +516,15 @@ export function StaffRewardsPanel() {
                 {rewardMutation.data.reward.quantity}
               </strong>
               <p className="text-muted-foreground text-sm font-bold">
-                {rewardMutation.data.player.nickname} ·{" "}
-                {rewardMutation.data.player.team.name}
+                <span className="inline-flex items-center gap-2 align-middle">
+                  <PlayerAvatar
+                    playerId={rewardMutation.data.player.playerId}
+                    nickname={rewardMutation.data.player.nickname}
+                    className="border-ink size-6 rounded-[9px] border"
+                  />
+                  {rewardMutation.data.player.nickname}
+                </span>{" "}
+                · {rewardMutation.data.player.team.name}
               </p>
             </CardContent>
           </Card>

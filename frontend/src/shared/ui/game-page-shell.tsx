@@ -25,7 +25,7 @@ export function GamePageShell({
     >
       <div
         className={cn(
-          "relative flex min-h-svh w-full max-w-[430px] flex-col px-4 py-[18px] pb-7",
+          "relative flex min-h-svh w-full max-w-[430px] flex-col px-4 py-[18px] pb-[calc(7.25rem+env(safe-area-inset-bottom))]",
           contentClassName,
         )}
       >

@@ -14,6 +14,7 @@ import {
 } from "@/shared/ui/card"
 import { GamePageShell } from "@/shared/ui/game-page-shell"
 import { PageHeader } from "@/shared/ui/page-header"
+import { PlayerAvatar } from "@/shared/ui/player-avatar"
 import {
   Collapsible,
   CollapsibleContent,
@@ -106,6 +107,11 @@ export function BattleResultPage() {
                 )}
               >
                 <CardContent className="grid gap-y-2">
+                  <PlayerAvatar
+                    playerId={player.playerId}
+                    nickname={player.nickname}
+                    className="border-ink mx-auto size-14 rounded-[20px] border-2"
+                  />
                   <span className="text-center">{player.nickname}</span>
                   <span className="text-center text-4xl font-bold">
                     {player.score ?? 0}
@@ -131,7 +137,7 @@ export function BattleResultPage() {
             <CardTitle>獲得獎勵</CardTitle>
             <CardDescription>本場對戰的開源力獎勵會收入帳號。</CardDescription>
           </CardHeader>
-          <CardContent className="flex gap-x-4">
+          <CardContent className="grid grid-cols-[64px_1fr] gap-x-4">
             <div className="bg-accent border-secondary-foreground rounded-lg border-2 p-2">
               <Backpack className="size-10 rounded-lg" />
             </div>
@@ -139,14 +145,19 @@ export function BattleResultPage() {
               {rewardedPlayers.map((player) => (
                 <div
                   key={player.playerId}
-                  className="grid grid-cols-[1fr_auto] gap-x-4"
+                  className="grid grid-cols-[28px_1fr_auto] items-center gap-x-2"
                 >
+                  <PlayerAvatar
+                    playerId={player.playerId}
+                    nickname={player.nickname}
+                    className="border-ink size-7 rounded-[10px] border"
+                  />
                   <span>{player.nickname}</span>
                   <span className="font-bold">
                     +{player.openPowerReward ?? 0} 開源力
                   </span>
                   {(player.openPowerBonusPercent ?? 0) > 0 ? (
-                    <span className="text-muted-foreground col-span-2 text-sm font-bold">
+                    <span className="text-muted-foreground col-span-2 col-start-2 text-sm font-bold">
                       基礎 {player.baseOpenPowerReward ?? 0}，加成 +
                       {player.openPowerBonusPercent}%
                     </span>
@@ -171,13 +182,18 @@ export function BattleResultPage() {
               return (
                 <div
                   key={player.playerId}
-                  className="border-border grid grid-cols-[1fr_auto] gap-2 border-b pb-2 last:border-b-0 last:pb-0"
+                  className="border-border grid grid-cols-[28px_1fr_auto] items-center gap-2 border-b pb-2 last:border-b-0 last:pb-0"
                 >
+                  <PlayerAvatar
+                    playerId={player.playerId}
+                    nickname={player.nickname}
+                    className="border-ink size-7 rounded-[10px] border"
+                  />
                   <span className="font-bold">{player.nickname}</span>
                   <span className="text-muted-foreground text-sm font-bold">
                     {drop.dropRate}%
                   </span>
-                  <span className="col-span-2 text-sm font-black">
+                  <span className="col-span-2 col-start-2 text-sm font-black">
                     {drop.dropped
                       ? `獲得 ${drop.itemName ?? drop.itemId} x${drop.quantity ?? 1}`
                       : "沒有掉落素材"}
@@ -237,7 +253,12 @@ export function BattleResultPage() {
                       key={answer.playerId}
                       className="grid gap-y-1 border-t pt-2"
                     >
-                      <span className="text-muted-foreground text-sm font-bold">
+                      <span className="text-muted-foreground inline-flex items-center gap-2 text-sm font-bold">
+                        <PlayerAvatar
+                          playerId={answer.playerId}
+                          nickname={answer.nickname}
+                          className="border-ink size-6 rounded-[9px] border"
+                        />
                         {answer.nickname}
                       </span>
                       {answer.correct && answer.bonusScore > 0 ? (

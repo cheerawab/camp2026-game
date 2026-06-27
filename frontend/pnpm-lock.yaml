@@ -10,6 +10,12 @@ importers:
       "@base-ui/react":
         specifier: ^1.5.0
         version: 1.5.0(@date-fns/tz@1.5.0)(@types/react@19.2.15)(date-fns@4.4.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      "@dicebear/core":
+        specifier: 9.4.2
+        version: 9.4.2
+      "@dicebear/thumbs":
+        specifier: 9.4.2
+        version: 9.4.2(@dicebear/core@9.4.2)
       "@hookform/resolvers":
         specifier: ^5.4.0
         version: 5.4.0(react-hook-form@7.77.0(react@19.2.6))
@@ -293,6 +299,22 @@ packages:
     peerDependenciesMeta:
       "@types/react":
         optional: true
+
+  "@dicebear/core@9.4.2":
+    resolution:
+      {
+        integrity: sha512-MF0042+Z3s8PGZKZLySfhft28bUa3B1iq0e5NSjCvY8gfMi5aIH/iRJGRJa1N9Jz1BNkxYb4yvJ/N9KO8Z6Y+w==,
+      }
+    engines: { node: ">=18.0.0" }
+
+  "@dicebear/thumbs@9.4.2":
+    resolution:
+      {
+        integrity: sha512-ccWvDBqbkWS5uzHbsg5L6uML6vBfX7jT3J3jHCQksvz8haHItxTK02w+6e1UavZUsvza4lG5X/XY3eji3siJ4Q==,
+      }
+    engines: { node: ">=18.0.0" }
+    peerDependencies:
+      "@dicebear/core": ^9.0.0
 
   "@date-fns/tz@1.5.0":
     resolution:
@@ -3754,6 +3776,12 @@ snapshots:
       use-sync-external-store: 1.6.0(react@19.2.6)
     optionalDependencies:
       "@types/react": 19.2.15
+
+  "@dicebear/core@9.4.2": {}
+
+  "@dicebear/thumbs@9.4.2(@dicebear/core@9.4.2)":
+    dependencies:
+      "@dicebear/core": 9.4.2
 
   "@date-fns/tz@1.5.0": {}
 

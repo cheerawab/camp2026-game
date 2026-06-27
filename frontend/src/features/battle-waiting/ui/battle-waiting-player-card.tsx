@@ -1,32 +1,31 @@
 import { Badge } from "@/shared/ui/badge"
 import { Card, CardContent } from "@/shared/ui/card"
+import { PlayerAvatar } from "@/shared/ui/player-avatar"
 import { Check, Loader2 } from "lucide-react"
 
 type BattleWaitingPlayerCardType = {
+  playerId: string
   name: string
   team: string
   ready: boolean
   loadoutCount?: number
-  pictureSrc?: string
 }
 
 export function BattleWaitingPlayerCard({
+  playerId,
   name,
   team,
   ready,
   loadoutCount = 0,
-  pictureSrc,
 }: BattleWaitingPlayerCardType) {
   return (
     <Card>
       <CardContent className="flex items-center justify-between">
-        {pictureSrc ? (
-          <img src={pictureSrc} className="h-20" alt="" />
-        ) : (
-          <div className="bg-pebble-spark border-ink grid size-20 place-items-center rounded-[22px] border-2 text-2xl font-black">
-            {name.trim().slice(0, 1) || "?"}
-          </div>
-        )}
+        <PlayerAvatar
+          playerId={playerId}
+          nickname={name}
+          className="bg-pebble-spark border-ink size-20 rounded-[22px] border-2"
+        />
         <div className="flex flex-col items-center justify-center">
           <span className="text-2xl font-bold">{name}</span>
           <span className="text-muted-foreground text-lg">{team}</span>

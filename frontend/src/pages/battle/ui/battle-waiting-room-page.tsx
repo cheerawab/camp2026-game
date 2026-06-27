@@ -249,26 +249,30 @@ export function BattleWaitingRoomPage() {
     )
   }
 
+  const computerMatch = match?.mode === "computer"
+
   return (
     <GamePageShell contentClassName="grid content-start gap-y-2">
       <PageHeader title="等待房間" headline="Battle Room" />
-      <Card>
-        <CardHeader>
-          <CardTitle>房號</CardTitle>
-          <CardDescription>
-            將這個房號分享給其他學員，加入後兩位玩家都準備即可開始。
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="grid justify-items-center gap-4">
-          <span className="block pl-[0.5rem] text-4xl font-bold tracking-[0.5rem]">
-            {match?.code ?? "------"}
-          </span>
-          <MatchCodeQr
-            value={match?.code ?? ""}
-            className="size-[168px] rounded-[24px] p-2"
-          />
-        </CardContent>
-      </Card>
+      {computerMatch ? null : (
+        <Card>
+          <CardHeader>
+            <CardTitle>房號</CardTitle>
+            <CardDescription>
+              將這個房號分享給其他學員，加入後兩位玩家都準備即可開始。
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid justify-items-center gap-4">
+            <span className="block pl-[0.5rem] text-4xl font-bold tracking-[0.5rem]">
+              {match?.code ?? "------"}
+            </span>
+            <MatchCodeQr
+              value={match?.code ?? ""}
+              className="size-[168px] rounded-[24px] p-2"
+            />
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>
@@ -447,8 +451,15 @@ export function BattleWaitingRoomPage() {
         (match?.players ?? []).map((player) => (
           <BattleWaitingPlayerCard
             key={player.playerId}
+            playerId={player.playerId}
             name={player.nickname}
-            team={player.playerId === match?.hostPlayerId ? "房主" : "挑戰者"}
+            team={
+              player.kind === "computer"
+                ? "電腦對手"
+                : player.playerId === match?.hostPlayerId
+                  ? "房主"
+                  : "挑戰者"
+            }
             ready={player.ready}
             loadoutCount={player.sitoneIds.length}
           />

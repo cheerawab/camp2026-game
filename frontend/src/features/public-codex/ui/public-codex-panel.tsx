@@ -108,7 +108,7 @@ export function PublicCodexPanel() {
       </nav>
 
       <section
-        className="grid grid-cols-2 gap-2.5"
+        className="grid grid-cols-2 items-start gap-2.5 pb-4"
         aria-label={tab === "stones" ? "小石圖鑑" : "道具圖鑑"}
       >
         {isPending ? (
@@ -126,12 +126,13 @@ export function PublicCodexPanel() {
                 className="bg-card border-ink min-w-0 rounded-[var(--radius)] border-2 p-3"
               >
                 <div
-                  className={`${meta.toneClass} border-ink mb-2 flex h-[86px] items-center justify-center rounded-[20px] border-2`}
+                  className={`${meta.toneClass} border-ink mb-2 grid aspect-square min-h-[128px] place-items-center overflow-hidden rounded-[20px] border-2`}
                   aria-hidden
                 >
                   <GameIcon
                     iconPath={meta.iconPath}
-                    imageClassName="p-2"
+                    className="p-2"
+                    imageClassName="drop-shadow-[0_2px_0_rgba(23,35,58,0.18)]"
                     fallback={
                       <span className="text-card/90 text-[34px] drop-shadow-[0_2px_0_rgba(23,35,58,0.3)]">
                         {meta.symbol}

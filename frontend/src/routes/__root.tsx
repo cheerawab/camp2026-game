@@ -5,12 +5,17 @@ import type { QueryClient } from "@tanstack/react-query"
 
 import { QueryProvider } from "@/app/providers/query-provider"
 import { AuthGate } from "@/features/auth/ui/auth-gate"
+import { GameErrorPage } from "@/pages/error/ui/game-error-page"
+import { NotFoundPage } from "@/pages/not-found/ui/not-found-page"
+import { AppBottomNav } from "@/shared/ui/app-bottom-nav"
 import { Toaster } from "@/shared/ui/sonner"
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
 }>()({
   component: RootComponent,
+  errorComponent: GameErrorPage,
+  notFoundComponent: NotFoundPage,
 })
 
 function RootComponent() {
@@ -20,6 +25,7 @@ function RootComponent() {
     <QueryProvider queryClient={queryClient}>
       <AuthGate>
         <Outlet />
+        <AppBottomNav />
       </AuthGate>
 
       <Toaster position="bottom-center" />

@@ -16,7 +16,6 @@ const TeamSchema = z.object({
 const TeamMemberSchema = z.object({
   playerId: z.string(),
   nickname: z.string(),
-  avatarUrl: z.string().optional(),
   role: z.string().optional(),
 })
 
@@ -26,7 +25,6 @@ const PlayerStatusSchema = z.object({
   team: TeamSchema.optional(),
   teamMembers: nullableArray(TeamMemberSchema),
   openPower: z.number(),
-  avatarUrl: z.string().optional(),
   role: z.string().optional(),
 })
 
@@ -37,11 +35,11 @@ const HomeActionSchema = z.object({
 })
 
 const HomeTeamRankSchema = z.object({
-  type: z.string(),
   rank: z.number(),
   teamId: z.string(),
   name: z.string(),
-  score: z.number(),
+  sitoneCount: z.number(),
+  openPower: z.number(),
   gapToPrevious: z.number(),
 })
 
@@ -203,25 +201,58 @@ const FusionCreateResponseSchema = z.object({
   recipe: FusionRecipeSchema,
 })
 
-const LeaderboardTeamSchema = z.object({
+const LeaderboardEntrySchema = z.object({
   rank: z.number(),
-  teamId: z.string(),
+  id: z.string(),
   name: z.string(),
-  score: z.number(),
-  metric: z.string(),
+  teamId: z.string().optional(),
+  teamName: z.string().optional(),
+  sitoneCount: z.number(),
+  openPower: z.number(),
   current: z.boolean(),
 })
 
 const LeaderboardResponseSchema = z.object({
-  type: z.enum(["open_power", "sitones", "matches"]),
-  teams: nullableArray(LeaderboardTeamSchema),
-  currentTeam: LeaderboardTeamSchema.optional(),
+  scope: z.enum(["teams", "players"]),
+  entries: nullableArray(LeaderboardEntrySchema),
+  currentEntry: LeaderboardEntrySchema.optional(),
   gapToPrevious: z.number(),
+})
+
+const LeaderboardTeamPlayerSchema = z.object({
+  playerId: z.string(),
+  nickname: z.string(),
+  sitoneCount: z.number(),
+  itemCount: z.number(),
+  openPower: z.number(),
+  current: z.boolean(),
+})
+
+const LeaderboardTeamPlayersResponseSchema = z.object({
+  team: TeamSchema,
+  players: nullableArray(LeaderboardTeamPlayerSchema),
+})
+
+const LeaderboardInventoryPlayerSchema = z.object({
+  playerId: z.string(),
+  nickname: z.string(),
+  sitoneCount: z.number(),
+  itemCount: z.number(),
+  openPower: z.number(),
+  current: z.boolean(),
+})
+
+const LeaderboardPlayerInventoryResponseSchema = z.object({
+  player: LeaderboardInventoryPlayerSchema,
+  team: TeamSchema,
+  items: nullableArray(PlayerItemSchema),
+  sitones: nullableArray(PlayerSitoneSchema),
 })
 
 const MatchPlayerSchema = z.object({
   playerId: z.string(),
   nickname: z.string(),
+  kind: z.enum(["human", "computer"]).default("human"),
   ready: z.boolean(),
   answeredCurrentQuestion: z.boolean().optional(),
   sitoneIds: nullableArray(z.string()),
@@ -277,6 +308,7 @@ const MatchQuestionResultSchema = MatchQuestionSchema.extend({
 export const MatchStateSchema = z.object({
   matchId: z.string(),
   code: z.string().optional(),
+  mode: z.enum(["pvp", "computer"]).default("pvp"),
   status: z.enum(["waiting", "active", "completed"]),
   phase: z.enum(["answering", "revealing"]).optional(),
   hostPlayerId: z.string(),
@@ -320,13 +352,16 @@ const AnswerAcceptedSchema = z.object({
   accepted: z.boolean(),
 })
 
+const ComputerBattleSettingsSchema = z.object({
+  enabled: z.boolean(),
+})
+
 const StaffRewardKindSchema = z.enum(["item", "sitone"])
 
 const StaffPlayerSchema = z.object({
   playerId: z.string(),
   nickname: z.string(),
   team: TeamSchema.optional(),
-  avatarUrl: z.string().optional(),
 })
 
 const StaffPlayersResponseSchema = z.object({
@@ -348,6 +383,139 @@ const StaffRewardResponseSchema = z.object({
   }),
 })
 
+const AdminLoginResponseSchema = z.object({
+  authenticated: z.boolean(),
+})
+
+const AdminSettingsSchema = z.object({
+  computerBattlesEnabled: z.boolean(),
+  computerEasyAccuracy: z.number(),
+  computerNormalAccuracy: z.number(),
+  computerHardAccuracy: z.number(),
+})
+
+const AdminDashboardTeamSummarySchema = z.object({
+  teamId: z.string(),
+  name: z.string(),
+})
+
+const AdminDashboardPlayerSchema = z.object({
+  rank: z.number(),
+  playerId: z.string(),
+  nickname: z.string(),
+  team: AdminDashboardTeamSummarySchema.optional(),
+  role: z.string().optional(),
+  sitoneCount: z.number(),
+  itemCount: z.number(),
+  openPower: z.number(),
+  matchCount: z.number(),
+  completedMatchCount: z.number(),
+  answerCount: z.number(),
+  correctAnswerCount: z.number(),
+  answerAccuracy: z.number(),
+  score: z.number(),
+  lastActivityAt: z.string().optional(),
+})
+
+const AdminDashboardPlayerRankSchema = AdminDashboardPlayerSchema.omit({
+  role: true,
+})
+
+const AdminDashboardTeamSchema = z.object({
+  rank: z.number(),
+  teamId: z.string(),
+  name: z.string(),
+  playerCount: z.number(),
+  sitoneCount: z.number(),
+  itemCount: z.number(),
+  openPower: z.number(),
+  averageSitones: z.number(),
+  averageItems: z.number(),
+  averageOpenPower: z.number(),
+  topPlayer: AdminDashboardPlayerRankSchema.optional(),
+})
+
+const AdminDashboardInventoryEntrySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  type: z.string().optional(),
+  rarity: z.string().optional(),
+  iconPath: z.string().optional(),
+  source: z.string().optional(),
+  quantity: z.number(),
+  ownerCount: z.number(),
+  catalogMissing: z.boolean(),
+})
+
+const AdminDashboardRecentMatchSchema = z.object({
+  matchId: z.string(),
+  code: z.string().optional(),
+  mode: z.enum(["pvp", "computer"]),
+  status: z.enum(["waiting", "active", "completed"]),
+  playerCount: z.number(),
+  winnerPlayerId: z.string().optional(),
+  winnerNickname: z.string().optional(),
+  topScore: z.number(),
+  createdAt: z.string().optional(),
+  startedAt: z.string().optional(),
+  completedAt: z.string().optional(),
+})
+
+const AdminDashboardSchema = z.object({
+  generatedAt: z.string(),
+  summary: z.object({
+    playerCount: z.number(),
+    staffCount: z.number(),
+    teamCount: z.number(),
+    ungroupedPlayerCount: z.number(),
+    totalSitones: z.number(),
+    totalItems: z.number(),
+    totalOpenPower: z.number(),
+    totalMatches: z.number(),
+    waitingMatches: z.number(),
+    activeMatches: z.number(),
+    completedMatches: z.number(),
+    answerCount: z.number(),
+    correctAnswerCount: z.number(),
+    answerAccuracy: z.number(),
+    shopPurchaseCount: z.number(),
+    fusionCount: z.number(),
+    staffRewardCount: z.number(),
+    itemDropCount: z.number(),
+    droppedItemCount: z.number(),
+  }),
+  topPlayers: z.object({
+    bySitones: nullableArray(AdminDashboardPlayerRankSchema),
+    byOpenPower: nullableArray(AdminDashboardPlayerRankSchema),
+    byItems: nullableArray(AdminDashboardPlayerRankSchema),
+    byScore: nullableArray(AdminDashboardPlayerRankSchema),
+    byAccuracy: nullableArray(AdminDashboardPlayerRankSchema),
+  }),
+  teams: nullableArray(AdminDashboardTeamSchema),
+  players: nullableArray(AdminDashboardPlayerSchema),
+  inventory: z.object({
+    sitones: nullableArray(AdminDashboardInventoryEntrySchema),
+    items: nullableArray(AdminDashboardInventoryEntrySchema),
+  }),
+  matches: z.object({
+    total: z.number(),
+    waiting: z.number(),
+    active: z.number(),
+    completed: z.number(),
+    pvp: z.number(),
+    computer: z.number(),
+    answerCount: z.number(),
+    correctAnswerCount: z.number(),
+    answerAccuracy: z.number(),
+    averageScore: z.number(),
+    averageElapsedMillis: z.number(),
+    dropAttempts: z.number(),
+    dropSuccesses: z.number(),
+    dropRate: z.number(),
+    recent: nullableArray(AdminDashboardRecentMatchSchema),
+  }),
+})
+
 export type PlayerStatus = z.infer<typeof PlayerStatusSchema>
 export type TeamMember = z.infer<typeof TeamMemberSchema>
 export type HomeResponse = z.infer<typeof HomeResponseSchema>
@@ -358,8 +526,18 @@ export type PlayerSitone = z.infer<typeof PlayerSitoneSchema>
 export type PlayerItem = z.infer<typeof PlayerItemSchema>
 export type ShopItem = z.infer<typeof ShopItemSchema>
 export type FusionRecipe = z.infer<typeof FusionRecipeSchema>
-export type LeaderboardType = z.infer<typeof LeaderboardResponseSchema>["type"]
+export type LeaderboardScope = z.infer<
+  typeof LeaderboardResponseSchema
+>["scope"]
 export type LeaderboardResponse = z.infer<typeof LeaderboardResponseSchema>
+export type LeaderboardEntry = z.infer<typeof LeaderboardEntrySchema>
+export type LeaderboardTeamPlayer = z.infer<typeof LeaderboardTeamPlayerSchema>
+export type LeaderboardTeamPlayersResponse = z.infer<
+  typeof LeaderboardTeamPlayersResponseSchema
+>
+export type LeaderboardPlayerInventoryResponse = z.infer<
+  typeof LeaderboardPlayerInventoryResponseSchema
+>
 export type MatchState = z.infer<typeof MatchStateSchema>
 export type MatchPlayer = z.infer<typeof MatchPlayerSchema>
 export type MatchQuestion = z.infer<typeof MatchQuestionSchema>
@@ -369,6 +547,19 @@ export type MatchChoice = "A" | "B" | "C" | "D"
 export type StaffRewardKind = z.infer<typeof StaffRewardKindSchema>
 export type StaffPlayer = z.infer<typeof StaffPlayerSchema>
 export type StaffRewardResponse = z.infer<typeof StaffRewardResponseSchema>
+export type AdminSettings = z.infer<typeof AdminSettingsSchema>
+export type AdminDashboard = z.infer<typeof AdminDashboardSchema>
+export type AdminDashboardPlayer = z.infer<typeof AdminDashboardPlayerSchema>
+export type AdminDashboardPlayerRank = z.infer<
+  typeof AdminDashboardPlayerRankSchema
+>
+export type AdminDashboardTeam = z.infer<typeof AdminDashboardTeamSchema>
+export type AdminDashboardInventoryEntry = z.infer<
+  typeof AdminDashboardInventoryEntrySchema
+>
+export type AdminDashboardRecentMatch = z.infer<
+  typeof AdminDashboardRecentMatchSchema
+>
 
 export const gameApi = {
   async login(token: string) {
@@ -470,15 +661,39 @@ export const gameApi = {
     return FusionCreateResponseSchema.parse(json)
   },
 
-  async leaderboard(type: LeaderboardType) {
+  async leaderboard(scope: LeaderboardScope) {
     const json = await apiClient.get("/api/leaderboards", {
-      searchParams: { type },
+      searchParams: { scope },
     })
     return LeaderboardResponseSchema.parse(json)
   },
 
+  async leaderboardTeamPlayers(teamID: string) {
+    const json = await apiClient.get(
+      `/api/leaderboards/teams/${teamID}/players`,
+    )
+    return LeaderboardTeamPlayersResponseSchema.parse(json)
+  },
+
+  async leaderboardPlayerInventory(playerID: string) {
+    const json = await apiClient.get(
+      `/api/leaderboards/players/${playerID}/inventory`,
+    )
+    return LeaderboardPlayerInventoryResponseSchema.parse(json)
+  },
+
   async createMatch() {
     const json = await apiClient.post("/api/matches")
+    return MatchStateSchema.parse(json)
+  },
+
+  async computerBattleSettings() {
+    const json = await apiClient.get("/api/matches/computer/settings")
+    return ComputerBattleSettingsSchema.parse(json)
+  },
+
+  async createComputerMatch() {
+    const json = await apiClient.post("/api/matches/computer")
     return MatchStateSchema.parse(json)
   },
 
@@ -531,5 +746,33 @@ export const gameApi = {
       searchParams: { query },
     })
     return StaffPlayersResponseSchema.parse(json).players
+  },
+
+  async adminLogin(password: string) {
+    const json = await apiClient.post("/api/admin/login", {
+      json: { password },
+    })
+    return AdminLoginResponseSchema.parse(json)
+  },
+
+  async adminLogout() {
+    await apiClient.post("/api/admin/logout")
+  },
+
+  async adminSettings() {
+    const json = await apiClient.get("/api/admin/settings")
+    return AdminSettingsSchema.parse(json)
+  },
+
+  async adminDashboard() {
+    const json = await apiClient.get("/api/admin/dashboard")
+    return AdminDashboardSchema.parse(json)
+  },
+
+  async updateAdminSettings(settings: AdminSettings) {
+    const json = await apiClient.put("/api/admin/settings", {
+      json: settings,
+    })
+    return AdminSettingsSchema.parse(json)
   },
 }

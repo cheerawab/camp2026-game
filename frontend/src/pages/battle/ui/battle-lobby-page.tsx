@@ -1,7 +1,7 @@
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
-import { ArrowRight, Play, ScanQrCode } from "lucide-react"
-import { useState } from "react"
+import { ArrowRight, Bot, Play, ScanQrCode } from "lucide-react"
+import { type ReactNode, useState } from "react"
 import { toast } from "sonner"
 
 import {
@@ -18,7 +18,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card"
-import { Field } from "@/shared/ui/field"
 import { GamePageShell } from "@/shared/ui/game-page-shell"
 import { Input } from "@/shared/ui/input"
 import { PageHeader } from "@/shared/ui/page-header"
@@ -27,6 +26,37 @@ function storeMatch(match: MatchState) {
   if (typeof window !== "undefined") {
     window.localStorage.setItem("camp2026.currentMatchId", match.matchId)
   }
+}
+
+const actionButtonClassName = "h-11 w-full rounded-[14px] text-base font-black"
+
+function LobbyActionCard({
+  title,
+  description,
+  children,
+  action,
+}: {
+  title: string
+  description: string
+  children: ReactNode
+  action: ReactNode
+}) {
+  return (
+    <Card className="gap-0 rounded-[22px] px-[15px] py-[15px]">
+      <CardHeader className="gap-1 px-0">
+        <CardTitle className="text-[22px] leading-tight font-black tracking-normal">
+          {title}
+        </CardTitle>
+        <CardDescription className="text-[13px] leading-[1.45] font-black">
+          {description}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="px-0 pt-3">
+        <p className="text-[15px] leading-[1.65] font-bold">{children}</p>
+      </CardContent>
+      <CardFooter className="px-0 pt-4">{action}</CardFooter>
+    </Card>
+  )
 }
 
 export function BattleLobbyPage() {
@@ -42,6 +72,17 @@ export function BattleLobbyPage() {
     onSuccess: onMatchReady,
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "建立房間失敗")
+    },
+  })
+  const computerSettingsQuery = useQuery({
+    queryKey: ["matches", "computer", "settings"],
+    queryFn: gameApi.computerBattleSettings,
+  })
+  const createComputerMutation = useMutation({
+    mutationFn: gameApi.createComputerMatch,
+    onSuccess: onMatchReady,
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "建立電腦對戰失敗")
     },
   })
   const joinMutation = useMutation({
@@ -66,41 +107,64 @@ export function BattleLobbyPage() {
   }
 
   return (
-    <GamePageShell contentClassName="grid content-start gap-y-2">
+    <GamePageShell contentClassName="grid content-start gap-y-3">
       <PageHeader title="知識王" headline="Battle Lobby" />
-      <Card>
-        <CardHeader>
-          <CardTitle>快速開始</CardTitle>
-          <CardDescription>建立一個雙人知識王房間</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <span>建立房間後，把房號分享給另一位學員加入對戰。</span>
-        </CardContent>
-        <CardFooter>
+      <LobbyActionCard
+        title="電腦對戰"
+        description="和系統控制的電腦對手進行知識王戰"
+        action={
           <Button
-            className="w-full"
+            type="button"
+            className={actionButtonClassName}
+            variant="secondary"
+            disabled={
+              computerSettingsQuery.isPending ||
+              createComputerMutation.isPending ||
+              !computerSettingsQuery.data?.enabled
+            }
+            onClick={() => createComputerMutation.mutate()}
+          >
+            <Bot />
+            {computerSettingsQuery.isPending
+              ? "同步中"
+              : computerSettingsQuery.data?.enabled
+                ? createComputerMutation.isPending
+                  ? "建立中"
+                  : "跟電腦對戰"
+                : "電腦對戰未開放"}
+          </Button>
+        }
+      >
+        沒有真人對手時，也可以完成對戰並取得結算獎勵。
+      </LobbyActionCard>
+
+      <LobbyActionCard
+        title="快速開始"
+        description="建立一個雙人知識王房間"
+        action={
+          <Button
+            type="button"
+            className={actionButtonClassName}
             disabled={createMutation.isPending}
             onClick={() => createMutation.mutate()}
           >
             <Play />
             {createMutation.isPending ? "建立中" : "建立房間"}
           </Button>
-        </CardFooter>
-      </Card>
+        }
+      >
+        建立房間後，把房號分享給另一位學員加入對戰。
+      </LobbyActionCard>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>多人連線</CardTitle>
-          <CardDescription>使用房號加入等待中的對戰</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <span>和其他學員連線對戰，比拼誰才是知識王。</span>
-        </CardContent>
-        <CardFooter className="grid gap-2">
-          <Field orientation="horizontal">
+      <LobbyActionCard
+        title="多人連線"
+        description="使用房號加入等待中的對戰"
+        action={
+          <div className="grid w-full grid-cols-[minmax(0,1fr)_44px_minmax(104px,1fr)] items-center gap-2">
             <Input
               id="input-room-id"
               type="text"
+              className="h-11 rounded-[14px] px-3 text-[15px] font-black"
               value={code}
               onChange={(event) =>
                 setCode(normalizeMatchCode(event.target.value))
@@ -108,7 +172,8 @@ export function BattleLobbyPage() {
               placeholder="請輸入房號"
             />
             <Button
-              size="icon-lg"
+              className="size-11 rounded-[14px]"
+              size="icon"
               type="button"
               aria-label="掃描房號 QR Code"
               disabled={joinMutation.isPending}
@@ -117,18 +182,20 @@ export function BattleLobbyPage() {
               <ScanQrCode />
             </Button>
             <Button
-              className="w-full flex-1"
-              size="lg"
+              className="h-11 rounded-[14px] px-3 text-[15px] font-black"
               variant="secondary"
+              type="button"
               disabled={joinMutation.isPending}
               onClick={handleJoin}
             >
               {joinMutation.isPending ? "加入中" : "加入房間"}
               <ArrowRight />
             </Button>
-          </Field>
-        </CardFooter>
-      </Card>
+          </div>
+        }
+      >
+        和其他學員連線對戰，比拼誰才是知識王。
+      </LobbyActionCard>
       {scannerOpen ? (
         <MatchCodeScannerDialog
           open={scannerOpen}

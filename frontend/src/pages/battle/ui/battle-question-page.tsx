@@ -18,6 +18,7 @@ import { sitoneMeta } from "@/shared/lib/game-labels"
 import { Button } from "@/shared/ui/button"
 import { Card, CardContent } from "@/shared/ui/card"
 import { GamePageShell } from "@/shared/ui/game-page-shell"
+import { PlayerAvatar } from "@/shared/ui/player-avatar"
 import { Separator } from "@/shared/ui/separator"
 import { cn } from "@/shared/utils"
 
@@ -165,12 +166,22 @@ function PlayerRail({
     >
       {side === "opponent" ? meter : null}
       <div className="flex items-center justify-between gap-3">
-        <div className="min-w-0">
-          <div className="truncate text-lg font-black">
-            {player?.nickname ?? "等待對手"}
-          </div>
-          <div className="text-muted-foreground text-xs font-bold">
-            {answerStatus(player, phase)}
+        <div className="flex min-w-0 items-center gap-2.5">
+          <PlayerAvatar
+            playerId={player?.playerId}
+            nickname={player?.nickname ?? label}
+            className={cn(
+              "border-ink size-11 rounded-[16px] border-2",
+              side === "opponent" ? "bg-pebble-resonate" : "bg-pebble-engineer",
+            )}
+          />
+          <div className="min-w-0">
+            <div className="truncate text-lg font-black">
+              {player?.nickname ?? "等待對手"}
+            </div>
+            <div className="text-muted-foreground text-xs font-bold">
+              {answerStatus(player, phase)}
+            </div>
           </div>
         </div>
         <div className="text-muted-foreground text-xs font-black whitespace-nowrap">
@@ -199,15 +210,20 @@ function ChoiceAnswerBadges({
   if (answers.length === 0) return null
 
   return (
-    <div className="flex max-w-[108px] flex-wrap justify-end gap-1">
+    <div className="flex max-w-[132px] flex-wrap justify-end gap-1">
       {answers.map((answer) => (
         <span
           key={answer.playerId}
           className={cn(
-            "border-ink grid max-w-[108px] grid-cols-[minmax(0,1fr)_auto] items-center gap-1 rounded-full border-2 px-2 py-1 text-[11px] leading-none font-black",
+            "border-ink grid max-w-[132px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-1 rounded-full border-2 px-2 py-1 text-[11px] leading-none font-black",
             answer.correct ? "bg-card text-ink" : "bg-status-warning text-ink",
           )}
         >
+          <PlayerAvatar
+            playerId={answer.playerId}
+            nickname={answer.nickname}
+            className="size-4 rounded-full"
+          />
           <span className="truncate">{answer.nickname}</span>
           <span>+{answer.score}</span>
         </span>

@@ -14,6 +14,7 @@ import {
 } from "@/shared/ui/card"
 import { GamePageShell } from "@/shared/ui/game-page-shell"
 import { PageHeader } from "@/shared/ui/page-header"
+import { PlayerAvatar } from "@/shared/ui/player-avatar"
 import { Separator } from "@/shared/ui/separator"
 import { cn } from "@/shared/utils"
 
@@ -133,10 +134,15 @@ export function BattleHistoryPage() {
                           <li
                             key={player.playerId}
                             className={cn(
-                              "grid grid-cols-[1fr_auto] items-center rounded-lg px-3 py-2",
+                              "grid grid-cols-[32px_1fr_auto] items-center gap-2 rounded-lg px-3 py-2",
                               index === 0 ? "bg-card" : "bg-surface-raised",
                             )}
                           >
+                            <PlayerAvatar
+                              playerId={player.playerId}
+                              nickname={player.nickname}
+                              className="border-ink size-8 rounded-[11px] border"
+                            />
                             <span className="font-black">
                               {player.nickname}
                             </span>

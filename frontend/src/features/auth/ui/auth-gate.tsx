@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/shared/ui/card"
 import { GamePageShell } from "@/shared/ui/game-page-shell"
 import { Spinner } from "@/shared/ui/spinner"
 
-const publicPathPrefixes = ["/login", "/codex"] as const
+const publicPathPrefixes = ["/login", "/codex", "/admin"] as const
 
 function isPublicPath(pathname: string) {
   return publicPathPrefixes.some(
