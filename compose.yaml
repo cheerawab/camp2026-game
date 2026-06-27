@@ -42,6 +42,7 @@ services:
       HTTP_WRITE_TIMEOUT: ${HTTP_WRITE_TIMEOUT:-15s}
       HTTP_IDLE_TIMEOUT: ${HTTP_IDLE_TIMEOUT:-60s}
       SHUTDOWN_TIMEOUT: ${SHUTDOWN_TIMEOUT:-10s}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
       MONGODB_URI: mongodb://${MONGO_USERNAME:-camp2026}:${MONGO_PASSWORD:-camp2026}@mongodb:27017/${MONGODB_DATABASE:-camp2026}?authSource=admin
       MONGODB_DATABASE: ${MONGODB_DATABASE:-camp2026}
     expose:
@@ -66,6 +67,31 @@ services:
     networks:
       - moniting
       - dokploy-network
+
+  tgbot:
+    build:
+      context: .
+      dockerfile: tgbot/Dockerfile
+    image: camp2026-tgbot:production
+    restart: unless-stopped
+    environment:
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_API_BASE_URL: ${TELEGRAM_API_BASE_URL:-https://api.telegram.org}
+      APP_LOGIN_BASE_URL: ${APP_LOGIN_BASE_URL}
+      TG_GROUP_TEAM_MAP: ${TG_GROUP_TEAM_MAP}
+      INITIAL_SITONE_IDS: ${INITIAL_SITONE_IDS:-stone_explorer_base,stone_inspiration_base,stone_resonance_base,stone_engineering_base,stone_entertainment_base}
+      TG_POLL_TIMEOUT: ${TG_POLL_TIMEOUT:-50s}
+      TG_LOGIN_REQUEST_TTL: ${TG_LOGIN_REQUEST_TTL:-10m}
+      TG_HTTP_CLIENT_TIMEOUT: ${TG_HTTP_CLIENT_TIMEOUT:-60s}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      SHUTDOWN_TIMEOUT: ${SHUTDOWN_TIMEOUT:-10s}
+      MONGODB_URI: mongodb://${MONGO_USERNAME:-camp2026}:${MONGO_PASSWORD:-camp2026}@mongodb:27017/${MONGODB_DATABASE:-camp2026}?authSource=admin
+      MONGODB_DATABASE: ${MONGODB_DATABASE:-camp2026}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - moniting
 
   mongodb:
     image: mongo:7.0
