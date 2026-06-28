@@ -123,7 +123,6 @@ func TestBattleEffectsApplyCaps(t *testing.T) {
 	}
 
 	effects, err = handler.battleEffects(t.Context(), "P1", []string{
-		"stone_order_guardian",
 		"stone_command_blind_trip",
 	})
 	if err != nil {
@@ -134,7 +133,6 @@ func TestBattleEffectsApplyCaps(t *testing.T) {
 	}
 
 	effects, err = handler.battleEffects(t.Context(), "P1", []string{
-		"stone_freedom_rebel",
 		"stone_fireside",
 		"stone_tech_art",
 	})

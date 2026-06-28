@@ -1201,16 +1201,8 @@ id = "stone_inspiration_base"
 quantity = 1
 
 
-[[fusion_recipes.outputs]]
-kind = "sitone"
-id = "stone_order_guardian"
-quantity = 1
 
 
-[[fusion_recipes.outputs]]
-kind = "sitone"
-id = "stone_freedom_rebel"
-quantity = 1
 
 [[fusion_recipes]]
 id = "recipe_event_python_turtle"

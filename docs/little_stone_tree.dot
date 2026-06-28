@@ -72,8 +72,6 @@ digraph LittleStoneEvolution {
       </TABLE>>
     ];
 
-    stone_order_guardian -> stone_freedom_rebel [style=invis, weight=10];
-    stone_freedom_rebel -> stone_python_turtle [style=invis, weight=10];
     stone_python_turtle -> stone_fireside [style=invis, weight=10];
     stone_fireside -> stone_command_blind_trip [style=invis, weight=10];
     stone_command_blind_trip -> stone_human_llm [style=invis, weight=10];
