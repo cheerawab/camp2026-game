@@ -499,7 +499,11 @@ function AdminDashboardView({ dashboard }: { dashboard: AdminDashboard }) {
   )
 }
 
-function MostOwnedPanel({ inventory }: { inventory: AdminDashboard["inventory"] }) {
+function MostOwnedPanel({
+  inventory,
+}: {
+  inventory: AdminDashboard["inventory"]
+}) {
   return (
     <section className="grid gap-3 lg:grid-cols-2">
       <MostOwnedListCard
@@ -576,7 +580,7 @@ function MostOwnedListRow({
       </div>
       <div className="grid min-w-0 gap-1">
         <div className="flex min-w-0 flex-wrap items-center gap-2">
-          <strong className="break-words text-base leading-tight font-black">
+          <strong className="text-base leading-tight font-black break-words">
             {entry.name}
           </strong>
           {entry.catalogMissing ? (
@@ -585,7 +589,7 @@ function MostOwnedListRow({
             <Badge variant="secondary">{catalogLabel(entry)}</Badge>
           )}
         </div>
-        <span className="text-muted-foreground break-all text-xs font-bold">
+        <span className="text-muted-foreground text-xs font-bold break-all">
           {entry.id}
         </span>
       </div>

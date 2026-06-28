@@ -331,10 +331,7 @@ export function HomeBasePage() {
                 className="grid size-[52px] -rotate-[4deg] place-items-center"
                 aria-hidden
               >
-                <GameFeatureIcon
-                  name={action.icon}
-                  className="size-[52px]"
-                />
+                <GameFeatureIcon name={action.icon} className="size-[52px]" />
               </div>
               <div>
                 <h3 className="mb-[3px] text-[18px] font-black">
@@ -378,10 +375,7 @@ export function HomeBasePage() {
                     className="row-span-2 grid size-[58px] place-items-center"
                     aria-hidden
                   >
-                    <GameFeatureIcon
-                      name={item.icon}
-                      className="size-[58px]"
-                    />
+                    <GameFeatureIcon name={item.icon} className="size-[58px]" />
                   </span>
                   <strong className="block font-black">{item.label}</strong>
                   <small className="text-muted-foreground block text-xs font-bold">
