@@ -43,8 +43,6 @@ recipe_entertainment_tech_art_s2_s3,branch_p5js_tech_art,4,40,2,3,stone_p5js,p5.
 recipe_entertainment_espresso_s1_s2,branch_espresso_ten_minutes,4,41,1,2,basic_orange,娛樂型小石,item_espresso_cup,Espresso 杯,stone_espresso,Espresso 小石,牠把想講的內容濃縮成一小杯，苦一點但很醒腦。短短十分鐘，也能讓人帶走一個新問題。,SITCON 2024 CFP,https://sitcon.org/2024/cfp/normal/
 recipe_entertainment_2024_ribbon_s1_s2,branch_2024_polaroid_night,4,42,1,2,basic_orange,娛樂型小石,item_ribbon,彩帶,stone_2024_ribbon,2024 彩帶小石,牠把活動現場的笑聲、掌聲和混亂都捲進彩帶裡。每次彩帶散開，基地就多一點營隊的聲音。,SITCON 2024,https://sitcon.org/2024/
 recipe_entertainment_2024_polaroid_s2_s3,branch_2024_polaroid_night,4,43,2,3,stone_2024_ribbon,2024 彩帶小石,item_polaroid_film,拍立得底片,stone_2024_last_night_polaroid,2024 最後一晚拍立得小石,把最後一晚的合照收進小小底片，連沒有說出口的感謝也一起留下。,SITCON 2024,https://sitcon.org/2024/
-recipe_event_heisenbug_order_guardian,event_heisenbug,3,44,0,0,,,,,stone_order_guardian,秩序守護者小石,牠把破碎的帳本重新排齊，讓位元城看起來再次穩定。只是每一次修補完成後，牠都會多看一眼那些被抹去的名字。,海森堡 bug A 結局,
-recipe_event_heisenbug_freedom_rebel,event_heisenbug,2,45,0,0,,,,,stone_freedom_rebel,自由反抗者小石,牠把被藏起來的帳本高高舉起，讓所有人看見系統背後的真相。即使城市因此短暫混亂，牠仍相信自由比沉默更接近答案。,海森堡 bug B 結局,
 recipe_event_python_turtle,event_special,1,46,0,0,,,,,stone_python_turtle,烏龜小石,牠慢慢走，慢慢畫，把每一次轉彎都留成可以回看的線。答案不一定要最快出現，有時候一步一步畫出來，反而更清楚。,Python Turtle 特殊活動,
 recipe_event_fireside,event_fireside,2,47,0,0,,,,,stone_fireside,爐邊小石,牠總是在夜談時靠近火光，安靜聽完每個人的故事。有人願意開口時，牠身上的光就會亮一點。,爐邊夜談活躍獎勵,
 recipe_event_command_blind_trip,event_checkpoint,3,48,0,0,,,,,stone_command_blind_trip,指令盲旅小石,牠戴上眼罩後不急著往前衝，而是等待隊友把混亂變成一套清楚的指令。每一次成功抵達，都是大家共同定義出來的路。,闖關活動：指令盲旅,

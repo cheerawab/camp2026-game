@@ -28,18 +28,6 @@ digraph LittleStoneEvolution {
     color="#cccccc";
     style="rounded";
 
-    stone_order_guardian [
-      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
-        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_order_guardian.png" SCALE="TRUE"/></TD></TR>
-        <TR><TD>秩序守護者小石</TD></TR>
-      </TABLE>>
-    ];
-    stone_freedom_rebel [
-      label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
-        <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_freedom_rebel.png" SCALE="TRUE"/></TD></TR>
-        <TR><TD>自由反抗者小石</TD></TR>
-      </TABLE>>
-    ];
     stone_python_turtle [
       label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
         <TR><TD FIXEDSIZE="TRUE" WIDTH="92" HEIGHT="92"><IMG SRC="../frontend/public/game-icons/stones/stone_python_turtle.png" SCALE="TRUE"/></TD></TR>

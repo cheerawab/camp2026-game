@@ -627,33 +627,7 @@ ability_value = 8
 ability_count = 0
 ability_description = "答對時分數提高 8%。"
 
-[[sitones]]
-id = "stone_order_guardian"
-name = "秩序守護者小石"
-type = "engineering"
-rarity = "limited"
-style = "default"
-description = "牠把破碎的帳本重新排齊，讓位元城看起來再次穩定。只是每一次修補完成後，牠都會多看一眼那些被抹去的名字。"
-icon_path = "/game-icons/stones/stone_order_guardian.png"
-ability_name = "穩定輸出"
-ability_kind = "answer_score_bonus"
-ability_value = 20
-ability_count = 0
-ability_description = "答對時分數提高 20%。"
 
-[[sitones]]
-id = "stone_freedom_rebel"
-name = "自由反抗者小石"
-type = "resonance"
-rarity = "limited"
-style = "default"
-description = "牠把被藏起來的帳本高高舉起，讓所有人看見系統背後的真相。即使城市因此短暫混亂，牠仍相信自由比沉默更接近答案。"
-icon_path = "/game-icons/stones/stone_freedom_rebel.png"
-ability_name = "亮晶晶"
-ability_kind = "open_power_bonus"
-ability_value = 20
-ability_count = 0
-ability_description = "對戰勝利時獲得開源力提高 20%。"
 
 [[sitones]]
 id = "stone_python_turtle"

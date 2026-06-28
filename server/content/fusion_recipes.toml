@@ -1200,34 +1200,12 @@ kind = "sitone"
 id = "stone_inspiration_base"
 quantity = 1
 
-[[fusion_recipes]]
-id = "recipe_event_heisenbug_order_guardian"
-branch_id = "event_heisenbug"
-type = "engineering"
-stage_from = 0
-stage_to = 0
-name = "秩序守護者小石"
-description = "牠把破碎的帳本重新排齊，讓位元城看起來再次穩定。只是每一次修補完成後，牠都會多看一眼那些被抹去的名字。"
-story = "牠把破碎的帳本重新排齊，讓位元城看起來再次穩定。只是每一次修補完成後，牠都會多看一眼那些被抹去的名字。"
-review_title = "海森堡 bug A 結局"
-enabled = false
 
 [[fusion_recipes.outputs]]
 kind = "sitone"
 id = "stone_order_guardian"
 quantity = 1
 
-[[fusion_recipes]]
-id = "recipe_event_heisenbug_freedom_rebel"
-branch_id = "event_heisenbug"
-type = "resonance"
-stage_from = 0
-stage_to = 0
-name = "自由反抗者小石"
-description = "牠把被藏起來的帳本高高舉起，讓所有人看見系統背後的真相。即使城市因此短暫混亂，牠仍相信自由比沉默更接近答案。"
-story = "牠把被藏起來的帳本高高舉起，讓所有人看見系統背後的真相。即使城市因此短暫混亂，牠仍相信自由比沉默更接近答案。"
-review_title = "海森堡 bug B 結局"
-enabled = false
 
 [[fusion_recipes.outputs]]
 kind = "sitone"
