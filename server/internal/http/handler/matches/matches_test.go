@@ -124,6 +124,7 @@ func TestBattleEffectsApplyCaps(t *testing.T) {
 
 	effects, err = handler.battleEffects(t.Context(), "P1", []string{
 		"stone_command_blind_trip",
+		"stone_von_neumann",
 	})
 	if err != nil {
 		t.Fatalf("battle effects: %v", err)
@@ -135,6 +136,7 @@ func TestBattleEffectsApplyCaps(t *testing.T) {
 	effects, err = handler.battleEffects(t.Context(), "P1", []string{
 		"stone_fireside",
 		"stone_tech_art",
+		"stone_2020_sitcon_tour_group",
 	})
 	if err != nil {
 		t.Fatalf("battle effects: %v", err)
