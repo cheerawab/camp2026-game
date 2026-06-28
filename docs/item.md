@@ -97,25 +97,21 @@
 | `item_charm_success` | 馬到成功 御守 | 200 | 娛樂型 | 對戰獲得開源力 +20%（每級 +10%，上限 +50%） |
 | `item_charm_harmony` | 金玉良緣 御守 | 200 | 共鳴型 | 活動獲得開源力 +20%（每級 +10%，上限 +50%） |
 
+## 三、無功能道具
 ### 明信片（多款）
 
 純裝飾道具，無遊戲數值效果。
 
-| ID | 名稱 | 價格 |
-|----|------|------|
-| `item_postcard_sitcon2024` | SITCON 2024 明信片 | 80 |
-| `item_postcard_sitcon2026` | SITCON 2026 明信片 | 80 |
-| `item_postcard_star_village` | 開源星手村明信片 | 80 |
-
-### 紀念品
-
 | ID | 名稱 | 價格 | 說明 |
 |----|------|------|------|
-| `item_tshirt_2026` | 2026 年會紀念 T | 300 | 純裝飾，無遊戲數值效果。 |
+| `item_postcard_sitcon2026` | SITCON 2026 明信片 | 80 ||
+| `item_postcard_star_village` | 開源星手村明信片 | 80 ||
+| `item_tshirt_2026` | T-shirt | 300 | 一件再普通不過的 T-shirt |
+| `item_cd` | 唱片 | 250 | 小石撿到的古老唱片 |
 
 ---
 
-## 三、物品類型定義
+## 四、物品類型定義
 
 所有道具在 `server/content/items.toml` 中定義，欄位如下：
 
