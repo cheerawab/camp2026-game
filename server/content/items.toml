@@ -56,6 +56,7 @@ icon_path = "/game-icons/items/item_cat_paw_print.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -80,6 +81,7 @@ icon_path = "/game-icons/items/item_clean_spec.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -92,6 +94,7 @@ icon_path = "/game-icons/items/item_cluster_core.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -140,6 +143,7 @@ icon_path = "/game-icons/items/item_essence_timer.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -164,6 +168,7 @@ icon_path = "/game-icons/items/item_human_label.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -176,6 +181,7 @@ icon_path = "/game-icons/items/item_infinite_star_map.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -188,6 +194,7 @@ icon_path = "/game-icons/items/item_lightning_talk_script.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -224,6 +231,7 @@ icon_path = "/game-icons/items/item_mission_map.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -236,6 +244,7 @@ icon_path = "/game-icons/items/item_open_source_roadmap.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -248,6 +257,7 @@ icon_path = "/game-icons/items/item_pixel_paint.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -260,6 +270,7 @@ icon_path = "/game-icons/items/item_polaroid_film.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -272,6 +283,7 @@ icon_path = "/game-icons/items/item_predecessor_notes.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -320,6 +332,7 @@ icon_path = "/game-icons/items/item_shared_notes_link.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -332,6 +345,7 @@ icon_path = "/game-icons/items/item_signature_inkpad.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -344,6 +358,7 @@ icon_path = "/game-icons/items/item_star_village_badge.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -356,6 +371,7 @@ icon_path = "/game-icons/items/item_star_village_signpost.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -392,6 +408,7 @@ icon_path = "/game-icons/items/item_system_docs.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -428,6 +445,7 @@ icon_path = "/game-icons/items/item_toolbox_key.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -452,6 +470,7 @@ icon_path = "/game-icons/items/item_transparent_proposal.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -464,6 +483,7 @@ icon_path = "/game-icons/items/item_venue_route.png"
 source = "shop"
 purchasable = true
 enabled = true
+locked = true
 price_open_power = 150
 
 [[items]]
@@ -547,7 +567,7 @@ description = "看起來好像有什麼功能..."
 icon_path = "/game-icons/items/item_postcard_sitcon2024.png"
 source = "shop"
 purchasable = true
-enabled = true
+enabled = false
 price_open_power = 300
 
 [[items]]
@@ -559,7 +579,7 @@ description = "看起來好像有什麼功能..."
 icon_path = "/game-icons/items/item_postcard_sitcon2026.png"
 source = "shop"
 purchasable = true
-enabled = true
+enabled = false
 price_open_power = 300
 
 [[items]]
@@ -571,7 +591,7 @@ description = "看起來好像有什麼功能..."
 icon_path = "/game-icons/items/item_postcard_star_village.png"
 source = "shop"
 purchasable = true
-enabled = true
+enabled = false
 price_open_power = 300
 
 [[items]]
@@ -583,5 +603,5 @@ description = "看起來好像有什麼功能..."
 icon_path = "/game-icons/items/item_tshirt_2026.png"
 source = "shop"
 purchasable = true
-enabled = true
+enabled = false
 price_open_power = 1200

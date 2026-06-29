@@ -124,6 +124,7 @@ func shopItemResponse(item content.Item, redeemed bool) ShopItemResponse {
 		IconPath:       item.IconPath,
 		Source:         item.Source,
 		PriceOpenPower: item.PriceOpenPower,
+		Locked:         item.Locked,
 		Redeemed:       redeemed,
 	}
 }

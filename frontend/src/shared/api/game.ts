@@ -139,6 +139,7 @@ const ShopItemSchema = z.object({
   iconPath: z.string().optional(),
   source: z.string().optional(),
   priceOpenPower: z.number(),
+  locked: z.boolean().default(false),
   redeemed: z.boolean(),
 })
 

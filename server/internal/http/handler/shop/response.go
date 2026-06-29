@@ -17,6 +17,7 @@ type ShopItemResponse struct {
 	IconPath       string `json:"iconPath,omitempty" example:"/game-icons/items/item_adventure_backpack.png"`
 	Source         string `json:"source,omitempty" example:"shop"`
 	PriceOpenPower int    `json:"priceOpenPower" example:"50"`
+	Locked         bool   `json:"locked" example:"false"`
 	Redeemed       bool   `json:"redeemed" example:"false"`
 }
 

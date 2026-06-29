@@ -67,6 +67,10 @@ func (h *Handler) Purchase(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteProblem(w, r, httpx.NotFound("shop item not found"))
 		return
 	}
+	if item.Locked {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusLocked, "shop item is locked"))
+		return
+	}
 
 	result, err := h.purchaseItem(r.Context(), player.ID, item)
 	if err != nil {

@@ -34,8 +34,10 @@ export function ShopPurchaseConfirmButton({
   label = "購買",
 }: ShopPurchaseConfirmButtonProps) {
   const queryClient = useQueryClient()
+  const isLocked = item.locked
   const canAfford =
-    currentOpenPower == null || currentOpenPower >= item.priceOpenPower
+    !isLocked &&
+    (currentOpenPower == null || currentOpenPower >= item.priceOpenPower)
   const purchaseMutation = useMutation({
     mutationFn: gameApi.purchase,
     onSuccess: (result) => {
@@ -57,7 +59,7 @@ export function ShopPurchaseConfirmButton({
         <Button
           className={className}
           size={size}
-          disabled={purchaseMutation.isPending}
+          disabled={isLocked || purchaseMutation.isPending}
         >
           <GameFeatureIcon name="shop" className="size-4" />
           {purchaseMutation.isPending ? "購買中" : label}
@@ -70,13 +72,16 @@ export function ShopPurchaseConfirmButton({
           </AlertDialogMedia>
           <AlertDialogTitle>確認購買</AlertDialogTitle>
           <AlertDialogDescription>
-            將使用 {item.priceOpenPower} 開源力購買「{item.name}」。
-            {currentOpenPower == null
-              ? ""
-              : ` 目前持有 ${currentOpenPower} 開源力。`}
+            {isLocked
+              ? `「${item.name}」暫未開放購買。`
+              : `將使用 ${item.priceOpenPower} 開源力購買「${item.name}」。${
+                  currentOpenPower == null
+                    ? ""
+                    : ` 目前持有 ${currentOpenPower} 開源力。`
+                }`}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        {!canAfford ? (
+        {!isLocked && !canAfford ? (
           <div className="text-destructive text-sm font-bold">
             目前開源力不足，無法完成購買。
           </div>
@@ -86,7 +91,7 @@ export function ShopPurchaseConfirmButton({
             取消
           </AlertDialogCancel>
           <AlertDialogAction
-            disabled={!canAfford || purchaseMutation.isPending}
+            disabled={isLocked || !canAfford || purchaseMutation.isPending}
             onClick={() => purchaseMutation.mutate(item.id)}
           >
             <GameFeatureIcon name="shop" className="size-4" />

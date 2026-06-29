@@ -33,6 +33,7 @@ type Item struct {
 	Source         string `toml:"source"`
 	Purchasable    bool   `toml:"purchasable"`
 	Enabled        bool   `toml:"enabled"`
+	Locked         bool   `toml:"locked"`
 	PriceOpenPower int    `toml:"price_open_power"`
 }
 

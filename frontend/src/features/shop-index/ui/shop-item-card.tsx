@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router"
-import { Check, Info } from "lucide-react"
+import { Check, Info, LockKeyhole } from "lucide-react"
 
 import { type ShopItem } from "@/shared/api/game"
 import {
@@ -23,24 +23,34 @@ type ShopItemCardType = {
 
 export function ShopItemCard({ item, currentOpenPower }: ShopItemCardType) {
   const navigate = useNavigate()
+  const isLocked = item.locked
 
   return (
-    <Card className="py-4">
+    <Card className={["py-4", isLocked ? "border-ink/70" : ""].join(" ")}>
       <CardContent className="px-4">
         <div className="grid grid-cols-[96px_minmax(0,1fr)] gap-3">
           <div className="self-start">
             <div
               className={[
-                "border-ink grid size-24 place-items-center rounded-[1.375rem] border-2",
-                itemTypeClass(item.type),
+                "border-ink relative grid size-24 place-items-center rounded-[1.375rem] border-2",
+                isLocked ? "bg-muted border-dashed" : itemTypeClass(item.type),
               ].join(" ")}
               aria-hidden
             >
               <GameIcon
                 iconPath={item.iconPath}
-                imageClassName="p-2"
+                imageClassName={
+                  isLocked
+                    ? "p-3 brightness-0 contrast-200 saturate-0 opacity-80"
+                    : "p-2"
+                }
                 fallback={<GameFeatureIcon name="shop" className="size-8" />}
               />
+              {isLocked ? (
+                <span className="bg-card border-ink absolute right-1.5 bottom-1.5 grid size-7 place-items-center rounded-full border-2">
+                  <LockKeyhole className="size-4" />
+                </span>
+              ) : null}
             </div>
           </div>
           <div className="grid min-w-0 gap-2">
@@ -58,7 +68,14 @@ export function ShopItemCard({ item, currentOpenPower }: ShopItemCardType) {
                     </Badge>
                   ))}
               </div>
-              <Badge>開源力 {item.priceOpenPower}</Badge>
+              {isLocked ? (
+                <Badge variant="outline">
+                  <LockKeyhole className="size-3.5" />
+                  暫未開放
+                </Badge>
+              ) : (
+                <Badge>開源力 {item.priceOpenPower}</Badge>
+              )}
             </div>
             <div className="truncate text-xl leading-tight font-bold">
               {item.name}
@@ -80,7 +97,12 @@ export function ShopItemCard({ item, currentOpenPower }: ShopItemCardType) {
                 <Info />
                 資訊
               </Button>
-              {item.redeemed ? (
+              {isLocked ? (
+                <Button variant="outline" className="px-2" disabled>
+                  <LockKeyhole />
+                  鎖定
+                </Button>
+              ) : item.redeemed ? (
                 <Button variant="outline" className="px-2" disabled>
                   <Check />
                   已擁有

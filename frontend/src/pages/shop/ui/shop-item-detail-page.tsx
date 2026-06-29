@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
-import { Check } from "lucide-react"
+import { Check, LockKeyhole } from "lucide-react"
 
 import { ShopPurchaseConfirmButton } from "@/features/shop-index/ui/shop-purchase-confirm-button"
 import { gameApi } from "@/shared/api/game"
@@ -32,6 +32,7 @@ export function ShopItemDetailPage({ itemID }: ShopItemDetailPageProps) {
     queryFn: gameApi.status,
   })
   const item = itemQuery.data
+  const isLocked = item?.locked ?? false
 
   return (
     <GamePageShell contentClassName="grid content-start gap-y-2">
@@ -49,16 +50,25 @@ export function ShopItemDetailPage({ itemID }: ShopItemDetailPageProps) {
         <>
           <div
             className={[
-              "border-foreground mx-auto mb-2 grid size-36 -rotate-3 place-items-center rounded-lg border-2",
-              itemTypeClass(item.type),
+              "border-foreground relative mx-auto mb-2 grid size-36 -rotate-3 place-items-center rounded-lg border-2",
+              isLocked ? "bg-muted border-dashed" : itemTypeClass(item.type),
             ].join(" ")}
             aria-hidden
           >
             <GameIcon
               iconPath={item.iconPath}
-              imageClassName="p-3"
+              imageClassName={
+                isLocked
+                  ? "p-4 brightness-0 contrast-200 saturate-0 opacity-80"
+                  : "p-3"
+              }
               fallback={<GameFeatureIcon name="shop" className="size-14" />}
             />
+            {isLocked ? (
+              <span className="bg-card border-ink absolute right-2 bottom-2 grid size-9 place-items-center rounded-full border-2">
+                <LockKeyhole className="size-5" />
+              </span>
+            ) : null}
           </div>
 
           <Card>
@@ -87,7 +97,13 @@ export function ShopItemDetailPage({ itemID }: ShopItemDetailPageProps) {
                 <span className="text-accent-foreground text-lg font-bold">
                   狀態
                 </span>
-                <span>{item.redeemed ? "已擁有" : "可使用開源力兌換"}</span>
+                <span>
+                  {isLocked
+                    ? "暫未開放兌換"
+                    : item.redeemed
+                      ? "已擁有"
+                      : "可使用開源力兌換"}
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -96,19 +112,28 @@ export function ShopItemDetailPage({ itemID }: ShopItemDetailPageProps) {
             <CardContent className="flex items-center justify-between">
               <div className="grid">
                 <span className="text-muted-foreground text-sm font-bold">
-                  花費開源力
+                  {isLocked ? "兌換狀態" : "花費開源力"}
                 </span>
-                <div className="flex items-center">
-                  <span className="text-2xl font-bold">
-                    {item.priceOpenPower}
-                  </span>
-                  <span className="whitespace-pre">
-                    {" "}
-                    / {statusQuery.data?.openPower ?? 0} 開源力
-                  </span>
-                </div>
+                {isLocked ? (
+                  <span className="text-2xl font-bold">暫未開放</span>
+                ) : (
+                  <div className="flex items-center">
+                    <span className="text-2xl font-bold">
+                      {item.priceOpenPower}
+                    </span>
+                    <span className="whitespace-pre">
+                      {" "}
+                      / {statusQuery.data?.openPower ?? 0} 開源力
+                    </span>
+                  </div>
+                )}
               </div>
-              {item.redeemed ? (
+              {isLocked ? (
+                <Button size="lg" disabled variant="outline">
+                  <LockKeyhole />
+                  鎖定
+                </Button>
+              ) : item.redeemed ? (
                 <Button size="lg" disabled variant="outline">
                   <Check />
                   已擁有
