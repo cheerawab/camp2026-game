@@ -369,7 +369,7 @@ export function BattleWaitingRoomPage() {
                       key={record.id}
                       type="button"
                       variant={selected ? "default" : "outline"}
-                      className="h-auto justify-start rounded-2xl px-3 py-2"
+                      className="h-auto min-w-0 items-start justify-start rounded-2xl px-3 py-2 text-left whitespace-normal"
                       disabled={!canAddSitone}
                       onClick={() => addSitone(record)}
                       aria-pressed={selected}
@@ -382,14 +382,14 @@ export function BattleWaitingRoomPage() {
                       >
                         {meta.short}
                       </span>
-                      <span className="min-w-0 text-left">
+                      <span className="min-w-0 flex-1 text-left">
                         <strong className="block truncate">
                           {record.sitone.name}
                         </strong>
                         <span className="block text-xs leading-none opacity-80">
                           已放 {selectedCount}/{ownedQuantity}
                         </span>
-                        <span className="mt-1 block text-xs leading-snug opacity-80">
+                        <span className="mt-1 block text-xs leading-snug break-words opacity-80">
                           {record.sitone.abilityName}：
                           {record.sitone.abilityDescription}
                         </span>
