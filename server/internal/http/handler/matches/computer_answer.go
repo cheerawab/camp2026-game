@@ -92,12 +92,8 @@ func (h *Handler) ensureComputerAnswer(ctx context.Context, match *mongomodel.Ma
 		elapsedMillis = 0
 	}
 
-	answerID, err := newID("answer")
-	if err != nil {
-		return false, err
-	}
 	answer := mongomodel.MatchAnswer{
-		ID:            answerID,
+		ID:            matchAnswerRecordID(match.ID, computerPlayerID, questionID),
 		MatchID:       match.ID,
 		PlayerID:      computerPlayerID,
 		QuestionID:    questionID,
@@ -116,10 +112,11 @@ func (h *Handler) ensureComputerAnswer(ctx context.Context, match *mongomodel.Ma
 		return false, err
 	}
 
-	match.Players[computerIndex].Score += score
-	if err := h.saveMatch(ctx, *match); err != nil {
+	if err := h.applyMatchAnswerScore(ctx, match.ID, computerPlayerID, score); err != nil {
 		return false, err
 	}
+	match.Players[computerIndex].Score += score
+	match.Revision++
 	return true, nil
 }
 

@@ -177,7 +177,7 @@ const docTemplate = `{
         },
         "/auth/login": {
             "post": {
-                "description": "User-facing endpoint. Validates the stable auth token from the issued game URL and writes it to the camp2026_auth cookie.",
+                "description": "User-facing endpoint. Validates the issued game URL token, rotates it, and writes the fresh session token to the camp2026_auth cookie.",
                 "consumes": [
                     "application/json"
                 ],
@@ -208,7 +208,7 @@ const docTemplate = `{
                         "headers": {
                             "Set-Cookie": {
                                 "type": "string",
-                                "description": "camp2026_auth=\u003cauth-token\u003e; Path=/; HttpOnly; Secure; SameSite=Lax"
+                                "description": "camp2026_auth=\u003cauth-token\u003e; Path=/; HttpOnly; Secure; SameSite=Strict"
                             }
                         }
                     },
@@ -266,7 +266,7 @@ const docTemplate = `{
                         "headers": {
                             "Set-Cookie": {
                                 "type": "string",
-                                "description": "camp2026_auth=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0"
+                                "description": "camp2026_auth=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0"
                             }
                         }
                     },
@@ -1553,7 +1553,12 @@ const docTemplate = `{
         },
         "/qr/resolve": {
             "post": {
-                "description": "Resolves a player QR code identifier into a public player summary without exposing auth credentials.",
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Staff-only endpoint. Resolves a player QR code identifier into a player summary without exposing auth credentials.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1584,6 +1589,18 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
                         "schema": {
                             "$ref": "#/definitions/httpx.ProblemDetails"
                         }

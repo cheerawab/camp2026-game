@@ -46,12 +46,13 @@ func New(ctx context.Context) (*Application, error) {
 	mongoDB := mongoClient.Database(cfg.MongoDatabase)
 
 	handler := httpserver.NewRouter(httpserver.Dependencies{
-		Log:            log,
-		RequestTimeout: cfg.HTTP.RequestTimeout,
-		Content:        contentStore,
-		MongoClient:    mongoClient,
-		MongoDB:        mongoDB,
-		AdminPassword:  cfg.AdminPassword,
+		Log:               log,
+		RequestTimeout:    cfg.HTTP.RequestTimeout,
+		Content:           contentStore,
+		MongoClient:       mongoClient,
+		MongoDB:           mongoDB,
+		AdminPassword:     cfg.AdminPassword,
+		AdminCookieSecure: cfg.AdminCookieSecure,
 	})
 
 	return &Application{

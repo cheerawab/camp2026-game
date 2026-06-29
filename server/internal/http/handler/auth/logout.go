@@ -1,9 +1,11 @@
 package auth
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
+	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
 )
 
 // Logout godoc
@@ -13,18 +15,25 @@ import (
 // @Produce json
 // @Security AuthCookieAuth
 // @Success 204
-// @Header 204 {string} Set-Cookie "camp2026_auth=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0"
+// @Header 204 {string} Set-Cookie "camp2026_auth=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0"
 // @Failure 401 {object} httpx.ProblemDetails
 // @Router /auth/logout [post]
-func (h *Handler) Logout(w http.ResponseWriter, _ *http.Request) {
-	http.SetCookie(w, &http.Cookie{
-		Name:     authctx.CookieName,
-		Value:    "",
-		Path:     "/",
-		MaxAge:   -1,
-		HttpOnly: true,
-		Secure:   true,
-		SameSite: http.SameSiteLaxMode,
-	})
+func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
+	player, ok := authctx.PlayerFromContext(r.Context())
+	if !ok || player.ID == "" || player.AuthToken == "" {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusUnauthorized, "authentication required"))
+		return
+	}
+	if h.db == nil {
+		httpx.WriteProblem(w, r, httpx.ServiceUnavailable("database is unavailable"))
+		return
+	}
+
+	if _, err := h.rotateAuthToken(r.Context(), player.ID, player.AuthToken); err != nil && !errors.Is(err, errAuthTokenStale) {
+		httpx.WriteProblem(w, r, httpx.InternalServerError("logout failed", "logout_auth_token_rotate_failed", err))
+		return
+	}
+
+	http.SetCookie(w, authCookie("", -1))
 	w.WriteHeader(http.StatusNoContent)
 }

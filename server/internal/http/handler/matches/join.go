@@ -59,34 +59,58 @@ func (h *Handler) Join(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) joinMatch(w http.ResponseWriter, r *http.Request, match mongomodel.Match, player mongomodel.Player) {
-	if match.Status != mongomodel.MatchStatusWaiting {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "match is not joinable"))
-		return
-	}
-	if isParticipant(match, player.ID) {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "player already joined match"))
-		return
-	}
-	if len(match.Players) >= 2 {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "match is full"))
-		return
-	}
-	sitoneIDs, err := h.defaultSitoneLoadout(r.Context(), player)
-	if err != nil {
-		httpx.WriteProblem(w, r, httpx.InternalServerError("match join failed", "match_join_default_loadout_failed", err))
-		return
-	}
+	code := match.Code
+	var err error
+	for attempt := 0; attempt < matchSaveMaxAttempts; attempt++ {
+		if attempt > 0 {
+			match, err = h.findMatchByCode(r.Context(), code)
+			if err != nil {
+				if errors.Is(err, mongo.ErrNoDocuments) {
+					httpx.WriteProblem(w, r, httpx.NotFound("match not found"))
+					return
+				}
+				httpx.WriteProblem(w, r, httpx.InternalServerError("match join failed", "match_join_lookup_failed", err))
+				return
+			}
+		}
 
-	match.Players = append(match.Players, mongomodel.MatchPlayer{
-		PlayerID:  player.ID,
-		Nickname:  player.Nickname,
-		Kind:      mongomodel.MatchPlayerKindHuman,
-		Ready:     false,
-		Score:     0,
-		SitoneIDs: sitoneIDs,
-	})
-	if err := h.saveMatch(r.Context(), match); err != nil {
-		httpx.WriteProblem(w, r, httpx.InternalServerError("match join failed", "match_join_save_failed", err))
+		if match.Status != mongomodel.MatchStatusWaiting {
+			httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "match is not joinable"))
+			return
+		}
+		if isParticipant(match, player.ID) {
+			httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "player already joined match"))
+			return
+		}
+		if len(match.Players) >= 2 {
+			httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "match is full"))
+			return
+		}
+		sitoneIDs, err := h.defaultSitoneLoadout(r.Context(), player)
+		if err != nil {
+			httpx.WriteProblem(w, r, httpx.InternalServerError("match join failed", "match_join_default_loadout_failed", err))
+			return
+		}
+
+		match.Players = append(match.Players, mongomodel.MatchPlayer{
+			PlayerID:  player.ID,
+			Nickname:  player.Nickname,
+			Kind:      mongomodel.MatchPlayerKindHuman,
+			Ready:     false,
+			Score:     0,
+			SitoneIDs: sitoneIDs,
+		})
+		if err = h.saveMatch(r.Context(), &match); errors.Is(err, errMatchSaveConflict) {
+			continue
+		}
+		if err != nil {
+			httpx.WriteProblem(w, r, httpx.InternalServerError("match join failed", "match_join_save_failed", err))
+			return
+		}
+		break
+	}
+	if errors.Is(err, errMatchSaveConflict) {
+		writeMatchProblem(w, r, err)
 		return
 	}
 

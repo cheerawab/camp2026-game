@@ -23,22 +23,25 @@ const (
 )
 
 type Dependencies struct {
-	Content       *content.Store
-	MongoDB       *mongo.Database
-	AdminPassword string
+	Content           *content.Store
+	MongoDB           *mongo.Database
+	AdminPassword     string
+	AdminCookieSecure bool
 }
 
 type Handler struct {
-	content       *content.Store
-	db            *mongo.Database
-	adminPassword string
+	content           *content.Store
+	db                *mongo.Database
+	adminPassword     string
+	adminCookieSecure bool
 }
 
 func New(dep Dependencies) *Handler {
 	return &Handler{
-		content:       dep.Content,
-		db:            dep.MongoDB,
-		adminPassword: strings.TrimSpace(dep.AdminPassword),
+		content:           dep.Content,
+		db:                dep.MongoDB,
+		adminPassword:     strings.TrimSpace(dep.AdminPassword),
+		adminCookieSecure: dep.AdminCookieSecure,
 	}
 }
 
@@ -105,7 +108,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.SetCookie(w, h.sessionCookie(r, adminSessionValue(h.adminPassword), adminCookieMaxAge))
+	http.SetCookie(w, h.sessionCookie(adminSessionValue(h.adminPassword), adminCookieMaxAge))
 	httpx.WriteJSON(w, http.StatusOK, LoginResponse{Authenticated: true})
 }
 
@@ -116,7 +119,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 // @Success 204
 // @Router /admin/logout [post]
 func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
-	http.SetCookie(w, h.sessionCookie(r, "", -1))
+	http.SetCookie(w, h.sessionCookie("", -1))
 	httpx.WriteJSON(w, http.StatusNoContent, nil)
 }
 
@@ -215,7 +218,7 @@ func (h *Handler) requireDatabase(w http.ResponseWriter, r *http.Request) bool {
 	return false
 }
 
-func (h *Handler) sessionCookie(r *http.Request, value string, maxAge int) *http.Cookie {
+func (h *Handler) sessionCookie(value string, maxAge int) *http.Cookie {
 	return &http.Cookie{
 		Name:     CookieName,
 		Value:    value,
@@ -223,7 +226,7 @@ func (h *Handler) sessionCookie(r *http.Request, value string, maxAge int) *http
 		MaxAge:   maxAge,
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
-		Secure:   r.TLS != nil,
+		Secure:   h.adminCookieSecure,
 	}
 }
 

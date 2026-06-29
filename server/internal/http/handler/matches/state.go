@@ -14,6 +14,10 @@ import (
 	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
 )
 
+const matchSaveMaxAttempts = 5
+
+var errMatchSaveConflict = errors.New("match save conflict")
+
 func (h *Handler) findMatchByID(ctx context.Context, matchID string) (mongomodel.Match, error) {
 	var match mongomodel.Match
 	err := h.db.Collection(mongomodel.MatchesCollection).
@@ -30,10 +34,37 @@ func (h *Handler) findMatchByCode(ctx context.Context, code string) (mongomodel.
 	return match, err
 }
 
-func (h *Handler) saveMatch(ctx context.Context, match mongomodel.Match) error {
-	_, err := h.db.Collection(mongomodel.MatchesCollection).
-		ReplaceOne(ctx, bson.M{"_id": match.ID}, match)
-	return err
+func (h *Handler) saveMatch(ctx context.Context, match *mongomodel.Match) error {
+	if match == nil {
+		return errors.New("match is nil")
+	}
+
+	next := *match
+	next.Revision++
+	result, err := h.db.Collection(mongomodel.MatchesCollection).
+		ReplaceOne(ctx, matchRevisionFilter(match.ID, match.Revision), next)
+	if err != nil {
+		return err
+	}
+	if result.MatchedCount == 0 {
+		return errMatchSaveConflict
+	}
+
+	match.Revision = next.Revision
+	return nil
+}
+
+func matchRevisionFilter(matchID string, revision int64) bson.M {
+	if revision == 0 {
+		return bson.M{
+			"_id": matchID,
+			"$or": bson.A{
+				bson.M{"revision": 0},
+				bson.M{"revision": bson.M{"$exists": false}},
+			},
+		}
+	}
+	return bson.M{"_id": matchID, "revision": revision}
 }
 
 func (h *Handler) findAnswers(ctx context.Context, matchID string) ([]mongomodel.MatchAnswer, error) {
@@ -71,7 +102,49 @@ func (h *Handler) findAnswer(ctx context.Context, matchID, playerID, questionID 
 	return answer, err
 }
 
+func matchAnswerRecordID(matchID string, playerID string, questionID string) string {
+	return "answer_" + matchID + "_" + playerID + "_" + questionID
+}
+
+func (h *Handler) applyMatchAnswerScore(ctx context.Context, matchID string, playerID string, score int) error {
+	inc := bson.M{"revision": 1}
+	if score != 0 {
+		inc["players.$.score"] = score
+	}
+
+	result, err := h.db.Collection(mongomodel.MatchesCollection).UpdateOne(
+		ctx,
+		bson.M{"_id": matchID, "players.player_id": playerID},
+		bson.M{"$inc": inc},
+	)
+	if err != nil {
+		return err
+	}
+	if result.MatchedCount == 0 {
+		return errMatchSaveConflict
+	}
+	return nil
+}
+
 func (h *Handler) advanceMatch(ctx context.Context, match mongomodel.Match, now time.Time) (mongomodel.Match, []string, error) {
+	events := []string{}
+	for attempt := 0; attempt < matchSaveMaxAttempts; attempt++ {
+		advanced, attemptEvents, err := h.advanceMatchOnce(ctx, match, now)
+		events = append(events, attemptEvents...)
+		if errors.Is(err, errMatchSaveConflict) {
+			fresh, findErr := h.findMatchByID(ctx, match.ID)
+			if findErr != nil {
+				return advanced, events, findErr
+			}
+			match = fresh
+			continue
+		}
+		return advanced, events, err
+	}
+	return match, events, errMatchSaveConflict
+}
+
+func (h *Handler) advanceMatchOnce(ctx context.Context, match mongomodel.Match, now time.Time) (mongomodel.Match, []string, error) {
 	if match.Status == mongomodel.MatchStatusCompleted {
 		return match, nil, h.writeMatchRewards(ctx, match)
 	}
@@ -101,7 +174,7 @@ func (h *Handler) advanceMatch(ctx context.Context, match mongomodel.Match, now 
 
 			match.Phase = mongomodel.MatchPhaseRevealing
 			match.RevealEndsAt = now.Add(revealDuration * time.Second)
-			if err := h.saveMatch(ctx, match); err != nil {
+			if err := h.saveMatch(ctx, &match); err != nil {
 				return match, events, err
 			}
 			events = append(events, "round_revealed")
@@ -119,7 +192,7 @@ func (h *Handler) advanceMatch(ctx context.Context, match mongomodel.Match, now 
 				match.Status = mongomodel.MatchStatusCompleted
 				match.Phase = ""
 				match.CompletedAt = revealEndsAt
-				if err := h.saveMatch(ctx, match); err != nil {
+				if err := h.saveMatch(ctx, &match); err != nil {
 					return match, events, err
 				}
 				if err := h.writeMatchRewards(ctx, match); err != nil {
@@ -137,7 +210,7 @@ func (h *Handler) advanceMatch(ctx context.Context, match mongomodel.Match, now 
 			if err := h.ensureCurrentRoundEliminations(ctx, &match); err != nil {
 				return match, events, err
 			}
-			if err := h.saveMatch(ctx, match); err != nil {
+			if err := h.saveMatch(ctx, &match); err != nil {
 				return match, events, err
 			}
 			events = append(events, "round_started")
@@ -492,6 +565,10 @@ func (h *Handler) publishState(_ context.Context, match mongomodel.Match, eventN
 func writeMatchProblem(w http.ResponseWriter, r *http.Request, err error) {
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		httpx.WriteProblem(w, r, httpx.NotFound("match not found"))
+		return
+	}
+	if errors.Is(err, errMatchSaveConflict) {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "match was updated; retry"))
 		return
 	}
 	httpx.WriteProblem(w, r, err)

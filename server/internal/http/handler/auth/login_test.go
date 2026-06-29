@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -12,6 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 
+	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
 	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
 )
@@ -65,8 +67,117 @@ func TestSetAuthCookie(t *testing.T) {
 	if !cookie.Secure {
 		t.Fatalf("expected cookie to be Secure")
 	}
-	if cookie.SameSite != http.SameSiteLaxMode {
-		t.Fatalf("expected SameSite=Lax, got %v", cookie.SameSite)
+	if cookie.SameSite != http.SameSiteStrictMode {
+		t.Fatalf("expected SameSite=Strict, got %v", cookie.SameSite)
+	}
+	if cookie.MaxAge != 0 {
+		t.Fatalf("expected session cookie max age, got %d", cookie.MaxAge)
+	}
+}
+
+func TestLogoutRequiresAuthenticatedPlayer(t *testing.T) {
+	handler := New(Dependencies{})
+
+	req := httptest.NewRequest(http.MethodPost, "/api/auth/logout", nil)
+	res := httptest.NewRecorder()
+	handler.Logout(res, req)
+
+	problem := assertProblem(t, res, http.StatusUnauthorized)
+	if problem.Detail != "authentication required" {
+		t.Fatalf("expected authentication required detail, got %q", problem.Detail)
+	}
+}
+
+func TestLogoutRequiresDatabase(t *testing.T) {
+	handler := New(Dependencies{})
+
+	req := httptest.NewRequest(http.MethodPost, "/api/auth/logout", nil)
+	req = req.WithContext(authctx.WithPlayer(req.Context(), mongomodel.Player{ID: "7H9K2Q", AuthToken: "auth_token_123456"}))
+	res := httptest.NewRecorder()
+	handler.Logout(res, req)
+
+	problem := assertProblem(t, res, http.StatusServiceUnavailable)
+	if problem.Detail != "database is unavailable" {
+		t.Fatalf("expected database unavailable detail, got %q", problem.Detail)
+	}
+}
+
+func TestAuthCookieClearsCookie(t *testing.T) {
+	res := httptest.NewRecorder()
+
+	http.SetCookie(res, authCookie("", -1))
+
+	cookies := res.Result().Cookies()
+	if len(cookies) != 1 {
+		t.Fatalf("expected 1 cookie, got %d", len(cookies))
+	}
+
+	cookie := cookies[0]
+	if cookie.Name != "camp2026_auth" {
+		t.Fatalf("expected auth cookie name, got %q", cookie.Name)
+	}
+	if cookie.Value != "" {
+		t.Fatalf("expected empty auth cookie value, got %q", cookie.Value)
+	}
+	if cookie.Path != "/" {
+		t.Fatalf("expected cookie path /, got %q", cookie.Path)
+	}
+	if cookie.MaxAge != -1 {
+		t.Fatalf("expected cleared cookie max age, got %d", cookie.MaxAge)
+	}
+	if !cookie.HttpOnly {
+		t.Fatalf("expected cookie to be HttpOnly")
+	}
+	if !cookie.Secure {
+		t.Fatalf("expected cookie to be Secure")
+	}
+	if cookie.SameSite != http.SameSiteStrictMode {
+		t.Fatalf("expected SameSite=Strict, got %v", cookie.SameSite)
+	}
+	if !strings.Contains(res.Header().Get("Set-Cookie"), "Max-Age=0") {
+		t.Fatalf("expected Set-Cookie header to clear cookie, got %q", res.Header().Get("Set-Cookie"))
+	}
+}
+
+func TestNewAuthToken(t *testing.T) {
+	token, err := newAuthToken()
+	if err != nil {
+		t.Fatalf("new auth token: %v", err)
+	}
+	if token == "" {
+		t.Fatal("expected auth token")
+	}
+	if strings.ContainsAny(token, "+/=") {
+		t.Fatalf("expected raw URL-safe base64 token, got %q", token)
+	}
+
+	decoded, err := base64.RawURLEncoding.DecodeString(token)
+	if err != nil {
+		t.Fatalf("decode auth token: %v", err)
+	}
+	if len(decoded) != authTokenBytes {
+		t.Fatalf("expected %d random bytes, got %d", authTokenBytes, len(decoded))
+	}
+}
+
+func TestAuthTokenRotationUpdate(t *testing.T) {
+	gotFilter := authTokenRotationFilter("7H9K2Q", "old_token")
+	wantFilter := bson.M{
+		"_id":        "7H9K2Q",
+		"auth_token": "old_token",
+	}
+	if !reflect.DeepEqual(gotFilter, wantFilter) {
+		t.Fatalf("unexpected auth token rotation filter: %#v", gotFilter)
+	}
+
+	gotUpdate := authTokenRotationUpdate("new_token")
+	wantUpdate := bson.M{
+		"$set": bson.M{
+			"auth_token": "new_token",
+		},
+	}
+	if !reflect.DeepEqual(gotUpdate, wantUpdate) {
+		t.Fatalf("unexpected auth token rotation update: %#v", gotUpdate)
 	}
 }
 

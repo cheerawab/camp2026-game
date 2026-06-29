@@ -1,6 +1,8 @@
 package fusions
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"testing"
 
@@ -56,6 +58,15 @@ func TestModelComponents(t *testing.T) {
 	}
 	if components[0].RefID != "item_adventure_backpack" || components[0].Quantity != 3 {
 		t.Fatalf("unexpected model component: %#v", components[0])
+	}
+}
+
+func TestCreateFusionRequiresTransactionClient(t *testing.T) {
+	handler := &Handler{}
+
+	_, err := handler.createFusion(context.Background(), "player-a", content.FusionRecipe{ID: "fusion-a"})
+	if !errors.Is(err, errFusionTransactionsUnavailable) {
+		t.Fatalf("expected transaction unavailable error, got %v", err)
 	}
 }
 

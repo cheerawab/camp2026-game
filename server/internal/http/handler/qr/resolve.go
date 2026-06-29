@@ -11,17 +11,21 @@ import (
 
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
 	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
+	"github.com/sitcon-tw/camp2026-game/internal/openpower"
 )
 
 // Resolve godoc
 // @Summary Resolve player QR code
-// @Description Resolves a player QR code identifier into a public player summary without exposing auth credentials.
+// @Description Staff-only endpoint. Resolves a player QR code identifier into a player summary without exposing auth credentials.
 // @Tags qr
 // @Accept json
 // @Produce json
+// @Security AuthCookieAuth
 // @Param request body ResolveRequest true "QR resolve request"
 // @Success 200 {object} ResolveResponse
 // @Failure 400 {object} httpx.ProblemDetails
+// @Failure 401 {object} httpx.ProblemDetails
+// @Failure 403 {object} httpx.ProblemDetails
 // @Failure 404 {object} httpx.ProblemDetails
 // @Failure 422 {object} httpx.ProblemDetails
 // @Failure 500 {object} httpx.ProblemDetails
@@ -96,28 +100,5 @@ func (h *Handler) findTeam(ctx context.Context, teamID string) (mongomodel.Team,
 }
 
 func (h *Handler) sumOpenPower(ctx context.Context, playerID string) (int, error) {
-	cursor, err := h.db.Collection(mongomodel.OpenPowerRecordsCollection).Aggregate(ctx, mongo.Pipeline{
-		{{Key: "$match", Value: bson.D{{Key: "player_id", Value: playerID}}}},
-		{{Key: "$group", Value: bson.D{
-			{Key: "_id", Value: nil},
-			{Key: "total", Value: bson.D{{Key: "$sum", Value: "$amount"}}},
-		}}},
-	})
-	if err != nil {
-		return 0, err
-	}
-	defer func() {
-		_ = cursor.Close(ctx)
-	}()
-
-	var totals []struct {
-		Total int `bson:"total"`
-	}
-	if err := cursor.All(ctx, &totals); err != nil {
-		return 0, err
-	}
-	if len(totals) == 0 {
-		return 0, nil
-	}
-	return totals[0].Total, nil
+	return openpower.TotalForPlayer(ctx, h.db, playerID)
 }

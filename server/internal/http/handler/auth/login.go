@@ -13,17 +13,18 @@ import (
 	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
 	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
+	"github.com/sitcon-tw/camp2026-game/internal/openpower"
 )
 
 // Login godoc
 // @Summary User login with auth token
-// @Description User-facing endpoint. Validates the stable auth token from the issued game URL and writes it to the camp2026_auth cookie.
+// @Description User-facing endpoint. Validates the issued game URL token, rotates it, and writes the fresh session token to the camp2026_auth cookie.
 // @Tags User Authentication
 // @Accept json
 // @Produce json
 // @Param request body apimodel.AuthLoginRequest true "Auth login request"
 // @Success 200 {object} apimodel.AuthLoginResponse
-// @Header 200 {string} Set-Cookie "camp2026_auth=<auth-token>; Path=/; HttpOnly; Secure; SameSite=Lax"
+// @Header 200 {string} Set-Cookie "camp2026_auth=<auth-token>; Path=/; HttpOnly; Secure; SameSite=Strict"
 // @Failure 400 {object} httpx.ProblemDetails
 // @Failure 401 {object} httpx.ProblemDetails
 // @Failure 422 {object} httpx.ProblemDetails
@@ -81,7 +82,17 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	setAuthCookie(w, body.Token)
+	sessionToken, err := h.rotateAuthToken(r.Context(), player.ID, body.Token)
+	if errors.Is(err, errAuthTokenStale) {
+		httpx.WriteProblem(w, r, httpx.NewError(http.StatusUnauthorized, "invalid auth token"))
+		return
+	}
+	if err != nil {
+		httpx.WriteProblem(w, r, httpx.InternalServerError("login failed", "login_auth_token_rotate_failed", err))
+		return
+	}
+
+	setAuthCookie(w, sessionToken)
 	httpx.WriteJSON(w, http.StatusOK, loginResponse(player, team, openPower))
 }
 
@@ -93,14 +104,19 @@ func playerTeamID(player mongomodel.Player) string {
 }
 
 func setAuthCookie(w http.ResponseWriter, token string) {
-	http.SetCookie(w, &http.Cookie{
+	http.SetCookie(w, authCookie(token, 0))
+}
+
+func authCookie(value string, maxAge int) *http.Cookie {
+	return &http.Cookie{
 		Name:     authctx.CookieName,
-		Value:    token,
+		Value:    value,
 		Path:     "/",
+		MaxAge:   maxAge,
 		HttpOnly: true,
 		Secure:   true,
-		SameSite: http.SameSiteLaxMode,
-	})
+		SameSite: http.SameSiteStrictMode,
+	}
 }
 
 func (h *Handler) findTeam(ctx context.Context, teamID string) (mongomodel.Team, error) {
@@ -118,39 +134,15 @@ func (h *Handler) findTeam(ctx context.Context, teamID string) (mongomodel.Team,
 }
 
 func (h *Handler) sumOpenPower(ctx context.Context, playerID string) (int, error) {
-	cursor, err := h.db.Collection(mongomodel.OpenPowerRecordsCollection).
-		Aggregate(ctx, openPowerTotalPipeline(playerID))
-	if err != nil {
-		return 0, err
-	}
-	defer func() {
-		_ = cursor.Close(ctx)
-	}()
-
-	return openPowerTotalFromCursor(ctx, cursor)
+	return openpower.TotalForPlayer(ctx, h.db, playerID)
 }
 
 func openPowerTotalFromCursor(ctx context.Context, cursor *mongo.Cursor) (int, error) {
-	var totals []struct {
-		Total int `bson:"total"`
-	}
-	if err := cursor.All(ctx, &totals); err != nil {
-		return 0, err
-	}
-	if len(totals) == 0 {
-		return 0, nil
-	}
-	return totals[0].Total, nil
+	return openpower.TotalFromCursor(ctx, cursor)
 }
 
 func openPowerTotalPipeline(playerID string) mongo.Pipeline {
-	return mongo.Pipeline{
-		{{Key: "$match", Value: bson.D{{Key: "player_id", Value: playerID}}}},
-		{{Key: "$group", Value: bson.D{
-			{Key: "_id", Value: nil},
-			{Key: "total", Value: bson.D{{Key: "$sum", Value: "$amount"}}},
-		}}},
-	}
+	return openpower.TotalPipeline(playerID)
 }
 
 func loginResponse(player mongomodel.Player, team *mongomodel.Team, openPower int) apimodel.AuthLoginResponse {

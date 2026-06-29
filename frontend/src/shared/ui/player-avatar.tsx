@@ -2,7 +2,7 @@ import { createAvatar } from "@dicebear/core"
 import * as thumbs from "@dicebear/thumbs"
 import * as React from "react"
 
-import { Avatar } from "@/shared/ui/avatar"
+import { Avatar, AvatarImage } from "@/shared/ui/avatar"
 import { cn } from "@/shared/utils"
 
 function avatarSeed(playerId?: string, nickname?: string) {
@@ -13,6 +13,10 @@ function avatarSeed(playerId?: string, nickname?: string) {
   if (name) return name
 
   return "camp2026-player"
+}
+
+function svgDataUrl(svg: string) {
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`
 }
 
 type PlayerAvatarProps = Omit<
@@ -33,8 +37,8 @@ export function PlayerAvatar({
   ...props
 }: PlayerAvatarProps) {
   const seed = avatarSeed(playerId, nickname)
-  const svg = React.useMemo(
-    () => createAvatar(thumbs, { seed }).toString(),
+  const avatarSrc = React.useMemo(
+    () => svgDataUrl(createAvatar(thumbs, { seed }).toString()),
     [seed],
   )
 
@@ -46,12 +50,15 @@ export function PlayerAvatar({
       className={cn("bg-surface-raised", className)}
       {...props}
     >
-      <span
+      <AvatarImage
+        src={avatarSrc}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
         className={cn(
-          "block size-full overflow-hidden [&>svg]:block [&>svg]:size-full",
+          "block size-full object-cover",
           svgClassName,
         )}
-        dangerouslySetInnerHTML={{ __html: svg }}
       />
     </Avatar>
   )

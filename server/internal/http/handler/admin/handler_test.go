@@ -44,6 +44,57 @@ func TestLoginSetsAdminSessionCookie(t *testing.T) {
 	if !cookie.HttpOnly || cookie.Path != "/" || cookie.MaxAge <= 0 {
 		t.Fatalf("expected http-only persistent root cookie, got %#v", cookie)
 	}
+	if cookie.SameSite != http.SameSiteLaxMode {
+		t.Fatalf("expected SameSite=Lax, got %v", cookie.SameSite)
+	}
+	if cookie.Secure {
+		t.Fatalf("expected admin cookie to be insecure by default for local development")
+	}
+}
+
+func TestLoginSetsSecureAdminSessionCookieWhenConfigured(t *testing.T) {
+	handler := New(Dependencies{AdminPassword: "secret", AdminCookieSecure: true})
+	req := httptest.NewRequest(http.MethodPost, "http://backend/api/admin/login", strings.NewReader(`{"password":"secret"}`))
+	res := httptest.NewRecorder()
+
+	if req.TLS != nil {
+		t.Fatalf("expected backend request without TLS")
+	}
+	handler.Login(res, req)
+
+	if res.Code != http.StatusOK {
+		t.Fatalf("expected status %d, got %d: %s", http.StatusOK, res.Code, res.Body.String())
+	}
+	cookies := res.Result().Cookies()
+	if len(cookies) != 1 {
+		t.Fatalf("expected one cookie, got %#v", cookies)
+	}
+	if cookie := cookies[0]; !cookie.Secure {
+		t.Fatalf("expected secure admin cookie behind TLS-terminating proxy, got %#v", cookie)
+	}
+}
+
+func TestLogoutClearsSecureAdminSessionCookieWhenConfigured(t *testing.T) {
+	handler := New(Dependencies{AdminPassword: "secret", AdminCookieSecure: true})
+	req := httptest.NewRequest(http.MethodPost, "http://backend/api/admin/logout", nil)
+	res := httptest.NewRecorder()
+
+	handler.Logout(res, req)
+
+	if res.Code != http.StatusNoContent {
+		t.Fatalf("expected status %d, got %d: %s", http.StatusNoContent, res.Code, res.Body.String())
+	}
+	cookies := res.Result().Cookies()
+	if len(cookies) != 1 {
+		t.Fatalf("expected one cookie, got %#v", cookies)
+	}
+	cookie := cookies[0]
+	if cookie.Name != CookieName || cookie.Value != "" || cookie.MaxAge >= 0 {
+		t.Fatalf("expected expired admin cookie, got %#v", cookie)
+	}
+	if !cookie.Secure {
+		t.Fatalf("expected logout cookie to keep Secure flag, got %#v", cookie)
+	}
 }
 
 func TestLoginRejectsInvalidPassword(t *testing.T) {
@@ -95,10 +146,39 @@ func TestDashboardRequiresDatabase(t *testing.T) {
 	}
 }
 
+func TestDashboardPlayerProjectionFetchesOnlyDashboardFields(t *testing.T) {
+	projection := dashboardPlayerProjection()
+	included := make(map[string]any, len(projection))
+	for _, field := range projection {
+		included[field.Key] = field.Value
+	}
+
+	expected := map[string]struct{}{
+		"_id":        {},
+		"nickname":   {},
+		"team_id":    {},
+		"avatar_url": {},
+		"role":       {},
+	}
+	if len(included) != len(expected) {
+		t.Fatalf("expected only dashboard player fields, got %#v", projection)
+	}
+	for field := range expected {
+		if included[field] != 1 {
+			t.Fatalf("expected projection to include %q, got %#v", field, projection)
+		}
+	}
+	for _, field := range []string{"auth_token", "qrcode_token", "default_sitone_ids"} {
+		if _, ok := included[field]; ok {
+			t.Fatalf("projection must not fetch sensitive field %q: %#v", field, projection)
+		}
+	}
+}
+
 func TestBuildDashboardResponseExcludesStaffAndRanksPlayers(t *testing.T) {
 	now := time.Date(2026, 6, 27, 8, 0, 0, 0, time.UTC)
 	raw := dashboardRawData{
-		Players: []mongomodel.Player{
+		Players: []dashboardPlayer{
 			{ID: "player-a", Nickname: "Alice", TeamID: "team-a"},
 			{ID: "player-b", Nickname: "Bob", TeamID: "team-a"},
 			{ID: "player-c", Nickname: "Cody"},

@@ -1,8 +1,11 @@
 package matches
 
 import (
+	"errors"
 	"testing"
 	"time"
+
+	"go.mongodb.org/mongo-driver/v2/bson"
 
 	"github.com/sitcon-tw/camp2026-game/internal/content"
 	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
@@ -237,6 +240,32 @@ func TestMatchRewardKeysUseMatchAndPlayer(t *testing.T) {
 	}
 }
 
+func TestMatchRevisionFilterGuardsInitialAndExistingRevisions(t *testing.T) {
+	initial := matchRevisionFilter("match_123", 0)
+	if initial["_id"] != "match_123" {
+		t.Fatalf("expected match id filter, got %#v", initial)
+	}
+	alternatives, ok := initial["$or"].(bson.A)
+	if !ok || len(alternatives) != 2 {
+		t.Fatalf("expected initial revision filter to allow zero or missing revision, got %#v", initial)
+	}
+
+	existing := matchRevisionFilter("match_123", 7)
+	if existing["_id"] != "match_123" || existing["revision"] != int64(7) {
+		t.Fatalf("expected existing revision guard, got %#v", existing)
+	}
+	if _, ok := existing["$or"]; ok {
+		t.Fatalf("expected existing revision filter not to allow missing revision, got %#v", existing)
+	}
+}
+
+func TestMatchAnswerRecordIDUsesMatchPlayerAndQuestion(t *testing.T) {
+	got := matchAnswerRecordID("match_123", "P1", "quiz-001")
+	if got != "answer_match_123_P1_quiz-001" {
+		t.Fatalf("unexpected answer record id: %q", got)
+	}
+}
+
 func TestAllPlayersReady(t *testing.T) {
 	match := mongomodel.Match{
 		Players: []mongomodel.MatchPlayer{
@@ -416,6 +445,19 @@ func TestPickQuestionIDs(t *testing.T) {
 	}
 }
 
+func TestShuffleQuizQuestionsReturnsRandomnessError(t *testing.T) {
+	randomErr := errors.New("entropy unavailable")
+	questions := []content.QuizQuestion{
+		{ID: "quiz-001"},
+		{ID: "quiz-002"},
+	}
+
+	err := shuffleQuizQuestions(questions, errReader{err: randomErr})
+	if !errors.Is(err, randomErr) {
+		t.Fatalf("expected random error, got %v", err)
+	}
+}
+
 func TestMatchResultsRevealCompletedAnswers(t *testing.T) {
 	handler := New(Dependencies{Content: loadTestContent(t)})
 	match := mongomodel.Match{
@@ -566,4 +608,12 @@ func loadTestContent(t *testing.T) *content.Store {
 	t.Helper()
 
 	return testcontent.Load(t)
+}
+
+type errReader struct {
+	err error
+}
+
+func (r errReader) Read(_ []byte) (int, error) {
+	return 0, r.err
 }

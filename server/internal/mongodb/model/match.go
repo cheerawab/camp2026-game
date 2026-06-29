@@ -27,6 +27,7 @@ const (
 
 type Match struct {
 	ID                   string                  `bson:"_id"`
+	Revision             int64                   `bson:"revision,omitempty"`
 	Code                 string                  `bson:"code"`
 	Mode                 string                  `bson:"mode,omitempty"`
 	Status               string                  `bson:"status"`

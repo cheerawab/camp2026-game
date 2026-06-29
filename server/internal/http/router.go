@@ -28,12 +28,13 @@ import (
 )
 
 type Dependencies struct {
-	Log            *slog.Logger
-	RequestTimeout time.Duration
-	Content        *content.Store
-	MongoClient    *mongo.Client
-	MongoDB        *mongo.Database
-	AdminPassword  string
+	Log               *slog.Logger
+	RequestTimeout    time.Duration
+	Content           *content.Store
+	MongoClient       *mongo.Client
+	MongoDB           *mongo.Database
+	AdminPassword     string
+	AdminCookieSecure bool
 }
 
 func NewRouter(dep Dependencies) http.Handler {
@@ -51,8 +52,11 @@ func NewRouter(dep Dependencies) http.Handler {
 	r.Use(chimw.Timeout(dep.RequestTimeout))
 	r.Use(recoverer(dep.Log))
 	r.Use(requestLogger(dep.Log))
+	r.Use(rateLimitByIP(newIPRateLimiter(globalRateLimit)))
+	r.Use(rateLimitRoute(http.MethodPost, "/api/auth/login", newIPRateLimiter(authLoginRateLimit)))
 
 	r.Route("/api", func(api chi.Router) {
+		api.Use(sameOriginUnsafeRequestGuard())
 		registerRoutes(api, dep)
 	})
 
@@ -70,9 +74,10 @@ func NewRouter(dep Dependencies) http.Handler {
 
 func registerRoutes(api chi.Router, dep Dependencies) {
 	adminhandler.New(adminhandler.Dependencies{
-		Content:       dep.Content,
-		MongoDB:       dep.MongoDB,
-		AdminPassword: dep.AdminPassword,
+		Content:           dep.Content,
+		MongoDB:           dep.MongoDB,
+		AdminPassword:     dep.AdminPassword,
+		AdminCookieSecure: dep.AdminCookieSecure,
 	}).RegisterRoutes(api)
 	systemhandler.New(systemhandler.Dependencies{
 		MongoClient: dep.MongoClient,
@@ -85,7 +90,7 @@ func registerRoutes(api chi.Router, dep Dependencies) {
 	}).RegisterRoutes(api)
 	qrhandler.New(qrhandler.Dependencies{
 		MongoDB: dep.MongoDB,
-	}).RegisterRoutes(api)
+	}).RegisterRoutes(api.With(authctx.RequireStaff(dep.MongoDB)))
 	mehandler.New(mehandler.Dependencies{
 		Content: dep.Content,
 		MongoDB: dep.MongoDB,

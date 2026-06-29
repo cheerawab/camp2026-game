@@ -109,13 +109,8 @@ func (h *Handler) Answer(w http.ResponseWriter, r *http.Request) {
 		elapsedMillis = 0
 	}
 
-	answerID, err := newID("answer")
-	if err != nil {
-		httpx.WriteProblem(w, r, httpx.InternalServerError("answer failed", "match_answer_id_create_failed", err))
-		return
-	}
 	answer := mongomodel.MatchAnswer{
-		ID:            answerID,
+		ID:            matchAnswerRecordID(match.ID, player.ID, body.QuestionID),
 		MatchID:       match.ID,
 		PlayerID:      player.ID,
 		QuestionID:    body.QuestionID,
@@ -128,13 +123,21 @@ func (h *Handler) Answer(w http.ResponseWriter, r *http.Request) {
 		AnsweredAt:    now,
 	}
 	if _, err := h.db.Collection(mongomodel.MatchAnswersCollection).InsertOne(r.Context(), answer); err != nil {
+		if mongo.IsDuplicateKeyError(err) {
+			httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "question already answered"))
+			return
+		}
 		httpx.WriteProblem(w, r, httpx.InternalServerError("answer failed", "match_answer_insert_failed", err))
 		return
 	}
 
-	match.Players[idx].Score += score
-	if err := h.saveMatch(r.Context(), match); err != nil {
+	if err := h.applyMatchAnswerScore(r.Context(), match.ID, player.ID, score); err != nil {
 		httpx.WriteProblem(w, r, httpx.InternalServerError("answer failed", "match_answer_save_match_failed", err))
+		return
+	}
+	match, err = h.findMatchByID(r.Context(), match.ID)
+	if err != nil {
+		httpx.WriteProblem(w, r, httpx.InternalServerError("answer failed", "match_answer_reload_match_failed", err))
 		return
 	}
 

@@ -1623,8 +1623,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: User-facing endpoint. Validates the stable auth token from the
-        issued game URL and writes it to the camp2026_auth cookie.
+      description: User-facing endpoint. Validates the issued game URL token, rotates
+        it, and writes the fresh session token to the camp2026_auth cookie.
       parameters:
       - description: Auth login request
         in: body
@@ -1639,7 +1639,7 @@ paths:
           description: OK
           headers:
             Set-Cookie:
-              description: camp2026_auth=<auth-token>; Path=/; HttpOnly; Secure; SameSite=Lax
+              description: camp2026_auth=<auth-token>; Path=/; HttpOnly; Secure; SameSite=Strict
               type: string
           schema:
             $ref: '#/definitions/apimodel.AuthLoginResponse'
@@ -1676,7 +1676,7 @@ paths:
           description: No Content
           headers:
             Set-Cookie:
-              description: camp2026_auth=; Path=/; HttpOnly; Secure; SameSite=Lax;
+              description: camp2026_auth=; Path=/; HttpOnly; Secure; SameSite=Strict;
                 Max-Age=0
               type: string
         "401":
@@ -2514,8 +2514,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Resolves a player QR code identifier into a public player summary
-        without exposing auth credentials.
+      description: Staff-only endpoint. Resolves a player QR code identifier into
+        a player summary without exposing auth credentials.
       parameters:
       - description: QR resolve request
         in: body
@@ -2534,6 +2534,14 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/httpx.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
         "404":
           description: Not Found
           schema:
@@ -2550,6 +2558,8 @@ paths:
           description: Service Unavailable
           schema:
             $ref: '#/definitions/httpx.ProblemDetails'
+      security:
+      - AuthCookieAuth: []
       summary: Resolve player QR code
       tags:
       - qr

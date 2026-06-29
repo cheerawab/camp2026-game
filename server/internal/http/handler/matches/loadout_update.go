@@ -1,6 +1,7 @@
 package matches
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -47,29 +48,41 @@ func (h *Handler) UpdateLoadout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	match, err := h.findMatchByID(r.Context(), chi.URLParam(r, "matchID"))
-	if err != nil {
+	matchID := chi.URLParam(r, "matchID")
+	var match mongomodel.Match
+	for attempt := 0; attempt < matchSaveMaxAttempts; attempt++ {
+		match, err = h.findMatchByID(r.Context(), matchID)
+		if err != nil {
+			writeMatchProblem(w, r, err)
+			return
+		}
+		if !isParticipant(match, player.ID) {
+			httpx.WriteProblem(w, r, httpx.NotFound("match not found"))
+			return
+		}
+		if match.Status != mongomodel.MatchStatusWaiting {
+			httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "match loadout is locked"))
+			return
+		}
+
+		idx := playerIndex(match, player.ID)
+		if match.Players[idx].Ready {
+			httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "player is already ready"))
+			return
+		}
+		match.Players[idx].SitoneIDs = sitoneIDs
+
+		if err = h.saveMatch(r.Context(), &match); errors.Is(err, errMatchSaveConflict) {
+			continue
+		}
+		if err != nil {
+			httpx.WriteProblem(w, r, httpx.InternalServerError("loadout update failed", "match_loadout_save_match_failed", err))
+			return
+		}
+		break
+	}
+	if errors.Is(err, errMatchSaveConflict) {
 		writeMatchProblem(w, r, err)
-		return
-	}
-	if !isParticipant(match, player.ID) {
-		httpx.WriteProblem(w, r, httpx.NotFound("match not found"))
-		return
-	}
-	if match.Status != mongomodel.MatchStatusWaiting {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "match loadout is locked"))
-		return
-	}
-
-	idx := playerIndex(match, player.ID)
-	if match.Players[idx].Ready {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "player is already ready"))
-		return
-	}
-	match.Players[idx].SitoneIDs = sitoneIDs
-
-	if err := h.saveMatch(r.Context(), match); err != nil {
-		httpx.WriteProblem(w, r, httpx.InternalServerError("loadout update failed", "match_loadout_save_match_failed", err))
 		return
 	}
 	if err := h.saveDefaultSitoneLoadout(r.Context(), player.ID, sitoneIDs); err != nil {

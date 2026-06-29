@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -18,23 +19,24 @@ const (
 	defaultLogLevel        = "info"
 	defaultHTTPAddr        = ":8080"
 	defaultContentDir      = "server/content"
-	defaultMongoURI        = "mongodb://camp2026:camp2026@localhost:27017/camp2026?authSource=admin"
+	defaultMongoURI        = "mongodb://localhost:27017/camp2026"
 	defaultMongoDatabase   = "camp2026"
 	defaultRequestTimeout  = 10 * time.Second
 	defaultShutdownTimeout = 10 * time.Second
 )
 
 type Config struct {
-	Env             string
-	ServiceName     string
-	Version         string
-	LogLevel        slog.Level
-	ShutdownTimeout time.Duration
-	ContentDir      string
-	AdminPassword   string
-	HTTP            HTTPConfig
-	MongoURI        string
-	MongoDatabase   string
+	Env               string
+	ServiceName       string
+	Version           string
+	LogLevel          slog.Level
+	ShutdownTimeout   time.Duration
+	ContentDir        string
+	AdminPassword     string
+	AdminCookieSecure bool
+	HTTP              HTTPConfig
+	MongoURI          string
+	MongoDatabase     string
 }
 
 type HTTPConfig struct {
@@ -49,13 +51,20 @@ type HTTPConfig struct {
 func Load() (Config, error) {
 	loadDotEnv()
 
+	env := stringValue("APP_ENV", defaultAppEnv)
+	adminCookieSecure, err := boolValue("ADMIN_COOKIE_SECURE", defaultAdminCookieSecure(env))
+	if err != nil {
+		return Config{}, err
+	}
+
 	cfg := Config{
-		Env:             stringValue("APP_ENV", defaultAppEnv),
-		ServiceName:     stringValue("SERVICE_NAME", defaultServiceName),
-		Version:         stringValue("APP_VERSION", defaultAppVersion),
-		ShutdownTimeout: durationValue("SHUTDOWN_TIMEOUT", defaultShutdownTimeout),
-		ContentDir:      stringValue("CONTENT_DIR", defaultContentDir),
-		AdminPassword:   stringValue("ADMIN_PASSWORD", ""),
+		Env:               env,
+		ServiceName:       stringValue("SERVICE_NAME", defaultServiceName),
+		Version:           stringValue("APP_VERSION", defaultAppVersion),
+		ShutdownTimeout:   durationValue("SHUTDOWN_TIMEOUT", defaultShutdownTimeout),
+		ContentDir:        stringValue("CONTENT_DIR", defaultContentDir),
+		AdminPassword:     stringValue("ADMIN_PASSWORD", ""),
+		AdminCookieSecure: adminCookieSecure,
 		HTTP: HTTPConfig{
 			Addr:              stringValue("HTTP_ADDR", defaultHTTPAddr),
 			RequestTimeout:    durationValue("REQUEST_TIMEOUT", defaultRequestTimeout),
@@ -64,7 +73,7 @@ func Load() (Config, error) {
 			WriteTimeout:      durationValue("HTTP_WRITE_TIMEOUT", 15*time.Second),
 			IdleTimeout:       durationValue("HTTP_IDLE_TIMEOUT", 60*time.Second),
 		},
-		MongoURI:      stringValue("MONGODB_URI", defaultMongoURI),
+		MongoURI:      mongoURIValue(env),
 		MongoDatabase: stringValue("MONGODB_DATABASE", defaultMongoDatabase),
 	}
 
@@ -126,6 +135,26 @@ func stringValue(key, fallback string) string {
 	return value
 }
 
+func mongoURIValue(env string) string {
+	value := strings.TrimSpace(os.Getenv("MONGODB_URI"))
+	if value != "" {
+		return value
+	}
+	if defaultMongoURIAllowed(env) {
+		return defaultMongoURI
+	}
+	return ""
+}
+
+func defaultMongoURIAllowed(env string) bool {
+	switch strings.ToLower(strings.TrimSpace(env)) {
+	case "", "local", "dev", "development", "test", "ci":
+		return true
+	default:
+		return false
+	}
+}
+
 func durationValue(key string, fallback time.Duration) time.Duration {
 	value := strings.TrimSpace(os.Getenv(key))
 	if value == "" {
@@ -137,6 +166,28 @@ func durationValue(key string, fallback time.Duration) time.Duration {
 		return fallback
 	}
 	return parsed
+}
+
+func boolValue(key string, fallback bool) (bool, error) {
+	value := strings.TrimSpace(os.Getenv(key))
+	if value == "" {
+		return fallback, nil
+	}
+
+	parsed, err := strconv.ParseBool(value)
+	if err != nil {
+		return false, fmt.Errorf("%s must be a boolean", key)
+	}
+	return parsed, nil
+}
+
+func defaultAdminCookieSecure(env string) bool {
+	switch strings.ToLower(strings.TrimSpace(env)) {
+	case "", "local", "dev", "development", "test":
+		return false
+	default:
+		return true
+	}
 }
 
 func parseLogLevel(value string) (slog.Level, error) {

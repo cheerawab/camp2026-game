@@ -11,6 +11,7 @@ import (
 	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
 	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
+	"github.com/sitcon-tw/camp2026-game/internal/openpower"
 )
 
 // Status godoc
@@ -118,39 +119,15 @@ func (h *Handler) findTeamMembers(ctx context.Context, teamID string) ([]mongomo
 }
 
 func (h *Handler) sumOpenPower(ctx context.Context, playerID string) (int, error) {
-	cursor, err := h.db.Collection(mongomodel.OpenPowerRecordsCollection).
-		Aggregate(ctx, openPowerTotalPipeline(playerID))
-	if err != nil {
-		return 0, err
-	}
-	defer func() {
-		_ = cursor.Close(ctx)
-	}()
-
-	return openPowerTotalFromCursor(ctx, cursor)
+	return openpower.TotalForPlayer(ctx, h.db, playerID)
 }
 
 func openPowerTotalFromCursor(ctx context.Context, cursor *mongo.Cursor) (int, error) {
-	var totals []struct {
-		Total int `bson:"total"`
-	}
-	if err := cursor.All(ctx, &totals); err != nil {
-		return 0, err
-	}
-	if len(totals) == 0 {
-		return 0, nil
-	}
-	return totals[0].Total, nil
+	return openpower.TotalFromCursor(ctx, cursor)
 }
 
 func openPowerTotalPipeline(playerID string) mongo.Pipeline {
-	return mongo.Pipeline{
-		{{Key: "$match", Value: bson.D{{Key: "player_id", Value: playerID}}}},
-		{{Key: "$group", Value: bson.D{
-			{Key: "_id", Value: nil},
-			{Key: "total", Value: bson.D{{Key: "$sum", Value: "$amount"}}},
-		}}},
-	}
+	return openpower.TotalPipeline(playerID)
 }
 
 func statusResponse(player mongomodel.Player, team *mongomodel.Team, openPower int, teamMembers []mongomodel.Player) StatusResponse {

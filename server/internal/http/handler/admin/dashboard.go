@@ -9,6 +9,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 
 	"github.com/sitcon-tw/camp2026-game/internal/content"
 	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
@@ -43,7 +44,7 @@ func (h *Handler) Dashboard(w http.ResponseWriter, r *http.Request) {
 }
 
 type dashboardRawData struct {
-	Players          []mongomodel.Player
+	Players          []dashboardPlayer
 	Teams            []mongomodel.Team
 	PlayerSitones    []mongomodel.PlayerSitone
 	PlayerItems      []mongomodel.PlayerItem
@@ -56,8 +57,22 @@ type dashboardRawData struct {
 	StaffRewards     []mongomodel.StaffReward
 }
 
+type dashboardPlayer struct {
+	ID        string `bson:"_id"`
+	Nickname  string `bson:"nickname"`
+	TeamID    string `bson:"team_id,omitempty"`
+	AvatarURL string `bson:"avatar_url,omitempty"`
+	Role      string `bson:"role,omitempty"`
+}
+
 func (h *Handler) dashboardRawData(ctx context.Context) (dashboardRawData, error) {
-	players, err := findAllDashboard[mongomodel.Player](ctx, h.db, mongomodel.PlayersCollection, bson.M{})
+	players, err := findAllDashboard[dashboardPlayer](
+		ctx,
+		h.db,
+		mongomodel.PlayersCollection,
+		bson.M{},
+		options.Find().SetProjection(dashboardPlayerProjection()),
+	)
 	if err != nil {
 		return dashboardRawData{}, err
 	}
@@ -117,8 +132,24 @@ func (h *Handler) dashboardRawData(ctx context.Context) (dashboardRawData, error
 	}, nil
 }
 
-func findAllDashboard[T any](ctx context.Context, db *mongo.Database, collection string, filter any) ([]T, error) {
-	cursor, err := db.Collection(collection).Find(ctx, filter)
+func dashboardPlayerProjection() bson.D {
+	return bson.D{
+		{Key: "_id", Value: 1},
+		{Key: "nickname", Value: 1},
+		{Key: "team_id", Value: 1},
+		{Key: "avatar_url", Value: 1},
+		{Key: "role", Value: 1},
+	}
+}
+
+func findAllDashboard[T any](
+	ctx context.Context,
+	db *mongo.Database,
+	collection string,
+	filter any,
+	opts ...options.Lister[options.FindOptions],
+) ([]T, error) {
+	cursor, err := db.Collection(collection).Find(ctx, filter, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +168,7 @@ func findAllDashboard[T any](ctx context.Context, db *mongo.Database, collection
 }
 
 type dashboardPlayerStats struct {
-	Player              mongomodel.Player
+	Player              dashboardPlayer
 	Team                *DashboardTeamSummaryResponse
 	SitoneCount         int
 	ItemCount           int
@@ -329,7 +360,7 @@ func dashboardTeamsByID(teams []mongomodel.Team) map[string]mongomodel.Team {
 	return out
 }
 
-func dashboardTeamForPlayer(player mongomodel.Player, teamsByID map[string]mongomodel.Team) *DashboardTeamSummaryResponse {
+func dashboardTeamForPlayer(player dashboardPlayer, teamsByID map[string]mongomodel.Team) *DashboardTeamSummaryResponse {
 	if player.TeamID == "" {
 		return nil
 	}
@@ -531,7 +562,7 @@ func dashboardPlayerResponses(statsByPlayer map[string]*dashboardPlayerStats) []
 	return players
 }
 
-func dashboardPlayerName(player mongomodel.Player) string {
+func dashboardPlayerName(player dashboardPlayer) string {
 	if player.Nickname != "" {
 		return player.Nickname
 	}

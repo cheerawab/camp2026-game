@@ -1,13 +1,17 @@
 package matches
 
 import (
+	"crypto/rand"
 	"errors"
-	"math/rand"
+	"fmt"
+	"io"
+	"math/big"
 	"net/http"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 
+	"github.com/sitcon-tw/camp2026-game/internal/content"
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
 	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
 )
@@ -31,63 +35,77 @@ func (h *Handler) Ready(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	match, err := h.findMatchByID(r.Context(), chi.URLParam(r, "matchID"))
-	if err != nil {
+	matchID := chi.URLParam(r, "matchID")
+	var match mongomodel.Match
+	var events []string
+	var err error
+	for attempt := 0; attempt < matchSaveMaxAttempts; attempt++ {
+		match, err = h.findMatchByID(r.Context(), matchID)
+		if err != nil {
+			writeMatchProblem(w, r, err)
+			return
+		}
+		if !isParticipant(match, player.ID) {
+			httpx.WriteProblem(w, r, httpx.NotFound("match not found"))
+			return
+		}
+		if match.Status != mongomodel.MatchStatusWaiting {
+			httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "match is not waiting for ready"))
+			return
+		}
+
+		idx := playerIndex(match, player.ID)
+		if len(match.Players[idx].SitoneIDs) == 0 {
+			sitoneIDs, err := h.defaultSitoneLoadout(r.Context(), player)
+			if err != nil {
+				httpx.WriteProblem(w, r, httpx.InternalServerError("ready failed", "match_ready_default_loadout_failed", err))
+				return
+			}
+			match.Players[idx].SitoneIDs = sitoneIDs
+		}
+		if len(match.Players[idx].SitoneIDs) == 0 {
+			httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "select at least one sitone before ready"))
+			return
+		}
+		match.Players[idx].Ready = true
+		events = []string{"player_ready"}
+
+		if allPlayersReady(match) {
+			questionIDs, err := h.pickQuestionIDs()
+			if err != nil {
+				httpx.WriteProblem(w, r, httpx.InternalServerError("match start failed", "match_ready_pick_questions_failed", err))
+				return
+			}
+			now := time.Now()
+			match.Status = mongomodel.MatchStatusActive
+			match.Phase = mongomodel.MatchPhaseAnswering
+			match.QuestionIDs = questionIDs
+			match.CurrentQuestionIndex = 0
+			match.StartedAt = now
+			match.RoundStartedAt = now
+			match.RoundEndsAt = now.Add(roundDuration * time.Second)
+			if err := h.snapshotMatchBattleEffects(r.Context(), &match); err != nil {
+				httpx.WriteProblem(w, r, httpx.InternalServerError("match start failed", "match_ready_effects_failed", err))
+				return
+			}
+			if err := h.ensureCurrentRoundEliminations(r.Context(), &match); err != nil {
+				httpx.WriteProblem(w, r, httpx.InternalServerError("match start failed", "match_ready_eliminations_failed", err))
+				return
+			}
+			events = append(events, "round_started")
+		}
+
+		if err = h.saveMatch(r.Context(), &match); errors.Is(err, errMatchSaveConflict) {
+			continue
+		}
+		if err != nil {
+			httpx.WriteProblem(w, r, httpx.InternalServerError("ready failed", "match_ready_save_failed", err))
+			return
+		}
+		break
+	}
+	if errors.Is(err, errMatchSaveConflict) {
 		writeMatchProblem(w, r, err)
-		return
-	}
-	if !isParticipant(match, player.ID) {
-		httpx.WriteProblem(w, r, httpx.NotFound("match not found"))
-		return
-	}
-	if match.Status != mongomodel.MatchStatusWaiting {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "match is not waiting for ready"))
-		return
-	}
-
-	idx := playerIndex(match, player.ID)
-	if len(match.Players[idx].SitoneIDs) == 0 {
-		sitoneIDs, err := h.defaultSitoneLoadout(r.Context(), player)
-		if err != nil {
-			httpx.WriteProblem(w, r, httpx.InternalServerError("ready failed", "match_ready_default_loadout_failed", err))
-			return
-		}
-		match.Players[idx].SitoneIDs = sitoneIDs
-	}
-	if len(match.Players[idx].SitoneIDs) == 0 {
-		httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "select at least one sitone before ready"))
-		return
-	}
-	match.Players[idx].Ready = true
-	events := []string{"player_ready"}
-
-	if allPlayersReady(match) {
-		questionIDs, err := h.pickQuestionIDs()
-		if err != nil {
-			httpx.WriteProblem(w, r, httpx.InternalServerError("match start failed", "match_ready_pick_questions_failed", err))
-			return
-		}
-		now := time.Now()
-		match.Status = mongomodel.MatchStatusActive
-		match.Phase = mongomodel.MatchPhaseAnswering
-		match.QuestionIDs = questionIDs
-		match.CurrentQuestionIndex = 0
-		match.StartedAt = now
-		match.RoundStartedAt = now
-		match.RoundEndsAt = now.Add(roundDuration * time.Second)
-		if err := h.snapshotMatchBattleEffects(r.Context(), &match); err != nil {
-			httpx.WriteProblem(w, r, httpx.InternalServerError("match start failed", "match_ready_effects_failed", err))
-			return
-		}
-		if err := h.ensureCurrentRoundEliminations(r.Context(), &match); err != nil {
-			httpx.WriteProblem(w, r, httpx.InternalServerError("match start failed", "match_ready_eliminations_failed", err))
-			return
-		}
-		events = append(events, "round_started")
-	}
-
-	if err := h.saveMatch(r.Context(), match); err != nil {
-		httpx.WriteProblem(w, r, httpx.InternalServerError("ready failed", "match_ready_save_failed", err))
 		return
 	}
 
@@ -108,13 +126,26 @@ func (h *Handler) pickQuestionIDs() ([]string, error) {
 		return nil, httpx.InternalServerError("quiz questions are unavailable", "match_questions_insufficient", errors.New("not enough quiz questions"))
 	}
 
-	rand.Shuffle(len(questions), func(i, j int) {
-		questions[i], questions[j] = questions[j], questions[i]
-	})
+	if err := shuffleQuizQuestions(questions, rand.Reader); err != nil {
+		return nil, err
+	}
 
 	ids := make([]string, 0, matchQuestionCount)
 	for _, question := range questions[:matchQuestionCount] {
 		ids = append(ids, question.ID)
 	}
 	return ids, nil
+}
+
+func shuffleQuizQuestions(questions []content.QuizQuestion, random io.Reader) error {
+	for i := len(questions) - 1; i > 0; i-- {
+		n, err := rand.Int(random, big.NewInt(int64(i+1)))
+		if err != nil {
+			return fmt.Errorf("shuffle quiz questions: %w", err)
+		}
+
+		j := int(n.Int64())
+		questions[i], questions[j] = questions[j], questions[i]
+	}
+	return nil
 }

@@ -3,6 +3,7 @@ package fusions
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -16,7 +17,10 @@ import (
 	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
 )
 
-var errInsufficientMaterials = errors.New("insufficient fusion materials")
+var (
+	errInsufficientMaterials         = errors.New("insufficient fusion materials")
+	errFusionTransactionsUnavailable = errors.New("fusion requires transaction support")
+)
 
 // Create godoc
 // @Summary Create fusion
@@ -64,6 +68,15 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "insufficient fusion materials"))
 			return
 		}
+		if errors.Is(err, errFusionTransactionsUnavailable) {
+			httpx.WriteProblem(w, r, &httpx.Error{
+				Status: http.StatusServiceUnavailable,
+				Detail: errFusionTransactionsUnavailable.Error(),
+				Code:   "fusion_transactions_unavailable",
+				Cause:  err,
+			})
+			return
+		}
 		httpx.WriteProblem(w, r, httpx.InternalServerError("fusion failed", "fusion_create_failed", err))
 		return
 	}
@@ -86,12 +99,12 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) createFusion(ctx context.Context, playerID string, recipe content.FusionRecipe) (string, error) {
 	if h.client == nil {
-		return h.createFusionWithoutTransaction(ctx, playerID, recipe)
+		return "", errFusionTransactionsUnavailable
 	}
 
 	fusionID, err := h.createFusionWithTransaction(ctx, playerID, recipe)
 	if err != nil && transactionUnsupported(err) {
-		return h.createFusionWithoutTransaction(ctx, playerID, recipe)
+		return "", fmt.Errorf("%w: %w", errFusionTransactionsUnavailable, err)
 	}
 	return fusionID, err
 }
@@ -136,24 +149,6 @@ func (h *Handler) createFusionWithTransaction(ctx context.Context, playerID stri
 		return nil
 	})
 	if err != nil {
-		return "", err
-	}
-	return fusionID, nil
-}
-
-func (h *Handler) createFusionWithoutTransaction(ctx context.Context, playerID string, recipe content.FusionRecipe) (string, error) {
-	fusionID := newID("fusion")
-	for _, input := range recipe.Inputs {
-		if err := h.consumeComponent(ctx, playerID, input); err != nil {
-			return "", err
-		}
-	}
-	for _, output := range recipe.Outputs {
-		if err := h.grantComponent(ctx, playerID, output); err != nil {
-			return "", err
-		}
-	}
-	if err := h.insertFusionRecord(ctx, fusionID, playerID, recipe, time.Now()); err != nil {
 		return "", err
 	}
 	return fusionID, nil

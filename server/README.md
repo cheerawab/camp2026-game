@@ -94,6 +94,15 @@ local development. The backend Docker build also uses this value to download
 
 The app opens and pings MongoDB during startup. Collection indexes and seed data
 should be managed explicitly by setup scripts when those schemas are introduced.
+Open Power balance reads aggregate `open_power_records` by `player_id`; setup
+scripts should create this index before production load:
+
+```javascript
+db.open_power_records.createIndex(
+  { player_id: 1, created_at: -1 },
+  { name: "open_power_records_player_created_at_idx" }
+)
+```
 
 ## Handler Structure
 
