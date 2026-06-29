@@ -6,6 +6,7 @@ import (
 
 	"github.com/sitcon-tw/camp2026-game/internal/content"
 	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
+	"github.com/sitcon-tw/camp2026-game/internal/testcontent"
 )
 
 func TestScoreAnswer(t *testing.T) {
@@ -564,9 +565,5 @@ func TestBrokerPublishesEvents(t *testing.T) {
 func loadTestContent(t *testing.T) *content.Store {
 	t.Helper()
 
-	store, err := content.Load("../../../../content")
-	if err != nil {
-		t.Fatalf("load test content: %v", err)
-	}
-	return store
+	return testcontent.Load(t)
 }

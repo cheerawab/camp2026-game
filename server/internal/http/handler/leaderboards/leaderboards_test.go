@@ -6,6 +6,7 @@ import (
 	"github.com/sitcon-tw/camp2026-game/internal/content"
 	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
 	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
+	"github.com/sitcon-tw/camp2026-game/internal/testcontent"
 )
 
 func TestNormalizeScopeDefaultsToTeams(t *testing.T) {
@@ -202,10 +203,7 @@ func TestQuantityTotalsIgnoreNonPositiveQuantities(t *testing.T) {
 func loadTestContent(t *testing.T) *content.Store {
 	t.Helper()
 
-	store, err := content.Load("../../../../content")
-	if err != nil {
-		t.Fatalf("load test content: %v", err)
-	}
+	store := testcontent.Load(t)
 	if len(store.ListItems()) == 0 {
 		t.Fatalf("expected loaded item catalog")
 	}

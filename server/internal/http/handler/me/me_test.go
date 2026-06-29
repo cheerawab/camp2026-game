@@ -17,6 +17,7 @@ import (
 	"github.com/sitcon-tw/camp2026-game/internal/http/authctx"
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
 	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
+	"github.com/sitcon-tw/camp2026-game/internal/testcontent"
 )
 
 func TestQRCodeResponse(t *testing.T) {
@@ -449,11 +450,7 @@ func assertProblem(t *testing.T, res *httptest.ResponseRecorder, status int) htt
 func loadTestContent(t *testing.T) *content.Store {
 	t.Helper()
 
-	store, err := content.Load("../../../../content")
-	if err != nil {
-		t.Fatalf("load test content: %v", err)
-	}
-	return store
+	return testcontent.Load(t)
 }
 
 func testTime(t *testing.T, value string) time.Time {

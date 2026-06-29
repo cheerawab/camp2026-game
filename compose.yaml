@@ -28,6 +28,8 @@ services:
     build:
       context: .
       dockerfile: server/Dockerfile
+      args:
+        QUIZ_QUESTIONS_CSV_URL: ${QUIZ_QUESTIONS_CSV_URL:-}
     image: camp2026-game-api:production
     restart: unless-stopped
     environment:

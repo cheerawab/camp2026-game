@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/sitcon-tw/camp2026-game/internal/content"
+	"github.com/sitcon-tw/camp2026-game/internal/testcontent"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -108,9 +109,5 @@ func TestTransactionUnsupported(t *testing.T) {
 func loadTestContent(t *testing.T) *content.Store {
 	t.Helper()
 
-	store, err := content.Load("../../../../content")
-	if err != nil {
-		t.Fatalf("load test content: %v", err)
-	}
-	return store
+	return testcontent.Load(t)
 }

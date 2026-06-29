@@ -21,9 +21,9 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 
-	"github.com/sitcon-tw/camp2026-game/internal/content"
 	httpserver "github.com/sitcon-tw/camp2026-game/internal/http"
 	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
+	"github.com/sitcon-tw/camp2026-game/internal/testcontent"
 	"github.com/testcontainers/testcontainers-go"
 	tcmongodb "github.com/testcontainers/testcontainers-go/modules/mongodb"
 )
@@ -262,14 +262,9 @@ func seedPlayersAndTeams(t *testing.T, ctx context.Context, db *mongo.Database) 
 func newE2EServer(t *testing.T, mongoClient *mongo.Client, db *mongo.Database) *httptest.Server {
 	t.Helper()
 
-	store, err := content.Load("../../content")
-	if err != nil {
-		t.Fatalf("load content: %v", err)
-	}
-
 	router := httpserver.NewRouter(httpserver.Dependencies{
 		Log:         slog.New(slog.NewTextHandler(io.Discard, nil)),
-		Content:     store,
+		Content:     testcontent.Load(t),
 		MongoClient: mongoClient,
 		MongoDB:     db,
 	})

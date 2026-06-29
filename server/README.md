@@ -87,6 +87,11 @@ Runtime settings and secrets stay in env. Game content definitions such as
 sitones, items, crafting recipes, bingo boards, bingo missions, and world boss
 definitions should be loaded from TOML files, not env.
 
+Quiz questions are not committed to Git. Set `QUIZ_QUESTIONS_CSV_URL` in a
+private `.env` or deployment secret, then run `make fetch-quiz-questions` for
+local development. The backend Docker build also uses this value to download
+`content/quiz_questions.csv` into the image.
+
 The app opens and pings MongoDB during startup. Collection indexes and seed data
 should be managed explicitly by setup scripts when those schemas are introduced.
 

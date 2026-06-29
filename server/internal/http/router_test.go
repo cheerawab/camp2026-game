@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/sitcon-tw/camp2026-game/internal/content"
+	"github.com/sitcon-tw/camp2026-game/internal/testcontent"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
@@ -106,6 +107,7 @@ func TestStaffRoutesRequireAuthentication(t *testing.T) {
 	}{
 		{method: http.MethodGet, path: "/api/staff/players?query=Alice"},
 		{method: http.MethodPost, path: "/api/staff/rewards", body: strings.NewReader(`{"qrcodeToken":"qr-token-player-a","kind":"sitone","refId":"stone_engineering_base","quantity":1}`)},
+		{method: http.MethodPost, path: "/api/qr/resolve", body: strings.NewReader(`{"qrcodeToken":"qr-token-player-a"}`)},
 	} {
 		res := performRequest(router, route.method, route.path, route.body)
 		problem := assertProblem(t, res, http.StatusUnauthorized, "")
@@ -127,6 +129,7 @@ func TestStaffRoutesRequireDatabase(t *testing.T) {
 	}{
 		{method: http.MethodGet, path: "/api/staff/players?query=Alice"},
 		{method: http.MethodPost, path: "/api/staff/rewards", body: strings.NewReader(`{"qrcodeToken":"qr-token-player-a","kind":"sitone","refId":"stone_engineering_base","quantity":1}`)},
+		{method: http.MethodPost, path: "/api/qr/resolve", body: strings.NewReader(`{"qrcodeToken":"qr-token-player-a"}`)},
 	} {
 		res := performRequestWithCookie(router, route.method, route.path, route.body, "staff_token_2026")
 		problem := assertProblem(t, res, http.StatusServiceUnavailable, "")
@@ -493,7 +496,7 @@ func TestSwaggerJSON(t *testing.T) {
 	assertSwaggerSecurity(t, spec.Paths, "/auth/logout", http.MethodPost, true)
 	assertSwaggerSecurity(t, spec.Paths, "/catalog/items", http.MethodGet, false)
 	assertSwaggerSecurity(t, spec.Paths, "/catalog/sitones", http.MethodGet, false)
-	assertSwaggerSecurity(t, spec.Paths, "/qr/resolve", http.MethodPost, false)
+	assertSwaggerSecurity(t, spec.Paths, "/qr/resolve", http.MethodPost, true)
 	assertSwaggerSecurity(t, spec.Paths, "/fusions", http.MethodPost, true)
 	assertSwaggerSecurity(t, spec.Paths, "/fusions/recipes", http.MethodGet, true)
 	assertSwaggerSecurity(t, spec.Paths, "/leaderboards", http.MethodGet, true)
@@ -624,11 +627,7 @@ func assertProblem(t *testing.T, res *httptest.ResponseRecorder, status int, loc
 func loadTestContent(t *testing.T) *content.Store {
 	t.Helper()
 
-	store, err := content.Load("../../content")
-	if err != nil {
-		t.Fatalf("load test content: %v", err)
-	}
-	return store
+	return testcontent.Load(t)
 }
 
 func performRequest(handler http.Handler, method, path string, body *strings.Reader) *httptest.ResponseRecorder {

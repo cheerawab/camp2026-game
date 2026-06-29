@@ -25,9 +25,11 @@ tmp/
 .tmp/
 .cache/
 
+# Generated backend content
+server/content/quiz_questions.csv
+
 # Package manager caches
 .pnpm-store/
 .npm/
 .yarn/
 .pnp.*
-

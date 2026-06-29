@@ -1,4 +1,4 @@
-.PHONY: dev run seed import-staff import-staff-teams grant-initial-sitones generate swagger fmt test test-e2e tidy
+.PHONY: dev run seed import-staff import-staff-teams grant-initial-sitones fetch-quiz-questions generate swagger fmt test test-e2e tidy
 
 dev:
 	air
@@ -20,6 +20,9 @@ import-staff-teams:
 
 grant-initial-sitones:
 	go run ./cmd/grant-initial-sitones $(ARGS)
+
+fetch-quiz-questions:
+	sh ./scripts/fetch-quiz-questions.sh
 
 generate: swagger
 
