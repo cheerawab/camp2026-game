@@ -5,6 +5,8 @@ import * as React from "react"
 import { Avatar, AvatarImage } from "@/shared/ui/avatar"
 import { cn } from "@/shared/utils"
 
+const COMPUTER_AVATAR_SRC = "/game-icons/avatars/computer-opponent.png"
+
 function avatarSeed(playerId?: string, nickname?: string) {
   const id = playerId?.trim()
   if (id) return id
@@ -25,21 +27,27 @@ type PlayerAvatarProps = Omit<
 > & {
   playerId?: string
   nickname?: string
+  kind?: "human" | "computer"
   svgClassName?: string
 }
 
 export function PlayerAvatar({
   playerId,
   nickname,
+  kind,
   className,
   svgClassName,
   "aria-label": ariaLabel,
   ...props
 }: PlayerAvatarProps) {
   const seed = avatarSeed(playerId, nickname)
+  const isComputer = kind === "computer" || playerId === "computer"
   const avatarSrc = React.useMemo(
-    () => svgDataUrl(createAvatar(thumbs, { seed }).toString()),
-    [seed],
+    () =>
+      isComputer
+        ? COMPUTER_AVATAR_SRC
+        : svgDataUrl(createAvatar(thumbs, { seed }).toString()),
+    [isComputer, seed],
   )
 
   return (
@@ -55,10 +63,7 @@ export function PlayerAvatar({
         alt=""
         aria-hidden="true"
         draggable={false}
-        className={cn(
-          "block size-full object-cover",
-          svgClassName,
-        )}
+        className={cn("block size-full object-cover", svgClassName)}
       />
     </Avatar>
   )

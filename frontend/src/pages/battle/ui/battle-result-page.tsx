@@ -111,6 +111,7 @@ export function BattleResultPage() {
                   <PlayerAvatar
                     playerId={player.playerId}
                     nickname={player.nickname}
+                    kind={player.kind}
                     className="border-ink mx-auto size-14 rounded-[20px] border-2"
                   />
                   <span className="text-center">{player.nickname}</span>
@@ -151,6 +152,7 @@ export function BattleResultPage() {
                   <PlayerAvatar
                     playerId={player.playerId}
                     nickname={player.nickname}
+                    kind={player.kind}
                     className="border-ink size-7 rounded-[10px] border"
                   />
                   <span>{player.nickname}</span>
@@ -188,6 +190,7 @@ export function BattleResultPage() {
                   <PlayerAvatar
                     playerId={player.playerId}
                     nickname={player.nickname}
+                    kind={player.kind}
                     className="border-ink size-7 rounded-[10px] border"
                   />
                   <span className="font-bold">{player.nickname}</span>

@@ -453,6 +453,7 @@ export function BattleWaitingRoomPage() {
             key={player.playerId}
             playerId={player.playerId}
             name={player.nickname}
+            kind={player.kind}
             team={
               player.kind === "computer"
                 ? "電腦對手"

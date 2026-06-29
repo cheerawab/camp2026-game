@@ -6,6 +6,7 @@ import { Check, Loader2 } from "lucide-react"
 type BattleWaitingPlayerCardType = {
   playerId: string
   name: string
+  kind?: "human" | "computer"
   team: string
   ready: boolean
   loadoutCount?: number
@@ -14,6 +15,7 @@ type BattleWaitingPlayerCardType = {
 export function BattleWaitingPlayerCard({
   playerId,
   name,
+  kind,
   team,
   ready,
   loadoutCount = 0,
@@ -24,6 +26,7 @@ export function BattleWaitingPlayerCard({
         <PlayerAvatar
           playerId={playerId}
           nickname={name}
+          kind={kind}
           className="bg-pebble-spark border-ink size-20 rounded-[22px] border-2"
         />
         <div className="flex flex-col items-center justify-center">
