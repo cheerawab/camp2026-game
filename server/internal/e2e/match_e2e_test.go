@@ -412,17 +412,17 @@ func assertShopPurchaseFlow(t *testing.T, ctx context.Context, db *mongo.Databas
 	body := getJSON(t, serverURL+"/api/shop/items", []*http.Cookie{cookie}, http.StatusOK)
 	var list shopItemList
 	decodeJSON(t, body, &list)
-	if len(list.Items) != 33 {
-		t.Fatalf("expected 33 shop items, got %#v", list.Items)
+	if len(list.Items) != 49 {
+		t.Fatalf("expected 49 shop items, got %#v", list.Items)
 	}
-	if list.Items[0].ID != "item_adventure_backpack" || list.Items[0].PriceOpenPower != 50 {
+	if list.Items[0].ID != "item_adventure_backpack" || list.Items[0].PriceOpenPower != 150 {
 		t.Fatalf("unexpected first shop item: %#v", list.Items[0])
 	}
 
 	body = getJSON(t, serverURL+"/api/shop/items/item_adventure_backpack", []*http.Cookie{cookie}, http.StatusOK)
 	var detail shopItemDetail
 	decodeJSON(t, body, &detail)
-	if detail.Item.ID != "item_adventure_backpack" || detail.Item.PriceOpenPower != 50 {
+	if detail.Item.ID != "item_adventure_backpack" || detail.Item.PriceOpenPower != 150 {
 		t.Fatalf("unexpected shop item detail: %#v", detail)
 	}
 
@@ -434,8 +434,8 @@ func assertShopPurchaseFlow(t *testing.T, ctx context.Context, db *mongo.Databas
 	if purchase.PurchaseID == "" ||
 		purchase.ItemID != "item_adventure_backpack" ||
 		purchase.Quantity != 1 ||
-		purchase.PriceOpenPower != 50 ||
-		purchase.OpenPower != 450 {
+		purchase.PriceOpenPower != 150 ||
+		purchase.OpenPower != 350 {
 		t.Fatalf("unexpected purchase response: %#v", purchase)
 	}
 
@@ -445,7 +445,7 @@ func assertShopPurchaseFlow(t *testing.T, ctx context.Context, db *mongo.Databas
 		Decode(&storedPurchase); err != nil {
 		t.Fatalf("find shop purchase: %v", err)
 	}
-	if storedPurchase.PlayerID != playerAID || storedPurchase.ItemID != "item_adventure_backpack" || storedPurchase.PriceOpenPower != 50 {
+	if storedPurchase.PlayerID != playerAID || storedPurchase.ItemID != "item_adventure_backpack" || storedPurchase.PriceOpenPower != 150 {
 		t.Fatalf("unexpected stored purchase: %#v", storedPurchase)
 	}
 
@@ -455,7 +455,7 @@ func assertShopPurchaseFlow(t *testing.T, ctx context.Context, db *mongo.Databas
 		Decode(&deduction); err != nil {
 		t.Fatalf("find open power deduction: %v", err)
 	}
-	if deduction.PlayerID != playerAID || deduction.Amount != -50 {
+	if deduction.PlayerID != playerAID || deduction.Amount != -150 {
 		t.Fatalf("unexpected open power deduction: %#v", deduction)
 	}
 

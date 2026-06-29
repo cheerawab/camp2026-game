@@ -272,6 +272,8 @@ const MatchPlayerSchema = z.object({
       dropped: z.boolean(),
       itemId: z.string().optional(),
       itemName: z.string().optional(),
+      sitoneId: z.string().optional(),
+      sitoneName: z.string().optional(),
       quantity: z.number().optional(),
       dropRate: z.number(),
     })

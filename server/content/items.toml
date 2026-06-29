@@ -8,7 +8,7 @@ icon_path = "/game-icons/items/item_adventure_backpack.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_black_box_sticker"
@@ -20,7 +20,7 @@ icon_path = "/game-icons/items/item_black_box_sticker.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_booth_sticker"
@@ -32,7 +32,7 @@ icon_path = "/game-icons/items/item_booth_sticker.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_canvas_code"
@@ -44,7 +44,7 @@ icon_path = "/game-icons/items/item_canvas_code.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_cat_paw_print"
@@ -53,10 +53,10 @@ type = "material"
 rarity = "common"
 description = "貓掌印，可用於小石合成。"
 icon_path = "/game-icons/items/item_cat_paw_print.png"
-source = "drop"
-purchasable = false
+source = "shop"
+purchasable = true
 enabled = true
-price_open_power = 0
+price_open_power = 150
 
 [[items]]
 id = "item_charter_draft"
@@ -68,7 +68,7 @@ icon_path = "/game-icons/items/item_charter_draft.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_clean_spec"
@@ -77,10 +77,10 @@ type = "material"
 rarity = "common"
 description = "整潔規格書，可用於小石合成。"
 icon_path = "/game-icons/items/item_clean_spec.png"
-source = "drop"
-purchasable = false
+source = "shop"
+purchasable = true
 enabled = true
-price_open_power = 0
+price_open_power = 150
 
 [[items]]
 id = "item_cluster_core"
@@ -89,10 +89,10 @@ type = "material"
 rarity = "common"
 description = "叢集核心，可用於小石合成。"
 icon_path = "/game-icons/items/item_cluster_core.png"
-source = "drop"
-purchasable = false
+source = "shop"
+purchasable = true
 enabled = true
-price_open_power = 0
+price_open_power = 150
 
 [[items]]
 id = "item_container_sticker"
@@ -104,7 +104,7 @@ icon_path = "/game-icons/items/item_container_sticker.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_contribution_sticker"
@@ -116,7 +116,7 @@ icon_path = "/game-icons/items/item_contribution_sticker.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_espresso_cup"
@@ -128,7 +128,7 @@ icon_path = "/game-icons/items/item_espresso_cup.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_essence_timer"
@@ -137,10 +137,10 @@ type = "material"
 rarity = "common"
 description = "精華計時器，可用於小石合成。"
 icon_path = "/game-icons/items/item_essence_timer.png"
-source = "drop"
-purchasable = false
+source = "shop"
+purchasable = true
 enabled = true
-price_open_power = 0
+price_open_power = 150
 
 [[items]]
 id = "item_finite_label"
@@ -152,7 +152,7 @@ icon_path = "/game-icons/items/item_finite_label.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_human_label"
@@ -161,10 +161,10 @@ type = "material"
 rarity = "common"
 description = "人類標籤，可用於小石合成。"
 icon_path = "/game-icons/items/item_human_label.png"
-source = "drop"
-purchasable = false
+source = "shop"
+purchasable = true
 enabled = true
-price_open_power = 0
+price_open_power = 150
 
 [[items]]
 id = "item_infinite_star_map"
@@ -173,10 +173,10 @@ type = "material"
 rarity = "common"
 description = "無限星圖，可用於小石合成。"
 icon_path = "/game-icons/items/item_infinite_star_map.png"
-source = "drop"
-purchasable = false
+source = "shop"
+purchasable = true
 enabled = true
-price_open_power = 0
+price_open_power = 150
 
 [[items]]
 id = "item_lightning_talk_script"
@@ -185,10 +185,10 @@ type = "material"
 rarity = "common"
 description = "閃電講稿，可用於小石合成。"
 icon_path = "/game-icons/items/item_lightning_talk_script.png"
-source = "drop"
-purchasable = false
+source = "shop"
+purchasable = true
 enabled = true
-price_open_power = 0
+price_open_power = 150
 
 [[items]]
 id = "item_maze_map"
@@ -200,7 +200,7 @@ icon_path = "/game-icons/items/item_maze_map.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_microphone"
@@ -212,7 +212,7 @@ icon_path = "/game-icons/items/item_microphone.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_mission_map"
@@ -221,10 +221,10 @@ type = "material"
 rarity = "common"
 description = "任務地圖，可用於小石合成。"
 icon_path = "/game-icons/items/item_mission_map.png"
-source = "drop"
-purchasable = false
+source = "shop"
+purchasable = true
 enabled = true
-price_open_power = 0
+price_open_power = 150
 
 [[items]]
 id = "item_open_source_roadmap"
@@ -233,10 +233,10 @@ type = "material"
 rarity = "common"
 description = "開源路線圖，可用於小石合成。"
 icon_path = "/game-icons/items/item_open_source_roadmap.png"
-source = "drop"
-purchasable = false
+source = "shop"
+purchasable = true
 enabled = true
-price_open_power = 0
+price_open_power = 150
 
 [[items]]
 id = "item_pixel_paint"
@@ -245,10 +245,10 @@ type = "material"
 rarity = "common"
 description = "像素顏料，可用於小石合成。"
 icon_path = "/game-icons/items/item_pixel_paint.png"
-source = "drop"
-purchasable = false
+source = "shop"
+purchasable = true
 enabled = true
-price_open_power = 0
+price_open_power = 150
 
 [[items]]
 id = "item_polaroid_film"
@@ -257,10 +257,10 @@ type = "material"
 rarity = "common"
 description = "拍立得底片，可用於小石合成。"
 icon_path = "/game-icons/items/item_polaroid_film.png"
-source = "drop"
-purchasable = false
+source = "shop"
+purchasable = true
 enabled = true
-price_open_power = 0
+price_open_power = 150
 
 [[items]]
 id = "item_predecessor_notes"
@@ -269,10 +269,10 @@ type = "material"
 rarity = "common"
 description = "前人筆記，可用於小石合成。"
 icon_path = "/game-icons/items/item_predecessor_notes.png"
-source = "drop"
-purchasable = false
+source = "shop"
+purchasable = true
 enabled = true
-price_open_power = 0
+price_open_power = 150
 
 [[items]]
 id = "item_prompt_card"
@@ -284,7 +284,7 @@ icon_path = "/game-icons/items/item_prompt_card.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_public_key_tag"
@@ -296,7 +296,7 @@ icon_path = "/game-icons/items/item_public_key_tag.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_ribbon"
@@ -308,7 +308,7 @@ icon_path = "/game-icons/items/item_ribbon.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_shared_notes_link"
@@ -317,10 +317,10 @@ type = "material"
 rarity = "common"
 description = "共筆連結，可用於小石合成。"
 icon_path = "/game-icons/items/item_shared_notes_link.png"
-source = "both"
+source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_signature_inkpad"
@@ -329,10 +329,10 @@ type = "material"
 rarity = "common"
 description = "簽章印泥，可用於小石合成。"
 icon_path = "/game-icons/items/item_signature_inkpad.png"
-source = "drop"
-purchasable = false
+source = "shop"
+purchasable = true
 enabled = true
-price_open_power = 0
+price_open_power = 150
 
 [[items]]
 id = "item_star_village_badge"
@@ -341,10 +341,10 @@ type = "material"
 rarity = "common"
 description = "星手村徽章，可用於小石合成。"
 icon_path = "/game-icons/items/item_star_village_badge.png"
-source = "both"
+source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_star_village_signpost"
@@ -353,10 +353,10 @@ type = "material"
 rarity = "common"
 description = "星手村路標，可用於小石合成。"
 icon_path = "/game-icons/items/item_star_village_signpost.png"
-source = "drop"
-purchasable = false
+source = "shop"
+purchasable = true
 enabled = true
-price_open_power = 0
+price_open_power = 150
 
 [[items]]
 id = "item_sticky_note"
@@ -368,7 +368,7 @@ icon_path = "/game-icons/items/item_sticky_note.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_student_community_card"
@@ -380,7 +380,7 @@ icon_path = "/game-icons/items/item_student_community_card.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_system_docs"
@@ -389,10 +389,10 @@ type = "material"
 rarity = "common"
 description = "系統文件，可用於小石合成。"
 icon_path = "/game-icons/items/item_system_docs.png"
-source = "drop"
-purchasable = false
+source = "shop"
+purchasable = true
 enabled = true
-price_open_power = 0
+price_open_power = 150
 
 [[items]]
 id = "item_terminal_cursor"
@@ -404,7 +404,7 @@ icon_path = "/game-icons/items/item_terminal_cursor.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_test_sticker"
@@ -416,7 +416,7 @@ icon_path = "/game-icons/items/item_test_sticker.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_toolbox_key"
@@ -425,10 +425,10 @@ type = "material"
 rarity = "common"
 description = "工具箱鑰匙，可用於小石合成。"
 icon_path = "/game-icons/items/item_toolbox_key.png"
-source = "drop"
-purchasable = false
+source = "shop"
+purchasable = true
 enabled = true
-price_open_power = 0
+price_open_power = 150
 
 [[items]]
 id = "item_tour_flag"
@@ -440,7 +440,7 @@ icon_path = "/game-icons/items/item_tour_flag.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_transparent_proposal"
@@ -449,10 +449,10 @@ type = "material"
 rarity = "common"
 description = "透明提案，可用於小石合成。"
 icon_path = "/game-icons/items/item_transparent_proposal.png"
-source = "both"
+source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_venue_route"
@@ -461,10 +461,10 @@ type = "material"
 rarity = "common"
 description = "會場路線，可用於小石合成。"
 icon_path = "/game-icons/items/item_venue_route.png"
-source = "both"
+source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_wooden_abacus"
@@ -476,19 +476,19 @@ icon_path = "/game-icons/items/item_wooden_abacus.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 50
+price_open_power = 150
 
 [[items]]
 id = "item_charm_connection"
 name = "連線成功御守"
 type = "charm"
 rarity = "rare"
-description = "永久生效。帶探索型小石上場時，對戰素材掉落率額外提高 15%。"
+description = "永久生效。帶探索型小石上場時，對戰小石掉落率額外提高 15%。"
 icon_path = "/game-icons/items/item_charm_connection.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 200
+price_open_power = 800
 
 [[items]]
 id = "item_charm_debug"
@@ -500,7 +500,7 @@ icon_path = "/game-icons/items/item_charm_debug.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 200
+price_open_power = 800
 
 [[items]]
 id = "item_charm_all_nighter"
@@ -512,7 +512,7 @@ icon_path = "/game-icons/items/item_charm_all_nighter.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 200
+price_open_power = 800
 
 [[items]]
 id = "item_charm_success"
@@ -524,7 +524,7 @@ icon_path = "/game-icons/items/item_charm_success.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 200
+price_open_power = 800
 
 [[items]]
 id = "item_charm_harmony"
@@ -536,7 +536,7 @@ icon_path = "/game-icons/items/item_charm_harmony.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 200
+price_open_power = 800
 
 [[items]]
 id = "item_postcard_sitcon2024"
@@ -548,7 +548,7 @@ icon_path = "/game-icons/items/item_postcard_sitcon2024.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 80
+price_open_power = 300
 
 [[items]]
 id = "item_postcard_sitcon2026"
@@ -560,7 +560,7 @@ icon_path = "/game-icons/items/item_postcard_sitcon2026.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 80
+price_open_power = 300
 
 [[items]]
 id = "item_postcard_star_village"
@@ -572,7 +572,7 @@ icon_path = "/game-icons/items/item_postcard_star_village.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 80
+price_open_power = 300
 
 [[items]]
 id = "item_tshirt_2026"
@@ -584,4 +584,4 @@ icon_path = "/game-icons/items/item_tshirt_2026.png"
 source = "shop"
 purchasable = true
 enabled = true
-price_open_power = 300
+price_open_power = 1200

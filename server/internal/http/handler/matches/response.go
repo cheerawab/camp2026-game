@@ -104,9 +104,11 @@ type MatchAnswerResponse struct {
 }
 
 type MatchItemDropResponse struct {
-	Dropped  bool   `json:"dropped" example:"true"`
-	ItemID   string `json:"itemId,omitempty" example:"item_clean_spec"`
-	ItemName string `json:"itemName,omitempty" example:"整潔規格書"`
-	Quantity int    `json:"quantity,omitempty" example:"1"`
-	DropRate int    `json:"dropRate" example:"60"`
+	Dropped    bool   `json:"dropped" example:"true"`
+	ItemID     string `json:"itemId,omitempty"`
+	ItemName   string `json:"itemName,omitempty"`
+	SitoneID   string `json:"sitoneId,omitempty" example:"stone_explorer_base"`
+	SitoneName string `json:"sitoneName,omitempty" example:"探索型小石"`
+	Quantity   int    `json:"quantity,omitempty" example:"1"`
+	DropRate   int    `json:"dropRate" example:"25"`
 }

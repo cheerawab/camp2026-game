@@ -122,8 +122,8 @@ func TestBattleEffectsApplyCaps(t *testing.T) {
 	if err != nil {
 		t.Fatalf("battle effects: %v", err)
 	}
-	if effects.MaterialDropBonusPercent != 35 {
-		t.Fatalf("expected material drop cap 35, got %#v", effects)
+	if effects.MaterialDropBonusPercent != 15 {
+		t.Fatalf("expected material drop cap 15, got %#v", effects)
 	}
 
 	effects, err = handler.battleEffects(t.Context(), "P1", []string{
@@ -223,11 +223,47 @@ func TestMatchMaterialDropRateUsesWinnerAndLoserBaseRates(t *testing.T) {
 		},
 	}
 
-	if got := matchMaterialDropRate(match, match.Players[0], battleEffects{MaterialDropBonusPercent: 35}); got != 80 {
-		t.Fatalf("expected winner drop rate 80, got %d", got)
+	if got := matchMaterialDropRate(match, match.Players[0], battleEffects{MaterialDropBonusPercent: 15}); got != 40 {
+		t.Fatalf("expected winner drop rate 40, got %d", got)
 	}
-	if got := matchMaterialDropRate(match, match.Players[1], battleEffects{MaterialDropBonusPercent: 12}); got != 37 {
-		t.Fatalf("expected loser drop rate 37, got %d", got)
+	if got := matchMaterialDropRate(match, match.Players[1], battleEffects{MaterialDropBonusPercent: 12}); got != 27 {
+		t.Fatalf("expected loser drop rate 27, got %d", got)
+	}
+}
+
+func TestLeastOwnedSitoneDropPoolPrefersLowestQuantity(t *testing.T) {
+	pool := []content.Sitone{
+		{ID: "stone_a"},
+		{ID: "stone_b"},
+		{ID: "stone_c"},
+	}
+	owned := map[string]int{
+		"stone_a": 2,
+		"stone_b": 0,
+		"stone_c": 1,
+	}
+
+	got := leastOwnedSitoneDropPool(pool, owned)
+	if len(got) != 1 || got[0].ID != "stone_b" {
+		t.Fatalf("expected least-owned stone_b, got %#v", got)
+	}
+}
+
+func TestLeastOwnedSitoneDropPoolIncludesTiedLowestQuantity(t *testing.T) {
+	pool := []content.Sitone{
+		{ID: "stone_a"},
+		{ID: "stone_b"},
+		{ID: "stone_c"},
+	}
+	owned := map[string]int{
+		"stone_a": 1,
+		"stone_b": 0,
+		"stone_c": 0,
+	}
+
+	got := leastOwnedSitoneDropPool(pool, owned)
+	if len(got) != 2 || got[0].ID != "stone_b" || got[1].ID != "stone_c" {
+		t.Fatalf("expected tied lowest stones b and c, got %#v", got)
 	}
 }
 

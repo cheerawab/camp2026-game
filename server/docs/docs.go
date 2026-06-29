@@ -15,6 +15,44 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/admin/dashboard": {
+            "get": {
+                "description": "Returns an admin-only operational dashboard with player, inventory, match, and activity statistics.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Get admin game dashboard",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/admin.DashboardResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/login": {
             "post": {
                 "description": "Uses the ADMIN_PASSWORD environment variable to create an admin session cookie.",
@@ -1948,6 +1986,516 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "admin.DashboardInventoryEntryResponse": {
+            "type": "object",
+            "properties": {
+                "catalogMissing": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "iconPath": {
+                    "type": "string",
+                    "example": "/game-icons/stones/basic_blue.png"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "stone_engineering_base"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "工程型小石"
+                },
+                "ownerCount": {
+                    "type": "integer",
+                    "example": 18
+                },
+                "quantity": {
+                    "type": "integer",
+                    "example": 30
+                },
+                "rarity": {
+                    "type": "string",
+                    "example": "base"
+                },
+                "source": {
+                    "type": "string",
+                    "example": "drop"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "engineering"
+                }
+            }
+        },
+        "admin.DashboardInventoryResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/admin.DashboardInventoryEntryResponse"
+                    }
+                },
+                "sitones": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/admin.DashboardInventoryEntryResponse"
+                    }
+                }
+            }
+        },
+        "admin.DashboardMatchesResponse": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "integer",
+                    "example": 4
+                },
+                "answerAccuracy": {
+                    "type": "integer",
+                    "example": 75
+                },
+                "answerCount": {
+                    "type": "integer",
+                    "example": 240
+                },
+                "averageElapsedMillis": {
+                    "type": "number",
+                    "example": 4200.5
+                },
+                "averageScore": {
+                    "type": "number",
+                    "example": 88.2
+                },
+                "completed": {
+                    "type": "integer",
+                    "example": 58
+                },
+                "computer": {
+                    "type": "integer",
+                    "example": 23
+                },
+                "correctAnswerCount": {
+                    "type": "integer",
+                    "example": 180
+                },
+                "dropAttempts": {
+                    "type": "integer",
+                    "example": 114
+                },
+                "dropRate": {
+                    "type": "integer",
+                    "example": 34
+                },
+                "dropSuccesses": {
+                    "type": "integer",
+                    "example": 39
+                },
+                "pvp": {
+                    "type": "integer",
+                    "example": 41
+                },
+                "recent": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/admin.DashboardRecentMatchResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 64
+                },
+                "waiting": {
+                    "type": "integer",
+                    "example": 2
+                }
+            }
+        },
+        "admin.DashboardPlayerRankResponse": {
+            "type": "object",
+            "properties": {
+                "answerAccuracy": {
+                    "type": "integer",
+                    "example": 78
+                },
+                "answerCount": {
+                    "type": "integer",
+                    "example": 40
+                },
+                "avatarUrl": {
+                    "type": "string",
+                    "example": "https://example.test/avatar/alice.png"
+                },
+                "completedMatchCount": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "correctAnswerCount": {
+                    "type": "integer",
+                    "example": 31
+                },
+                "itemCount": {
+                    "type": "integer",
+                    "example": 6
+                },
+                "lastActivityAt": {
+                    "type": "string"
+                },
+                "matchCount": {
+                    "type": "integer",
+                    "example": 12
+                },
+                "nickname": {
+                    "type": "string",
+                    "example": "Alice"
+                },
+                "openPower": {
+                    "type": "integer",
+                    "example": 1188
+                },
+                "playerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                },
+                "rank": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "score": {
+                    "type": "integer",
+                    "example": 6200
+                },
+                "sitoneCount": {
+                    "type": "integer",
+                    "example": 18
+                },
+                "team": {
+                    "$ref": "#/definitions/admin.DashboardTeamSummaryResponse"
+                }
+            }
+        },
+        "admin.DashboardPlayerResponse": {
+            "type": "object",
+            "properties": {
+                "answerAccuracy": {
+                    "type": "integer",
+                    "example": 78
+                },
+                "answerCount": {
+                    "type": "integer",
+                    "example": 40
+                },
+                "avatarUrl": {
+                    "type": "string",
+                    "example": "https://example.test/avatar/alice.png"
+                },
+                "completedMatchCount": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "correctAnswerCount": {
+                    "type": "integer",
+                    "example": 31
+                },
+                "itemCount": {
+                    "type": "integer",
+                    "example": 6
+                },
+                "lastActivityAt": {
+                    "type": "string"
+                },
+                "matchCount": {
+                    "type": "integer",
+                    "example": 12
+                },
+                "nickname": {
+                    "type": "string",
+                    "example": "Alice"
+                },
+                "openPower": {
+                    "type": "integer",
+                    "example": 1188
+                },
+                "playerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                },
+                "rank": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "role": {
+                    "type": "string",
+                    "example": "player"
+                },
+                "score": {
+                    "type": "integer",
+                    "example": 6200
+                },
+                "sitoneCount": {
+                    "type": "integer",
+                    "example": 18
+                },
+                "team": {
+                    "$ref": "#/definitions/admin.DashboardTeamSummaryResponse"
+                }
+            }
+        },
+        "admin.DashboardRecentMatchResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "example": "842913"
+                },
+                "completedAt": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "matchId": {
+                    "type": "string",
+                    "example": "M8RXP2"
+                },
+                "mode": {
+                    "type": "string",
+                    "example": "pvp"
+                },
+                "playerCount": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "startedAt": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "completed"
+                },
+                "topScore": {
+                    "type": "integer",
+                    "example": 600
+                },
+                "winnerNickname": {
+                    "type": "string",
+                    "example": "Alice"
+                },
+                "winnerPlayerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                }
+            }
+        },
+        "admin.DashboardResponse": {
+            "type": "object",
+            "properties": {
+                "generatedAt": {
+                    "type": "string"
+                },
+                "inventory": {
+                    "$ref": "#/definitions/admin.DashboardInventoryResponse"
+                },
+                "matches": {
+                    "$ref": "#/definitions/admin.DashboardMatchesResponse"
+                },
+                "players": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/admin.DashboardPlayerResponse"
+                    }
+                },
+                "summary": {
+                    "$ref": "#/definitions/admin.DashboardSummaryResponse"
+                },
+                "teams": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/admin.DashboardTeamResponse"
+                    }
+                },
+                "topPlayers": {
+                    "$ref": "#/definitions/admin.DashboardTopPlayersResponse"
+                }
+            }
+        },
+        "admin.DashboardSummaryResponse": {
+            "type": "object",
+            "properties": {
+                "activeMatches": {
+                    "type": "integer",
+                    "example": 4
+                },
+                "answerAccuracy": {
+                    "type": "integer",
+                    "example": 75
+                },
+                "answerCount": {
+                    "type": "integer",
+                    "example": 240
+                },
+                "completedMatches": {
+                    "type": "integer",
+                    "example": 58
+                },
+                "correctAnswerCount": {
+                    "type": "integer",
+                    "example": 180
+                },
+                "droppedItemCount": {
+                    "type": "integer",
+                    "example": 39
+                },
+                "fusionCount": {
+                    "type": "integer",
+                    "example": 21
+                },
+                "itemDropCount": {
+                    "type": "integer",
+                    "example": 114
+                },
+                "playerCount": {
+                    "type": "integer",
+                    "example": 120
+                },
+                "shopPurchaseCount": {
+                    "type": "integer",
+                    "example": 44
+                },
+                "staffCount": {
+                    "type": "integer",
+                    "example": 18
+                },
+                "staffRewardCount": {
+                    "type": "integer",
+                    "example": 88
+                },
+                "teamCount": {
+                    "type": "integer",
+                    "example": 12
+                },
+                "totalItems": {
+                    "type": "integer",
+                    "example": 188
+                },
+                "totalMatches": {
+                    "type": "integer",
+                    "example": 64
+                },
+                "totalOpenPower": {
+                    "type": "integer",
+                    "example": 98220
+                },
+                "totalSitones": {
+                    "type": "integer",
+                    "example": 420
+                },
+                "ungroupedPlayerCount": {
+                    "type": "integer",
+                    "example": 3
+                },
+                "waitingMatches": {
+                    "type": "integer",
+                    "example": 2
+                }
+            }
+        },
+        "admin.DashboardTeamResponse": {
+            "type": "object",
+            "properties": {
+                "averageItems": {
+                    "type": "number",
+                    "example": 4.4
+                },
+                "averageOpenPower": {
+                    "type": "number",
+                    "example": 2400
+                },
+                "averageSitones": {
+                    "type": "number",
+                    "example": 12
+                },
+                "itemCount": {
+                    "type": "integer",
+                    "example": 44
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Blue Team"
+                },
+                "openPower": {
+                    "type": "integer",
+                    "example": 24000
+                },
+                "playerCount": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "rank": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "sitoneCount": {
+                    "type": "integer",
+                    "example": 120
+                },
+                "teamId": {
+                    "type": "string",
+                    "example": "8M4RXP"
+                },
+                "topPlayer": {
+                    "$ref": "#/definitions/admin.DashboardPlayerRankResponse"
+                }
+            }
+        },
+        "admin.DashboardTeamSummaryResponse": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "Blue Team"
+                },
+                "teamId": {
+                    "type": "string",
+                    "example": "8M4RXP"
+                }
+            }
+        },
+        "admin.DashboardTopPlayersResponse": {
+            "type": "object",
+            "properties": {
+                "byAccuracy": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/admin.DashboardPlayerRankResponse"
+                    }
+                },
+                "byItems": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/admin.DashboardPlayerRankResponse"
+                    }
+                },
+                "byOpenPower": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/admin.DashboardPlayerRankResponse"
+                    }
+                },
+                "byScore": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/admin.DashboardPlayerRankResponse"
+                    }
+                },
+                "bySitones": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/admin.DashboardPlayerRankResponse"
+                    }
+                }
+            }
+        },
         "admin.LoginRequest": {
             "type": "object",
             "required": [
@@ -2931,23 +3479,29 @@ const docTemplate = `{
             "properties": {
                 "dropRate": {
                     "type": "integer",
-                    "example": 60
+                    "example": 25
                 },
                 "dropped": {
                     "type": "boolean",
                     "example": true
                 },
                 "itemId": {
-                    "type": "string",
-                    "example": "item_clean_spec"
+                    "type": "string"
                 },
                 "itemName": {
-                    "type": "string",
-                    "example": "整潔規格書"
+                    "type": "string"
                 },
                 "quantity": {
                     "type": "integer",
                     "example": 1
+                },
+                "sitoneId": {
+                    "type": "string",
+                    "example": "stone_explorer_base"
+                },
+                "sitoneName": {
+                    "type": "string",
+                    "example": "探索型小石"
                 }
             }
         },

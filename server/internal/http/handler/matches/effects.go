@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	materialDropBonusCap    = 35
+	materialDropBonusCap    = 15
 	answerScoreBonusCap     = 30
 	openPowerBonusCap       = 40
 	eliminateWrongChanceCap = 50

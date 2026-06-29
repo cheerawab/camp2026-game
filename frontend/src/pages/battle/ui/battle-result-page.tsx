@@ -173,7 +173,7 @@ export function BattleResultPage() {
       {dropPlayers.length > 0 ? (
         <Card>
           <CardHeader>
-            <CardTitle>素材掉落</CardTitle>
+            <CardTitle>小石掉落</CardTitle>
             <CardDescription>勝敗雙方都會依掉落率結算一次。</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-2">
@@ -196,8 +196,8 @@ export function BattleResultPage() {
                   </span>
                   <span className="col-span-2 col-start-2 text-sm font-black">
                     {drop.dropped
-                      ? `獲得 ${drop.itemName ?? drop.itemId} x${drop.quantity ?? 1}`
-                      : "沒有掉落素材"}
+                      ? `獲得 ${drop.sitoneName ?? drop.sitoneId ?? drop.itemName ?? drop.itemId} x${drop.quantity ?? 1}`
+                      : "沒有掉落小石"}
                   </span>
                 </div>
               )

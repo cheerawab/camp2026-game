@@ -10,7 +10,7 @@ ability_name = "拾荒直覺"
 ability_kind = "material_drop_rate"
 ability_value = 8
 ability_count = 0
-ability_description = "對戰素材掉落率提高 8%。"
+ability_description = "對戰小石掉落率提高 8%。"
 
 [[sitones]]
 id = "stone_2019_unboxed_algorithm"
@@ -24,7 +24,7 @@ ability_name = "拾荒直覺"
 ability_kind = "material_drop_rate"
 ability_value = 12
 ability_count = 0
-ability_description = "對戰素材掉落率提高 12%。"
+ability_description = "對戰小石掉落率提高 12%。"
 
 [[sitones]]
 id = "stone_2020_sitcon_tour_group"
@@ -94,7 +94,7 @@ ability_name = "拾荒直覺"
 ability_kind = "material_drop_rate"
 ability_value = 12
 ability_count = 0
-ability_description = "對戰素材掉落率提高 12%。"
+ability_description = "對戰小石掉落率提高 12%。"
 
 [[sitones]]
 id = "stone_2022_maze"
@@ -108,7 +108,7 @@ ability_name = "拾荒直覺"
 ability_kind = "material_drop_rate"
 ability_value = 8
 ability_count = 0
-ability_description = "對戰素材掉落率提高 8%。"
+ability_description = "對戰小石掉落率提高 8%。"
 
 [[sitones]]
 id = "stone_2024_finite"
@@ -178,7 +178,7 @@ ability_name = "拾荒直覺"
 ability_kind = "material_drop_rate"
 ability_value = 12
 ability_count = 0
-ability_description = "對戰素材掉落率提高 12%。"
+ability_description = "對戰小石掉落率提高 12%。"
 
 [[sitones]]
 id = "stone_booth"
@@ -192,7 +192,7 @@ ability_name = "拾荒直覺"
 ability_kind = "material_drop_rate"
 ability_value = 8
 ability_count = 0
-ability_description = "對戰素材掉落率提高 8%。"
+ability_description = "對戰小石掉落率提高 8%。"
 
 [[sitones]]
 id = "stone_camp_backpack"
@@ -206,7 +206,7 @@ ability_name = "拾荒直覺"
 ability_kind = "material_drop_rate"
 ability_value = 8
 ability_count = 0
-ability_description = "對戰素材掉落率提高 8%。"
+ability_description = "對戰小石掉落率提高 8%。"
 
 [[sitones]]
 id = "stone_clean_code"
@@ -360,7 +360,7 @@ ability_name = "拾荒直覺"
 ability_kind = "material_drop_rate"
 ability_value = 5
 ability_count = 0
-ability_description = "對戰素材掉落率提高 5%。"
+ability_description = "對戰小石掉落率提高 5%。"
 
 [[sitones]]
 id = "stone_gpg"
@@ -528,7 +528,7 @@ ability_name = "拾荒直覺"
 ability_kind = "material_drop_rate"
 ability_value = 12
 ability_count = 0
-ability_description = "對戰素材掉落率提高 12%。"
+ability_description = "對戰小石掉落率提高 12%。"
 
 [[sitones]]
 id = "stone_sticky_note"

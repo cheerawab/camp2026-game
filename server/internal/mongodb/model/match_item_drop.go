@@ -9,6 +9,7 @@ type MatchItemDrop struct {
 	MatchID   string    `bson:"match_id"`
 	PlayerID  string    `bson:"player_id"`
 	ItemID    string    `bson:"item_id,omitempty"`
+	SitoneID  string    `bson:"sitone_id,omitempty"`
 	Quantity  int       `bson:"quantity,omitempty"`
 	DropRate  int       `bson:"drop_rate"`
 	Dropped   bool      `bson:"dropped"`

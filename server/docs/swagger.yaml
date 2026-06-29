@@ -1,5 +1,371 @@
 basePath: /api
 definitions:
+  admin.DashboardInventoryEntryResponse:
+    properties:
+      catalogMissing:
+        example: false
+        type: boolean
+      iconPath:
+        example: /game-icons/stones/basic_blue.png
+        type: string
+      id:
+        example: stone_engineering_base
+        type: string
+      name:
+        example: 工程型小石
+        type: string
+      ownerCount:
+        example: 18
+        type: integer
+      quantity:
+        example: 30
+        type: integer
+      rarity:
+        example: base
+        type: string
+      source:
+        example: drop
+        type: string
+      type:
+        example: engineering
+        type: string
+    type: object
+  admin.DashboardInventoryResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/admin.DashboardInventoryEntryResponse'
+        type: array
+      sitones:
+        items:
+          $ref: '#/definitions/admin.DashboardInventoryEntryResponse'
+        type: array
+    type: object
+  admin.DashboardMatchesResponse:
+    properties:
+      active:
+        example: 4
+        type: integer
+      answerAccuracy:
+        example: 75
+        type: integer
+      answerCount:
+        example: 240
+        type: integer
+      averageElapsedMillis:
+        example: 4200.5
+        type: number
+      averageScore:
+        example: 88.2
+        type: number
+      completed:
+        example: 58
+        type: integer
+      computer:
+        example: 23
+        type: integer
+      correctAnswerCount:
+        example: 180
+        type: integer
+      dropAttempts:
+        example: 114
+        type: integer
+      dropRate:
+        example: 34
+        type: integer
+      dropSuccesses:
+        example: 39
+        type: integer
+      pvp:
+        example: 41
+        type: integer
+      recent:
+        items:
+          $ref: '#/definitions/admin.DashboardRecentMatchResponse'
+        type: array
+      total:
+        example: 64
+        type: integer
+      waiting:
+        example: 2
+        type: integer
+    type: object
+  admin.DashboardPlayerRankResponse:
+    properties:
+      answerAccuracy:
+        example: 78
+        type: integer
+      answerCount:
+        example: 40
+        type: integer
+      avatarUrl:
+        example: https://example.test/avatar/alice.png
+        type: string
+      completedMatchCount:
+        example: 10
+        type: integer
+      correctAnswerCount:
+        example: 31
+        type: integer
+      itemCount:
+        example: 6
+        type: integer
+      lastActivityAt:
+        type: string
+      matchCount:
+        example: 12
+        type: integer
+      nickname:
+        example: Alice
+        type: string
+      openPower:
+        example: 1188
+        type: integer
+      playerId:
+        example: 7H9K2Q
+        type: string
+      rank:
+        example: 1
+        type: integer
+      score:
+        example: 6200
+        type: integer
+      sitoneCount:
+        example: 18
+        type: integer
+      team:
+        $ref: '#/definitions/admin.DashboardTeamSummaryResponse'
+    type: object
+  admin.DashboardPlayerResponse:
+    properties:
+      answerAccuracy:
+        example: 78
+        type: integer
+      answerCount:
+        example: 40
+        type: integer
+      avatarUrl:
+        example: https://example.test/avatar/alice.png
+        type: string
+      completedMatchCount:
+        example: 10
+        type: integer
+      correctAnswerCount:
+        example: 31
+        type: integer
+      itemCount:
+        example: 6
+        type: integer
+      lastActivityAt:
+        type: string
+      matchCount:
+        example: 12
+        type: integer
+      nickname:
+        example: Alice
+        type: string
+      openPower:
+        example: 1188
+        type: integer
+      playerId:
+        example: 7H9K2Q
+        type: string
+      rank:
+        example: 1
+        type: integer
+      role:
+        example: player
+        type: string
+      score:
+        example: 6200
+        type: integer
+      sitoneCount:
+        example: 18
+        type: integer
+      team:
+        $ref: '#/definitions/admin.DashboardTeamSummaryResponse'
+    type: object
+  admin.DashboardRecentMatchResponse:
+    properties:
+      code:
+        example: "842913"
+        type: string
+      completedAt:
+        type: string
+      createdAt:
+        type: string
+      matchId:
+        example: M8RXP2
+        type: string
+      mode:
+        example: pvp
+        type: string
+      playerCount:
+        example: 2
+        type: integer
+      startedAt:
+        type: string
+      status:
+        example: completed
+        type: string
+      topScore:
+        example: 600
+        type: integer
+      winnerNickname:
+        example: Alice
+        type: string
+      winnerPlayerId:
+        example: 7H9K2Q
+        type: string
+    type: object
+  admin.DashboardResponse:
+    properties:
+      generatedAt:
+        type: string
+      inventory:
+        $ref: '#/definitions/admin.DashboardInventoryResponse'
+      matches:
+        $ref: '#/definitions/admin.DashboardMatchesResponse'
+      players:
+        items:
+          $ref: '#/definitions/admin.DashboardPlayerResponse'
+        type: array
+      summary:
+        $ref: '#/definitions/admin.DashboardSummaryResponse'
+      teams:
+        items:
+          $ref: '#/definitions/admin.DashboardTeamResponse'
+        type: array
+      topPlayers:
+        $ref: '#/definitions/admin.DashboardTopPlayersResponse'
+    type: object
+  admin.DashboardSummaryResponse:
+    properties:
+      activeMatches:
+        example: 4
+        type: integer
+      answerAccuracy:
+        example: 75
+        type: integer
+      answerCount:
+        example: 240
+        type: integer
+      completedMatches:
+        example: 58
+        type: integer
+      correctAnswerCount:
+        example: 180
+        type: integer
+      droppedItemCount:
+        example: 39
+        type: integer
+      fusionCount:
+        example: 21
+        type: integer
+      itemDropCount:
+        example: 114
+        type: integer
+      playerCount:
+        example: 120
+        type: integer
+      shopPurchaseCount:
+        example: 44
+        type: integer
+      staffCount:
+        example: 18
+        type: integer
+      staffRewardCount:
+        example: 88
+        type: integer
+      teamCount:
+        example: 12
+        type: integer
+      totalItems:
+        example: 188
+        type: integer
+      totalMatches:
+        example: 64
+        type: integer
+      totalOpenPower:
+        example: 98220
+        type: integer
+      totalSitones:
+        example: 420
+        type: integer
+      ungroupedPlayerCount:
+        example: 3
+        type: integer
+      waitingMatches:
+        example: 2
+        type: integer
+    type: object
+  admin.DashboardTeamResponse:
+    properties:
+      averageItems:
+        example: 4.4
+        type: number
+      averageOpenPower:
+        example: 2400
+        type: number
+      averageSitones:
+        example: 12
+        type: number
+      itemCount:
+        example: 44
+        type: integer
+      name:
+        example: Blue Team
+        type: string
+      openPower:
+        example: 24000
+        type: integer
+      playerCount:
+        example: 10
+        type: integer
+      rank:
+        example: 1
+        type: integer
+      sitoneCount:
+        example: 120
+        type: integer
+      teamId:
+        example: 8M4RXP
+        type: string
+      topPlayer:
+        $ref: '#/definitions/admin.DashboardPlayerRankResponse'
+    type: object
+  admin.DashboardTeamSummaryResponse:
+    properties:
+      name:
+        example: Blue Team
+        type: string
+      teamId:
+        example: 8M4RXP
+        type: string
+    type: object
+  admin.DashboardTopPlayersResponse:
+    properties:
+      byAccuracy:
+        items:
+          $ref: '#/definitions/admin.DashboardPlayerRankResponse'
+        type: array
+      byItems:
+        items:
+          $ref: '#/definitions/admin.DashboardPlayerRankResponse'
+        type: array
+      byOpenPower:
+        items:
+          $ref: '#/definitions/admin.DashboardPlayerRankResponse'
+        type: array
+      byScore:
+        items:
+          $ref: '#/definitions/admin.DashboardPlayerRankResponse'
+        type: array
+      bySitones:
+        items:
+          $ref: '#/definitions/admin.DashboardPlayerRankResponse'
+        type: array
+    type: object
   admin.LoginRequest:
     properties:
       password:
@@ -693,20 +1059,24 @@ definitions:
   matches.MatchItemDropResponse:
     properties:
       dropRate:
-        example: 60
+        example: 25
         type: integer
       dropped:
         example: true
         type: boolean
       itemId:
-        example: item_clean_spec
         type: string
       itemName:
-        example: 整潔規格書
         type: string
       quantity:
         example: 1
         type: integer
+      sitoneId:
+        example: stone_explorer_base
+        type: string
+      sitoneName:
+        example: 探索型小石
+        type: string
     type: object
   matches.MatchPlayerResponse:
     properties:
@@ -1514,6 +1884,32 @@ info:
   title: Camp 2026 Game API
   version: 0.1.0
 paths:
+  /admin/dashboard:
+    get:
+      description: Returns an admin-only operational dashboard with player, inventory,
+        match, and activity statistics.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/admin.DashboardResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpx.ProblemDetails'
+      summary: Get admin game dashboard
+      tags:
+      - admin
   /admin/login:
     post:
       consumes:
