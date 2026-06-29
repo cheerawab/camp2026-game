@@ -593,6 +593,7 @@ type = "entertainment"
 rarity = "rare"
 style = "default"
 description = "牠學會在時間結束前，把最重要的概念送到聽眾手上。不是講得越多越好，而是讓人願意繼續查下去。"
+icon_path = "/game-icons/stones/stone_ten_minute_essence.png"
 ability_name = "掌聲加成"
 ability_kind = "open_power_bonus"
 ability_value = 12
