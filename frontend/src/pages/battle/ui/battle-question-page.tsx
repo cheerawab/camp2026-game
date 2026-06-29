@@ -369,7 +369,7 @@ export function BattleQuestionPage() {
         <Card>
           <CardContent className="grid gap-3">
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
-              <div className="grid gap-y-1">
+              <div className="grid min-w-0 gap-y-1">
                 <span className="text-muted-foreground text-sm font-black">
                   第 {(match?.currentQuestionIndex ?? 0) + 1} /{" "}
                   {match?.questionCount ?? 0} 題
@@ -378,8 +378,8 @@ export function BattleQuestionPage() {
                   {question?.prompt ?? "正在同步題目"}
                 </span>
               </div>
-              <div className="grid justify-items-end leading-none">
-                <span key={now} className="text-4xl font-black">
+              <div className="grid w-16 shrink-0 justify-items-center leading-none">
+                <span className="w-[3ch] text-center text-4xl font-black tabular-nums">
                   {displaySeconds}
                 </span>
                 <span className="text-sm font-bold">
