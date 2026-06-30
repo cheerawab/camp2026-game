@@ -349,6 +349,10 @@ const CompletedMatchSchema = z.object({
 
 const CompletedMatchesResponseSchema = z.object({
   matches: nullableArray(CompletedMatchSchema),
+  page: z.number(),
+  perPage: z.number(),
+  total: z.number(),
+  totalPages: z.number(),
 })
 
 const AnswerAcceptedSchema = z.object({
@@ -630,9 +634,9 @@ export const gameApi = {
     return PlayerItemsResponseSchema.parse(json).items
   },
 
-  async completedMatches() {
-    const json = await apiClient.get("/api/me/matches")
-    return CompletedMatchesResponseSchema.parse(json).matches
+  async completedMatches(page = 1) {
+    const json = await apiClient.get("/api/me/matches", { searchParams: { page } })
+    return CompletedMatchesResponseSchema.parse(json)
   },
 
   async shopItems() {
