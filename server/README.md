@@ -14,7 +14,9 @@ make dev
 `make dev` runs Air hot reload. Use `make run` to run `go run ./cmd/api`
 without file watching.
 
-MongoDB is configured through `MONGODB_URI` and `MONGODB_DATABASE`.
+MongoDB is configured through `MONGODB_URI` and `MONGODB_DATABASE`. Local and
+production Docker Compose use a single-node replica set named `rs0` so MongoDB
+transactions are available.
 
 ## Local Seed Data
 
@@ -24,6 +26,12 @@ demo players:
 ```sh
 docker compose -f ../docker/compose.dev.yaml up -d mongodb
 make seed
+```
+
+The local MongoDB URI should include the replica set name:
+
+```text
+mongodb://camp2026:camp2026@localhost:27017/camp2026?authSource=admin&replicaSet=rs0
 ```
 
 The command writes teams, players, open power records, owned sitones, and owned

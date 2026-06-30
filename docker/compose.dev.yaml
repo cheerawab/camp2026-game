@@ -3,10 +3,28 @@ services:
     image: mongo:7.0
     container_name: camp2026-mongodb
     restart: unless-stopped
+    entrypoint:
+      - bash
+      - -c
+      - |
+        set -e
+        if [ -z "$${MONGO_REPLICA_SET_KEY}" ]; then
+          echo "MONGO_REPLICA_SET_KEY is required" >&2
+          exit 1
+        fi
+        keyfile=/data/configdb/keyfile
+        mkdir -p /data/configdb
+        printf '%s\n' "$${MONGO_REPLICA_SET_KEY}" > "$$keyfile"
+        chmod 400 "$$keyfile"
+        chown mongodb:mongodb "$$keyfile"
+        exec docker-entrypoint.sh mongod --replSet "$${MONGO_REPLICA_SET_NAME:-rs0}" --bind_ip_all --keyFile "$$keyfile"
     environment:
       MONGO_INITDB_ROOT_USERNAME: camp2026
       MONGO_INITDB_ROOT_PASSWORD: camp2026
       MONGO_INITDB_DATABASE: camp2026
+      MONGO_REPLICA_SET_NAME: rs0
+      MONGO_REPLICA_SET_HOST: localhost:27017
+      MONGO_REPLICA_SET_KEY: camp2026DevelopmentReplicaSetKey1234567890
     ports:
       - "27017:27017"
     volumes:
@@ -14,12 +32,8 @@ services:
     healthcheck:
       test:
         [
-          "CMD",
-          "mongosh",
-          "--quiet",
-          "mongodb://camp2026:camp2026@localhost:27017/admin",
-          "--eval",
-          "db.adminCommand({ ping: 1 }).ok",
+          "CMD-SHELL",
+          "mongosh --quiet --host localhost --port 27017 -u \"$${MONGO_INITDB_ROOT_USERNAME}\" -p \"$${MONGO_INITDB_ROOT_PASSWORD}\" --authenticationDatabase admin --eval 'const name = process.env.MONGO_REPLICA_SET_NAME || \"rs0\"; const host = process.env.MONGO_REPLICA_SET_HOST || \"localhost:27017\"; try { const status = rs.status(); if (status.myState !== 1) quit(1); } catch (err) { if (err.code === 94 || err.codeName === \"NotYetInitialized\" || /no replset config has been received|not yet initialized/i.test(err.message)) { rs.initiate({_id: name, members: [{_id: 0, host}]}); quit(1); } throw err; } db.adminCommand({ ping: 1 }).ok'",
         ]
       interval: 5s
       timeout: 5s

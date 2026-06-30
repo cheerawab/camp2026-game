@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	defaultMongoURI          = "mongodb://camp2026:camp2026@localhost:27017/camp2026?authSource=admin"
+	defaultMongoURI          = "mongodb://camp2026:camp2026@localhost:27017/camp2026?authSource=admin&replicaSet=rs0"
 	defaultMongoDatabase     = "camp2026"
 	defaultLogLevel          = "info"
 	defaultPollTimeout       = 50 * time.Second

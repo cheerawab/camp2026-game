@@ -25,7 +25,7 @@ TELEGRAM_BOT_TOKEN=123456:secret
 APP_LOGIN_BASE_URL=https://game.example.com/login
 TG_GROUP_TEAM_MAP=-1001111111111=team-001,-1002222222222=team-002
 INITIAL_SITONE_IDS=stone_explorer_base,stone_inspiration_base,stone_resonance_base,stone_engineering_base,stone_entertainment_base
-MONGODB_URI=mongodb://camp2026:camp2026@localhost:27017/camp2026?authSource=admin
+MONGODB_URI=mongodb://camp2026:camp2026@localhost:27017/camp2026?authSource=admin&replicaSet=rs0
 MONGODB_DATABASE=camp2026
 ```
 
