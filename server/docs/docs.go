@@ -1320,7 +1320,7 @@ const docTemplate = `{
                         "AuthCookieAuth": []
                     }
                 ],
-                "description": "Returns completed quiz matches joined by the authenticated player. Waiting and active matches are not returned.",
+                "description": "Returns completed quiz matches joined by the authenticated player. Waiting and active matches are not returned. Results are paginated with 50 items per page.",
                 "produces": [
                     "application/json"
                 ],
@@ -1328,11 +1328,25 @@ const docTemplate = `{
                     "me"
                 ],
                 "summary": "List current player completed matches",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number (default 1)",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/me.CompletedMatchListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
                         }
                     },
                     "401": {
@@ -3917,6 +3931,18 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/me.CompletedMatchResponse"
                     }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "perPage": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "totalPages": {
+                    "type": "integer"
                 }
             }
         },
@@ -4458,6 +4484,10 @@ const docTemplate = `{
                 "id": {
                     "type": "string",
                     "example": "item_adventure_backpack"
+                },
+                "locked": {
+                    "type": "boolean",
+                    "example": false
                 },
                 "name": {
                     "type": "string",
