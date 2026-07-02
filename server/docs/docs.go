@@ -724,6 +724,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/httpx.ProblemDetails"
                         }
                     },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {

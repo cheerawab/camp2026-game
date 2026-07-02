@@ -40,6 +40,7 @@ func (h *Handler) saveMatch(ctx context.Context, match *mongomodel.Match) error 
 	}
 
 	next := *match
+	releaseOpenHostLockOnCompletion(&next)
 	next.Revision++
 	result, err := h.db.Collection(mongomodel.MatchesCollection).
 		ReplaceOne(ctx, matchRevisionFilter(match.ID, match.Revision), next)
@@ -51,7 +52,14 @@ func (h *Handler) saveMatch(ctx context.Context, match *mongomodel.Match) error 
 	}
 
 	match.Revision = next.Revision
+	match.OpenHostLock = next.OpenHostLock
 	return nil
+}
+
+func releaseOpenHostLockOnCompletion(match *mongomodel.Match) {
+	if match != nil && match.Status == mongomodel.MatchStatusCompleted {
+		match.OpenHostLock = ""
+	}
 }
 
 func matchRevisionFilter(matchID string, revision int64) bson.M {

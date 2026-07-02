@@ -98,6 +98,13 @@ func matchIndexModels() []mongo.IndexModel {
 			},
 			Options: options.Index().SetName("matches_status_player_completed_created"),
 		},
+		{
+			Keys: bson.D{{Key: "open_host_lock", Value: 1}},
+			Options: options.Index().
+				SetName("matches_open_host_lock").
+				SetUnique(true).
+				SetPartialFilterExpression(bson.M{"open_host_lock": bson.M{"$gt": ""}}),
+		},
 	}
 }
 
