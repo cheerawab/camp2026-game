@@ -7,8 +7,9 @@ import (
 )
 
 type Event struct {
-	Name  string
-	Match mongomodel.Match
+	Name    string
+	Match   mongomodel.Match
+	Answers []mongomodel.MatchAnswer
 }
 
 type Broker struct {

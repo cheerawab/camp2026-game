@@ -484,6 +484,74 @@ func TestApplyRevealDeadlineTransitionCompletesLastRound(t *testing.T) {
 	}
 }
 
+func TestShouldRevealRoundWithInMemoryAnswers(t *testing.T) {
+	now := time.Date(2026, 6, 2, 10, 0, 3, 0, time.UTC)
+	match := mongomodel.Match{
+		Status:               mongomodel.MatchStatusActive,
+		Phase:                mongomodel.MatchPhaseAnswering,
+		QuestionIDs:          []string{"quiz-001"},
+		CurrentQuestionIndex: 0,
+		RoundEndsAt:          now.Add(10 * time.Second),
+		Players: []mongomodel.MatchPlayer{
+			{PlayerID: "P1"},
+			{PlayerID: "P2"},
+		},
+	}
+
+	answers := []mongomodel.MatchAnswer{
+		{PlayerID: "P1", QuestionID: "quiz-001"},
+	}
+	if shouldRevealRoundWithAnswers(match, answers, now) {
+		t.Fatal("expected one answer before deadline not to reveal")
+	}
+
+	answers = append(answers, mongomodel.MatchAnswer{PlayerID: "P2", QuestionID: "quiz-001"})
+	if !shouldRevealRoundWithAnswers(match, answers, now) {
+		t.Fatal("expected all players answered to reveal")
+	}
+
+	if !shouldRevealRoundWithAnswers(match, nil, match.RoundEndsAt) {
+		t.Fatal("expected round deadline to reveal without answers")
+	}
+}
+
+func TestMatchSessionTickBroadcastsActiveStateEverySecond(t *testing.T) {
+	broker := NewBroker()
+	handler := New(Dependencies{
+		Content: loadTestContent(t),
+		Broker:  broker,
+	})
+	match := mongomodel.Match{
+		ID:                   "match_123",
+		Status:               mongomodel.MatchStatusActive,
+		Phase:                mongomodel.MatchPhaseAnswering,
+		QuestionIDs:          []string{"quiz-001"},
+		CurrentQuestionIndex: 0,
+		RoundEndsAt:          time.Now().Add(10 * time.Second),
+		Players: []mongomodel.MatchPlayer{
+			{PlayerID: "P1", Nickname: "Alice"},
+			{PlayerID: "P2", Nickname: "Bob"},
+		},
+	}
+	session := newMatchSession(NewMatchSessionManager(handler), match, nil)
+	events, unsubscribe := broker.Subscribe(match.ID)
+	defer unsubscribe()
+
+	session.tick(time.Now())
+
+	select {
+	case event := <-events:
+		if event.Name != "match_updated" {
+			t.Fatalf("expected match_updated event, got %q", event.Name)
+		}
+		if event.Match.ID != match.ID || event.Answers == nil {
+			t.Fatalf("expected session event snapshot, got %#v", event)
+		}
+	case <-time.After(time.Second):
+		t.Fatal("expected session tick to broadcast active state")
+	}
+}
+
 func TestMatchModeAndPlayerKindDefaults(t *testing.T) {
 	match := mongomodel.Match{}
 	if got := matchMode(match); got != mongomodel.MatchModePVP {

@@ -35,6 +35,25 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteProblem(w, r, httpx.NotFound("match not found"))
 		return
 	}
+	if matchIsOpen(match) {
+		session, err := h.sessions.GetOrLoad(r.Context(), match.ID)
+		if err != nil {
+			httpx.WriteProblem(w, r, err)
+			return
+		}
+		state, err := session.State(r.Context(), player.ID)
+		if err != nil {
+			httpx.WriteProblem(w, r, err)
+			return
+		}
+		httpx.WriteJSON(w, http.StatusOK, state)
+		return
+	}
 
-	h.writeAdvancedMatchState(w, r, match, player.ID)
+	state, err := h.buildMatchState(r.Context(), match, player.ID)
+	if err != nil {
+		httpx.WriteProblem(w, r, err)
+		return
+	}
+	httpx.WriteJSON(w, http.StatusOK, state)
 }

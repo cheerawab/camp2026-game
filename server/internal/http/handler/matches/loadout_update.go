@@ -7,7 +7,6 @@ import (
 	"github.com/go-chi/chi/v5"
 
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
-	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
 )
 
 // UpdateLoadout godoc
@@ -48,41 +47,18 @@ func (h *Handler) UpdateLoadout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	matchID := chi.URLParam(r, "matchID")
-	var match mongomodel.Match
-	for attempt := 0; attempt < matchSaveMaxAttempts; attempt++ {
-		match, err = h.findMatchByID(r.Context(), matchID)
-		if err != nil {
+	session, err := h.sessions.GetOrLoad(r.Context(), chi.URLParam(r, "matchID"))
+	if err != nil {
+		writeMatchProblem(w, r, err)
+		return
+	}
+	state, err := session.UpdateLoadout(r.Context(), player.ID, sitoneIDs)
+	if err != nil {
+		if errors.Is(err, errMatchSaveConflict) || errors.Is(err, errOpenParticipantMatchExists) {
 			writeMatchProblem(w, r, err)
 			return
 		}
-		if !isParticipant(match, player.ID) {
-			httpx.WriteProblem(w, r, httpx.NotFound("match not found"))
-			return
-		}
-		if match.Status != mongomodel.MatchStatusWaiting {
-			httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "match loadout is locked"))
-			return
-		}
-
-		idx := playerIndex(match, player.ID)
-		if match.Players[idx].Ready {
-			httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "player is already ready"))
-			return
-		}
-		match.Players[idx].SitoneIDs = sitoneIDs
-
-		if err = h.saveMatch(r.Context(), &match); errors.Is(err, errMatchSaveConflict) {
-			continue
-		}
-		if err != nil {
-			httpx.WriteProblem(w, r, httpx.InternalServerError("loadout update failed", "match_loadout_save_match_failed", err))
-			return
-		}
-		break
-	}
-	if errors.Is(err, errMatchSaveConflict) {
-		writeMatchProblem(w, r, err)
+		httpx.WriteProblem(w, r, err)
 		return
 	}
 	if err := h.saveDefaultSitoneLoadout(r.Context(), player.ID, sitoneIDs); err != nil {
@@ -90,11 +66,5 @@ func (h *Handler) UpdateLoadout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.publishState(r.Context(), match, "match_updated")
-	state, err := h.buildMatchState(r.Context(), match, player.ID)
-	if err != nil {
-		httpx.WriteProblem(w, r, err)
-		return
-	}
 	httpx.WriteJSON(w, http.StatusOK, state)
 }

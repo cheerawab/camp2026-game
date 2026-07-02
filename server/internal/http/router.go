@@ -4,6 +4,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -28,13 +29,14 @@ import (
 )
 
 type Dependencies struct {
-	Log               *slog.Logger
-	RequestTimeout    time.Duration
-	Content           *content.Store
-	MongoClient       *mongo.Client
-	MongoDB           *mongo.Database
-	AdminPassword     string
-	AdminCookieSecure bool
+	Log                  *slog.Logger
+	RequestTimeout       time.Duration
+	Content              *content.Store
+	MongoClient          *mongo.Client
+	MongoDB              *mongo.Database
+	AdminPassword        string
+	AdminCookieSecure    bool
+	RecoverMatchSessions bool
 }
 
 func NewRouter(dep Dependencies) http.Handler {
@@ -49,7 +51,7 @@ func NewRouter(dep Dependencies) http.Handler {
 	r.Use(chimw.RequestID)
 	r.Use(chimw.RealIP)
 	r.Use(chimw.StripSlashes)
-	r.Use(chimw.Timeout(dep.RequestTimeout))
+	r.Use(timeoutExceptMatchEvents(dep.RequestTimeout))
 	r.Use(recoverer(dep.Log))
 	r.Use(requestLogger(dep.Log))
 
@@ -68,6 +70,20 @@ func NewRouter(dep Dependencies) http.Handler {
 	r.Handle("/metrics", promhttp.Handler())
 
 	return r
+}
+
+func timeoutExceptMatchEvents(timeout time.Duration) func(http.Handler) http.Handler {
+	timeoutMiddleware := chimw.Timeout(timeout)
+	return func(next http.Handler) http.Handler {
+		timeoutHandler := timeoutMiddleware(next)
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if strings.HasPrefix(r.URL.Path, "/api/matches/") && strings.HasSuffix(r.URL.Path, "/events") {
+				next.ServeHTTP(w, r)
+				return
+			}
+			timeoutHandler.ServeHTTP(w, r)
+		})
+	}
 }
 
 func registerRoutes(api chi.Router, dep Dependencies) {
@@ -98,9 +114,10 @@ func registerRoutes(api chi.Router, dep Dependencies) {
 		MongoDB: dep.MongoDB,
 	}).RegisterRoutes(api.With(authctx.RequirePlayer(dep.MongoDB)))
 	matcheshandler.New(matcheshandler.Dependencies{
-		Content:     dep.Content,
-		MongoClient: dep.MongoClient,
-		MongoDB:     dep.MongoDB,
+		Content:            dep.Content,
+		MongoClient:        dep.MongoClient,
+		MongoDB:            dep.MongoDB,
+		RecoverOpenMatches: dep.RecoverMatchSessions,
 	}).RegisterRoutes(api.With(authctx.RequirePlayer(dep.MongoDB)))
 	fusionshandler.New(fusionshandler.Dependencies{
 		Content:     dep.Content,

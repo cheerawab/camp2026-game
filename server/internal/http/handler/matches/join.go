@@ -59,77 +59,22 @@ func (h *Handler) Join(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) joinMatch(w http.ResponseWriter, r *http.Request, match mongomodel.Match, player mongomodel.Player) {
-	code := match.Code
-	var err error
-	for attempt := 0; attempt < matchSaveMaxAttempts; attempt++ {
-		if attempt > 0 {
-			match, err = h.findMatchByCode(r.Context(), code)
-			if err != nil {
-				if errors.Is(err, mongo.ErrNoDocuments) {
-					httpx.WriteProblem(w, r, httpx.NotFound("match not found"))
-					return
-				}
-				httpx.WriteProblem(w, r, httpx.InternalServerError("match join failed", "match_join_lookup_failed", err))
-				return
-			}
-		}
-
-		if isParticipant(match, player.ID) {
-			h.writeAdvancedMatchState(w, r, match, player.ID)
-			return
-		}
-		if err := h.ensureNoOpenParticipantMatch(r.Context(), player.ID); err != nil {
-			if errors.Is(err, errOpenParticipantMatchExists) {
-				writeOpenParticipantMatchConflict(w, r)
-				return
-			}
-			httpx.WriteProblem(w, r, httpx.InternalServerError("match join failed", "match_join_open_lookup_failed", err))
-			return
-		}
-		if match.Status != mongomodel.MatchStatusWaiting {
-			httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "match is not joinable"))
-			return
-		}
-		if len(match.Players) >= 2 {
-			httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "match is full"))
-			return
-		}
-		sitoneIDs, err := h.defaultSitoneLoadout(r.Context(), player)
-		if err != nil {
-			httpx.WriteProblem(w, r, httpx.InternalServerError("match join failed", "match_join_default_loadout_failed", err))
-			return
-		}
-
-		match.Players = append(match.Players, mongomodel.MatchPlayer{
-			PlayerID:  player.ID,
-			Nickname:  player.Nickname,
-			Kind:      mongomodel.MatchPlayerKindHuman,
-			Ready:     false,
-			Score:     0,
-			SitoneIDs: sitoneIDs,
-		})
-		match.OpenPlayerLocks = humanParticipantIDs(match)
-		if err = h.saveMatch(r.Context(), &match); errors.Is(err, errMatchSaveConflict) {
-			continue
-		}
-		if errors.Is(err, errOpenParticipantMatchExists) {
-			writeOpenParticipantMatchConflict(w, r)
-			return
-		}
-		if err != nil {
-			httpx.WriteProblem(w, r, httpx.InternalServerError("match join failed", "match_join_save_failed", err))
-			return
-		}
-		break
-	}
-	if errors.Is(err, errMatchSaveConflict) {
+	session, err := h.sessions.GetOrLoad(r.Context(), match.ID)
+	if err != nil {
 		writeMatchProblem(w, r, err)
 		return
 	}
 
-	h.publishState(r.Context(), match, "match_updated")
-	state, err := h.buildMatchState(r.Context(), match, player.ID)
+	state, err := session.Join(r.Context(), player)
 	if err != nil {
+		if errors.Is(err, errOpenParticipantMatchExists) {
+			writeOpenParticipantMatchConflict(w, r)
+			return
+		}
+		if errors.Is(err, errMatchSaveConflict) {
+			writeMatchProblem(w, r, err)
+			return
+		}
 		httpx.WriteProblem(w, r, err)
 		return
 	}

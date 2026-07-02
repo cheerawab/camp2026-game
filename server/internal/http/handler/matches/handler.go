@@ -19,17 +19,19 @@ const (
 )
 
 type Dependencies struct {
-	Content     *content.Store
-	MongoClient *mongo.Client
-	MongoDB     *mongo.Database
-	Broker      *Broker
+	Content            *content.Store
+	MongoClient        *mongo.Client
+	MongoDB            *mongo.Database
+	Broker             *Broker
+	RecoverOpenMatches bool
 }
 
 type Handler struct {
-	content *content.Store
-	client  *mongo.Client
-	db      *mongo.Database
-	broker  *Broker
+	content  *content.Store
+	client   *mongo.Client
+	db       *mongo.Database
+	broker   *Broker
+	sessions *MatchSessionManager
 }
 
 func New(dep Dependencies) *Handler {
@@ -37,12 +39,17 @@ func New(dep Dependencies) *Handler {
 	if broker == nil {
 		broker = NewBroker()
 	}
-	return &Handler{
+	h := &Handler{
 		content: dep.Content,
 		client:  dep.MongoClient,
 		db:      dep.MongoDB,
 		broker:  broker,
 	}
+	h.sessions = NewMatchSessionManager(h)
+	if dep.RecoverOpenMatches && h.db != nil {
+		h.sessions.RecoverOpenMatches()
+	}
+	return h
 }
 
 func (h *Handler) RegisterRoutes(api chi.Router) {

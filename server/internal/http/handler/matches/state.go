@@ -449,7 +449,15 @@ func (h *Handler) buildMatchState(ctx context.Context, match mongomodel.Match, v
 	if err != nil {
 		return MatchStateResponse{}, err
 	}
+	return h.buildMatchStateWithAnswers(ctx, match, viewerPlayerID, answers)
+}
 
+func (h *Handler) buildMatchStateWithAnswers(
+	ctx context.Context,
+	match mongomodel.Match,
+	viewerPlayerID string,
+	answers []mongomodel.MatchAnswer,
+) (MatchStateResponse, error) {
 	answerByQuestionPlayer := make(map[string]map[string]mongomodel.MatchAnswer)
 	for _, answer := range answers {
 		if _, ok := answerByQuestionPlayer[answer.QuestionID]; !ok {
@@ -634,14 +642,18 @@ func (h *Handler) matchQuestionResult(
 	return result, nil
 }
 
-func (h *Handler) publishState(_ context.Context, match mongomodel.Match, eventName string) {
-	if h.broker == nil {
-		return
-	}
-	h.broker.Publish(match.ID, Event{
+func (h *Handler) publishState(ctx context.Context, match mongomodel.Match, eventName string) {
+	h.publishEvent(ctx, Event{
 		Name:  eventName,
 		Match: match,
 	})
+}
+
+func (h *Handler) publishEvent(_ context.Context, event Event) {
+	if h.broker == nil {
+		return
+	}
+	h.broker.Publish(event.Match.ID, event)
 }
 
 func (h *Handler) writeAdvancedMatchState(w http.ResponseWriter, r *http.Request, match mongomodel.Match, playerID string) {

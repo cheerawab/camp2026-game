@@ -127,7 +127,8 @@ func (h *Handler) CreateComputer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	state, err := h.buildMatchState(r.Context(), match, player.ID)
+	session := h.sessions.Start(match)
+	state, err := session.State(r.Context(), player.ID)
 	if err != nil {
 		httpx.WriteProblem(w, r, err)
 		return

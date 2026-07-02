@@ -1,7 +1,6 @@
 package matches
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -41,19 +40,20 @@ func (h *Handler) Events(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteProblem(w, r, httpx.NotFound("match not found"))
 		return
 	}
-	match, advanceEvents, err := h.advanceMatch(r.Context(), match, time.Now())
-	if err != nil {
-		httpx.WriteProblem(w, r, httpx.InternalServerError("match events unavailable", "match_events_advance_failed", err))
-		return
-	}
-	for _, event := range advanceEvents {
-		h.publishState(r.Context(), match, event)
-	}
 
 	flusher, ok := w.(http.Flusher)
 	if !ok {
 		httpx.WriteProblem(w, r, httpx.InternalServerError("event stream is unavailable", "match_events_flusher_unavailable", errors.New("response writer does not implement http.Flusher")))
 		return
+	}
+
+	var session *MatchSession
+	if matchIsOpen(match) {
+		session, err = h.sessions.GetOrLoad(r.Context(), match.ID)
+		if err != nil {
+			httpx.WriteProblem(w, r, err)
+			return
+		}
 	}
 
 	eventCh, unsubscribe := h.broker.Subscribe(matchID)
@@ -63,7 +63,12 @@ func (h *Handler) Events(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 
-	state, err := h.buildMatchState(r.Context(), match, player.ID)
+	var state MatchStateResponse
+	if session != nil {
+		state, err = session.State(r.Context(), player.ID)
+	} else {
+		state, err = h.buildMatchState(r.Context(), match, player.ID)
+	}
 	if err != nil {
 		httpx.WriteProblem(w, r, err)
 		return
@@ -71,7 +76,7 @@ func (h *Handler) Events(w http.ResponseWriter, r *http.Request) {
 	writeSSE(w, "match_updated", state)
 	flusher.Flush()
 
-	heartbeat := time.NewTicker(15 * time.Second)
+	heartbeat := time.NewTicker(30 * time.Second)
 	defer heartbeat.Stop()
 
 	for {
@@ -87,39 +92,22 @@ func (h *Handler) Events(w http.ResponseWriter, r *http.Request) {
 				flusher.Flush()
 				return
 			}
-			state, err := h.buildMatchState(r.Context(), event.Match, player.ID)
+			var state MatchStateResponse
+			if event.Answers != nil {
+				state, err = h.buildMatchStateWithAnswers(r.Context(), event.Match, player.ID, event.Answers)
+			} else {
+				state, err = h.buildMatchState(r.Context(), event.Match, player.ID)
+			}
 			if err != nil {
 				return
 			}
 			writeSSE(w, event.Name, state)
 			flusher.Flush()
 		case <-heartbeat.C:
-			advanced, err := h.advanceAndPublishMatch(r.Context(), matchID, time.Now())
-			if err != nil {
-				return
-			}
-			if advanced {
-				continue
-			}
 			_, _ = fmt.Fprint(w, ": keepalive\n\n")
 			flusher.Flush()
 		}
 	}
-}
-
-func (h *Handler) advanceAndPublishMatch(ctx context.Context, matchID string, now time.Time) (bool, error) {
-	match, err := h.findMatchByID(ctx, matchID)
-	if err != nil {
-		return false, err
-	}
-	match, events, err := h.advanceMatch(ctx, match, now)
-	if err != nil {
-		return false, err
-	}
-	for _, event := range events {
-		h.publishState(ctx, match, event)
-	}
-	return len(events) > 0, nil
 }
 
 func writeSSE(w http.ResponseWriter, name string, data MatchStateResponse) {
