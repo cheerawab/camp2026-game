@@ -78,6 +78,14 @@ func (h *Handler) joinMatch(w http.ResponseWriter, r *http.Request, match mongom
 			h.writeAdvancedMatchState(w, r, match, player.ID)
 			return
 		}
+		if err := h.ensureNoOpenParticipantMatch(r.Context(), player.ID); err != nil {
+			if errors.Is(err, errOpenParticipantMatchExists) {
+				writeOpenParticipantMatchConflict(w, r)
+				return
+			}
+			httpx.WriteProblem(w, r, httpx.InternalServerError("match join failed", "match_join_open_lookup_failed", err))
+			return
+		}
 		if match.Status != mongomodel.MatchStatusWaiting {
 			httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "match is not joinable"))
 			return
@@ -100,8 +108,13 @@ func (h *Handler) joinMatch(w http.ResponseWriter, r *http.Request, match mongom
 			Score:     0,
 			SitoneIDs: sitoneIDs,
 		})
+		match.OpenPlayerLocks = humanParticipantIDs(match)
 		if err = h.saveMatch(r.Context(), &match); errors.Is(err, errMatchSaveConflict) {
 			continue
+		}
+		if errors.Is(err, errOpenParticipantMatchExists) {
+			writeOpenParticipantMatchConflict(w, r)
+			return
 		}
 		if err != nil {
 			httpx.WriteProblem(w, r, httpx.InternalServerError("match join failed", "match_join_save_failed", err))

@@ -70,6 +70,13 @@ func TestIndexModelsByCollection(t *testing.T) {
 			partial:    bson.M{"open_host_lock": bson.M{"$gt": ""}},
 		},
 		{
+			collection: mongomodel.MatchesCollection,
+			name:       "matches_open_player_locks",
+			keys:       bson.D{{Key: "open_player_locks", Value: 1}},
+			unique:     true,
+			partial:    bson.M{"open_player_locks": bson.M{"$exists": true}},
+		},
+		{
 			collection: mongomodel.MatchAnswersCollection,
 			name:       "match_answers_match_player_question",
 			keys: bson.D{

@@ -105,6 +105,13 @@ func matchIndexModels() []mongo.IndexModel {
 				SetUnique(true).
 				SetPartialFilterExpression(bson.M{"open_host_lock": bson.M{"$gt": ""}}),
 		},
+		{
+			Keys: bson.D{{Key: "open_player_locks", Value: 1}},
+			Options: options.Index().
+				SetName("matches_open_player_locks").
+				SetUnique(true).
+				SetPartialFilterExpression(bson.M{"open_player_locks": bson.M{"$exists": true}}),
+		},
 	}
 }
 

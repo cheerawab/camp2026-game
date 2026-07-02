@@ -42,15 +42,7 @@ func (h *Handler) findOpenParticipantMatch(ctx context.Context, playerID string)
 	err := h.db.Collection(mongomodel.MatchesCollection).
 		FindOne(
 			ctx,
-			bson.M{
-				"status": bson.M{
-					"$in": bson.A{
-						mongomodel.MatchStatusWaiting,
-						mongomodel.MatchStatusActive,
-					},
-				},
-				"players.player_id": playerID,
-			},
+			openParticipantMatchFilter(playerID),
 			options.FindOne().SetSort(bson.D{
 				{Key: "created_at", Value: -1},
 				{Key: "_id", Value: -1},
@@ -60,17 +52,40 @@ func (h *Handler) findOpenParticipantMatch(ctx context.Context, playerID string)
 	return match, err
 }
 
+func openParticipantMatchFilter(playerID string) bson.M {
+	return bson.M{
+		"status":            openMatchStatusFilter(),
+		"players.player_id": playerID,
+	}
+}
+
+func openMatchStatusFilter() bson.M {
+	return bson.M{
+		"$in": bson.A{
+			mongomodel.MatchStatusWaiting,
+			mongomodel.MatchStatusActive,
+		},
+	}
+}
+
+func matchIsOpen(match mongomodel.Match) bool {
+	return match.Status == mongomodel.MatchStatusWaiting || match.Status == mongomodel.MatchStatusActive
+}
+
 func (h *Handler) saveMatch(ctx context.Context, match *mongomodel.Match) error {
 	if match == nil {
 		return errors.New("match is nil")
 	}
 
 	next := *match
-	releaseOpenHostLockOnCompletion(&next)
+	syncOpenMatchLocks(&next)
 	next.Revision++
 	result, err := h.db.Collection(mongomodel.MatchesCollection).
 		ReplaceOne(ctx, matchRevisionFilter(match.ID, match.Revision), next)
 	if err != nil {
+		if mongo.IsDuplicateKeyError(err) {
+			return errOpenParticipantMatchExists
+		}
 		return err
 	}
 	if result.MatchedCount == 0 {
@@ -79,13 +94,37 @@ func (h *Handler) saveMatch(ctx context.Context, match *mongomodel.Match) error 
 
 	match.Revision = next.Revision
 	match.OpenHostLock = next.OpenHostLock
+	match.OpenPlayerLocks = next.OpenPlayerLocks
 	return nil
 }
 
-func releaseOpenHostLockOnCompletion(match *mongomodel.Match) {
-	if match != nil && match.Status == mongomodel.MatchStatusCompleted {
-		match.OpenHostLock = ""
+func syncOpenMatchLocks(match *mongomodel.Match) {
+	if match == nil {
+		return
 	}
+	if matchIsOpen(*match) {
+		match.OpenHostLock = match.HostPlayerID
+		match.OpenPlayerLocks = humanParticipantIDs(*match)
+		return
+	}
+	match.OpenHostLock = ""
+	match.OpenPlayerLocks = nil
+}
+
+func humanParticipantIDs(match mongomodel.Match) []string {
+	locks := make([]string, 0, len(match.Players))
+	seen := make(map[string]struct{}, len(match.Players))
+	for _, player := range match.Players {
+		if player.PlayerID == "" || isComputerPlayer(player) {
+			continue
+		}
+		if _, ok := seen[player.PlayerID]; ok {
+			continue
+		}
+		seen[player.PlayerID] = struct{}{}
+		locks = append(locks, player.PlayerID)
+	}
+	return locks
 }
 
 func matchRevisionFilter(matchID string, revision int64) bson.M {
@@ -621,6 +660,10 @@ func writeMatchProblem(w http.ResponseWriter, r *http.Request, err error) {
 	}
 	if errors.Is(err, errMatchSaveConflict) {
 		httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "match was updated; retry"))
+		return
+	}
+	if errors.Is(err, errOpenParticipantMatchExists) {
+		writeOpenParticipantMatchConflict(w, r)
 		return
 	}
 	httpx.WriteProblem(w, r, err)

@@ -71,7 +71,7 @@ func (h *Handler) CreateComputer(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "computer battles are disabled"))
 		return
 	}
-	if err := h.ensureNoOpenHostedMatch(r.Context(), player.ID); err != nil {
+	if err := h.ensureNoOpenParticipantMatch(r.Context(), player.ID); err != nil {
 		writeCreateMatchProblem(w, r, err)
 		return
 	}
@@ -94,6 +94,9 @@ func (h *Handler) CreateComputer(w http.ResponseWriter, r *http.Request) {
 		Status:       mongomodel.MatchStatusWaiting,
 		HostPlayerID: player.ID,
 		OpenHostLock: player.ID,
+		OpenPlayerLocks: []string{
+			player.ID,
+		},
 		Players: []mongomodel.MatchPlayer{
 			{
 				PlayerID:  player.ID,
@@ -117,7 +120,7 @@ func (h *Handler) CreateComputer(w http.ResponseWriter, r *http.Request) {
 
 	if _, err := h.db.Collection(mongomodel.MatchesCollection).InsertOne(r.Context(), match); err != nil {
 		if mongo.IsDuplicateKeyError(err) {
-			writeOpenHostedMatchConflict(w, r)
+			writeOpenParticipantMatchConflict(w, r)
 			return
 		}
 		httpx.WriteProblem(w, r, httpx.InternalServerError("match creation failed", "match_insert_failed", err))

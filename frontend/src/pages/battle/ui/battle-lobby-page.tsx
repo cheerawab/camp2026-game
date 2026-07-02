@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { ArrowRight, ScanQrCode } from "lucide-react"
-import { type ReactNode, useState } from "react"
+import { type ReactNode, useEffect, useState } from "react"
 import { toast } from "sonner"
 
 import {
@@ -27,6 +27,12 @@ import { PageHeader } from "@/shared/ui/page-header"
 function storeMatch(match: MatchState) {
   if (typeof window !== "undefined") {
     window.localStorage.setItem("camp2026.currentMatchId", match.matchId)
+  }
+}
+
+function clearStoredMatch() {
+  if (typeof window !== "undefined") {
+    window.localStorage.removeItem("camp2026.currentMatchId")
   }
 }
 
@@ -82,12 +88,27 @@ export function BattleLobbyPage() {
     },
     retry: (failureCount, error) =>
       !(error instanceof AppError && error.status < 500) && failureCount < 2,
+    refetchOnMount: "always",
+    staleTime: 0,
   })
   const openMatch =
     openMatchQuery.data?.status === "waiting" ||
     openMatchQuery.data?.status === "active"
       ? openMatchQuery.data
       : null
+  const openMatchIsComputer = openMatch?.mode === "computer"
+  const openMatchChecking =
+    openMatchQuery.isPending || openMatchQuery.isFetching
+  useEffect(() => {
+    if (!openMatchQuery.isFetchedAfterMount || openMatchQuery.isError) {
+      return
+    }
+    if (openMatch) {
+      storeMatch(openMatch)
+      return
+    }
+    clearStoredMatch()
+  }, [openMatch, openMatchQuery.isError, openMatchQuery.isFetchedAfterMount])
   const createMutation = useMutation({
     mutationFn: gameApi.createMatch,
     onSuccess: onMatchReady,
@@ -108,6 +129,11 @@ export function BattleLobbyPage() {
     mutationFn: gameApi.createComputerMatch,
     onSuccess: onMatchReady,
     onError: (error) => {
+      if (error instanceof AppError && error.status === 409) {
+        queryClient.invalidateQueries({ queryKey: ["matches", "open"] })
+        toast.error("已有進行中的對戰，請重新加入")
+        return
+      }
       toast.error(error instanceof Error ? error.message : "建立電腦對戰失敗")
     },
   })
@@ -115,11 +141,20 @@ export function BattleLobbyPage() {
     mutationFn: gameApi.joinMatch,
     onSuccess: onMatchReady,
     onError: (error) => {
+      if (error instanceof AppError && error.status === 409) {
+        queryClient.invalidateQueries({ queryKey: ["matches", "open"] })
+        toast.error("已有進行中的對戰，請重新加入")
+        return
+      }
       toast.error(error instanceof Error ? error.message : "加入房間失敗")
     },
   })
 
   function handleJoinCode(value: string) {
+    if (openMatch) {
+      onMatchReady(openMatch)
+      return
+    }
     const normalizedCode = normalizeMatchCode(value)
     if (!normalizedCode) {
       toast.error("請先輸入房號")
@@ -140,36 +175,59 @@ export function BattleLobbyPage() {
     createMutation.mutate()
   }
 
+  function handleComputerBattle() {
+    if (openMatch) {
+      onMatchReady(openMatch)
+      return
+    }
+    createComputerMutation.mutate()
+  }
+
   return (
     <GamePageShell contentClassName="grid content-start gap-y-3">
       <PageHeader title="知識王" headline="Battle Lobby" />
       <LobbyActionCard
         title="電腦對戰"
-        description="和系統控制的電腦對手進行知識王戰"
+        description={
+          openMatch
+            ? openMatchIsComputer
+              ? "回到尚未結束的電腦對戰"
+              : "已有尚未結束的知識王對戰"
+            : "和系統控制的電腦對手進行知識王戰"
+        }
         action={
           <Button
             type="button"
             className={actionButtonClassName}
             variant="secondary"
             disabled={
+              openMatchChecking ||
               computerSettingsQuery.isPending ||
               createComputerMutation.isPending ||
-              !computerSettingsQuery.data?.enabled
+              (!openMatch && !computerSettingsQuery.data?.enabled)
             }
-            onClick={() => createComputerMutation.mutate()}
+            onClick={handleComputerBattle}
           >
             <GameFeatureIcon name="battle" className="size-4" />
-            {computerSettingsQuery.isPending
+            {openMatchChecking || computerSettingsQuery.isPending
               ? "同步中"
-              : computerSettingsQuery.data?.enabled
-                ? createComputerMutation.isPending
-                  ? "建立中"
-                  : "跟電腦對戰"
-                : "電腦對戰未開放"}
+              : openMatch
+                ? openMatchIsComputer
+                  ? "重新加入電腦對戰"
+                  : "回到目前對戰"
+                : computerSettingsQuery.data?.enabled
+                  ? createComputerMutation.isPending
+                    ? "建立中"
+                    : "跟電腦對戰"
+                  : "電腦對戰未開放"}
           </Button>
         }
       >
-        沒有真人對手時，也可以完成對戰並取得結算獎勵。
+        {openMatch
+          ? openMatchIsComputer
+            ? "電腦對戰已經開始或仍在等待房，可以直接回到原本的對戰。"
+            : "你目前有尚未結束的對戰，先回到原本的對戰再開始電腦對戰。"
+          : "沒有真人對手時，也可以完成對戰並取得結算獎勵。"}
       </LobbyActionCard>
 
       <LobbyActionCard
@@ -181,11 +239,11 @@ export function BattleLobbyPage() {
           <Button
             type="button"
             className={actionButtonClassName}
-            disabled={openMatchQuery.isPending || createMutation.isPending}
+            disabled={openMatchChecking || createMutation.isPending}
             onClick={handleQuickStart}
           >
             <GameFeatureIcon name="battle" className="size-4" />
-            {openMatchQuery.isPending
+            {openMatchChecking
               ? "同步中"
               : openMatch
                 ? "重新加入對戰"
@@ -213,6 +271,7 @@ export function BattleLobbyPage() {
               onChange={(event) =>
                 setCode(normalizeMatchCode(event.target.value))
               }
+              disabled={Boolean(openMatch) || openMatchChecking}
               placeholder="請輸入房號"
             />
             <Button
@@ -220,7 +279,11 @@ export function BattleLobbyPage() {
               size="icon"
               type="button"
               aria-label="掃描房號 QR Code"
-              disabled={joinMutation.isPending}
+              disabled={
+                Boolean(openMatch) ||
+                openMatchChecking ||
+                joinMutation.isPending
+              }
               onClick={() => setScannerOpen(true)}
             >
               <ScanQrCode />
@@ -229,10 +292,14 @@ export function BattleLobbyPage() {
               className="h-11 rounded-[14px] px-3 text-[15px] font-black"
               variant="secondary"
               type="button"
-              disabled={joinMutation.isPending}
+              disabled={openMatchChecking || joinMutation.isPending}
               onClick={handleJoin}
             >
-              {joinMutation.isPending ? "加入中" : "加入房間"}
+              {openMatch
+                ? "回到目前對戰"
+                : joinMutation.isPending
+                  ? "加入中"
+                  : "加入房間"}
               <ArrowRight />
             </Button>
           </div>

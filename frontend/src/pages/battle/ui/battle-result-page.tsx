@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
 import { ChevronDown } from "lucide-react"
+import { useEffect, useState } from "react"
 
 import { useMatchEvents } from "@/features/game/use-match-events"
 import { gameApi, type MatchQuestionResult } from "@/shared/api/game"
@@ -51,7 +52,7 @@ function choiceText(result: MatchQuestionResult, choice?: string) {
 }
 
 export function BattleResultPage() {
-  const matchID = getStoredMatchID()
+  const [matchID] = useState(getStoredMatchID)
   const { data: match, isPending } = useQuery({
     queryKey: ["matches", matchID],
     queryFn: () => gameApi.getMatch(matchID),
@@ -73,6 +74,12 @@ export function BattleResultPage() {
     (player) => (player.openPowerReward ?? 0) > 0,
   )
   const dropPlayers = players.filter((player) => player.materialDrop != null)
+
+  useEffect(() => {
+    if (match?.status === "completed") {
+      clearStoredMatchID()
+    }
+  }, [match?.status])
 
   return (
     <GamePageShell contentClassName="grid content-start gap-y-2">

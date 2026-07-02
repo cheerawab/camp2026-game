@@ -10,6 +10,7 @@ import {
   useMatchDeadlineRefresh,
   useMatchEvents,
 } from "@/features/game/use-match-events"
+import { AppError } from "@/shared/api/error"
 import { gameApi, type PlayerSitone } from "@/shared/api/game"
 import { sitoneMeta } from "@/shared/lib/game-labels"
 import { Button } from "@/shared/ui/button"
@@ -27,6 +28,12 @@ import { cn } from "@/shared/utils"
 function getStoredMatchID() {
   if (typeof window === "undefined") return ""
   return window.localStorage.getItem("camp2026.currentMatchId") ?? ""
+}
+
+function clearStoredMatchID() {
+  if (typeof window !== "undefined") {
+    window.localStorage.removeItem("camp2026.currentMatchId")
+  }
 }
 
 const maxLoadoutSize = 5
@@ -225,13 +232,21 @@ export function BattleWaitingRoomPage() {
   }
 
   useEffect(() => {
+    if (
+      matchQuery.error instanceof AppError &&
+      matchQuery.error.status === 404
+    ) {
+      clearStoredMatchID()
+      navigate({ to: "/battle", replace: true })
+      return
+    }
     if (match?.status === "active") {
       navigate({ to: "/battle/question" })
     }
     if (match?.status === "completed") {
       navigate({ to: "/battle/result" })
     }
-  }, [match?.status, navigate])
+  }, [match?.status, matchQuery.error, navigate])
 
   if (!matchID) {
     return (

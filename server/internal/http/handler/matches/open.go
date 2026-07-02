@@ -3,10 +3,12 @@ package matches
 import (
 	"errors"
 	"net/http"
+	"time"
 
 	"go.mongodb.org/mongo-driver/v2/mongo"
 
 	"github.com/sitcon-tw/camp2026-game/internal/http/httpx"
+	mongomodel "github.com/sitcon-tw/camp2026-game/internal/mongodb/model"
 )
 
 // Open godoc
@@ -37,5 +39,23 @@ func (h *Handler) Open(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.writeAdvancedMatchState(w, r, match, player.ID)
+	match, events, err := h.advanceMatch(r.Context(), match, time.Now())
+	if err != nil {
+		httpx.WriteProblem(w, r, httpx.InternalServerError("match lookup failed", "match_open_advance_failed", err))
+		return
+	}
+	for _, event := range events {
+		h.publishState(r.Context(), match, event)
+	}
+	if match.Status == mongomodel.MatchStatusCompleted {
+		httpx.WriteProblem(w, r, httpx.NotFound("match not found"))
+		return
+	}
+
+	state, err := h.buildMatchState(r.Context(), match, player.ID)
+	if err != nil {
+		httpx.WriteProblem(w, r, err)
+		return
+	}
+	httpx.WriteJSON(w, http.StatusOK, state)
 }

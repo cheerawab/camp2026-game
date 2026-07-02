@@ -31,7 +31,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	if !ok || !h.requireDatabase(w, r) || !h.requireContent(w, r) {
 		return
 	}
-	if err := h.ensureNoOpenHostedMatch(r.Context(), player.ID); err != nil {
+	if err := h.ensureNoOpenParticipantMatch(r.Context(), player.ID); err != nil {
 		writeCreateMatchProblem(w, r, err)
 		return
 	}
@@ -60,6 +60,9 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		Status:       mongomodel.MatchStatusWaiting,
 		HostPlayerID: player.ID,
 		OpenHostLock: player.ID,
+		OpenPlayerLocks: []string{
+			player.ID,
+		},
 		Players: []mongomodel.MatchPlayer{
 			{
 				PlayerID:  player.ID,
@@ -75,7 +78,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	if _, err := h.db.Collection(mongomodel.MatchesCollection).InsertOne(r.Context(), match); err != nil {
 		if mongo.IsDuplicateKeyError(err) {
-			writeOpenHostedMatchConflict(w, r)
+			writeOpenParticipantMatchConflict(w, r)
 			return
 		}
 		httpx.WriteProblem(w, r, httpx.InternalServerError("match creation failed", "match_insert_failed", err))
@@ -90,13 +93,13 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	httpx.WriteJSON(w, http.StatusCreated, state)
 }
 
-var errOpenHostedMatchExists = errors.New("player already has an open match")
+var errOpenParticipantMatchExists = errors.New("player already has an open match")
 
-func (h *Handler) ensureNoOpenHostedMatch(ctx context.Context, playerID string) error {
+func (h *Handler) ensureNoOpenParticipantMatch(ctx context.Context, playerID string) error {
 	err := h.db.Collection(mongomodel.MatchesCollection).
 		FindOne(
 			ctx,
-			openHostedMatchFilter(playerID),
+			openParticipantMatchFilter(playerID),
 			options.FindOne().SetProjection(bson.D{{Key: "_id", Value: 1}}),
 		).
 		Err()
@@ -106,30 +109,25 @@ func (h *Handler) ensureNoOpenHostedMatch(ctx context.Context, playerID string) 
 	if err != nil {
 		return err
 	}
-	return errOpenHostedMatchExists
+	return errOpenParticipantMatchExists
 }
 
 func openHostedMatchFilter(playerID string) bson.M {
 	return bson.M{
 		"host_player_id": playerID,
-		"status": bson.M{
-			"$in": bson.A{
-				mongomodel.MatchStatusWaiting,
-				mongomodel.MatchStatusActive,
-			},
-		},
+		"status":         openMatchStatusFilter(),
 	}
 }
 
 func writeCreateMatchProblem(w http.ResponseWriter, r *http.Request, err error) {
-	if errors.Is(err, errOpenHostedMatchExists) {
-		writeOpenHostedMatchConflict(w, r)
+	if errors.Is(err, errOpenParticipantMatchExists) {
+		writeOpenParticipantMatchConflict(w, r)
 		return
 	}
 	httpx.WriteProblem(w, r, httpx.InternalServerError("match creation failed", "match_open_lookup_failed", err))
 }
 
-func writeOpenHostedMatchConflict(w http.ResponseWriter, r *http.Request) {
+func writeOpenParticipantMatchConflict(w http.ResponseWriter, r *http.Request) {
 	httpx.WriteProblem(w, r, httpx.NewError(http.StatusConflict, "player already has an open match"))
 }
 

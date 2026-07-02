@@ -2,6 +2,7 @@ package matches
 
 import (
 	"errors"
+	"strings"
 	"testing"
 	"time"
 
@@ -314,20 +315,48 @@ func TestOpenHostedMatchFilterMatchesWaitingAndActiveHost(t *testing.T) {
 	}
 }
 
-func TestReleaseOpenHostLockOnCompletion(t *testing.T) {
+func TestOpenParticipantMatchFilterMatchesWaitingAndActiveParticipant(t *testing.T) {
+	filter := openParticipantMatchFilter("P1")
+	if filter["players.player_id"] != "P1" {
+		t.Fatalf("expected participant player filter, got %#v", filter)
+	}
+
+	status, ok := filter["status"].(bson.M)
+	if !ok {
+		t.Fatalf("expected status filter, got %#v", filter)
+	}
+	values, ok := status["$in"].(bson.A)
+	if !ok || len(values) != 2 {
+		t.Fatalf("expected status $in filter, got %#v", status)
+	}
+	if values[0] != mongomodel.MatchStatusWaiting || values[1] != mongomodel.MatchStatusActive {
+		t.Fatalf("expected waiting and active statuses, got %#v", values)
+	}
+}
+
+func TestSyncOpenMatchLocks(t *testing.T) {
 	match := mongomodel.Match{
 		Status:       mongomodel.MatchStatusActive,
-		OpenHostLock: "P1",
+		HostPlayerID: "P1",
+		Players: []mongomodel.MatchPlayer{
+			{PlayerID: "P1", Kind: mongomodel.MatchPlayerKindHuman},
+			{PlayerID: "computer", Kind: mongomodel.MatchPlayerKindComputer},
+			{PlayerID: "P2", Kind: mongomodel.MatchPlayerKindHuman},
+			{PlayerID: "P2", Kind: mongomodel.MatchPlayerKindHuman},
+		},
 	}
-	releaseOpenHostLockOnCompletion(&match)
+	syncOpenMatchLocks(&match)
 	if match.OpenHostLock != "P1" {
 		t.Fatalf("expected active match to keep open host lock, got %q", match.OpenHostLock)
 	}
+	if got := strings.Join(match.OpenPlayerLocks, ","); got != "P1,P2" {
+		t.Fatalf("expected human participant locks, got %#v", match.OpenPlayerLocks)
+	}
 
 	match.Status = mongomodel.MatchStatusCompleted
-	releaseOpenHostLockOnCompletion(&match)
-	if match.OpenHostLock != "" {
-		t.Fatalf("expected completed match to release open host lock, got %q", match.OpenHostLock)
+	syncOpenMatchLocks(&match)
+	if match.OpenHostLock != "" || match.OpenPlayerLocks != nil {
+		t.Fatalf("expected completed match to release open locks, got host=%q players=%#v", match.OpenHostLock, match.OpenPlayerLocks)
 	}
 }
 
