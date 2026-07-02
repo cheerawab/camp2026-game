@@ -918,6 +918,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/matches/open": {
+            "get": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Returns the current waiting or active match for the authenticated participant.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "matches"
+                ],
+                "summary": "Get current open match",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/matches.OpenMatchResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
         "/matches/{matchID}": {
             "get": {
                 "security": [
@@ -3677,6 +3726,79 @@ const docTemplate = `{
             }
         },
         "matches.MatchStateResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "example": "ABC123"
+                },
+                "completedAt": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "currentQuestion": {
+                    "$ref": "#/definitions/matches.MatchQuestionResponse"
+                },
+                "currentQuestionIndex": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "currentQuestionResult": {
+                    "$ref": "#/definitions/matches.MatchQuestionResult"
+                },
+                "hostPlayerId": {
+                    "type": "string",
+                    "example": "7H9K2Q"
+                },
+                "matchId": {
+                    "type": "string",
+                    "example": "match_7H9K2Q"
+                },
+                "mode": {
+                    "type": "string",
+                    "example": "pvp"
+                },
+                "phase": {
+                    "type": "string",
+                    "example": "answering"
+                },
+                "players": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/matches.MatchPlayerResponse"
+                    }
+                },
+                "questionCount": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/matches.MatchQuestionResult"
+                    }
+                },
+                "revealEndsAt": {
+                    "type": "string"
+                },
+                "roundEndsAt": {
+                    "type": "string"
+                },
+                "roundStartedAt": {
+                    "type": "string"
+                },
+                "startedAt": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "active"
+                }
+            }
+        },
+        "matches.OpenMatchResponse": {
             "type": "object",
             "properties": {
                 "code": {

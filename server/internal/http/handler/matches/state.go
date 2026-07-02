@@ -29,7 +29,33 @@ func (h *Handler) findMatchByID(ctx context.Context, matchID string) (mongomodel
 func (h *Handler) findMatchByCode(ctx context.Context, code string) (mongomodel.Match, error) {
 	var match mongomodel.Match
 	err := h.db.Collection(mongomodel.MatchesCollection).
-		FindOne(ctx, bson.M{"code": code, "status": mongomodel.MatchStatusWaiting}).
+		FindOne(ctx, bson.M{
+			"code":   code,
+			"status": bson.M{"$ne": mongomodel.MatchStatusCompleted},
+		}).
+		Decode(&match)
+	return match, err
+}
+
+func (h *Handler) findOpenParticipantMatch(ctx context.Context, playerID string) (mongomodel.Match, error) {
+	var match mongomodel.Match
+	err := h.db.Collection(mongomodel.MatchesCollection).
+		FindOne(
+			ctx,
+			bson.M{
+				"status": bson.M{
+					"$in": bson.A{
+						mongomodel.MatchStatusWaiting,
+						mongomodel.MatchStatusActive,
+					},
+				},
+				"players.player_id": playerID,
+			},
+			options.FindOne().SetSort(bson.D{
+				{Key: "created_at", Value: -1},
+				{Key: "_id", Value: -1},
+			}),
+		).
 		Decode(&match)
 	return match, err
 }
@@ -568,6 +594,24 @@ func (h *Handler) publishState(_ context.Context, match mongomodel.Match, eventN
 		Name:  eventName,
 		Match: match,
 	})
+}
+
+func (h *Handler) writeAdvancedMatchState(w http.ResponseWriter, r *http.Request, match mongomodel.Match, playerID string) {
+	match, events, err := h.advanceMatch(r.Context(), match, time.Now())
+	if err != nil {
+		httpx.WriteProblem(w, r, httpx.InternalServerError("match state unavailable", "match_state_advance_failed", err))
+		return
+	}
+	for _, event := range events {
+		h.publishState(r.Context(), match, event)
+	}
+
+	state, err := h.buildMatchState(r.Context(), match, playerID)
+	if err != nil {
+		httpx.WriteProblem(w, r, err)
+		return
+	}
+	httpx.WriteJSON(w, http.StatusOK, state)
 }
 
 func writeMatchProblem(w http.ResponseWriter, r *http.Request, err error) {
