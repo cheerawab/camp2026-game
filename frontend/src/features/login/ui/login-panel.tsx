@@ -1,9 +1,9 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { type FormEvent, useEffect, useRef, useState } from "react"
 
 import sitconLogo from "@/assets/sitcon-logo.svg"
-import { gameApi } from "@/shared/api/game"
+import { gameApi, type PlayerStatus } from "@/shared/api/game"
 import { Badge } from "@/shared/ui/badge"
 import { Button } from "@/shared/ui/button"
 import { Input } from "@/shared/ui/input"
@@ -63,13 +63,22 @@ export function LoginPanel({ initialToken }: LoginPanelProps) {
   const autoSubmittedTokenRef = useRef("")
   const [code, setCode] = useState(autoToken)
   const [hasTried, setHasTried] = useState(false)
+  const statusQuery = useQuery({
+    queryKey: ["me", "status", "login"],
+    queryFn: gameApi.status,
+    gcTime: 0,
+    refetchOnMount: "always",
+    retry: false,
+    staleTime: 0,
+    throwOnError: false,
+  })
   const loginMutation = useMutation({
     mutationFn: gameApi.login,
     onSuccess: (result) => {
       queryClient.setQueryData(["me", "status"], result.player)
       queryClient.invalidateQueries({ queryKey: ["me", "home"] })
       navigate({
-        to: result.player.role === "staff" ? "/staff" : "/",
+        to: loginDestination(result.player),
         replace: true,
       })
     },
@@ -80,12 +89,39 @@ export function LoginPanel({ initialToken }: LoginPanelProps) {
     hasAttempted && (code.trim().length === 0 || loginMutation.isError)
 
   useEffect(() => {
-    if (autoToken.length === 0 || autoSubmittedTokenRef.current === autoToken) {
+    if (
+      autoToken.length === 0 ||
+      autoSubmittedTokenRef.current === autoToken ||
+      !statusQuery.isFetchedAfterMount ||
+      !statusQuery.isError
+    ) {
       return
     }
     autoSubmittedTokenRef.current = autoToken
     loginMutation.mutate(autoToken)
-  }, [autoToken, loginMutation])
+  }, [
+    autoToken,
+    loginMutation,
+    statusQuery.isError,
+    statusQuery.isFetchedAfterMount,
+  ])
+
+  useEffect(() => {
+    if (!statusQuery.isFetchedAfterMount || !statusQuery.data) {
+      return
+    }
+    queryClient.setQueryData(["me", "status"], statusQuery.data)
+    queryClient.invalidateQueries({ queryKey: ["me", "home"] })
+    navigate({
+      to: loginDestination(statusQuery.data),
+      replace: true,
+    })
+  }, [
+    navigate,
+    queryClient,
+    statusQuery.data,
+    statusQuery.isFetchedAfterMount,
+  ])
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -163,14 +199,22 @@ export function LoginPanel({ initialToken }: LoginPanelProps) {
         </div>
         <Button
           type="submit"
-          disabled={loginMutation.isPending}
+          disabled={statusQuery.isPending || loginMutation.isPending}
           className="border-ink h-[56px] w-full border-2 text-[1.05rem] font-black shadow-[0_4px_0_rgba(23,35,58,0.22)] active:translate-y-0.5 active:shadow-[0_2px_0_rgba(23,35,58,0.22)]"
         >
-          {loginMutation.isPending ? "登入中" : "進入基地"}
+          {statusQuery.isPending
+            ? "確認登入狀態"
+            : loginMutation.isPending
+              ? "登入中"
+              : "進入基地"}
         </Button>
       </form>
     </section>
   )
+}
+
+function loginDestination(player: Pick<PlayerStatus, "role">) {
+  return player.role === "staff" ? "/staff" : "/"
 }
 
 type StoneType = (typeof stoneTypes)[number]
