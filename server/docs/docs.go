@@ -587,7 +587,7 @@ const docTemplate = `{
                         "AuthCookieAuth": []
                     }
                 ],
-                "description": "Returns read-only item and sitone inventory for a non-staff leaderboard player.",
+                "description": "Returns read-only item and sitone inventory for a leaderboard player.",
                 "produces": [
                     "application/json"
                 ],
@@ -645,7 +645,7 @@ const docTemplate = `{
                         "AuthCookieAuth": []
                     }
                 ],
-                "description": "Lists non-staff players in a ranked team with their inventory totals.",
+                "description": "Lists players in a ranked team with their inventory totals.",
                 "produces": [
                     "application/json"
                 ],
@@ -1847,7 +1847,7 @@ const docTemplate = `{
                         "AuthCookieAuth": []
                     }
                 ],
-                "description": "Staff-only endpoint. Searches non-staff players by nickname or player ID for reward targeting.",
+                "description": "Staff-only endpoint. Searches players by nickname or player ID for reward targeting.",
                 "produces": [
                     "application/json"
                 ],
@@ -4458,6 +4458,10 @@ const docTemplate = `{
                 "id": {
                     "type": "string",
                     "example": "item_adventure_backpack"
+                },
+                "locked": {
+                    "type": "boolean",
+                    "example": false
                 },
                 "name": {
                     "type": "string",
