@@ -268,6 +268,30 @@ func TestLeastOwnedSitoneDropPoolIncludesTiedLowestQuantity(t *testing.T) {
 	}
 }
 
+func TestSecureRandomIntUsesReaderValue(t *testing.T) {
+	got, err := secureRandomInt(strings.NewReader("*"), 100)
+	if err != nil {
+		t.Fatalf("secure random int: %v", err)
+	}
+	if got != 42 {
+		t.Fatalf("expected reader value 42, got %d", got)
+	}
+}
+
+func TestSecureRandomIntRejectsInvalidMax(t *testing.T) {
+	if _, err := secureRandomInt(strings.NewReader("*"), 0); err == nil {
+		t.Fatal("expected invalid max error")
+	}
+}
+
+func TestSecureRandomIntReturnsRandomnessError(t *testing.T) {
+	randomErr := errors.New("entropy unavailable")
+	_, err := secureRandomInt(errReader{err: randomErr}, 100)
+	if !errors.Is(err, randomErr) {
+		t.Fatalf("expected random error, got %v", err)
+	}
+}
+
 func TestMatchRewardKeysUseMatchAndPlayer(t *testing.T) {
 	if got := matchRewardRecordID("match_123", "P1"); got != "open_power_reward_match_123_P1" {
 		t.Fatalf("unexpected reward record id: %q", got)

@@ -2,6 +2,10 @@ package matches
 
 import (
 	"context"
+	"crypto/rand"
+	"fmt"
+	"io"
+	"math/big"
 	"sort"
 	"time"
 
@@ -127,7 +131,11 @@ func (h *Handler) matchItemDrop(ctx context.Context, match mongomodel.Match, pla
 		Source:    matchItemDropSource(match.ID, player.PlayerID),
 		CreatedAt: createdAt,
 	}
-	if deterministicPercent("material-drop", match.ID, player.PlayerID) >= dropRate {
+	roll, err := secureRandomPercent()
+	if err != nil {
+		return mongomodel.MatchItemDrop{}, err
+	}
+	if roll >= dropRate {
 		return record, nil
 	}
 
@@ -135,11 +143,14 @@ func (h *Handler) matchItemDrop(ctx context.Context, match mongomodel.Match, pla
 	if len(pool) == 0 {
 		return record, nil
 	}
-	pool, err := h.preferredBaseSitoneDropPool(ctx, player.PlayerID, pool)
+	pool, err = h.preferredBaseSitoneDropPool(ctx, player.PlayerID, pool)
 	if err != nil {
 		return mongomodel.MatchItemDrop{}, err
 	}
-	index := int(deterministicUint64("material-drop-item", match.ID, player.PlayerID) % uint64(len(pool)))
+	index, err := secureRandomIndex(len(pool))
+	if err != nil {
+		return mongomodel.MatchItemDrop{}, err
+	}
 	record.SitoneID = pool[index].ID
 	record.Quantity = matchItemDropQuantity
 	record.Dropped = true
@@ -241,6 +252,25 @@ func leastOwnedSitoneDropPool(pool []content.Sitone, owned map[string]int) []con
 		out = append(out, sitone)
 	}
 	return out
+}
+
+func secureRandomPercent() (int, error) {
+	return secureRandomInt(rand.Reader, 100)
+}
+
+func secureRandomIndex(length int) (int, error) {
+	return secureRandomInt(rand.Reader, length)
+}
+
+func secureRandomInt(random io.Reader, max int) (int, error) {
+	if max <= 0 {
+		return 0, fmt.Errorf("random max must be positive")
+	}
+	value, err := rand.Int(random, big.NewInt(int64(max)))
+	if err != nil {
+		return 0, fmt.Errorf("secure random int: %w", err)
+	}
+	return int(value.Int64()), nil
 }
 
 func (h *Handler) findMatchItemDrops(ctx context.Context, matchID string) ([]mongomodel.MatchItemDrop, error) {
