@@ -73,6 +73,11 @@ func (h *Handler) Events(w http.ResponseWriter, r *http.Request) {
 			if !ok {
 				return
 			}
+			if event.Name == "match_deleted" {
+				writeSSEDeleted(w, event.Match.ID)
+				flusher.Flush()
+				return
+			}
 			state, err := h.buildMatchState(r.Context(), event.Match, player.ID)
 			if err != nil {
 				return
@@ -92,5 +97,14 @@ func writeSSE(w http.ResponseWriter, name string, data MatchStateResponse) {
 		return
 	}
 	_, _ = fmt.Fprintf(w, "event: %s\n", name)
+	_, _ = fmt.Fprintf(w, "data: %s\n\n", payload)
+}
+
+func writeSSEDeleted(w http.ResponseWriter, matchID string) {
+	payload, err := json.Marshal(map[string]string{"matchId": matchID})
+	if err != nil {
+		return
+	}
+	_, _ = fmt.Fprint(w, "event: match_deleted\n")
 	_, _ = fmt.Fprintf(w, "data: %s\n\n", payload)
 }

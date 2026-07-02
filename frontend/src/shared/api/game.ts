@@ -722,6 +722,10 @@ export const gameApi = {
     return MatchStateSchema.parse(json)
   },
 
+  async leaveMatch(matchID: string) {
+    await apiClient.post(`/api/matches/${matchID}/leave`)
+  },
+
   async updateMatchLoadout(matchID: string, sitoneIds: string[]) {
     const json = await apiClient.put(`/api/matches/${matchID}/loadout`, {
       json: { sitoneIds },

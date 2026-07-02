@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -177,6 +178,20 @@ func TestMatchFlowE2E(t *testing.T) {
 	getJSON(t, server.URL+"/api/matches/open", []*http.Cookie{playerACookie}, http.StatusNotFound)
 
 	assertDatabaseState(t, ctx, db, created.MatchID, completed)
+}
+
+func TestWaitingRoomLeaveFlowE2E(t *testing.T) {
+	ctx := t.Context()
+	mongoClient, db := startMongo(t, ctx)
+	seedPlayersAndTeams(t, ctx, db)
+
+	server := newE2EServer(t, mongoClient, db)
+	defer server.Close()
+
+	playerACookie := login(t, server.URL, playerAToken)
+	playerBCookie := login(t, server.URL, playerBToken)
+
+	assertWaitingRoomLeaveFlow(t, ctx, db, server.URL, playerACookie, playerBCookie)
 }
 
 func startMongo(t *testing.T, ctx context.Context) (*mongo.Client, *mongo.Database) {
@@ -514,6 +529,53 @@ func assertShopPurchaseFlow(t *testing.T, ctx context.Context, db *mongo.Databas
 	decodeJSON(t, body, &meItems)
 	if len(meItems.Items) != 1 || meItems.Items[0].ItemID != "item_adventure_backpack" || meItems.Items[0].Quantity != 4 {
 		t.Fatalf("expected me items to include purchased item, got %#v", meItems.Items)
+	}
+}
+
+func assertWaitingRoomLeaveFlow(t *testing.T, ctx context.Context, db *mongo.Database, serverURL string, hostCookie *http.Cookie, challengerCookie *http.Cookie) {
+	t.Helper()
+
+	var created matchState
+	body := postJSON(t, serverURL+"/api/matches", nil, []*http.Cookie{hostCookie}, http.StatusCreated)
+	decodeJSON(t, body, &created)
+
+	body = postJSON(t, serverURL+"/api/matches/join", map[string]string{
+		"code": created.Code,
+	}, []*http.Cookie{challengerCookie}, http.StatusOK)
+	var joined matchState
+	decodeJSON(t, body, &joined)
+	if len(joined.Players) != 2 {
+		t.Fatalf("expected challenger to join waiting room, got %#v", joined.Players)
+	}
+
+	postJSON(t, serverURL+"/api/matches/"+created.MatchID+"/leave", nil, []*http.Cookie{challengerCookie}, http.StatusNoContent)
+	getJSON(t, serverURL+"/api/matches/open", []*http.Cookie{challengerCookie}, http.StatusNotFound)
+
+	body = getJSON(t, serverURL+"/api/matches/"+created.MatchID, []*http.Cookie{hostCookie}, http.StatusOK)
+	var afterChallengerLeft matchState
+	decodeJSON(t, body, &afterChallengerLeft)
+	if len(afterChallengerLeft.Players) != 1 || afterChallengerLeft.Players[0].PlayerID != playerAID {
+		t.Fatalf("expected waiting room to keep only host after challenger leaves, got %#v", afterChallengerLeft.Players)
+	}
+
+	body = postJSON(t, serverURL+"/api/matches/join", map[string]string{
+		"code": created.Code,
+	}, []*http.Cookie{challengerCookie}, http.StatusOK)
+	decodeJSON(t, body, &joined)
+	if len(joined.Players) != 2 {
+		t.Fatalf("expected challenger to rejoin waiting room, got %#v", joined.Players)
+	}
+
+	postJSON(t, serverURL+"/api/matches/"+created.MatchID+"/leave", nil, []*http.Cookie{hostCookie}, http.StatusNoContent)
+	getJSON(t, serverURL+"/api/matches/open", []*http.Cookie{hostCookie}, http.StatusNotFound)
+	getJSON(t, serverURL+"/api/matches/open", []*http.Cookie{challengerCookie}, http.StatusNotFound)
+	getJSON(t, serverURL+"/api/matches/"+created.MatchID, []*http.Cookie{challengerCookie}, http.StatusNotFound)
+
+	err := db.Collection(mongomodel.MatchesCollection).
+		FindOne(ctx, bson.M{"_id": created.MatchID}).
+		Err()
+	if !errors.Is(err, mongo.ErrNoDocuments) {
+		t.Fatalf("expected host leave to delete waiting match, got %v", err)
 	}
 }
 

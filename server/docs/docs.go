@@ -1146,6 +1146,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/matches/{matchID}/leave": {
+            "post": {
+                "security": [
+                    {
+                        "AuthCookieAuth": []
+                    }
+                ],
+                "description": "Leaves a waiting match room. If the host leaves before the match starts, the room is deleted; otherwise the player is removed from the waiting room.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "matches"
+                ],
+                "summary": "Leave waiting match room",
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/httpx.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
         "/matches/{matchID}/loadout": {
             "put": {
                 "security": [

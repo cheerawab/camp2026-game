@@ -14,10 +14,11 @@ const matchEventNames = [
 
 export function useMatchEvents(
   matchID: string,
-  options: { enabled?: boolean } = {},
+  options: { enabled?: boolean; onDeleted?: () => void } = {},
 ) {
   const queryClient = useQueryClient()
   const enabled = options.enabled ?? true
+  const onDeleted = options.onDeleted
 
   useEffect(() => {
     if (!enabled || !matchID || typeof window === "undefined") return
@@ -34,13 +35,19 @@ export function useMatchEvents(
         // Ignore malformed events and let the connection keep streaming.
       }
     }
+    const handleDeleted = () => {
+      queryClient.removeQueries({ queryKey: ["matches", matchID] })
+      onDeleted?.()
+      source.close()
+    }
 
     for (const eventName of matchEventNames) {
       source.addEventListener(eventName, handleMessage)
     }
+    source.addEventListener("match_deleted", handleDeleted)
 
     return () => source.close()
-  }, [enabled, matchID, queryClient])
+  }, [enabled, matchID, onDeleted, queryClient])
 }
 
 export function useMatchDeadlineRefresh(

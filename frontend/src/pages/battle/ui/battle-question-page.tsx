@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 
 import {
@@ -245,12 +245,19 @@ export function BattleQuestionPage() {
   const queryClient = useQueryClient()
   const [matchID] = useState(getStoredMatchID)
   const [now, setNow] = useState(() => Date.now())
+  const handleMatchDeleted = useCallback(() => {
+    clearStoredMatchID()
+    navigate({ to: "/battle", replace: true })
+  }, [navigate])
   const matchQuery = useQuery({
     queryKey: ["matches", matchID],
     queryFn: () => gameApi.getMatch(matchID),
     enabled: matchID.length > 0,
   })
-  useMatchEvents(matchID, { enabled: matchID.length > 0 })
+  useMatchEvents(matchID, {
+    enabled: matchID.length > 0,
+    onDeleted: handleMatchDeleted,
+  })
   const statusQuery = useQuery({
     queryKey: ["me", "status"],
     queryFn: gameApi.status,

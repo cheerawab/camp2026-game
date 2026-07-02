@@ -219,6 +219,7 @@ func TestMatchRoutesRequireAuthentication(t *testing.T) {
 		{method: http.MethodPost, path: "/api/matches/computer"},
 		{method: http.MethodPost, path: "/api/matches/join"},
 		{method: http.MethodGet, path: "/api/matches/M8RXP2"},
+		{method: http.MethodPost, path: "/api/matches/M8RXP2/leave"},
 		{method: http.MethodPut, path: "/api/matches/M8RXP2/loadout"},
 		{method: http.MethodPost, path: "/api/matches/M8RXP2/ready"},
 		{method: http.MethodPost, path: "/api/matches/M8RXP2/answers"},
@@ -246,6 +247,7 @@ func TestMatchRoutesRequireDatabase(t *testing.T) {
 		{method: http.MethodPost, path: "/api/matches/computer"},
 		{method: http.MethodPost, path: "/api/matches/join"},
 		{method: http.MethodGet, path: "/api/matches/M8RXP2"},
+		{method: http.MethodPost, path: "/api/matches/M8RXP2/leave"},
 		{method: http.MethodPut, path: "/api/matches/M8RXP2/loadout"},
 		{method: http.MethodPost, path: "/api/matches/M8RXP2/ready"},
 		{method: http.MethodPost, path: "/api/matches/M8RXP2/answers"},
@@ -453,6 +455,7 @@ func TestSwaggerJSON(t *testing.T) {
 		"/matches/{matchID}",
 		"/matches/{matchID}/answers",
 		"/matches/{matchID}/events",
+		"/matches/{matchID}/leave",
 		"/matches/{matchID}/ready",
 		"/shop/items",
 		"/shop/items/{itemID}",
@@ -532,6 +535,7 @@ func TestSwaggerJSON(t *testing.T) {
 	assertSwaggerSecurity(t, spec.Paths, "/matches/{matchID}/ready", http.MethodPost, true)
 	assertSwaggerSecurity(t, spec.Paths, "/matches/{matchID}/answers", http.MethodPost, true)
 	assertSwaggerSecurity(t, spec.Paths, "/matches/{matchID}/events", http.MethodGet, true)
+	assertSwaggerSecurity(t, spec.Paths, "/matches/{matchID}/leave", http.MethodPost, true)
 	assertSwaggerSecurity(t, spec.Paths, "/shop/items", http.MethodGet, true)
 	assertSwaggerSecurity(t, spec.Paths, "/shop/items/{itemID}", http.MethodGet, true)
 	assertSwaggerSecurity(t, spec.Paths, "/shop/purchases", http.MethodPost, true)

@@ -52,6 +52,7 @@ func (h *Handler) RegisterRoutes(api chi.Router) {
 	api.Post("/matches/join", h.Join)
 	api.Get("/matches/open", h.Open)
 	api.Get("/matches/{matchID}", h.Get)
+	api.Post("/matches/{matchID}/leave", h.Leave)
 	api.Put("/matches/{matchID}/loadout", h.UpdateLoadout)
 	api.Post("/matches/{matchID}/ready", h.Ready)
 	api.Post("/matches/{matchID}/answers", h.Answer)

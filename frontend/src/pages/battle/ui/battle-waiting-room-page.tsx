@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { Check, DoorOpen, Plus, X } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { toast } from "sonner"
 
 import { MatchCodeQr } from "@/features/battle-qr"
@@ -102,12 +102,19 @@ export function BattleWaitingRoomPage() {
   const queryClient = useQueryClient()
   const [matchID] = useState(getStoredMatchID)
   const [manualSitoneIDs, setManualSitoneIDs] = useState<string[] | null>(null)
+  const handleMatchDeleted = useCallback(() => {
+    clearStoredMatchID()
+    navigate({ to: "/battle", replace: true })
+  }, [navigate])
   const matchQuery = useQuery({
     queryKey: ["matches", matchID],
     queryFn: () => gameApi.getMatch(matchID),
     enabled: matchID.length > 0,
   })
-  useMatchEvents(matchID, { enabled: matchID.length > 0 })
+  useMatchEvents(matchID, {
+    enabled: matchID.length > 0,
+    onDeleted: handleMatchDeleted,
+  })
   const statusQuery = useQuery({
     queryKey: ["me", "status"],
     queryFn: gameApi.status,
@@ -132,6 +139,17 @@ export function BattleWaitingRoomPage() {
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "小石套用失敗")
+    },
+  })
+  const leaveMutation = useMutation({
+    mutationFn: () => gameApi.leaveMatch(matchID),
+    onSuccess: () => {
+      clearStoredMatchID()
+      queryClient.invalidateQueries({ queryKey: ["matches", "open"] })
+      navigate({ to: "/battle", replace: true })
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "離開房間失敗")
     },
   })
   const readyMutation = useMutation({
@@ -485,19 +503,13 @@ export function BattleWaitingRoomPage() {
       <Card>
         <CardContent className="grid grid-cols-2 gap-2">
           <Button
-            asChild
             variant="outline"
             size="lg"
-            onClick={() => {
-              if (typeof window !== "undefined") {
-                window.localStorage.removeItem("camp2026.currentMatchId")
-              }
-            }}
+            disabled={leaveMutation.isPending || readyMutation.isPending}
+            onClick={() => leaveMutation.mutate()}
           >
-            <Link to="/battle">
-              <DoorOpen />
-              離開房間
-            </Link>
+            <DoorOpen />
+            {leaveMutation.isPending ? "離開中" : "離開房間"}
           </Button>
           <Button
             size="lg"
